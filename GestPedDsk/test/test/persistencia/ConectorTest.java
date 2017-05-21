@@ -11,8 +11,9 @@ import gpd.db.generic.GenSqlExecType;
 import gpd.db.generic.GenSqlSelectType;
 import gpd.exceptions.ConectorException;
 import gpd.persistencia.conector.Conector;
+import gpd.util.ConfigDriver;
 
-public class ConnectorTest extends Conector {
+public class ConectorTest extends Conector {
 
 	@Test
 	public void testGetConn() {
@@ -21,6 +22,8 @@ public class ConnectorTest extends Conector {
 
 	@Test
 	public void testSelectGeneric() {
+		ConfigDriver cfg = new ConfigDriver();
+		cfg.logConfig();
 		Conector.getConn();
 //		HashMap<Integer, Object> hashDatos = new HashMap<>();
 //		hashDatos.put(new Integer(1), 1);

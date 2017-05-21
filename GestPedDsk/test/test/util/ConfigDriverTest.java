@@ -2,23 +2,20 @@ package test.util;
 
 import static org.junit.Assert.fail;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
+import org.apache.log4j.Logger;
 import org.junit.Test;
 
-import gpd.db.util.ConfigDriver;
-import gpd.db.util.PropReader;
+import gpd.util.ConfigDriver;
 
 public class ConfigDriverTest {
 
+	static final Logger logger = Logger.getLogger(ConfigDriverTest.class);
+	
 	@Test
 	public void testGetPropertiesValue() {
 		ConfigDriver cfgDriver = new ConfigDriver();
 		cfgDriver.logConfig();
-//		BasicConfigurator.configure();
-		final Logger logger = Logger.getLogger(PropReader.class.getName());
-		logger.log(Level.INFO, "Finaliza ok");
+		logger.info("Finaliza ok");
 	}
 
 	@Test

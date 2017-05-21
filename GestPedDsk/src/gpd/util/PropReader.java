@@ -1,4 +1,4 @@
-package gpd.db.util;
+package gpd.util;
 
 import java.util.Enumeration;
 import java.util.Hashtable;

@@ -1,12 +1,14 @@
 package gpd.interfaces.persona;
 
-import gpd.dominio.persona.Cliente;
-import gpd.dominio.persona.Proveedor;
+import gpd.dominio.persona.PersonaFisica;
+import gpd.dominio.persona.PersonaJuridica;
 
 public interface IPersPersona {
 	
-	Integer resultado = null;
-	public Integer guardarCliente(Cliente cliente);
-	public Integer guardarProveedor(Proveedor proveedor);
+//	Integer resultado = null;
+	public PersonaFisica obtenerPersFisicaPorId(Integer id);
+	public PersonaJuridica obtenerPersJuridicaPorId(Integer id);
+	public Integer guardarPersFisica(PersonaFisica pf);
+	public Integer guardarPersJuridica(PersonaJuridica pj);
 	
 }

@@ -6,7 +6,7 @@ import static org.junit.Assert.fail;
 import org.junit.Test;
 
 import dps.types.Fecha;
-import gpd.dominio.persona.Cliente;
+import gpd.dominio.persona.ClientePers;
 import gpd.dominio.persona.Localidad;
 import gpd.dominio.persona.Sexo;
 import gpd.dominio.persona.TipoDoc;
@@ -18,8 +18,8 @@ import gpd.managers.persona.ManagerPersona;
 public class ManagerPersonaTest {
 
 	@Test
-	public void testGuardarCliente() {
-		Cliente cli = new Cliente();
+	public void testGuardarPersFisica() {
+		ClientePers cli = new ClientePers();
 		TipoDoc tipoDoc = new TipoDoc();
 		tipoDoc.setIdTipoDoc(1);
 		tipoDoc.setNombre("CI");
@@ -29,7 +29,7 @@ public class ManagerPersonaTest {
 		cli.setPuerta("552");
 		cli.setSolar("solar");
 		cli.setManzana("manzana");
-		cli.setKm(new Double(558));
+		cli.setKm(new Float(558));
 //		cli.setComplemento(""); DEJO NULO A PROPÓSITO
 		cli.setTelefono("21050030");
 		cli.setCelular("099123456");
@@ -53,12 +53,12 @@ public class ManagerPersonaTest {
 		cli.setUltAct(new Fecha());
 		
 		ManagerPersona mgrPersona = new ManagerPersona();
-		Integer resultado = mgrPersona.guardarCliente(cli);
+		Integer resultado = mgrPersona.guardarPersFisica(cli);
 		assertTrue(1==resultado);
 	}
 
 	@Test
-	public void testGuardarProveedor() {
+	public void testGuardarPersJuridica() {
 		fail("Not yet implemented");
 	}
 

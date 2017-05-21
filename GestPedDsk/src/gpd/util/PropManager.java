@@ -1,20 +1,20 @@
-package gpd.db.util;
+package gpd.util;
 
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Properties;
-import java.util.Vector;
-import java.util.logging.Logger;
 
+import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
 public abstract class PropManager {
 	
 	private Hashtable<String, Hashtable<String, String>> config = new Hashtable<String, Hashtable<String, String>>();
-	abstract protected Vector<String> getPropertiesValue();
+	abstract protected HashSet<String> getPropertiesValue();
 
     protected final void loadConfig() {
-        Vector<String> propertiesValues = getPropertiesValue();
+        HashSet<String> propertiesValues = getPropertiesValue();
         for (String element : propertiesValues) {
             config.put(element, PropReader.readProp(element));
         }
@@ -30,7 +30,8 @@ public abstract class PropManager {
     }
     
     protected final void configLog4J() {
-    	Logger logger = Logger.getLogger(PropManager.class.getName());
+    	Logger logger = Logger.getLogger(PropManager.class);
+    	logger.info("Inicio configuracion Log4j...");
     	Hashtable<String, String> values = config.get(CnstProp.PROP_LOG4J);
     	Properties prop = new Properties();
     	if (null != values) {
@@ -38,15 +39,14 @@ public abstract class PropManager {
     		Object key;
     		Object value;
     		while(e.hasMoreElements()) {
-    		  key = e.nextElement();
-    		  value = values.get(key);
-    		  System.out.println("Clave : " + key + " - Valor : " + value);
-    		  prop.setProperty(String.valueOf(key), String.valueOf(value));
+    			key = e.nextElement();
+				value = values.get(key);
+				System.out.println("Clave : " + key + " - Valor : " + value);
+				prop.setProperty(String.valueOf(key), String.valueOf(value));
     		}
     	}
     	PropertyConfigurator.configure(prop);
-    	
-    	logger.info("logueo despues de configurado");
+    	logger.info("Log4j configurado correctamente...");
     }
     
     

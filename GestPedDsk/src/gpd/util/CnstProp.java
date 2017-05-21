@@ -1,4 +1,4 @@
-package gpd.db.util;
+package gpd.util;
 
 public interface CnstProp {
 

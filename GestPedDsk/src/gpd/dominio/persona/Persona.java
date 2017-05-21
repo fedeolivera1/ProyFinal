@@ -1,16 +1,13 @@
 package gpd.dominio.persona;
 
-import java.io.Serializable;
+public abstract class Persona {
 
-public abstract class Persona implements Serializable{
-
-	private static final long serialVersionUID = 1L;
 	private Integer idPersona;
 	private String direccion;
 	private String puerta;
 	private String solar;
 	private String manzana;
-	private Double km;
+	private Float km;
 	private String complemento;
 	private String telefono;
 	private String celular;
@@ -54,10 +51,10 @@ public abstract class Persona implements Serializable{
 		this.manzana = manzana;
 	}
 	
-	public Double getKm() {
+	public Float getKm() {
 		return km;
 	}
-	public void setKm(Double km) {
+	public void setKm(Float km) {
 		this.km = km;
 	}
 	
@@ -102,7 +99,5 @@ public abstract class Persona implements Serializable{
 	public void setLocalidad(Localidad localidad) {
 		this.localidad = localidad;
 	}
-	
-	
 	
 }

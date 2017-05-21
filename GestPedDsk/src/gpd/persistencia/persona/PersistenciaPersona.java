@@ -1,16 +1,12 @@
 package gpd.persistencia.persona;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
-import gpd.db.constantes.CnstQryPersonas;
+import gpd.db.constantes.CnstQryPersona;
 import gpd.db.generic.GenSqlExecType;
-import gpd.db.generic.GenSqlSelectType;
-import gpd.dominio.persona.Cliente;
-import gpd.dominio.persona.Proveedor;
+import gpd.dominio.persona.PersonaFisica;
+import gpd.dominio.persona.PersonaJuridica;
 import gpd.dominio.persona.TipoPersona;
 import gpd.dominio.util.Origen;
 import gpd.dominio.util.Sinc;
@@ -24,73 +20,79 @@ public class PersistenciaPersona extends Conector implements IPersPersona  {
 	private Integer resultado;
 	
 	@Override
-	public Integer guardarCliente(Cliente cliente) {
+	public PersonaFisica obtenerPersFisicaPorId(Integer id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public PersonaJuridica obtenerPersJuridicaPorId(Integer id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public Integer guardarPersFisica(PersonaFisica persFisica) {
 		try {
 			Conector.getConn();
-			Integer documento = cliente.getDocumento();
+			Integer documento = persFisica.getDocumento();
 			
-			guardarPersona(documento, cliente.getDireccion(), cliente.getPuerta(), cliente.getSolar(), cliente.getManzana(),
-					cliente.getKm(), cliente.getComplemento(), cliente.getTelefono(), cliente.getCelular(), cliente.getEmail(),
-					cliente.getTipoPers(), cliente.getLocalidad().getIdLocalidad());
+			guardarPersona(documento, persFisica.getDireccion(), persFisica.getPuerta(), persFisica.getSolar(), persFisica.getManzana(),
+					persFisica.getKm(), persFisica.getComplemento(), persFisica.getTelefono(), persFisica.getCelular(), persFisica.getEmail(),
+					persFisica.getTipoPers(), persFisica.getLocalidad().getIdLocalidad());
 			
-			GenSqlExecType genExec = new GenSqlExecType(CnstQryPersonas.QUERY_INSERT_CLIENTE);
+			GenSqlExecType genExec = new GenSqlExecType(CnstQryPersona.QUERY_INSERT_CLIENTE);
 			genExec.getExecuteDatosCond().put(1, documento);
-			genExec.getExecuteDatosCond().put(2, cliente.getTipoDoc().getIdTipoDoc());
-			genExec.getExecuteDatosCond().put(3, cliente.getApellido1());
-			genExec.getExecuteDatosCond().put(4, cliente.getApellido2());
-			genExec.getExecuteDatosCond().put(5, cliente.getNombre1());
-			genExec.getExecuteDatosCond().put(6, cliente.getNombre2());
-			genExec.getExecuteDatosCond().put(7, cliente.getFechaNac());
-			genExec.getExecuteDatosCond().put(8, cliente.getSexo().getAsChar());
+			genExec.getExecuteDatosCond().put(2, persFisica.getTipoDoc().getIdTipoDoc());
+			genExec.getExecuteDatosCond().put(3, persFisica.getApellido1());
+			genExec.getExecuteDatosCond().put(4, persFisica.getApellido2());
+			genExec.getExecuteDatosCond().put(5, persFisica.getNombre1());
+			genExec.getExecuteDatosCond().put(6, persFisica.getNombre2());
+			genExec.getExecuteDatosCond().put(7, persFisica.getFechaNac());
+			genExec.getExecuteDatosCond().put(8, persFisica.getSexo().getAsChar());
 			genExec.getExecuteDatosCond().put(9, Origen.D.getAsChar());
 			genExec.getExecuteDatosCond().put(10, Sinc.N.getAsChar());
-			genExec.getExecuteDatosCond().put(11, cliente.getUltAct());
+			genExec.getExecuteDatosCond().put(11, persFisica.getUltAct());
 			resultado = (Integer) runGeneric(genExec);
 			
-			Conector.closeConn(null, "guardarCliente");
+			Conector.closeConn(null, "guardarPersFisica");
 		} catch (ConectorException e) {
 			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al guardarCliente: " + e.getMessage(), e);
+			logger.log(Level.FATAL, "Excepcion al guardarPersFisica: " + e.getMessage(), e);
 		}
 		return resultado;
 	}
 
 	@Override
-	public Integer guardarProveedor(Proveedor proveedor) {
-		Integer secProveedor = null;
+	public Integer guardarPersJuridica(PersonaJuridica personaJuridica) {
 		try {
 			Conector.getConn();
-			GenSqlSelectType genSel = new GenSqlSelectType(CnstQryPersonas.QUERY_SELECT_SEQ_PER);
-			ResultSet rs = (ResultSet) runGeneric(genSel);
-			if(rs.next()) {
-				secProveedor = rs.getInt(1);
-			}
 			
-			guardarPersona(secProveedor, proveedor.getDireccion(), proveedor.getPuerta(), proveedor.getSolar(), proveedor.getManzana(),
-					proveedor.getKm(), proveedor.getComplemento(), proveedor.getTelefono(), proveedor.getCelular(), proveedor.getEmail(),
-					proveedor.getTipoPers(), proveedor.getLocalidad().getIdLocalidad());
+			guardarPersona(personaJuridica.getRut(), personaJuridica.getDireccion(), personaJuridica.getPuerta(), personaJuridica.getSolar(), personaJuridica.getManzana(),
+					personaJuridica.getKm(), personaJuridica.getComplemento(), personaJuridica.getTelefono(), personaJuridica.getCelular(), personaJuridica.getEmail(),
+					personaJuridica.getTipoPers(), personaJuridica.getLocalidad().getIdLocalidad());
 			
-			GenSqlExecType genExec = new GenSqlExecType(CnstQryPersonas.QUERY_INSERT_PROVEEDOR);
-			genExec.getExecuteDatosCond().put(1, secProveedor);
-			genExec.getExecuteDatosCond().put(2, proveedor.getRazonSocial());
-			genExec.getExecuteDatosCond().put(3, proveedor.getRut());
-			genExec.getExecuteDatosCond().put(4, proveedor.getBps());
-			genExec.getExecuteDatosCond().put(5, proveedor.getBse());
+			GenSqlExecType genExec = new GenSqlExecType(CnstQryPersona.QUERY_INSERT_PROVEEDOR);
+			genExec.getExecuteDatosCond().put(1, personaJuridica.getRut());
+			genExec.getExecuteDatosCond().put(1, personaJuridica.getNombre());
+			genExec.getExecuteDatosCond().put(2, personaJuridica.getRazonSocial());
+			genExec.getExecuteDatosCond().put(4, personaJuridica.getBps());
+			genExec.getExecuteDatosCond().put(5, personaJuridica.getBse());
 			resultado = (Integer) runGeneric(genExec);
 			
-			Conector.closeConn(null, "guardarProveedor");
-			} catch (ConectorException | SQLException e) {
+			Conector.closeConn(null, "guardarPersJuridica");
+			} catch (ConectorException e) {
 				Conector.rollbackConn();
-				logger.log(Level.FATAL, "Excepcion al guardarProveedor: " + e.getMessage(), e);
+				logger.log(Level.FATAL, "Excepcion al guardarPersJuridica: " + e.getMessage(), e);
 			}
 		return resultado;
 	}
 	
 	private Integer guardarPersona(Integer idPersona, String direccion, String puerta, String solar, String manzana,
-			Double km, String complemento, String telefono, String celular, String email, TipoPersona tipoPers, 
+			Float km, String complemento, String telefono, String celular, String email, TipoPersona tipoPers, 
 			Integer idLoc) throws ConectorException {
 		try {
-			GenSqlExecType genExec = new GenSqlExecType(CnstQryPersonas.QUERY_INSERT_PERSONA);
+			GenSqlExecType genExec = new GenSqlExecType(CnstQryPersona.QUERY_INSERT_PERSONA);
 			genExec.getExecuteDatosCond().put(1, idPersona);
 			genExec.getExecuteDatosCond().put(2, direccion);
 			genExec.getExecuteDatosCond().put(3, puerta);
@@ -110,5 +112,6 @@ public class PersistenciaPersona extends Conector implements IPersPersona  {
 		}
 		return resultado;
 	}
+
 
 }

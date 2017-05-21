@@ -1,14 +1,11 @@
 package gpd.dominio.persona;
 
-import java.io.Serializable;
-
 import dps.types.Fecha;
 import gpd.dominio.util.Origen;
 import gpd.dominio.util.Sinc;
 
-public class Cliente extends Persona implements Serializable {
+public abstract class PersonaFisica extends Persona {
 
-	private static final long serialVersionUID = 1L;
 	private Integer documento;
 	private TipoDoc tipoDoc;
 	private String apellido1;

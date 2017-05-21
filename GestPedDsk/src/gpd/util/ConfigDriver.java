@@ -1,20 +1,21 @@
-package gpd.db.util;
+package gpd.util;
 
-import java.util.Vector;
-import java.util.logging.Logger;
+import java.util.HashSet;
+
+import org.apache.log4j.Logger;
 
 public class ConfigDriver extends PropManager {
 
-private static Logger logger = Logger.getLogger(ConfigDriver.class.getName());
+private static Logger logger = Logger.getLogger(ConfigDriver.class);
 	
 	public ConfigDriver() {
-		super.loadConfig();
 		super.configLog4J();
+		super.loadConfig();
 	}
 	
 	@Override
-	protected Vector<String> getPropertiesValue() {
-		Vector<String> resp = new Vector<String>();
+	protected HashSet<String> getPropertiesValue() {
+		HashSet<String> resp = new HashSet<String>();
 		resp.add(CnstProp.PROP_DB);
 		resp.add(CnstProp.PROP_LOG4J);
 		return resp;
