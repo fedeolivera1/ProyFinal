@@ -1,4 +1,4 @@
-package test.dps.types;
+package test.types;
 
 import static org.junit.Assert.*;
 
