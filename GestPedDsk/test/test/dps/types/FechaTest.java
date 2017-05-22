@@ -4,7 +4,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import dps.types.Fecha;
+import gpd.types.Fecha;
 
 public class FechaTest {
 

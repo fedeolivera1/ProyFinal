@@ -9,6 +9,6 @@ public interface IPersPersona {
 	public PersonaFisica obtenerPersFisicaPorId(Integer id);
 	public PersonaJuridica obtenerPersJuridicaPorId(Integer id);
 	public Integer guardarPersFisica(PersonaFisica pf);
-	public Integer guardarPersJuridica(PersonaJuridica pj);
+	public Integer guardarPersJuridica(PersonaJuridica pj, char tipoPj);
 	
 }

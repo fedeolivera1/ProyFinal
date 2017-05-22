@@ -10,10 +10,10 @@ import java.util.HashMap;
 
 import org.apache.log4j.Logger;
 
-import dps.types.Fecha;
 import gpd.db.generic.GenSqlExecType;
 import gpd.db.generic.GenSqlSelectType;
 import gpd.exceptions.ConectorException;
+import gpd.types.Fecha;
 import gpd.util.ConfigDriver;
 
 public abstract class Conector {
@@ -25,10 +25,11 @@ public abstract class Conector {
 	 */
 	public static void getConn() {
 		try {
-			ConfigDriver cfgDriver = new ConfigDriver();
-			Class.forName(cfgDriver.getDbDriver());
-			conn = DriverManager.getConnection(cfgDriver.getDbUrl()+cfgDriver.getDbName(), cfgDriver.getDbUser(), cfgDriver.getDbPass());
+			ConfigDriver cfgDrv = ConfigDriver.getConfigDriver();
+			Class.forName(cfgDrv.getDbDriver());
+			conn = DriverManager.getConnection(cfgDrv.getDbUrl()+cfgDrv.getDbName(), cfgDrv.getDbUser(), cfgDrv.getDbPass());
 			conn.setAutoCommit(false);
+			logger.debug("Se abre conexion db... Thread: " + Thread.currentThread().getId());
 		} catch (SQLException | ClassNotFoundException e) {
 			try {
 				conn.rollback();
@@ -69,19 +70,21 @@ public abstract class Conector {
 	}
 	
 	/**
-	 * @param rs
 	 * @param nameOp
+	 * @param ResultSet
 	 * cierra la conexion activa, y hace commit de la misma
+	 * el parametro ResultSet se pasa 'null' en casos de selects
 	 */
-	public static void closeConn(ResultSet rs, String nameOp) {
+	public static void closeConn(String nameOp, ResultSet rs) {
 		try {
-			if (rs != null) {
+			if(rs != null) {
 				rs.close();
 			}
 			if(conn != null && !conn.isClosed()) {
 				commitConn();
 				conn.close();
 			}
+			logger.debug("Se cierra la conexion en el metodo - " + nameOp + ". Thread: " + Thread.currentThread().getId());
 		} catch (SQLException e) {
 			logger.error("ERROR - Conector al cerrar conexion en el metodo - " + nameOp + ". Error al cerrar las conexiones a BD." + e.getMessage(), e);
 		}

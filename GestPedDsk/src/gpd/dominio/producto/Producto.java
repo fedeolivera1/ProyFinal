@@ -1,8 +1,9 @@
 package gpd.dominio.producto;
 
 import java.io.Serializable;
-import dps.types.Fecha;
+
 import gpd.dominio.util.Sinc;
+import gpd.types.Fecha;
 
 public class Producto implements Serializable {
 

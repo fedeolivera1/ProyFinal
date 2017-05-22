@@ -2,17 +2,17 @@ package gpd.dominio.persona;
 
 public abstract class PersonaJuridica extends Persona {
 
-	private Integer rut;
+	private Long rut;
 	private String nombre;
 	private String razonSocial;
 	private String bps;
 	private String bse;
 	
 	
-	public Integer getRut() {
+	public Long getRut() {
 		return rut;
 	}
-	public void setRut(Integer rut) {
+	public void setRut(Long rut) {
 		this.rut = rut;
 	}
 	

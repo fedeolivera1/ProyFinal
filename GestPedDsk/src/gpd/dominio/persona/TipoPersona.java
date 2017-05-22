@@ -1,8 +1,8 @@
 package gpd.dominio.persona;
 
 public enum TipoPersona {
-	C("Cliente", 'C'), 
-	P("Proveedor", 'P');
+	F("Persona Fisica", 'F'), 
+	J("Persona Juridica", 'J');
 	
 	private final String tipoPers;
 	private final char asChar;

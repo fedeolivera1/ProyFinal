@@ -6,11 +6,21 @@ import org.apache.log4j.Logger;
 
 public class ConfigDriver extends PropManager {
 
-private static Logger logger = Logger.getLogger(ConfigDriver.class);
+	private static ConfigDriver instance; 
+	private static Logger logger = Logger.getLogger(ConfigDriver.class);
+
+	public static ConfigDriver getConfigDriver() {
+		if(instance == null) {
+			logger.info("Se genera nueva instancia de ConfigDriver > se leen properties...");
+			instance = new ConfigDriver();
+		}
+		return instance;
+	}
 	
 	public ConfigDriver() {
-		super.configLog4J();
 		super.loadConfig();
+		super.configLog4J();
+		logConfig();
 	}
 	
 	@Override

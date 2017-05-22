@@ -25,8 +25,8 @@ public interface CnstQryPersona {
 														+ "(documento,id_tipo_doc,apellido1,apellido2,nombre1,nombre2,fecha_nac,sexo,origen,sinc,ult_act) "
 														+ "VALUES (?,?,?,?,?,?,?,?,?,?,?)";
 	public static final String QUERY_INSERT_PROVEEDOR = "INSERT INTO pers_juridica "
-														+ "(rut,nombre,razon_social,bps,bse) "
-														+ "VALUES (?,?,?,?,?)";
+														+ "(rut,nombre,razon_social,bps,bse,es_prov) "
+														+ "VALUES (?,?,?,?,?,?)";
 
 	public static final String QUERY_UPDATE_CLIENTE = "UPDATE pers_fisica SET ?,?,?,?,?,?,?,?,?,?,? WHERE documento=?";
 	public static final String QUERY_UPDATE_PROVEEDOR = "UPDATE pers_juridica SET ?,?,?,?,?,?,?,?,?,?,? WHERE rut=?";

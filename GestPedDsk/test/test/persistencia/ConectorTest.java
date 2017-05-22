@@ -45,7 +45,7 @@ public class ConectorTest extends Conector {
 		} catch (ConectorException e1) {
 			e1.printStackTrace();
 		} finally {
-			Conector.closeConn(rs, "testSelectGeneric");
+			Conector.closeConn("testSelectGeneric", rs);
 		}
 	}
 	
@@ -119,7 +119,7 @@ public class ConectorTest extends Conector {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Conector.closeConn(null, "testExecuteNonQuery");
+		Conector.closeConn("testExecuteNonQuery", null);
 	}
 	
 	@Test
@@ -147,13 +147,13 @@ public class ConectorTest extends Conector {
 			e.printStackTrace();
 		}
 		System.out.println("cantidad ejecutados: " + resultado);
-		Conector.closeConn(null, "testExecuteNonQueryLista");
+		Conector.closeConn("testExecuteNonQueryLista", null);
 	}
 	
 	
 	@Test
 	public void testCloseConnection() {
-		Conector.closeConn(null, null);
+		Conector.closeConn("testExecuteNonQueryLista", null);
 	}
 
 }

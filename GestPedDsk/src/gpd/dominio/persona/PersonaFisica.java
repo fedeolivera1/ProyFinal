@@ -1,12 +1,12 @@
 package gpd.dominio.persona;
 
-import dps.types.Fecha;
 import gpd.dominio.util.Origen;
 import gpd.dominio.util.Sinc;
+import gpd.types.Fecha;
 
 public abstract class PersonaFisica extends Persona {
 
-	private Integer documento;
+	private Long documento;
 	private TipoDoc tipoDoc;
 	private String apellido1;
 	private String apellido2;
@@ -19,10 +19,10 @@ public abstract class PersonaFisica extends Persona {
 	private Fecha ultAct;
 	
 	
-	public Integer getDocumento() {
+	public Long getDocumento() {
 		return documento;
 	}
-	public void setDocumento(Integer documento) {
+	public void setDocumento(Long documento) {
 		this.documento = documento;
 	}
 	
