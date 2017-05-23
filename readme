@@ -1,0 +1,13 @@
+Descargar GITDesktop para manejar los commits.
+Para integrar el proyecto a GIT, 
+
+Para mejor compatibilidad, se creara la siguiente estructura de directorios para el proy:
+
+  1-C:\Proyecto
+        \ProyFinal2017Dsk
+        \ProyFinal2017Web
+        
+Informacion de BRANCHES:
+
+  master
+  
