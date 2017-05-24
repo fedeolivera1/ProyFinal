@@ -1,5 +1,7 @@
 package gpd.dominio.persona;
 
+import gpd.types.Fecha;
+
 public abstract class Persona {
 
 	private Integer idPersona;
@@ -12,6 +14,7 @@ public abstract class Persona {
 	private String telefono;
 	private String celular;
 	private String email;
+	private Fecha fechaReg;
 	private TipoPersona tipoPers;
 	private Localidad localidad;
 	
@@ -86,6 +89,13 @@ public abstract class Persona {
 		this.email = email;
 	}
 	
+	public Fecha getFechaReg() {
+		return fechaReg;
+	}
+	public void setFechaReg(Fecha fechaReg) {
+		this.fechaReg = fechaReg;
+	}
+	
 	public TipoPersona getTipoPers() {
 		return tipoPers;
 	}
@@ -99,5 +109,4 @@ public abstract class Persona {
 	public void setLocalidad(Localidad localidad) {
 		this.localidad = localidad;
 	}
-	
 }

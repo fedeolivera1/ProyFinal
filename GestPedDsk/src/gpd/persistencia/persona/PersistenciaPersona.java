@@ -13,6 +13,7 @@ import gpd.dominio.util.Sinc;
 import gpd.exceptions.ConectorException;
 import gpd.interfaces.persona.IPersPersona;
 import gpd.persistencia.conector.Conector;
+import gpd.types.Fecha;
 
 public class PersistenciaPersona extends Conector implements IPersPersona  {
 	
@@ -39,7 +40,7 @@ public class PersistenciaPersona extends Conector implements IPersPersona  {
 			
 			guardarPersona(documento, persFisica.getDireccion(), persFisica.getPuerta(), persFisica.getSolar(), persFisica.getManzana(),
 					persFisica.getKm(), persFisica.getComplemento(), persFisica.getTelefono(), persFisica.getCelular(), persFisica.getEmail(),
-					persFisica.getTipoPers(), persFisica.getLocalidad().getIdLocalidad());
+					persFisica.getFechaReg(), persFisica.getTipoPers(), persFisica.getLocalidad().getIdLocalidad());
 			
 			GenSqlExecType genExec = new GenSqlExecType(CnstQryPersona.QUERY_INSERT_CLIENTE);
 			genExec.getExecuteDatosCond().put(1, documento);
@@ -67,7 +68,7 @@ public class PersistenciaPersona extends Conector implements IPersPersona  {
 		try {
 			guardarPersona(personaJuridica.getRut(), personaJuridica.getDireccion(), personaJuridica.getPuerta(), personaJuridica.getSolar(), personaJuridica.getManzana(),
 					personaJuridica.getKm(), personaJuridica.getComplemento(), personaJuridica.getTelefono(), personaJuridica.getCelular(), personaJuridica.getEmail(),
-					personaJuridica.getTipoPers(), personaJuridica.getLocalidad().getIdLocalidad());
+					personaJuridica.getFechaReg(), personaJuridica.getTipoPers(), personaJuridica.getLocalidad().getIdLocalidad());
 			
 			GenSqlExecType genExec = new GenSqlExecType(CnstQryPersona.QUERY_INSERT_PROVEEDOR);
 			genExec.getExecuteDatosCond().put(1, personaJuridica.getRut());
@@ -86,7 +87,7 @@ public class PersistenciaPersona extends Conector implements IPersPersona  {
 	}
 	
 	private Integer guardarPersona(Long idPersona, String direccion, String puerta, String solar, String manzana,
-			Float km, String complemento, String telefono, String celular, String email, TipoPersona tipoPers, 
+			Float km, String complemento, String telefono, String celular, String email, Fecha fechaReg, TipoPersona tipoPers, 
 			Integer idLoc) throws ConectorException {
 		try {
 			GenSqlExecType genExec = new GenSqlExecType(CnstQryPersona.QUERY_INSERT_PERSONA);
@@ -100,8 +101,9 @@ public class PersistenciaPersona extends Conector implements IPersPersona  {
 			genExec.getExecuteDatosCond().put(8, telefono);
 			genExec.getExecuteDatosCond().put(9, celular);
 			genExec.getExecuteDatosCond().put(10, email);
-			genExec.getExecuteDatosCond().put(11, tipoPers.getAsChar());
-			genExec.getExecuteDatosCond().put(12, idLoc);
+			genExec.getExecuteDatosCond().put(11, fechaReg);
+			genExec.getExecuteDatosCond().put(12, tipoPers.getAsChar());
+			genExec.getExecuteDatosCond().put(13, idLoc);
 			resultado = (Integer) runGeneric(genExec);
 		} catch (ConectorException e) {
 			Conector.rollbackConn();

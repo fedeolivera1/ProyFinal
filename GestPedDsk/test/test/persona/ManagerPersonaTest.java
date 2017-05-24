@@ -34,6 +34,7 @@ public class ManagerPersonaTest {
 		cli.setTelefono("21050030");
 		cli.setCelular("099123456");
 		cli.setEmail("a@a.com");
+		cli.setFechaReg(new Fecha(2017,02,01));
 		cli.setTipoPers(TipoPersona.F);
 		Localidad loc = new Localidad();
 		loc.setIdLocalidad(1);

@@ -19,8 +19,8 @@ public interface CnstQryPersona {
 														+ "WHERE pj.rut=?";
 	
 	public static final String QUERY_INSERT_PERSONA = "INSERT INTO persona "
-														+ "(id_persona,direccion,puerta,solar,manzana,km,complemento,telefono,celular,email,tipo,id_loc) "
-														+ "VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
+														+ "(id_persona,direccion,puerta,solar,manzana,km,complemento,telefono,celular,email,fecha_reg,tipo,id_loc) "
+														+ "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
 	public static final String QUERY_INSERT_CLIENTE = "INSERT INTO pers_fisica "
 														+ "(documento,id_tipo_doc,apellido1,apellido2,nombre1,nombre2,fecha_nac,sexo,origen,sinc,ult_act) "
 														+ "VALUES (?,?,?,?,?,?,?,?,?,?,?)";
