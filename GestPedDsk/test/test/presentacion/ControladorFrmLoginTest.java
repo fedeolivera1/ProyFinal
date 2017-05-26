@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import gpd.dominio.usuario.UsuarioDsk;
 import gpd.exceptions.UsuarioNoExisteException;
-import gpd.presentacion.controlador.ControladorFrmLogin;
+import gpd.presentacion.controlador.CtrlFrmLogin;
 
 public class ControladorFrmLoginTest {
 
@@ -20,7 +20,7 @@ public class ControladorFrmLoginTest {
 	
 	@Test
 	public void loguearUsuario() {
-		ControladorFrmLogin ctrl = new ControladorFrmLogin();
+		CtrlFrmLogin ctrl = new CtrlFrmLogin();
 		UsuarioDsk logueado = null;
 		try {
 			logueado = ctrl.obtenerUsuario("pepe", "loscañaberales");

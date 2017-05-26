@@ -10,44 +10,56 @@ import gpd.persistencia.usuario.PersistenciaUsuario;
 
 public class ManagerUsuario {
 
-	private static ManagerUsuario instance;
 	private static final Logger logger = Logger.getLogger(ManagerUsuario.class);
+	IPersUsuario interfaceUsuario;
+	Integer resultado;
 	
-	
-	public static ManagerUsuario getManagerUsuario() {
-		if(instance == null) {
-			instance = new ManagerUsuario();
-			logger.info("Se genera nueva instancia de ManagerUsuario...");
-		}
-		return instance;
-	}
 
 	public UsuarioDsk obtenerUsuario(String nombreUsuario, String passwd) {
+		logger.info("Se ingresa a obtenerUsuario para " + nombreUsuario);
 		UsuarioDsk usuario = null;
 		Conector.getConn();
-		IPersUsuario interfaceUsuario = new PersistenciaUsuario();
+		interfaceUsuario = new PersistenciaUsuario();
 		try {
 			usuario = interfaceUsuario.obtenerUsuario(nombreUsuario, passwd);
+			Conector.closeConn("obtenerUsuario", null);
 		} catch (PersistenciaException e) {
 			e.printStackTrace();
 		}
-		Conector.closeConn("chequearLogin", null);
 		return usuario;
 	}
 
-	public UsuarioDsk guardarUsuario(UsuarioDsk usuario) {
-		// TODO Auto-generated method stub
-		return null;
+	public Integer guardarUsuario(UsuarioDsk usuario) {
+		logger.info("Ingresa guardarUsuario");
+		if(usuario != null) {
+			Conector.getConn();
+			interfaceUsuario = new PersistenciaUsuario();
+			resultado = interfaceUsuario.guardarUsuario(usuario);
+			Conector.closeConn("guardarUsuario", null);
+		}
+		return resultado;
 	}
 
-	public UsuarioDsk modificarUsuario(UsuarioDsk usuario) {
-		// TODO Auto-generated method stub
-		return null;
+	public Integer modificarUsuario(UsuarioDsk usuario) {
+		logger.info("Ingresa modificarUsuario");
+		if(usuario != null) {
+			Conector.getConn();
+			interfaceUsuario = new PersistenciaUsuario();
+			resultado = interfaceUsuario.modificarUsuario(usuario);
+			Conector.closeConn("modificarUsuario", null);
+		}
+		return resultado;
 	}
 
-	public UsuarioDsk eliminarUsuario(UsuarioDsk usuario) {
-		// TODO Auto-generated method stub
-		return null;
+	public Integer eliminarUsuario(UsuarioDsk usuario) {
+		logger.info("Ingresa eliminarUsuario");
+		if(usuario != null) {
+			Conector.getConn();
+			interfaceUsuario = new PersistenciaUsuario();
+			resultado = interfaceUsuario.eliminarUsuario(usuario);
+			Conector.closeConn("eliminarUsuario", null);
+		}
+		return resultado;
 	}
 	
 }

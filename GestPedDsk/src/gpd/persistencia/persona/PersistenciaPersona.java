@@ -35,14 +35,13 @@ public class PersistenciaPersona extends Conector implements IPersPersona  {
 	@Override
 	public Integer guardarPersFisica(PersonaFisica persFisica) {
 		try {
-			
 			Long documento = persFisica.getDocumento();
 			
 			guardarPersona(documento, persFisica.getDireccion(), persFisica.getPuerta(), persFisica.getSolar(), persFisica.getManzana(),
 					persFisica.getKm(), persFisica.getComplemento(), persFisica.getTelefono(), persFisica.getCelular(), persFisica.getEmail(),
 					persFisica.getFechaReg(), persFisica.getTipoPers(), persFisica.getLocalidad().getIdLocalidad());
 			
-			GenSqlExecType genExec = new GenSqlExecType(CnstQryPersona.QUERY_INSERT_CLIENTE);
+			GenSqlExecType genExec = new GenSqlExecType(CnstQryPersona.QRY_INSERT_CLIENTE);
 			genExec.getExecuteDatosCond().put(1, documento);
 			genExec.getExecuteDatosCond().put(2, persFisica.getTipoDoc().getIdTipoDoc());
 			genExec.getExecuteDatosCond().put(3, persFisica.getApellido1());
@@ -70,7 +69,7 @@ public class PersistenciaPersona extends Conector implements IPersPersona  {
 					personaJuridica.getKm(), personaJuridica.getComplemento(), personaJuridica.getTelefono(), personaJuridica.getCelular(), personaJuridica.getEmail(),
 					personaJuridica.getFechaReg(), personaJuridica.getTipoPers(), personaJuridica.getLocalidad().getIdLocalidad());
 			
-			GenSqlExecType genExec = new GenSqlExecType(CnstQryPersona.QUERY_INSERT_PROVEEDOR);
+			GenSqlExecType genExec = new GenSqlExecType(CnstQryPersona.QRY_INSERT_PROVEEDOR);
 			genExec.getExecuteDatosCond().put(1, personaJuridica.getRut());
 			genExec.getExecuteDatosCond().put(2, personaJuridica.getNombre());
 			genExec.getExecuteDatosCond().put(3, personaJuridica.getRazonSocial());
@@ -90,7 +89,7 @@ public class PersistenciaPersona extends Conector implements IPersPersona  {
 			Float km, String complemento, String telefono, String celular, String email, Fecha fechaReg, TipoPersona tipoPers, 
 			Integer idLoc) throws ConectorException {
 		try {
-			GenSqlExecType genExec = new GenSqlExecType(CnstQryPersona.QUERY_INSERT_PERSONA);
+			GenSqlExecType genExec = new GenSqlExecType(CnstQryPersona.QRY_INSERT_PERSONA);
 			genExec.getExecuteDatosCond().put(1, idPersona);
 			genExec.getExecuteDatosCond().put(2, direccion);
 			genExec.getExecuteDatosCond().put(3, puerta);

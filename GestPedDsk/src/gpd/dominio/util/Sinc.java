@@ -19,4 +19,13 @@ public enum Sinc {
 	public char getAsChar() {
 		return asChar;
 	}
+	
+	public static Sinc getSincPorChar(final char name) {
+        for (Sinc sinc : Sinc.values()) {
+            if (sinc.getAsChar() == name) { 
+            	return sinc; 
+            }
+    	}
+        return null;
+    }
 }

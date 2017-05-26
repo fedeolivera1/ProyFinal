@@ -20,4 +20,13 @@ public enum Sexo {
 		return asChar;
 	}
 	
+	public static Sexo getSexoPorChar(final char name) {
+        for (Sexo sexo : Sexo.values()) {
+            if (sexo.getAsChar() == name) { 
+            	return sexo; 
+            }
+    	}
+        return null;
+    }
+	
 }

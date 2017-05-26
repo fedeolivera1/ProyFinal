@@ -8,6 +8,7 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import gpd.db.constantes.CnstQryUsuario;
+import gpd.db.generic.GenSqlExecType;
 import gpd.db.generic.GenSqlSelectType;
 import gpd.dominio.usuario.TipoUsr;
 import gpd.dominio.usuario.UsuarioDsk;
@@ -24,7 +25,7 @@ public class PersistenciaUsuario extends Conector implements IPersUsuario {
 	public UsuarioDsk obtenerUsuario(String nombreUsuario, String passwd) throws PersistenciaException {
 		UsuarioDsk usuario = null;
 		ResultSet resultado;
-		GenSqlSelectType genType = new GenSqlSelectType(CnstQryUsuario.QUERY_LOGIN);
+		GenSqlSelectType genType = new GenSqlSelectType(CnstQryUsuario.QRY_LOGIN);
 		genType.getSelectDatosCond().put(1, nombreUsuario);
 		genType.getSelectDatosCond().put(2, passwd);
 		try {
@@ -47,21 +48,48 @@ public class PersistenciaUsuario extends Conector implements IPersUsuario {
 	}
 
 	@Override
-	public UsuarioDsk guardarUsuario(UsuarioDsk usuario) {
-		// TODO Auto-generated method stub
-		return null;
+	public Integer guardarUsuario(UsuarioDsk usuario) {
+		Integer resultado = null;
+		GenSqlExecType genExec = new GenSqlExecType(CnstQryUsuario.QRY_INSERT_USR);
+		genExec.getExecuteDatosCond().put(1, usuario.getNomUsu());
+		genExec.getExecuteDatosCond().put(2, usuario.getPass());
+		genExec.getExecuteDatosCond().put(3, usuario.getTipoUsr().getAsChar());
+		try {
+			resultado = (Integer) runGeneric(genExec);
+		} catch (ConectorException e) {
+			Conector.rollbackConn();
+			logger.log(Level.FATAL, "Excepcion al guardarUsuario: " + e.getMessage(), e);
+		}
+		return resultado;
 	}
 
 	@Override
-	public UsuarioDsk modificarUsuario(UsuarioDsk usuario) {
-		// TODO Auto-generated method stub
-		return null;
+	public Integer modificarUsuario(UsuarioDsk usuario) {
+		Integer resultado = null;
+		GenSqlExecType genExec = new GenSqlExecType(CnstQryUsuario.QRY_UPDATE_USR);
+		genExec.getExecuteDatosCond().put(1, usuario.getPass());
+		genExec.getExecuteDatosCond().put(2, usuario.getNomUsu());
+		try {
+			resultado = (Integer) runGeneric(genExec);
+		} catch (ConectorException e) {
+			Conector.rollbackConn();
+			logger.log(Level.FATAL, "Excepcion al modificarUsuario: " + e.getMessage(), e);
+		}
+		return resultado;
 	}
 
 	@Override
-	public UsuarioDsk eliminarUsuario(UsuarioDsk usuario) {
-		// TODO Auto-generated method stub
-		return null;
+	public Integer eliminarUsuario(UsuarioDsk usuario) {
+		Integer resultado = null;
+		GenSqlExecType genExec = new GenSqlExecType(CnstQryUsuario.QRY_DELETE_USR);
+		genExec.getExecuteDatosCond().put(1, usuario.getNomUsu());
+		try {
+			resultado = (Integer) runGeneric(genExec);
+		} catch (ConectorException e) {
+			Conector.rollbackConn();
+			logger.log(Level.FATAL, "Excepcion al eliminarUsuario: " + e.getMessage(), e);
+		}
+		return resultado;
 	}
 
 }
