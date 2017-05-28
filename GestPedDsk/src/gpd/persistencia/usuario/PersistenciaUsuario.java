@@ -25,11 +25,11 @@ public class PersistenciaUsuario extends Conector implements IPersUsuario {
 	public UsuarioDsk obtenerUsuario(String nombreUsuario, String passwd) throws PersistenciaException {
 		UsuarioDsk usuario = null;
 		ResultSet resultado;
-		GenSqlSelectType genType = new GenSqlSelectType(CnstQryUsuario.QRY_LOGIN);
-		genType.getSelectDatosCond().put(1, nombreUsuario);
-		genType.getSelectDatosCond().put(2, passwd);
+		GenSqlSelectType genSel = new GenSqlSelectType(CnstQryUsuario.QRY_LOGIN);
+		genSel.setParam(nombreUsuario);
+		genSel.setParam(passwd);
 		try {
-			resultado = (ResultSet) Conector.runGeneric(genType);
+			resultado = (ResultSet) Conector.runGeneric(genSel);
 			if(resultado.next()) {
 				usuario = new UsuarioDsk();
 				usuario.setNomUsu(nombreUsuario);
@@ -51,9 +51,9 @@ public class PersistenciaUsuario extends Conector implements IPersUsuario {
 	public Integer guardarUsuario(UsuarioDsk usuario) {
 		Integer resultado = null;
 		GenSqlExecType genExec = new GenSqlExecType(CnstQryUsuario.QRY_INSERT_USR);
-		genExec.getExecuteDatosCond().put(1, usuario.getNomUsu());
-		genExec.getExecuteDatosCond().put(2, usuario.getPass());
-		genExec.getExecuteDatosCond().put(3, usuario.getTipoUsr().getAsChar());
+		genExec.setParam(usuario.getNomUsu());
+		genExec.setParam(usuario.getPass());
+		genExec.setParam(usuario.getTipoUsr().getAsChar());
 		try {
 			resultado = (Integer) runGeneric(genExec);
 		} catch (ConectorException e) {
@@ -67,8 +67,8 @@ public class PersistenciaUsuario extends Conector implements IPersUsuario {
 	public Integer modificarUsuario(UsuarioDsk usuario) {
 		Integer resultado = null;
 		GenSqlExecType genExec = new GenSqlExecType(CnstQryUsuario.QRY_UPDATE_USR);
-		genExec.getExecuteDatosCond().put(1, usuario.getPass());
-		genExec.getExecuteDatosCond().put(2, usuario.getNomUsu());
+		genExec.setParam( usuario.getPass());
+		genExec.setParam(usuario.getNomUsu());
 		try {
 			resultado = (Integer) runGeneric(genExec);
 		} catch (ConectorException e) {
@@ -82,7 +82,7 @@ public class PersistenciaUsuario extends Conector implements IPersUsuario {
 	public Integer eliminarUsuario(UsuarioDsk usuario) {
 		Integer resultado = null;
 		GenSqlExecType genExec = new GenSqlExecType(CnstQryUsuario.QRY_DELETE_USR);
-		genExec.getExecuteDatosCond().put(1, usuario.getNomUsu());
+		genExec.setParam(usuario.getNomUsu());
 		try {
 			resultado = (Integer) runGeneric(genExec);
 		} catch (ConectorException e) {

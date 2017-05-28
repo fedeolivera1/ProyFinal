@@ -9,6 +9,7 @@ public class GenSqlExecType {
 	private String statement;
 	private HashMap<Integer, Object> executeDatosCond;
 	private List<HashMap<Integer, Object>> listaExecuteDatosCond;
+	private int cnt;
 	
 	
 	public GenSqlExecType(String statement) {
@@ -54,5 +55,20 @@ public class GenSqlExecType {
 	}
 	public void setListaExecuteDatosCond(List<HashMap<Integer, Object>> listaExecuteDatosCond) {
 		this.listaExecuteDatosCond = listaExecuteDatosCond;
+	}
+	
+	public void setParam(Object obj) {
+		cnt++;
+		this.getExecuteDatosCond().put(cnt, obj);
+	}
+	
+	public void setParamList(List<Object> objList) {
+		HashMap<Integer, Object> mapAux = new HashMap<>(); 
+		for(Object obj : objList) {
+			cnt++;
+			mapAux.put(cnt, obj);
+		}
+		this.getListaExecuteDatosCond().add(mapAux);
+		cnt = 0;
 	}
 }

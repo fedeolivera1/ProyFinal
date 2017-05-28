@@ -11,13 +11,13 @@ public interface IPersProducto {
 	//producto
 	public Producto obtenerProductoPorId(Integer id) throws PersistenciaException;
 	public List<Producto> obtenerListaProductoPorTipo(TipoProd tipoProd) throws PersistenciaException;
-	public Integer guardarProducto(Producto producto);
-	public Integer modificarProducto(Producto producto);
-	public Integer eliminarProducto(Producto producto);
+	public Integer guardarProducto(Producto producto) throws PersistenciaException;
+	public Integer modificarProducto(Producto producto) throws PersistenciaException;
+	public Integer eliminarProducto(Producto producto) throws PersistenciaException;
 	//tipo prod
 	public TipoProd obtenerTipoProdPorId(Integer id) throws PersistenciaException;
 	public List<TipoProd> obtenerListaTipoProd() throws PersistenciaException;
-	public Integer guardarTipoProd(TipoProd tipoProd);
-	public Integer modificarTipoProd(TipoProd  tipoProd);
-	public Integer eliminarTipoProd(TipoProd tipoProd);
+	public Integer guardarTipoProd(TipoProd tipoProd) throws PersistenciaException;
+	public Integer modificarTipoProd(TipoProd  tipoProd) throws PersistenciaException;
+	public Integer eliminarTipoProd(TipoProd tipoProd) throws PersistenciaException;
 }

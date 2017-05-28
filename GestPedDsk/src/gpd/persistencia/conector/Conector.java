@@ -17,6 +17,7 @@ import gpd.types.Fecha;
 import gpd.util.ConfigDriver;
 
 public abstract class Conector {
+	
 	private static final Logger logger = Logger.getLogger(Conector.class);
 	private static Connection conn = null;
 	

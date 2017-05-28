@@ -23,4 +23,11 @@ public class TipoProd implements Serializable {
 		this.descripcion = descripcion;
 	}
 	
+	@Override
+	public String toString() {
+		return idTipoProd + " | " + descripcion + "";
+	}
+	
+	
+	
 }

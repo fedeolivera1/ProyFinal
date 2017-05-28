@@ -50,7 +50,12 @@ public class ManagerProducto {
 		if(producto != null) {
 			Conector.getConn();
 			interfaceProducto = new PersistenciaProducto();
-			resultado = interfaceProducto.guardarProducto(producto);
+			try {
+				resultado = interfaceProducto.guardarProducto(producto);
+			} catch (PersistenciaException e) {
+				//FIXME ver como manejar esta excep
+				e.printStackTrace();
+			}
 			Conector.closeConn("guardarProducto", null);
 		}
 		return resultado;
@@ -61,7 +66,12 @@ public class ManagerProducto {
 		if(producto != null) {
 			Conector.getConn();
 			interfaceProducto = new PersistenciaProducto();
-			resultado = interfaceProducto.modificarProducto(producto);
+			try {
+				resultado = interfaceProducto.modificarProducto(producto);
+			} catch (PersistenciaException e) {
+				//FIXME ver como manejar esta excep
+				e.printStackTrace();
+			}
 			Conector.closeConn("modificarProducto", null);
 		}
 		return resultado;
@@ -72,7 +82,12 @@ public class ManagerProducto {
 		if(producto != null) {
 			Conector.getConn();
 			interfaceProducto = new PersistenciaProducto();
-			resultado = interfaceProducto.eliminarProducto(producto);
+			try {
+				resultado = interfaceProducto.eliminarProducto(producto);
+			} catch (PersistenciaException e) {
+				//FIXME ver como manejar esta excep
+				e.printStackTrace();
+			}
 			Conector.closeConn("eliminarProducto", null);
 		}
 		return resultado;
@@ -112,7 +127,12 @@ public class ManagerProducto {
 		if(tipoProd != null) {
 			Conector.getConn();
 			interfaceProducto = new PersistenciaProducto();
-			resultado = interfaceProducto.guardarTipoProd(tipoProd);
+			try {
+				resultado = interfaceProducto.guardarTipoProd(tipoProd);
+			} catch (PersistenciaException e) {
+				//FIXME ver como manejar esta excep
+				e.printStackTrace();
+			}
 			Conector.closeConn("guardarTipoProd", null);
 		}
 		return resultado;
@@ -123,7 +143,12 @@ public class ManagerProducto {
 		if(tipoProd != null) {
 			Conector.getConn();
 			interfaceProducto = new PersistenciaProducto();
-			resultado = interfaceProducto.modificarTipoProd(tipoProd);
+			try {
+				resultado = interfaceProducto.modificarTipoProd(tipoProd);
+			} catch (PersistenciaException e) {
+				//FIXME ver como manejar esta excep
+				e.printStackTrace();
+			}
 			Conector.closeConn("modificarTipoProd", null);
 		}
 		return resultado;
@@ -134,7 +159,12 @@ public class ManagerProducto {
 		if(tipoProd != null) {
 			Conector.getConn();
 			interfaceProducto = new PersistenciaProducto();
-			resultado = interfaceProducto.eliminarTipoProd(tipoProd);
+			try {
+				resultado = interfaceProducto.eliminarTipoProd(tipoProd);
+			} catch (PersistenciaException e) {
+				//FIXME ver como manejar esta excep
+				e.printStackTrace();
+			}
 			Conector.closeConn("eliminarTipoProd", null);
 		}
 		return resultado;

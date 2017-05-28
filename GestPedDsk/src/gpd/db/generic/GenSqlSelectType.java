@@ -6,6 +6,7 @@ public class GenSqlSelectType {
 
 	private String statement;
 	private HashMap<Integer, Object> selectDatosCond;
+	private int cnt = 0;
 
 
 	public GenSqlSelectType(String statement) {
@@ -33,12 +34,15 @@ public class GenSqlSelectType {
 		}
 		return selectDatosCond;
 	}
+
 	public void setSelectDatosCond(HashMap<Integer, Object> selectDatosCond) {
 		this.selectDatosCond = selectDatosCond;
 	}
 	
-	
-	
+	public void setParam(Object obj) {
+		cnt++;
+		this.getSelectDatosCond().put(cnt, obj);
+	}
 	
 	
 }

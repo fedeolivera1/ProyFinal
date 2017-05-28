@@ -30,9 +30,9 @@ public class PersistenciaProducto extends Conector implements IPersProducto {
 	public Producto obtenerProductoPorId(Integer id) throws PersistenciaException {
 		Producto producto = null;
 		try {
-			GenSqlSelectType genType = new GenSqlSelectType(CnstQryProducto.QRY_SELECT_PROD_XID);
-			genType.getSelectDatosCond().put(1, id);
-			ResultSet rs = (ResultSet) runGeneric(genType);
+			GenSqlSelectType genSel = new GenSqlSelectType(CnstQryProducto.QRY_SELECT_PROD_XID);
+			genSel.setParam(id);
+			ResultSet rs = (ResultSet) runGeneric(genSel);
 			if(rs.next()) {
 				producto = new Producto();
 				producto.setIdProducto(rs.getInt("id_producto"));
@@ -60,9 +60,9 @@ public class PersistenciaProducto extends Conector implements IPersProducto {
 	public List<Producto> obtenerListaProductoPorTipo(TipoProd tipoProd) throws PersistenciaException {
 		List<Producto> listaProducto = new ArrayList<>();
 		try {
-			GenSqlSelectType genType = new GenSqlSelectType(CnstQryProducto.QRY_SELECT_PROD_X_TIPOPROD);
-			genType.getSelectDatosCond().put(1, tipoProd.getIdTipoProd());
-			ResultSet rs = (ResultSet) runGeneric(genType);
+			GenSqlSelectType genSel = new GenSqlSelectType(CnstQryProducto.QRY_SELECT_PROD_X_TIPOPROD);
+			genSel.setParam(tipoProd.getIdTipoProd());
+			ResultSet rs = (ResultSet) runGeneric(genSel);
 			while(rs.next()) {
 				Producto producto = new Producto();
 				producto.setIdProducto(rs.getInt("id_producto"));
@@ -93,13 +93,13 @@ public class PersistenciaProducto extends Conector implements IPersProducto {
 	public Integer guardarProducto(Producto producto) {
 		Integer resultado = null;
 		GenSqlExecType genExec = new GenSqlExecType(CnstQryProducto.QRY_INSERT_PROD);
-		genExec.getExecuteDatosCond().put(1, producto.getCodigo());
-		genExec.getExecuteDatosCond().put(2, producto.getNombre());
-		genExec.getExecuteDatosCond().put(3, producto.getDescripcion());
-		genExec.getExecuteDatosCond().put(4, producto.getStockMin());
-		genExec.getExecuteDatosCond().put(5, producto.getPrecio());
-		genExec.getExecuteDatosCond().put(6, producto.getSinc().getAsChar());
-		genExec.getExecuteDatosCond().put(7, producto.getUltAct());
+		genExec.setParam(producto.getCodigo());
+		genExec.setParam(producto.getNombre());
+		genExec.setParam(producto.getDescripcion());
+		genExec.setParam(producto.getStockMin());
+		genExec.setParam(producto.getPrecio());
+		genExec.setParam(producto.getSinc().getAsChar());
+		genExec.setParam(producto.getUltAct());
 		try {
 			resultado = (Integer) runGeneric(genExec);
 		} catch (ConectorException e) {
@@ -113,14 +113,14 @@ public class PersistenciaProducto extends Conector implements IPersProducto {
 	public Integer modificarProducto(Producto producto) {
 		Integer resultado = null;
 		GenSqlExecType genExec = new GenSqlExecType(CnstQryProducto.QRY_UPDATE_PROD);
-		genExec.getExecuteDatosCond().put(1, producto.getCodigo());
-		genExec.getExecuteDatosCond().put(2, producto.getNombre());
-		genExec.getExecuteDatosCond().put(3, producto.getDescripcion());
-		genExec.getExecuteDatosCond().put(4, producto.getStockMin());
-		genExec.getExecuteDatosCond().put(5, producto.getPrecio());
-		genExec.getExecuteDatosCond().put(6, producto.getSinc().getAsChar());
-		genExec.getExecuteDatosCond().put(7, producto.getUltAct());
-		genExec.getExecuteDatosCond().put(8, producto.getIdProducto());
+		genExec.setParam(producto.getCodigo());
+		genExec.setParam(producto.getNombre());
+		genExec.setParam(producto.getDescripcion());
+		genExec.setParam(producto.getStockMin());
+		genExec.setParam(producto.getPrecio());
+		genExec.setParam(producto.getSinc().getAsChar());
+		genExec.setParam(producto.getUltAct());
+		genExec.setParam(producto.getIdProducto());
 		try {
 			resultado = (Integer) runGeneric(genExec);
 		} catch (ConectorException e) {
@@ -139,7 +139,7 @@ public class PersistenciaProducto extends Conector implements IPersProducto {
 			resultado = (Integer) runGeneric(genExec);
 		} catch (ConectorException e) {
 			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al modificarProducto: " + e.getMessage(), e);
+			logger.log(Level.FATAL, "Excepcion al eliminarProducto: " + e.getMessage(), e);
 		}
 		return resultado;
 	}
@@ -202,8 +202,8 @@ public class PersistenciaProducto extends Conector implements IPersProducto {
 	public Integer modificarTipoProd(TipoProd tipoProd) {
 		Integer resultado = null;
 		GenSqlExecType genExec = new GenSqlExecType(CnstQryProducto.QRY_UPDATE_TIPOPROD);
-		genExec.getExecuteDatosCond().put(1, tipoProd.getDescripcion());
-		genExec.getExecuteDatosCond().put(2, tipoProd.getIdTipoProd());
+		genExec.setParam(tipoProd.getDescripcion());
+		genExec.setParam(tipoProd.getIdTipoProd());
 		try {
 			resultado = (Integer) runGeneric(genExec);
 		} catch (ConectorException e) {
@@ -216,8 +216,8 @@ public class PersistenciaProducto extends Conector implements IPersProducto {
 	@Override
 	public Integer eliminarTipoProd(TipoProd tipoProd) {
 		Integer resultado = null;
-		GenSqlExecType genExec = new GenSqlExecType(CnstQryProducto.QRY_UPDATE_TIPOPROD);
-		genExec.getExecuteDatosCond().put(1, tipoProd.getIdTipoProd());
+		GenSqlExecType genExec = new GenSqlExecType(CnstQryProducto.QRY_DELETE_TIPOPROD);
+		genExec.setParam(tipoProd.getIdTipoProd());
 		try {
 			resultado = (Integer) runGeneric(genExec);
 		} catch (ConectorException e) {

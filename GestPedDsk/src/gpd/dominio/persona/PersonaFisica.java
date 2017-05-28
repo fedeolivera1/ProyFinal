@@ -4,7 +4,7 @@ import gpd.dominio.util.Origen;
 import gpd.dominio.util.Sinc;
 import gpd.types.Fecha;
 
-public abstract class PersonaFisica extends Persona {
+public class PersonaFisica extends Persona {
 
 	private Long documento;
 	private TipoDoc tipoDoc;
