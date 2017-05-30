@@ -7,10 +7,13 @@ public enum TipoUsr {
 	private final String tipoUsr;
 	private final char asChar;
 	
+	//Constructor
 	TipoUsr(String tipoUsr, char asChar) {
 		this.tipoUsr = tipoUsr;
 		this.asChar = asChar;
 	}
+	
+	//gets
 
 	public String getTipoUsr() {
 		return tipoUsr;
@@ -28,4 +31,11 @@ public enum TipoUsr {
     	}
         return null;
     }
+	
+	//Otros métodos
+	
+	@Override
+	public String toString() {
+	    return this.tipoUsr;
+	}
 }

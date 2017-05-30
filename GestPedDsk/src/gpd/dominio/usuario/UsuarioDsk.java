@@ -9,6 +9,18 @@ public class UsuarioDsk implements Serializable {
 	private String pass;
 	private TipoUsr tipoUsr;
 	
+	//Constructores
+	public UsuarioDsk(String nomUsur, String pswd, TipoUsr tipousu){
+		this.nomUsu=nomUsur;
+		this.pass=pswd;
+		this.tipoUsr=tipousu;		
+	}
+	
+	public UsuarioDsk(){
+		
+	}
+	
+	//Set y get
 	
 	public String getNomUsu() {
 		return nomUsu;

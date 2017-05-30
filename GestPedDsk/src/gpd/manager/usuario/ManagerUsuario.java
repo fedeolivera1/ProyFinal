@@ -35,9 +35,18 @@ public class ManagerUsuario {
 		return usuario;
 	}
 
-	public UsuarioDsk guardarUsuario(UsuarioDsk usuario) {
-		// TODO Auto-generated method stub
-		return null;
+	public void guardarUsuario(UsuarioDsk usuario) {
+		
+		Conector.getConn();
+		IPersUsuario interfaceUsuario = new PersistenciaUsuario();
+		try {
+			
+			interfaceUsuario.guardarUsuario(usuario);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		Conector.closeConn("chequearSiSeGuardo", null);
 	}
 
 	public UsuarioDsk modificarUsuario(UsuarioDsk usuario) {

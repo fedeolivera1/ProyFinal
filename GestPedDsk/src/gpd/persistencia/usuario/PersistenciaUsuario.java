@@ -47,9 +47,29 @@ public class PersistenciaUsuario extends Conector implements IPersUsuario {
 	}
 
 	@Override
-	public UsuarioDsk guardarUsuario(UsuarioDsk usuario) {
-		// TODO Auto-generated method stub
-		return null;
+	public void guardarUsuario(UsuarioDsk usuario) {
+		
+		ResultSet resultado;
+		GenSqlSelectType genType = new GenSqlSelectType(CnstQryUsuario.QUERY_LOGIN);
+		genType.getSelectDatosCond().put(1, nombreUsuario);
+		genType.getSelectDatosCond().put(2, passwd);
+		try {
+			resultado = (ResultSet) Conector.runGeneric(genType);
+			if(resultado.next()) {
+				usuario = new UsuarioDsk();
+				usuario.setNomUsu(nombreUsuario);
+				usuario.setPass(passwd);
+				char[] tipoChar = new char[1];
+				resultado.getCharacterStream("tipo").read(tipoChar);
+				TipoUsr tipo = TipoUsr.getTipoUsrPorChar(tipoChar[0]);
+				usuario.setTipoUsr(tipo);
+			}
+		} catch (ConectorException | SQLException | IOException e) {
+			Conector.rollbackConn();
+			logger.log(Level.FATAL, "Excepcion al guardarUsuario: " + e.getMessage(), e);
+			throw new PersistenciaException(e.getMessage()); 
+		}
+		
 	}
 
 	@Override

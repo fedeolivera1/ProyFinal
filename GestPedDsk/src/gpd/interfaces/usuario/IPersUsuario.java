@@ -6,7 +6,7 @@ import gpd.exceptions.PersistenciaException;
 public interface IPersUsuario {
 
 	public UsuarioDsk obtenerUsuario(String nombreUsuario, String password) throws PersistenciaException;
-	public UsuarioDsk guardarUsuario(UsuarioDsk usuario);
+	public void guardarUsuario(UsuarioDsk usuario);
 	public UsuarioDsk modificarUsuario(UsuarioDsk usuario);
 	public UsuarioDsk eliminarUsuario(UsuarioDsk usuario);
 	
