@@ -1,10 +1,11 @@
 package gpd.dominio.persona;
 
+import gpd.dominio.util.Origen;
+import gpd.dominio.util.Sinc;
 import gpd.types.Fecha;
 
 public abstract class Persona {
 
-	private Integer idPersona;
 	private String direccion;
 	private String puerta;
 	private String solar;
@@ -17,14 +18,10 @@ public abstract class Persona {
 	private Fecha fechaReg;
 	private TipoPersona tipoPers;
 	private Localidad localidad;
+	private Origen origen;
+	private Sinc sinc;
+	private Fecha ultAct;
 	
-	
-	public Integer getIdPersona() {
-		return idPersona;
-	}
-	public void setIdPersona(Integer idPersona) {
-		this.idPersona = idPersona;
-	}
 	
 	public String getDireccion() {
 		return direccion;
@@ -109,4 +106,26 @@ public abstract class Persona {
 	public void setLocalidad(Localidad localidad) {
 		this.localidad = localidad;
 	}
+	
+	public Origen getOrigen() {
+		return origen;
+	}
+	public void setOrigen(Origen origen) {
+		this.origen = origen;
+	}
+	
+	public Sinc getSinc() {
+		return sinc;
+	}
+	public void setSinc(Sinc sinc) {
+		this.sinc = sinc;
+	}
+	
+	public Fecha getUltAct() {
+		return ultAct;
+	}
+	public void setUltAct(Fecha ultAct) {
+		this.ultAct = ultAct;
+	}
+	
 }

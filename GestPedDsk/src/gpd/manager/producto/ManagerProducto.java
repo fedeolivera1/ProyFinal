@@ -34,9 +34,9 @@ public class ManagerProducto {
 	public List<Producto> obtenerListaProductoPorTipoProd(TipoProd tipoProd) {
 		logger.info("Se ingresa a obtenerListaProductoPorTipoProd");
 		List<Producto> listaProducto = null;
-		Conector.getConn();
 		interfaceProducto = new PersistenciaProducto();
 		try {
+			Conector.getConn();
 			listaProducto = interfaceProducto.obtenerListaProductoPorTipo(tipoProd);
 			Conector.closeConn("obtenerListaProductoPorTipoProd", null);
 		} catch (PersistenciaException e) {
@@ -48,15 +48,15 @@ public class ManagerProducto {
 	public Integer guardarProducto(Producto producto) {
 		logger.info("Se ingresa a guardarProducto");
 		if(producto != null) {
-			Conector.getConn();
 			interfaceProducto = new PersistenciaProducto();
 			try {
+				Conector.getConn();
 				resultado = interfaceProducto.guardarProducto(producto);
+				Conector.closeConn("guardarProducto", null);
 			} catch (PersistenciaException e) {
 				//FIXME ver como manejar esta excep
 				e.printStackTrace();
 			}
-			Conector.closeConn("guardarProducto", null);
 		}
 		return resultado;
 	}
@@ -64,15 +64,15 @@ public class ManagerProducto {
 	public Integer modificarProducto(Producto producto) {
 		logger.info("Se ingresa a modificarProducto");
 		if(producto != null) {
-			Conector.getConn();
 			interfaceProducto = new PersistenciaProducto();
 			try {
+				Conector.getConn();
 				resultado = interfaceProducto.modificarProducto(producto);
+				Conector.closeConn("modificarProducto", null);
 			} catch (PersistenciaException e) {
 				//FIXME ver como manejar esta excep
 				e.printStackTrace();
 			}
-			Conector.closeConn("modificarProducto", null);
 		}
 		return resultado;
 	}
@@ -80,15 +80,15 @@ public class ManagerProducto {
 	public Integer eliminarProducto(Producto producto) {
 		logger.info("Se ingresa a eliminarProducto");
 		if(producto != null) {
-			Conector.getConn();
 			interfaceProducto = new PersistenciaProducto();
 			try {
+				Conector.getConn();
 				resultado = interfaceProducto.eliminarProducto(producto);
+				Conector.closeConn("eliminarProducto", null);
 			} catch (PersistenciaException e) {
 				//FIXME ver como manejar esta excep
 				e.printStackTrace();
 			}
-			Conector.closeConn("eliminarProducto", null);
 		}
 		return resultado;
 	}
@@ -97,9 +97,9 @@ public class ManagerProducto {
 	public TipoProd obtenerTipoProdPorId(Integer id) {
 		logger.info("Se ingresa a obtenerTipoProd");
 		TipoProd tipoProd = null;
-		Conector.getConn();
 		interfaceProducto = new PersistenciaProducto();
 		try {
+			Conector.getConn();
 			tipoProd = interfaceProducto.obtenerTipoProdPorId(id);
 			Conector.closeConn("obtenerUsuario", null);
 		} catch (PersistenciaException e) {
@@ -111,9 +111,9 @@ public class ManagerProducto {
 	public List<TipoProd> obtenerListaTipoProd() {
 		logger.info("Se ingresa a obtenerTipoProd");
 		List<TipoProd> listaTipoProd = null;
-		Conector.getConn();
 		interfaceProducto = new PersistenciaProducto();
 		try {
+			Conector.getConn();
 			listaTipoProd = interfaceProducto.obtenerListaTipoProd();
 			Conector.closeConn("obtenerUsuario", null);
 		} catch (PersistenciaException e) {
@@ -125,15 +125,15 @@ public class ManagerProducto {
 	public Integer guardarTipoProd(TipoProd tipoProd) {
 		logger.info("Se ingresa a guardarTipoProd");
 		if(tipoProd != null) {
-			Conector.getConn();
 			interfaceProducto = new PersistenciaProducto();
 			try {
+				Conector.getConn();
 				resultado = interfaceProducto.guardarTipoProd(tipoProd);
+				Conector.closeConn("guardarTipoProd", null);
 			} catch (PersistenciaException e) {
 				//FIXME ver como manejar esta excep
 				e.printStackTrace();
 			}
-			Conector.closeConn("guardarTipoProd", null);
 		}
 		return resultado;
 	}
@@ -141,15 +141,15 @@ public class ManagerProducto {
 	public Integer modificarTipoProd(TipoProd tipoProd) {
 		logger.info("Ingresa modificarTipoProd");
 		if(tipoProd != null) {
-			Conector.getConn();
 			interfaceProducto = new PersistenciaProducto();
 			try {
+				Conector.getConn();
 				resultado = interfaceProducto.modificarTipoProd(tipoProd);
+				Conector.closeConn("modificarTipoProd", null);
 			} catch (PersistenciaException e) {
 				//FIXME ver como manejar esta excep
 				e.printStackTrace();
 			}
-			Conector.closeConn("modificarTipoProd", null);
 		}
 		return resultado;
 	}
@@ -157,15 +157,15 @@ public class ManagerProducto {
 	public Integer eliminarTipoProd(TipoProd tipoProd) {
 		logger.info("Se ingresa a eliminarTipoProd");
 		if(tipoProd != null) {
-			Conector.getConn();
 			interfaceProducto = new PersistenciaProducto();
 			try {
+				Conector.getConn();
 				resultado = interfaceProducto.eliminarTipoProd(tipoProd);
+				Conector.closeConn("eliminarTipoProd", null);
 			} catch (PersistenciaException e) {
 				//FIXME ver como manejar esta excep
 				e.printStackTrace();
 			}
-			Conector.closeConn("eliminarTipoProd", null);
 		}
 		return resultado;
 	}

@@ -43,6 +43,49 @@ public class GenSqlSelectType {
 		cnt++;
 		this.getSelectDatosCond().put(cnt, obj);
 	}
+
+	public void setParamEmptyAsNull(Object obj) {
+		cnt++;
+		if(obj instanceof String) {
+			obj = String.valueOf(obj).equals("") ? null : obj;
+		}
+		this.getSelectDatosCond().put(cnt, obj);
+	}
+
+	public void setParamEmptyAsNumber(Object obj) {
+		cnt++;
+		if(obj == null || obj instanceof String) {
+			obj = (obj == null || String.valueOf(obj).equals("")) ? -1 : obj;
+		}
+		this.getSelectDatosCond().put(cnt, obj);
+	}
+	
+	public void setParamLikeLeft(Object obj) {
+		cnt++;
+		if(obj instanceof String) {
+			String strObj = "%" + obj.toString();
+			obj = strObj;
+		}
+		this.getSelectDatosCond().put(cnt, obj);
+	}
+	
+	public void setParamLikeRight(Object obj) {
+		cnt++;
+		if(obj instanceof String) {
+			String strObj = obj.toString() + "%";
+			obj = strObj;
+		}
+		this.getSelectDatosCond().put(cnt, obj);
+	}
+	
+	public void setParamLikeBoth(Object obj) {
+		cnt++;
+		if(obj instanceof String) {
+			String strObj = "%" + obj.toString() + "%";
+			obj = strObj;
+		}
+		this.getSelectDatosCond().put(cnt, obj);
+	}
 	
 	
 }

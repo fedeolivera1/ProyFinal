@@ -23,4 +23,9 @@ public class Departamento implements Serializable {
 		this.nombreDepartamento = nombreDepartamento;
 	}
 	
+	@Override
+	public String toString() {
+		return nombreDepartamento;
+	}
+	
 }

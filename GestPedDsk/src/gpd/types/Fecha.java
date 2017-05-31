@@ -27,9 +27,9 @@ public class Fecha extends GregorianCalendar {
 	/**
 	 * setea una fecha por defecto
 	 */
-	public Fecha() {
+	public Fecha(int formato) {
 	    complete();
-	    setFormato(4);
+	    setFormato(formato);
 	}
 	
 	/**
@@ -211,7 +211,7 @@ public class Fecha extends GregorianCalendar {
 	 * @return String
 	 * genera toString a partir del formato recibido
 	 */
-	public String toString(Fecha fecha, int formato) {
+	public String toString(int formato) {
 		StringBuilder strFec = new StringBuilder();
 		if(AMD == formato) {
 			strFec.append(getAnio()).append(BARRA).append(cc(getMes())).append(BARRA).append(cc(getDia()));

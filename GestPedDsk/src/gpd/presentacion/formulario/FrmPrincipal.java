@@ -47,19 +47,28 @@ public class FrmPrincipal extends JFrame {
 		menuBar.add(mnArchivo);
 		
 		JMenuItem mnSalir = new JMenuItem("Salir");
+		mnSalir.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				System.exit(0);
+			}
+		});
 		mnArchivo.add(mnSalir);
 		
 		JMenu mnCliente = new JMenu("Cliente");
 		menuBar.add(mnCliente);
 		
-		JMenuItem mntmClientePersona = new JMenuItem("Mant Cliente Persona");
+		JMenuItem mntmClientePersona = new JMenuItem("Mant Persona");
+		mntmClientePersona.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				FrmPersona frmPers = FrmPersona.getFrmPersona(usr);
+				frmPers.setLocationRelativeTo(null);
+				frmPers.setVisible(true);
+			}
+		});
 		mnCliente.add(mntmClientePersona);
 		
-		JMenuItem mntmClienteEmpresa = new JMenuItem("Mant Cliente Empresa");
-		mnCliente.add(mntmClienteEmpresa);
-		
-		JMenuItem mntmMantProveedor = new JMenuItem("Mant Proveedor");
-		mnCliente.add(mntmMantProveedor);
+		JMenuItem mntmEmpresa = new JMenuItem("Mant Empresa");
+		mnCliente.add(mntmEmpresa);
 		
 		JMenu mnProducto = new JMenu("Producto");
 		menuBar.add(mnProducto);

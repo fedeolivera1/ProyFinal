@@ -108,7 +108,7 @@ public abstract class Conector {
 				Object value = (Object) genType.getSelectDatosCond().get(key);
 				fillPreparedStatement(ps, key, value);
 			}
-			logger.debug("Ejecucion query: " + genType.getStatement());
+			logger.debug("Ejecucion query: " + ps.toString());
 			rs = ps.executeQuery();
 		} catch (SQLException e) {
 			logger.error("Excepcion de SQL al ejecutar 'selectGeneric': " + e.getMessage(), e);
@@ -181,53 +181,55 @@ public abstract class Conector {
 	 */
 	protected static void fillPreparedStatement(PreparedStatement ps, Integer key, Object data) throws ConectorException {
 		try {
-			if (data instanceof String) {
-				ps.setObject(key, data, java.sql.Types.VARCHAR);
-				logger.debug("seteo param en posi " + key + " del tipo java.sql.Types.VARCHAR: " + data);
-		    } else if (data instanceof Integer) {
-		    	ps.setObject(key, data, java.sql.Types.INTEGER);
-		    	logger.debug("seteo param en posi " + key + " del tipo java.sql.Types.INTEGER: " + data);
-		    } else if (data instanceof Fecha) {
-		    	Fecha fecha = (Fecha) data;
-		    	if(fecha.esTimeStamp()) {
-		    		ps.setObject(key, fecha.getTimestampSql(), java.sql.Types.TIMESTAMP);
-		    		logger.debug("seteo param en posi " + key + " del tipo java.sql.Types.TIMESTAMP: " + data);
-		    	} else if(fecha.esHM()) {
-		    		ps.setObject(key, fecha.getTimeSql(), java.sql.Types.TIME);
-		    		logger.debug("seteo param en posi " + key + " del tipo java.sql.Types.TIME: " + data);
-		    	} else {
-		    		ps.setObject(key, fecha.getDateSql(), java.sql.Types.DATE);
-		    		logger.debug("seteo param en posi " + key + " del tipo java.sql.Types.DATE: " + data);
-		    	}
-		    } else if ((data instanceof java.util.Date) || (data instanceof java.util.GregorianCalendar)) {
-		    	ps.setObject(key, data, java.sql.Types.DATE);
-		    	logger.debug("seteo param en posi " + key + " del tipo java.sql.Types.DATE: " + data);
-		    } else if (data instanceof Character) {
-		    	ps.setObject(key, data, java.sql.Types.CHAR);
-		    	logger.debug("seteo param en posi " + key + " del tipo java.sql.Types.CHAR: " + data);
-		    } else if (data instanceof Long) {
-		    	ps.setObject(key, data, java.sql.Types.BIGINT);
-		    	logger.debug("seteo param en posi " + key + " del tipo java.sql.Types.BIGINT: " + data);
-		    } else if (data instanceof Double) {
-		    	ps.setObject(key, data, java.sql.Types.DOUBLE);
-		    	logger.debug("seteo param en posi " + key + " del tipo java.sql.Types.DOUBLE: " + data);
-			} else if (data instanceof BigDecimal) {
-				ps.setObject(key, data, java.sql.Types.DECIMAL);
-				logger.debug("seteo param en posi " + key + " del tipo java.sql.Types.DECIMAL: " + data);
-			} else if (data instanceof Float) {
-				ps.setObject(key, data, java.sql.Types.FLOAT);
-				logger.debug("seteo param en posi " + key + " del tipo java.sql.Types.FLOAT: " + data);
+			if(null == data) {
+				ps.setObject(key, null, java.sql.Types.NULL);
+				logger.debug("seteo param en posi " + key + " del tipo java.sql.Types.NULL");
 			} else {
-				if(null == data) {
-					ps.setObject(key, null, java.sql.Types.NULL);
-					logger.debug("seteo param en posi " + key + " del tipo java.sql.Types.NULL");
+				if (data instanceof String) {
+					ps.setObject(key, data, java.sql.Types.VARCHAR);
+					logger.debug("seteo param en posi " + key + " del tipo java.sql.Types.VARCHAR: " + data);
+				} else if (data instanceof Integer) {
+					ps.setObject(key, data, java.sql.Types.INTEGER);
+					logger.debug("seteo param en posi " + key + " del tipo java.sql.Types.INTEGER: " + data);
+				} else if (data instanceof Fecha) {
+					Fecha fecha = (Fecha) data;
+					if(fecha.esTimeStamp()) {
+						ps.setObject(key, fecha.getTimestampSql(), java.sql.Types.TIMESTAMP);
+						logger.debug("seteo param en posi " + key + " del tipo java.sql.Types.TIMESTAMP: " + data);
+					} else if(fecha.esHM()) {
+						ps.setObject(key, fecha.getTimeSql(), java.sql.Types.TIME);
+						logger.debug("seteo param en posi " + key + " del tipo java.sql.Types.TIME: " + data);
+					} else {
+						ps.setObject(key, fecha.getDateSql(), java.sql.Types.DATE);
+						logger.debug("seteo param en posi " + key + " del tipo java.sql.Types.DATE: " + data);
+					}
+				} else if ((data instanceof java.util.Date) || (data instanceof java.util.GregorianCalendar)) {
+					ps.setObject(key, data, java.sql.Types.DATE);
+					logger.debug("seteo param en posi " + key + " del tipo java.sql.Types.DATE: " + data);
+				} else if (data instanceof Character) {
+					ps.setObject(key, data, java.sql.Types.CHAR);
+					logger.debug("seteo param en posi " + key + " del tipo java.sql.Types.CHAR: " + data);
+				} else if (data instanceof Long) {
+					ps.setObject(key, data, java.sql.Types.BIGINT);
+					logger.debug("seteo param en posi " + key + " del tipo java.sql.Types.BIGINT: " + data);
+				} else if (data instanceof Double) {
+					ps.setObject(key, data, java.sql.Types.DOUBLE);
+					logger.debug("seteo param en posi " + key + " del tipo java.sql.Types.DOUBLE: " + data);
+				} else if (data instanceof BigDecimal) {
+					ps.setObject(key, data, java.sql.Types.DECIMAL);
+					logger.debug("seteo param en posi " + key + " del tipo java.sql.Types.DECIMAL: " + data);
+				} else if (data instanceof Float) {
+					ps.setObject(key, data, java.sql.Types.FLOAT);
+					logger.debug("seteo param en posi " + key + " del tipo java.sql.Types.FLOAT: " + data);
+				} else {
+					logger.error("Error: Tipo de parametro no encontrado!");
 				}
 			}
 		} catch (SQLException | ClassCastException e) {
-			logger.error("Excepcion en fillPreparedStatement : " + e.getMessage(), e);
+			logger.fatal("Excepcion en fillPreparedStatement : " + e.getMessage(), e);
 			throw new ConectorException(e.getMessage(), e);
 		} catch (Exception e) {
-			logger.error("Excepcion no controlada en fillPreparedStatement: " + e.getMessage(), e);
+			logger.fatal("Excepcion no controlada en fillPreparedStatement: " + e.getMessage(), e);
 			throw new ConectorException(e.getMessage(), e);
 		}
 	}

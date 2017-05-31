@@ -51,7 +51,7 @@ public class ManagerPersonaTest {
 		cli.setSexo(Sexo.M);
 		cli.setOrigen(Origen.D);
 		cli.setSinc(Sinc.N);
-		cli.setUltAct(new Fecha());
+		cli.setUltAct(new Fecha(Fecha.AMDHMS));
 		
 		ManagerPersona mgrPersona = new ManagerPersona();
 		Integer resultado = mgrPersona.guardarPersFisica(cli);

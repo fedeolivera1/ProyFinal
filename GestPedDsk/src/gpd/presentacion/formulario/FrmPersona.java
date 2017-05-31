@@ -1,20 +1,32 @@
 package gpd.presentacion.formulario;
 
 import java.awt.SystemColor;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
 import org.apache.log4j.Logger;
 
+import gpd.dominio.persona.Departamento;
+import gpd.dominio.persona.Localidad;
 import gpd.dominio.persona.Sexo;
 import gpd.dominio.persona.TipoDoc;
 import gpd.dominio.usuario.UsuarioDsk;
@@ -41,8 +53,14 @@ public class FrmPersona extends JFrame {
 	private JTextField txtPfTel;
 	private JTextField txtPfCel;
 	private JTextField txtPfEml;
+	private JComboBox<TipoDoc> cbxPfTipoDoc;
+	private JComboBox<Sexo> cbxPfSexo;
+	private JComboBox<Localidad> cbxPersLoc;
+	private JComboBox<Departamento> cbxPersDep;
 	private CtrlFrmPersona ctrlPers;
+	private JTable jtPersFisica;
 
+	
 	/**
 	 * Launch the application.
 	 */
@@ -59,9 +77,9 @@ public class FrmPersona extends JFrame {
 //		});
 //	}
 
-	public static FrmPersona getFrmCliente(UsuarioDsk usr) {
+	public static FrmPersona getFrmPersona(UsuarioDsk usr) {
 		if(instance == null) {
-			logger.info("Se genera nueva instancia de FrmCliente > usuario logueado: " + usr.getNomUsu());
+			logger.info("Se genera nueva instancia de FrmPersona > usuario logueado: " + usr.getNomUsu());
 			instance = new FrmPersona(usr);
 		}
 		return instance;
@@ -71,7 +89,7 @@ public class FrmPersona extends JFrame {
 	 * Create the frame.
 	 */
 	private FrmPersona(UsuarioDsk usr) {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 800, 600);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -92,7 +110,7 @@ public class FrmPersona extends JFrame {
 		lblTipoDoc.setBounds(10, 14, 64, 14);
 		pnlPersF.add(lblTipoDoc);
 		
-		JComboBox<TipoDoc> cbxPfTipoDoc = new JComboBox<>();
+		cbxPfTipoDoc = new JComboBox<>();
 		cbxPfTipoDoc.setBounds(84, 11, 151, 20);
 		ctrlPers.cargarCbxTipoDoc(cbxPfTipoDoc);
 		pnlPersF.add(cbxPfTipoDoc);
@@ -152,9 +170,15 @@ public class FrmPersona extends JFrame {
 		lblFNac.setBounds(10, 200, 64, 14);
 		pnlPersF.add(lblFNac);
 		
-		txtPfFnac = new JTextField();
+		txtPfFnac = new JFormattedTextField(ctrlPers.mascNumerica("##/##/####"));
+		txtPfFnac.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				ctrlPers.formatoFechaEnTxt(txtPfFnac);
+			}
+		});
 		txtPfFnac.setColumns(10);
-		txtPfFnac.setBounds(84, 197, 151, 20);
+		txtPfFnac.setBounds(84, 197, 65, 20);
 		pnlPersF.add(txtPfFnac);
 		
 		JLabel lblSexo = new JLabel("Sexo");
@@ -162,15 +186,16 @@ public class FrmPersona extends JFrame {
 		lblSexo.setBounds(10, 231, 64, 14);
 		pnlPersF.add(lblSexo);
 		
-		JComboBox<Sexo> cbxPfSexo = new JComboBox<>();
+		cbxPfSexo = new JComboBox<>();
 		cbxPfSexo.setBounds(84, 228, 65, 20);
 		pnlPersF.add(cbxPfSexo);
+		ctrlPers.cargarCbxSexo(cbxPfSexo);
 		
 		JSeparator separator = new JSeparator();
 		separator.setOrientation(SwingConstants.VERTICAL);
-		separator.setForeground(SystemColor.text);
+		separator.setForeground(SystemColor.info);
 		separator.setBackground(SystemColor.info);
-		separator.setBounds(245, 11, 2, 244);
+		separator.setBounds(245, 11, 2, 268);
 		pnlPersF.add(separator);
 		
 		JLabel lblDireccion = new JLabel("Direccion");
@@ -264,23 +289,249 @@ public class FrmPersona extends JFrame {
 		pnlPersF.add(txtPfEml);
 		
 		JButton btnPfAgr = new JButton("Agregar");
-		btnPfAgr.setBounds(499, 10, 89, 23);
+		btnPfAgr.setBounds(511, 10, 89, 23);
 		pnlPersF.add(btnPfAgr);
 		
 		JButton btnPfMod = new JButton("Modificar");
-		btnPfMod.setBounds(499, 41, 89, 23);
+		btnPfMod.setBounds(511, 41, 89, 23);
 		pnlPersF.add(btnPfMod);
 		
 		JButton btnPfEli = new JButton("Eliminar");
-		btnPfEli.setBounds(499, 72, 89, 23);
+		btnPfEli.setBounds(511, 72, 89, 23);
 		pnlPersF.add(btnPfEli);
 		
 		JButton btnPfBuscar = new JButton("Buscar");
-		btnPfBuscar.setBounds(499, 196, 89, 23);
+		btnPfBuscar.setBounds(511, 134, 89, 23);
 		pnlPersF.add(btnPfBuscar);
+		
+		JButton btnPfLimpiar = new JButton("Limpiar");
+		btnPfLimpiar.setBounds(511, 165, 89, 23);
+		pnlPersF.add(btnPfLimpiar);
+		
+		JLabel lblDepartamento = new JLabel("Departamento");
+		lblDepartamento.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblDepartamento.setBounds(257, 231, 71, 14);
+		pnlPersF.add(lblDepartamento);
+		
+		cbxPersDep = new JComboBox<>();
+		cbxPersDep.setBounds(338, 228, 151, 20);
+		pnlPersF.add(cbxPersDep);
+		ctrlPers.cargarCbxDep(cbxPersDep);
+		
+		JLabel lblLocalidad = new JLabel("Localidad");
+		lblLocalidad.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblLocalidad.setBounds(257, 262, 71, 14);
+		pnlPersF.add(lblLocalidad);
+		
+		cbxPersLoc = new JComboBox<>();
+		cbxPersLoc.setBounds(338, 259, 151, 20);
+		pnlPersF.add(cbxPersLoc);
+		
+		JSeparator separator_1 = new JSeparator();
+		separator_1.setForeground(SystemColor.info);
+		separator_1.setBackground(SystemColor.info);
+		separator_1.setBounds(10, 290, 759, 2);
+		pnlPersF.add(separator_1);
 		
 		JPanel pnlPersJ = new JPanel();
 		tabbedPane.addTab("Empresa", null, pnlPersJ, null);
 		pnlPersJ.setLayout(null);
+		
+		cbxPersDep.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				ctrlPers.cargarCbxLoc(cbxPersDep, cbxPersLoc);
+			}
+		});
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(10, 303, 759, 223);
+		pnlPersF.add(scrollPane);
+		
+		jtPersFisica = new JTable();
+		jtPersFisica.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+		scrollPane.setColumnHeaderView(jtPersFisica);
+		scrollPane.setViewportView(jtPersFisica);
+		
+		JSeparator separator_2 = new JSeparator();
+		separator_2.setOrientation(SwingConstants.VERTICAL);
+		separator_2.setForeground(SystemColor.info);
+		separator_2.setBackground(SystemColor.info);
+		separator_2.setBounds(499, 11, 2, 268);
+		pnlPersF.add(separator_2);
+		
+		btnPfAgr.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ctrlPers.agregarPersFisica(cbxPfTipoDoc, txtPfDoc, txtPfApe1, txtPfApe2, txtPfNom1, txtPfNom2, txtPfFnac, cbxPfSexo, 
+						txtPfDir, txtPfPue, txtPfSol, txtPfMan, txtPfKm, txtPfComp, txtPfTel, txtPfCel, txtPfEml, cbxPersLoc);
+			}
+		});
+		btnPfMod.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				ctrlPers.modificarPersFisica(cbxPfTipoDoc, txtPfDoc, txtPfApe1, txtPfApe2, txtPfNom1, txtPfNom2, txtPfFnac, cbxPfSexo, 
+						txtPfDir, txtPfPue, txtPfSol, txtPfMan, txtPfKm, txtPfComp, txtPfTel, txtPfCel, txtPfEml, cbxPersLoc);
+			}
+		});
+		btnPfEli.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ctrlPers.eliminarPersFisica(txtPfDoc);
+			}
+		});
+		btnPfLimpiar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ctrlPers.clearForm(getContentPane());
+			}
+		});
+		btnPfBuscar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ctrlPers.buscarPersFisica(txtPfDoc, txtPfApe1, txtPfApe2, txtPfNom1, txtPfNom2, cbxPfSexo, txtPfDir, txtPfTel, 
+						txtPfCel, txtPfEml, cbxPersLoc);
+			}
+		});
 	}
+
+	
+	/*****************************************************************************************************************************************************/
+	/* GET Y SET DE CAMPOS */
+	/*****************************************************************************************************************************************************/
+	public JTextField getTxtPfDoc() {
+		return txtPfDoc;
+	}
+	public void setTxtPfDoc(JTextField txtPfDoc) {
+		this.txtPfDoc = txtPfDoc;
+	}
+
+	public JTextField getTxtPfApe1() {
+		return txtPfApe1;
+	}
+	public void setTxtPfApe1(JTextField txtPfApe1) {
+		this.txtPfApe1 = txtPfApe1;
+	}
+
+	public JTextField getTxtPfApe2() {
+		return txtPfApe2;
+	}
+	public void setTxtPfApe2(JTextField txtPfApe2) {
+		this.txtPfApe2 = txtPfApe2;
+	}
+
+	public JTextField getTxtPfNom1() {
+		return txtPfNom1;
+	}
+	public void setTxtPfNom1(JTextField txtPfNom1) {
+		this.txtPfNom1 = txtPfNom1;
+	}
+
+	public JTextField getTxtPfNom2() {
+		return txtPfNom2;
+	}
+	public void setTxtPfNom2(JTextField txtPfNom2) {
+		this.txtPfNom2 = txtPfNom2;
+	}
+
+	public JTextField getTxtPfFnac() {
+		return txtPfFnac;
+	}
+	public void setTxtPfFnac(JTextField txtPfFnac) {
+		this.txtPfFnac = txtPfFnac;
+	}
+
+	public JTextField getTxtPfDir() {
+		return txtPfDir;
+	}
+	public void setTxtPfDir(JTextField txtPfDir) {
+		this.txtPfDir = txtPfDir;
+	}
+
+	public JTextField getTxtPfPue() {
+		return txtPfPue;
+	}
+	public void setTxtPfPue(JTextField txtPfPue) {
+		this.txtPfPue = txtPfPue;
+	}
+
+	public JTextField getTxtPfSol() {
+		return txtPfSol;
+	}
+	public void setTxtPfSol(JTextField txtPfSol) {
+		this.txtPfSol = txtPfSol;
+	}
+
+	public JTextField getTxtPfMan() {
+		return txtPfMan;
+	}
+	public void setTxtPfMan(JTextField txtPfMan) {
+		this.txtPfMan = txtPfMan;
+	}
+
+	public JTextField getTxtPfKm() {
+		return txtPfKm;
+	}
+	public void setTxtPfKm(JTextField txtPfKm) {
+		this.txtPfKm = txtPfKm;
+	}
+
+	public JTextField getTxtPfComp() {
+		return txtPfComp;
+	}
+	public void setTxtPfComp(JTextField txtPfComp) {
+		this.txtPfComp = txtPfComp;
+	}
+
+	public JTextField getTxtPfTel() {
+		return txtPfTel;
+	}
+	public void setTxtPfTel(JTextField txtPfTel) {
+		this.txtPfTel = txtPfTel;
+	}
+
+	public JTextField getTxtPfCel() {
+		return txtPfCel;
+	}
+	public void setTxtPfCel(JTextField txtPfCel) {
+		this.txtPfCel = txtPfCel;
+	}
+
+	public JTextField getTxtPfEml() {
+		return txtPfEml;
+	}
+	public void setTxtPfEml(JTextField txtPfEml) {
+		this.txtPfEml = txtPfEml;
+	}
+
+	public JComboBox<TipoDoc> getCbxPfTipoDoc() {
+		return cbxPfTipoDoc;
+	}
+	public void setCbxPfTipoDoc(JComboBox<TipoDoc> cbxPfTipoDoc) {
+		this.cbxPfTipoDoc = cbxPfTipoDoc;
+	}
+
+	public JComboBox<Sexo> getCbxPfSexo() {
+		return cbxPfSexo;
+	}
+	public void setCbxPfSexo(JComboBox<Sexo> cbxPfSexo) {
+		this.cbxPfSexo = cbxPfSexo;
+	}
+	
+	public JComboBox<Localidad> getCbxPersLoc() {
+		return cbxPersLoc;
+	}
+	public void setCbxPersLoc(JComboBox<Localidad> cbxPersLoc) {
+		this.cbxPersLoc = cbxPersLoc;
+	}
+
+	public JComboBox<Departamento> getCbxPersDep() {
+		return cbxPersDep;
+	}
+	public void setCbxPersDep(JComboBox<Departamento> cbxPersDep) {
+		this.cbxPersDep = cbxPersDep;
+	}
+
+	
+	public JTable getJtPersFisica() {
+		return jtPersFisica;
+	}
+	public void setJtPersFisica(JTable jtPersFisica) {
+		this.jtPersFisica = jtPersFisica;
+	}
+
 }

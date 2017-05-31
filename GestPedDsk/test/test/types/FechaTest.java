@@ -18,18 +18,18 @@ public class FechaTest {
 		callToString(fecha);
 		fecha = new Fecha(23, 59);
 		callToString(fecha);
-		fecha = new Fecha();
+		fecha = new Fecha(Fecha.AMD);
 		callToString(fecha);
 		assertNotNull(fecha);
 	}
 	
 	private void callToString(Fecha fecha) {
-		System.out.println(fecha.toString(fecha, Fecha.AMD));
-		System.out.println(fecha.toString(fecha, Fecha.DMA));
-		System.out.println(fecha.toString(fecha, Fecha.AMDHM));
-		System.out.println(fecha.toString(fecha, Fecha.AMDHMS));
-		System.out.println(fecha.toString(fecha, Fecha.HM));
-		System.out.println(fecha.toString(fecha, Fecha.HMS));
+		System.out.println(fecha.toString(Fecha.AMD));
+		System.out.println(fecha.toString(Fecha.DMA));
+		System.out.println(fecha.toString(Fecha.AMDHM));
+		System.out.println(fecha.toString(Fecha.AMDHMS));
+		System.out.println(fecha.toString(Fecha.HM));
+		System.out.println(fecha.toString(Fecha.HMS));
 		System.out.println("FORMATO DE LA FECHA: " + fecha.getFormato());
 		System.out.println("--------------------------------------");
 	}

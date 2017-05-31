@@ -39,7 +39,7 @@ public class GenSqlExecType {
 	
 	public HashMap<Integer, Object> getExecuteDatosCond() {
 		if(this.executeDatosCond == null) {
-			this.executeDatosCond = new HashMap<Integer, Object>();
+			this.executeDatosCond = new HashMap<>();
 		}
 		return executeDatosCond;
 	}
