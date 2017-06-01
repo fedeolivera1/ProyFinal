@@ -31,5 +31,8 @@ public class Localidad implements Serializable {
 		this.departamento = departamento;
 	}
 	
-	
+	@Override
+	public String toString() {
+		return nombreLocalidad;
+	}
 }

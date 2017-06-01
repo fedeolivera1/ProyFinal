@@ -23,8 +23,7 @@ public enum TipoUsr {
 		return asChar;
 	}
 
-	public static TipoUsr getTipoUsrPorChar(final char name)
-    {
+	public static TipoUsr getTipoUsrPorChar(final char name) {
         for (TipoUsr tipo : TipoUsr.values()) {
             if (tipo.getAsChar() == name)
                 return tipo;

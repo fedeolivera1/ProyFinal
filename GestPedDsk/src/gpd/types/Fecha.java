@@ -1,5 +1,8 @@
 package gpd.types;
 
+import java.sql.Date;
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
@@ -24,9 +27,9 @@ public class Fecha extends GregorianCalendar {
 	/**
 	 * setea una fecha por defecto
 	 */
-	public Fecha() {
+	public Fecha(int formato) {
 	    complete();
-	    setFormato(4);
+	    setFormato(formato);
 	}
 	
 	/**
@@ -88,10 +91,43 @@ public class Fecha extends GregorianCalendar {
 	/**
 	 * 
 	 * @param time
-	 * setea una fecha a partir de una tiempo en milisegundos
+	 * setea una fecha a partir de un tiempo (long) en milisegundos
 	 */
 	public Fecha(Long time) {
 		super.setTimeInMillis(time);
+		complete();
+		setFormato(AMDHMS);
+	}
+	
+	/**
+	 * 
+	 * @param time sql
+	 * setea una fecha a partir de un java.sql.Time en milisegundos
+	 */
+	public Fecha(Time time) {
+		super.setTimeInMillis(time.getTime());
+		complete();
+		setFormato(AMD);
+	}
+	
+	/**
+	 * 
+	 * @param date sql
+	 * setea una fecha a partir de un java.sql.Date en milisegundos
+	 */
+	public Fecha(Date date) {
+		super.setTimeInMillis(date.getTime());
+		complete();
+		setFormato(AMD);
+	}
+	
+	/**
+	 * 
+	 * @param timestamp sql
+	 * setea una fecha a partir de un java.sql.Timestamp en milisegundos
+	 */
+	public Fecha(Timestamp timestamp) {
+		super.setTimeInMillis(timestamp.getTime());
 		complete();
 		setFormato(AMDHMS);
 	}
@@ -175,7 +211,7 @@ public class Fecha extends GregorianCalendar {
 	 * @return String
 	 * genera toString a partir del formato recibido
 	 */
-	public String toString(Fecha fecha, int formato) {
+	public String toString(int formato) {
 		StringBuilder strFec = new StringBuilder();
 		if(AMD == formato) {
 			strFec.append(getAnio()).append(BARRA).append(cc(getMes())).append(BARRA).append(cc(getDia()));

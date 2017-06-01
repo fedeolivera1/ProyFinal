@@ -4,9 +4,9 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-import gpd.dominio.persona.ClienteEmp;
-import gpd.dominio.persona.ClientePers;
 import gpd.dominio.persona.Localidad;
+import gpd.dominio.persona.PersonaFisica;
+import gpd.dominio.persona.PersonaJuridica;
 import gpd.dominio.persona.Sexo;
 import gpd.dominio.persona.TipoDoc;
 import gpd.dominio.persona.TipoPersona;
@@ -19,7 +19,7 @@ public class ManagerPersonaTest {
 
 	@Test
 	public void testGuardarPersFisica() {
-		ClientePers cli = new ClientePers();
+		PersonaFisica cli = new PersonaFisica();
 		TipoDoc tipoDoc = new TipoDoc();
 		tipoDoc.setIdTipoDoc(1);
 		tipoDoc.setNombre("CI");
@@ -34,6 +34,7 @@ public class ManagerPersonaTest {
 		cli.setTelefono("21050030");
 		cli.setCelular("099123456");
 		cli.setEmail("a@a.com");
+		cli.setFechaReg(new Fecha(2017,02,01));
 		cli.setTipoPers(TipoPersona.F);
 		Localidad loc = new Localidad();
 		loc.setIdLocalidad(1);
@@ -50,7 +51,7 @@ public class ManagerPersonaTest {
 		cli.setSexo(Sexo.M);
 		cli.setOrigen(Origen.D);
 		cli.setSinc(Sinc.N);
-		cli.setUltAct(new Fecha());
+		cli.setUltAct(new Fecha(Fecha.AMDHMS));
 		
 		ManagerPersona mgrPersona = new ManagerPersona();
 		Integer resultado = mgrPersona.guardarPersFisica(cli);
@@ -59,30 +60,30 @@ public class ManagerPersonaTest {
 
 	@Test
 	public void testGuardarPersJuridica() {
-		ClienteEmp cli = new ClienteEmp();
+		PersonaJuridica emp = new PersonaJuridica();
 		//datos persona
-		cli.setDireccion("dir");
-		cli.setPuerta("552");
-		cli.setSolar("solar");
-		cli.setManzana("manzana");
-		cli.setKm(new Float(558));
+		emp.setDireccion("dir");
+		emp.setPuerta("552");
+		emp.setSolar("solar");
+		emp.setManzana("manzana");
+		emp.setKm(new Float(558));
 //		cli.setComplemento(""); DEJO NULO A PROPÓSITO
-		cli.setTelefono("21050030");
-		cli.setCelular("099123456");
-		cli.setEmail("a@a.com");
-		cli.setTipoPers(TipoPersona.J);
+		emp.setTelefono("21050030");
+		emp.setCelular("099123456");
+		emp.setEmail("a@a.com");
+		emp.setTipoPers(TipoPersona.J);
 		Localidad loc = new Localidad();
 		loc.setIdLocalidad(1);
-		cli.setLocalidad(loc);
+		emp.setLocalidad(loc);
 		//datos cliente empresa
-		cli.setRut(new Long("123456789012"));
-		cli.setNombre("nombre cli persona juridica");
-		cli.setRazonSocial("razon social cli persona juridica");
-		cli.setBps("bps");
-		cli.setBse("bse");
+		emp.setRut(new Long("123456789012"));
+		emp.setNombre("nombre cli persona juridica");
+		emp.setRazonSocial("razon social cli persona juridica");
+		emp.setBps("bps");
+		emp.setBse("bse");
 		
 		ManagerPersona mgrPersona = new ManagerPersona();
-		Integer resultado = mgrPersona.guardarPersJuridica(cli);
+		Integer resultado = mgrPersona.guardarPersJuridica(emp);
 		assertTrue(1==resultado);
 	}
 

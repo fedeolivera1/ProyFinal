@@ -19,4 +19,13 @@ public enum Origen {
 	public char getAsChar() {
 		return asChar;
 	}
+	
+	public static Origen getOrigenPorChar(final char name) {
+        for (Origen origen : Origen.values()) {
+            if (origen.getAsChar() == name) { 
+            	return origen; 
+            }
+    	}
+        return null;
+    }
 }

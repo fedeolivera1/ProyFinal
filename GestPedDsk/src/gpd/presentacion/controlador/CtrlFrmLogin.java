@@ -7,16 +7,18 @@ import java.security.NoSuchAlgorithmException;
 import gpd.dominio.usuario.UsuarioDsk;
 import gpd.exceptions.UsuarioNoExisteException;
 import gpd.manager.usuario.ManagerUsuario;
+import gpd.presentacion.generic.CnstPresGeneric;
 
-public class ControladorFrmLogin {
+public class CtrlFrmLogin extends CtrlGenerico {
+
 
 	public UsuarioDsk obtenerUsuario(String nombre, String passwd) throws UsuarioNoExisteException {
 		UsuarioDsk usr = null;
-		if(nombre == null || passwd == null) {
-			throw new UsuarioNoExisteException("Debe proporcionar nombre de usuario y password.");
+		if((nombre == null || nombre == "") || (passwd == null || passwd == "")) {
+			throw new UsuarioNoExisteException(CnstPresGeneric.USR_DATOS);
 		} else {
 			String hashPass = getMD5(passwd);
-			ManagerUsuario mgrUsr = ManagerUsuario.getManagerUsuario();
+			ManagerUsuario mgrUsr = new ManagerUsuario();
 			usr = mgrUsr.obtenerUsuario(nombre, hashPass);
 		}
 		return usr;

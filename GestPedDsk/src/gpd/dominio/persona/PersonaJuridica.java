@@ -1,12 +1,13 @@
 package gpd.dominio.persona;
 
-public abstract class PersonaJuridica extends Persona {
+public class PersonaJuridica extends Persona {
 
 	private Long rut;
 	private String nombre;
 	private String razonSocial;
 	private String bps;
 	private String bse;
+	private Boolean esProv;
 	
 	
 	public Long getRut() {
@@ -42,6 +43,13 @@ public abstract class PersonaJuridica extends Persona {
 	}
 	public void setBse(String bse) {
 		this.bse = bse;
+	}
+	
+	public Boolean getEsProv() {
+		return esProv;
+	}
+	public void setEsProv(Boolean esProv) {
+		this.esProv = esProv;
 	}
 	
 	

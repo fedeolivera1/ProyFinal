@@ -1,10 +1,8 @@
 package gpd.dominio.persona;
 
-import gpd.dominio.util.Origen;
-import gpd.dominio.util.Sinc;
 import gpd.types.Fecha;
 
-public abstract class PersonaFisica extends Persona {
+public class PersonaFisica extends Persona {
 
 	private Long documento;
 	private TipoDoc tipoDoc;
@@ -14,9 +12,6 @@ public abstract class PersonaFisica extends Persona {
 	private String nombre2;
 	private Fecha fechaNac;
 	private Sexo sexo;
-	private Origen origen;
-	private Sinc sinc;
-	private Fecha ultAct;
 	
 	
 	public Long getDocumento() {
@@ -74,28 +69,6 @@ public abstract class PersonaFisica extends Persona {
 	public void setSexo(Sexo sexo) {
 		this.sexo = sexo;
 	}
-	
-	public Origen getOrigen() {
-		return origen;
-	}
-	public void setOrigen(Origen origen) {
-		this.origen = origen;
-	}
-	
-	public Sinc getSinc() {
-		return sinc;
-	}
-	public void setSinc(Sinc sinc) {
-		this.sinc = sinc;
-	}
-	
-	public Fecha getUltAct() {
-		return ultAct;
-	}
-	public void setUltAct(Fecha ultAct) {
-		this.ultAct = ultAct;
-	}
-	
 	
 	
 }

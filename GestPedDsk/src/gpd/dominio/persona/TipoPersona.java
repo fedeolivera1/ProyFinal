@@ -19,4 +19,12 @@ public enum TipoPersona {
 	public char getAsChar() {
 		return asChar;
 	}
+	
+	public static TipoPersona getTipoPersonaPorChar(final char name) {
+        for (TipoPersona tipoPers : TipoPersona.values()) {
+            if (tipoPers.getAsChar() == name)
+                return tipoPers;
+    	}
+        return null;
+    }
 }
