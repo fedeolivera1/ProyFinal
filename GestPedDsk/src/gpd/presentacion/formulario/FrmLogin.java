@@ -22,16 +22,13 @@ import gpd.presentacion.generic.CnstPresGeneric;
 
 import javax.swing.JPasswordField;
 import javax.swing.JLabel;
-<<<<<<< HEAD
 import java.awt.Font;
 import java.awt.Color;
 import javax.swing.ImageIcon;
 import java.awt.Toolkit;
-=======
 import javax.swing.SwingConstants;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
->>>>>>> refs/remotes/origin/master
 
 public class FrmLogin extends JFrame {
 
@@ -65,13 +62,9 @@ public class FrmLogin extends JFrame {
 	 * Create the frame.
 	 */
 	public FrmLogin() {
-<<<<<<< HEAD
 		setTitle("Inicio");
 		setIconImage(Toolkit.getDefaultToolkit().getImage(FrmLogin.class.getResource("/gpd/recursos/Icono.png")));
-		ctrl = new ControladorFrmLogin();
-=======
 		ctrl = new CtrlFrmLogin();
->>>>>>> refs/remotes/origin/master
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 425, 300);
@@ -83,9 +76,7 @@ public class FrmLogin extends JFrame {
 		contentPane.setLayout(null);
 		
 		txtUsr = new JTextField();
-<<<<<<< HEAD
 		txtUsr.setBounds(268, 94, 120, 20);
-=======
 		txtUsr.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent arg0) {
@@ -95,7 +86,6 @@ public class FrmLogin extends JFrame {
 			}
 		});
 		txtUsr.setBounds(304, 94, 120, 20);
->>>>>>> refs/remotes/origin/master
 		contentPane.add(txtUsr);
 		txtUsr.setColumns(10);
 		
@@ -105,7 +95,6 @@ public class FrmLogin extends JFrame {
 				obtenerUsuario(txtUsr.getText(), txtPass.getPassword());
 			}
 		});
-<<<<<<< HEAD
 		btnLogin.setBounds(299, 171, 89, 23);
 		contentPane.add(btnLogin);
 		
@@ -129,7 +118,6 @@ public class FrmLogin extends JFrame {
 		lblNewLabel_1.setIcon(new ImageIcon(FrmLogin.class.getResource("/gpd/recursos/InicioDog.png")));
 		lblNewLabel_1.setBounds(56, 38, 120, 195);
 		contentPane.add(lblNewLabel_1);
-=======
 		
 		txtPass = new JPasswordField();
 		txtPass.addKeyListener(new KeyAdapter() {
@@ -145,7 +133,7 @@ public class FrmLogin extends JFrame {
 		btnLogin.setBounds(335, 166, 89, 23);
 		contentPane.add(btnLogin);
 		
-		JLabel lblUsuario = new JLabel("Usuario");
+		lblUsuario = new JLabel("Usuario");
 		lblUsuario.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblUsuario.setBounds(248, 97, 46, 14);
 		contentPane.add(lblUsuario);
@@ -172,6 +160,5 @@ public class FrmLogin extends JFrame {
 		} else {
 			JOptionPane.showMessageDialog(null, CnstPresGeneric.USR_NO_AUTENTICADO, CnstPresGeneric.USR, JOptionPane.ERROR_MESSAGE);
 		}
->>>>>>> refs/remotes/origin/master
 	}
 }
