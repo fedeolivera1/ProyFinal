@@ -24,6 +24,7 @@ import org.apache.log4j.Logger;
 import gpd.dominio.producto.TipoProd;
 import gpd.dominio.usuario.UsuarioDsk;
 import gpd.presentacion.controlador.CtrlFrmProducto;
+import javax.swing.JSeparator;
 
 public class FrmProducto extends JFrame {
 
@@ -177,12 +178,19 @@ public class FrmProducto extends JFrame {
 		 * boton agregar
 		 */
 		JButton btnProAgr = new JButton("Agregar");
-		btnProAgr.setBounds(134, 247, 89, 23);
+		btnProAgr.setBounds(282, 11, 89, 23);
 		btnProAgr.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				ctrlProd.agregarProducto(txtProCod, txtProNom, txtProDesc, ftxtProStockMin, ftxtProPrecio);
 			}
 		});
+		
+		JSeparator sepProd1 = new JSeparator();
+		sepProd1.setOrientation(SwingConstants.VERTICAL);
+		sepProd1.setForeground(SystemColor.info);
+		sepProd1.setBackground(SystemColor.info);
+		sepProd1.setBounds(270, 11, 2, 268);
+		tpProd.add(sepProd1);
 		tpProd.add(btnProAgr);
 		
 		/**
@@ -194,7 +202,7 @@ public class FrmProducto extends JFrame {
 				ctrlProd.modificarProducto(txtProId, txtProCod, txtProNom, txtProDesc, ftxtProStockMin, ftxtProPrecio);
 			}
 		});
-		btnProMod.setBounds(134, 281, 89, 23);
+		btnProMod.setBounds(282, 45, 89, 23);
 		tpProd.add(btnProMod);
 		
 		/**
@@ -206,7 +214,7 @@ public class FrmProducto extends JFrame {
 				ctrlProd.eliminarProducto(txtProId);
 			}
 		});
-		btnProEli.setBounds(134, 315, 89, 23);
+		btnProEli.setBounds(282, 79, 89, 23);
 		tpProd.add(btnProEli);
 		
 		JButton btnTpAgregar = new JButton("+");
@@ -215,7 +223,6 @@ public class FrmProducto extends JFrame {
 				ctrlProd.abrirInternalFrame();
 			}
 		});
-		btnTpAgregar.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		btnTpAgregar.setBounds(228, 41, 32, 23);
 		tpProd.add(btnTpAgregar);
 		

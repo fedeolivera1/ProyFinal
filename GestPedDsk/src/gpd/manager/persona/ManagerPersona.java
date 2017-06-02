@@ -19,7 +19,10 @@ import gpd.persistencia.persona.PersistenciaPersona;
 public class ManagerPersona {
 
 	private static final Logger logger = Logger.getLogger(ManagerPersona.class);
-	IPersPersona interfacePersona;
+	private IPersPersona interfacePersona;
+	
+	
+	/* TIPO DOC */
 	
 	public List<TipoDoc> obtenerListaTipoDoc() {
 		logger.info("Se ingresa a obtenerListaTipoDoc");
@@ -34,6 +37,8 @@ public class ManagerPersona {
 		}
 		return listaTipoDoc;
 	}
+	
+	/* PERSONA JURIDICA */
 	
 	public PersonaFisica obtenerPersFisicaPorId(Long id) {
 		logger.info("Se ingresa a obtenerPersFisicaPorId");
@@ -81,11 +86,71 @@ public class ManagerPersona {
 		}
 		return resultado;
 	}
+	
+	public Integer modificarPersFisica(PersonaFisica persFisica) {
+		logger.info("Se ingresa a modificarPersFisica");
+		Integer resultado = null;
+		if(persFisica != null) {
+			interfacePersona = new PersistenciaPersona();
+			try {
+				Conector.getConn();
+				resultado = interfacePersona.modificarPersFisica(persFisica);
+				Conector.closeConn("modificarPersFisica", null);
+			} catch (PersistenciaException e) {
+				//FIXME ver como manejar esta excep
+				e.printStackTrace();
+			}
+		}
+		return resultado;
+	}
+	
+	public Integer eliminarPersFisica(PersonaFisica persFisica) {
+		logger.info("Se ingresa a eliminarPersFisica");
+		Integer resultado = null;
+		if(persFisica != null) {
+			interfacePersona = new PersistenciaPersona();
+			try {
+				Conector.getConn();
+				resultado = interfacePersona.eliminarPersFisica(persFisica);
+				Conector.closeConn("eliminarPersFisica", null);
+			} catch (PersistenciaException e) {
+				//FIXME ver como manejar esta excep
+				e.printStackTrace();
+			}
+		}
+		return resultado;
+	}
 
-	public PersonaJuridica obtenerPersJuridicaPorId(Integer id) {
-		logger.info("Ingresa obtenerPersJuridicaPorId");
-		// TODO Auto-generated method stub
-		return null;
+	/* PERSONA JURIDICA */
+	
+	public List<PersonaJuridica> obtenerBusquedaPersJuridica(Long rut, String nombre, String razonSoc, String bps, String bse, 
+			Boolean esProv, String direccion, String telefono, String celular, String email, Localidad loc) {
+		logger.info("Ingresa obtenerBusquedaPersJuridica");
+		List<PersonaJuridica> listaPj = null;
+		interfacePersona = new PersistenciaPersona();
+		try {
+			Conector.getConn();
+			Integer idLoc = (loc != null ? loc.getIdLocalidad() : CnstQryGeneric.NUMBER_INVALID);
+			listaPj = interfacePersona.obtenerBusquedaPersJuridica(rut, nombre, razonSoc, bps, bse, esProv, direccion, telefono, celular, email, idLoc);
+			Conector.closeConn("obtenerBusquedaPersJuridica", null);
+		} catch (PersistenciaException e) {
+			e.printStackTrace();//FIXME ver como manejar esta excep
+		}
+		return listaPj;
+	}
+	
+	public PersonaJuridica obtenerPersJuridicaPorId(Long id) {
+		logger.info("Se ingresa a obtenerPersJuridicaPorId");
+		PersonaJuridica persJuridica = null;
+		interfacePersona = new PersistenciaPersona();
+		try {
+			Conector.getConn();
+			persJuridica = interfacePersona.obtenerPersJuridicaPorId(id);
+			Conector.closeConn("obtenerPersJuridicaPorId", null);
+		} catch (PersistenciaException e) {
+			e.printStackTrace();//FIXME ver como manejar esta excep
+		}
+		return persJuridica;
 	}
 	
 	public Integer guardarPersJuridica(PersonaJuridica persJuridica) {
@@ -96,13 +161,49 @@ public class ManagerPersona {
 			try {
 				Conector.getConn();
 				resultado = interfacePersona.guardarPersJuridica(persJuridica);
+				Conector.closeConn("guardarPersJuridica", null);
 			} catch (PersistenciaException e) {
 				e.printStackTrace();//FIXME ver como manejar esta excep
 			}
-			Conector.closeConn("guardarPersFisica", null);
 		}
 		return resultado;
 	}
+	
+	public Integer modificarPersJuridica(PersonaJuridica persJuridica) {
+		logger.info("Se ingresa a modificarPersJuridica");
+		Integer resultado = null;
+		if(persJuridica != null) {
+			interfacePersona = new PersistenciaPersona();
+			try {
+				Conector.getConn();
+				resultado = interfacePersona.modificarPersJuridica(persJuridica);
+				Conector.closeConn("modificarPersJuridica", null);
+			} catch (PersistenciaException e) {
+				//FIXME ver como manejar esta excep
+				e.printStackTrace();
+			}
+		}
+		return resultado;
+	}
+	
+	public Integer eliminarPersFisica(PersonaJuridica persJuridica) {
+		logger.info("Se ingresa a eliminarPersFisica");
+		Integer resultado = null;
+		if(persJuridica != null) {
+			interfacePersona = new PersistenciaPersona();
+			try {
+				Conector.getConn();
+				resultado = interfacePersona.eliminarPersJuridica(persJuridica);
+				Conector.closeConn("eliminarPersFisica", null);
+			} catch (PersistenciaException e) {
+				//FIXME ver como manejar esta excep
+				e.printStackTrace();
+			}
+		}
+		return resultado;
+	}
+	
+	/* DEP Y LOC */
 	
 	public List<Departamento> obtenerListaDepartamento() {
 		logger.info("Se ingresa a obtenerListaDepartamento");

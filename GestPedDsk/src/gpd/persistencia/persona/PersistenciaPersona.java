@@ -517,9 +517,77 @@ public class PersistenciaPersona extends Conector implements IPersPersona  {
 	}
 
 	@Override
-	public List<PersonaJuridica> obtenerBusquedaPersJuridica(String x) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<PersonaJuridica> obtenerBusquedaPersJuridica(Long rut, String nombre, String razonSoc, String bps, String bse, 
+			Boolean esProv, String direccion, String telefono, String celular, String email, Integer idLoc) throws PersistenciaException {
+		List<PersonaJuridica> listaPj = new ArrayList<>();
+		try {
+			GenSqlSelectType genType = new GenSqlSelectType(CnstQryPersona.QRY_SEARCH_PJ);
+			genType.setParamEmptyAsNumber(rut);
+			genType.setParamEmptyAsNumber(rut);
+			genType.setParamLikeBoth(nombre);
+			genType.setParam(nombre);
+			genType.setParamLikeBoth(razonSoc);
+			genType.setParam(razonSoc);
+			genType.setParamLikeBoth(bps);
+			genType.setParam(bps);
+			genType.setParamLikeBoth(bse);
+			genType.setParam(bse);
+			genType.setParam(esProv ? 'S' : 'N');
+			genType.setParam(esProv ? 'S' : 'N');
+			genType.setParamLikeBoth(direccion);
+			genType.setParam(direccion);
+			genType.setParamLikeBoth(telefono);
+			genType.setParam(telefono);
+			genType.setParamLikeBoth(celular);
+			genType.setParam(celular);
+			genType.setParamLikeBoth(email);
+			genType.setParam(email);
+			genType.setParamEmptyAsNumber(idLoc);
+			genType.setParamEmptyAsNumber(idLoc);
+			ResultSet rs = (ResultSet) runGeneric(genType);
+			while(rs.next()) {
+				PersonaJuridica pj = new PersonaJuridica();
+				pj.setRut(rs.getLong("rut"));
+				pj.setNombre(rs.getString("nombre"));
+				pj.setRazonSocial(rs.getString("razon_social"));
+				pj.setBps(rs.getString("bps"));
+				pj.setBse(rs.getString("bse"));
+				char[] esProvChar = new char[1];
+				rs.getCharacterStream("es_prov").read(esProvChar);
+				pj.setEsProv(esProvChar.equals('S') ? true : false);
+				//persona
+				pj.setDireccion(rs.getString("direccion"));
+				pj.setPuerta(rs.getString("puerta"));
+				pj.setSolar(rs.getString("solar"));
+				pj.setManzana(rs.getString("manzana"));
+				pj.setKm(rs.getFloat("km"));
+				pj.setComplemento(rs.getString("complemento"));
+				pj.setTelefono(rs.getString("telefono"));
+				pj.setCelular(rs.getString("celular"));
+				pj.setEmail(rs.getString("email"));
+				pj.setFechaReg(new Fecha(rs.getDate("fecha_reg")));
+				char[] tipoChar = new char[1];
+				rs.getCharacterStream("tipo").read(tipoChar);
+				pj.setTipoPers(TipoPersona.getTipoPersonaPorChar(tipoChar[0]));
+				pj.setLocalidad(obtenerLocalidadPorId(rs.getInt("id_loc")));
+				char[] origenChar = new char[1];
+				rs.getCharacterStream("origen").read(origenChar);
+				Origen origen = Origen.getOrigenPorChar(origenChar[0]);
+				pj.setOrigen(origen);
+				char[] sincChar = new char[1];
+				rs.getCharacterStream("sinc").read(sincChar);
+				Sinc sinc = Sinc.getSincPorChar(sincChar[0]);
+				pj.setSinc(sinc);
+				pj.setUltAct(new Fecha(rs.getTimestamp("ult_act")));
+				
+				listaPj.add(pj);
+			}
+		} catch (ConectorException | SQLException | IOException e) {
+			Conector.rollbackConn();
+			logger.log(Level.FATAL, "Excepcion al obtenerListaTipoDoc: " + e.getMessage(), e);
+			throw new PersistenciaException(e.getMessage());
+		}
+		return listaPj;
 	}
 
 	@Override

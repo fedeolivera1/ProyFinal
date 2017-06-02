@@ -14,8 +14,11 @@ import gpd.persistencia.producto.PersistenciaProducto;
 public class ManagerProducto {
 
 	private static final Logger logger = Logger.getLogger(ManagerProducto.class);
-	IPersProducto interfaceProducto;
-	Integer resultado;
+	private IPersProducto interfaceProducto;
+	private Integer resultado;
+	
+	
+	/* PRODUCTO */
 	
 	public Producto obtenerProductoPorId(Integer id) {
 		logger.info("Se ingresa a obtenerProductoPorId");
@@ -93,6 +96,8 @@ public class ManagerProducto {
 		return resultado;
 	}
 	
+	
+	/* TIPO PROD */
 	
 	public TipoProd obtenerTipoProdPorId(Integer id) {
 		logger.info("Se ingresa a obtenerTipoProd");

@@ -48,7 +48,7 @@ public class PersistenciaUsuario extends Conector implements IPersUsuario {
 	}
 
 	@Override
-	public Integer guardarUsuario(UsuarioDsk usuario) {
+	public Integer guardarUsuario(UsuarioDsk usuario) throws PersistenciaException {
 		Integer resultado = null;
 		GenSqlExecType genExec = new GenSqlExecType(CnstQryUsuario.QRY_INSERT_USR);
 		genExec.setParam(usuario.getNomUsu());
@@ -59,12 +59,13 @@ public class PersistenciaUsuario extends Conector implements IPersUsuario {
 		} catch (ConectorException e) {
 			Conector.rollbackConn();
 			logger.log(Level.FATAL, "Excepcion al guardarUsuario: " + e.getMessage(), e);
+			throw new PersistenciaException(e);
 		}
 		return resultado;
 	}
 
 	@Override
-	public Integer modificarUsuario(UsuarioDsk usuario) {
+	public Integer modificarUsuario(UsuarioDsk usuario) throws PersistenciaException {
 		Integer resultado = null;
 		GenSqlExecType genExec = new GenSqlExecType(CnstQryUsuario.QRY_UPDATE_USR);
 		genExec.setParam( usuario.getPass());
@@ -74,12 +75,13 @@ public class PersistenciaUsuario extends Conector implements IPersUsuario {
 		} catch (ConectorException e) {
 			Conector.rollbackConn();
 			logger.log(Level.FATAL, "Excepcion al modificarUsuario: " + e.getMessage(), e);
+			throw new PersistenciaException(e);
 		}
 		return resultado;
 	}
 
 	@Override
-	public Integer eliminarUsuario(UsuarioDsk usuario) {
+	public Integer eliminarUsuario(UsuarioDsk usuario) throws PersistenciaException {
 		Integer resultado = null;
 		GenSqlExecType genExec = new GenSqlExecType(CnstQryUsuario.QRY_DELETE_USR);
 		genExec.setParam(usuario.getNomUsu());
@@ -88,6 +90,7 @@ public class PersistenciaUsuario extends Conector implements IPersUsuario {
 		} catch (ConectorException e) {
 			Conector.rollbackConn();
 			logger.log(Level.FATAL, "Excepcion al eliminarUsuario: " + e.getMessage(), e);
+			throw new PersistenciaException(e);
 		}
 		return resultado;
 	}

@@ -7,6 +7,8 @@ import java.awt.event.FocusEvent;
 
 import javax.swing.BorderFactory;
 import javax.swing.border.Border;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 public class CompValidador {
 
@@ -45,6 +47,14 @@ public class CompValidador {
 					removeBorder(comp);
 				}
 			});
+		} else if (nombreClase.equals("javax.swing.JList")) {
+			((javax.swing.JList<?>) comp).setBorder(line);
+			((javax.swing.JList<?>) comp).addListSelectionListener(new ListSelectionListener() {
+				@Override
+				public void valueChanged(ListSelectionEvent e) {
+					removeBorder(comp);
+				}
+			});
 		}
 	}
 	
@@ -59,6 +69,8 @@ public class CompValidador {
 			((javax.swing.JComboBox<?>) comp).setBorder(empty);
 		} else if (nombreClase.equals("javax.swing.JTextArea")) {
 			((javax.swing.JTextArea) comp).setBorder(empty);
+		} else if (nombreClase.equals("javax.swing.JList")) {
+			((javax.swing.JList<?>) comp).setBorder(empty);
 		}
 	}
 	

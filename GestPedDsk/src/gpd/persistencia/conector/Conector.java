@@ -209,6 +209,9 @@ public abstract class Conector {
 				} else if (data instanceof Character) {
 					ps.setObject(key, data, java.sql.Types.CHAR);
 					logger.debug("seteo param en posi " + key + " del tipo java.sql.Types.CHAR: " + data);
+				} else if (data instanceof Boolean) {
+					ps.setObject(key, data, java.sql.Types.BOOLEAN);
+					logger.debug("seteo param en posi " + key + " del tipo java.sql.Types.BOOLEAN: " + data);
 				} else if (data instanceof Long) {
 					ps.setObject(key, data, java.sql.Types.BIGINT);
 					logger.debug("seteo param en posi " + key + " del tipo java.sql.Types.BIGINT: " + data);

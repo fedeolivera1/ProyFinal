@@ -35,6 +35,10 @@ public class CtrlFrmProducto extends CtrlGenerico {
 		this.setFrm(frm);
 	}
 	
+	/*****************************************************************************************************************************************************/
+	/* CONTROLES */
+	/*****************************************************************************************************************************************************/
+	
 	public void cargarCbxTipoProd(JComboBox<TipoProd> cbxTipoProd) {
 		cbxTipoProd.removeAllItems();
 		ArrayList<TipoProd> listaTipoProd = (ArrayList<TipoProd>) mgrProd.obtenerListaTipoProd();
@@ -60,6 +64,10 @@ public class CtrlFrmProducto extends CtrlGenerico {
 			txtTpDesc.setText(tp.getDescripcion());
 		}
 	}
+	
+	/*****************************************************************************************************************************************************/
+	/* ACCIONES */
+	/*****************************************************************************************************************************************************/
 	
 	public Integer agregarProducto(JTextField codigo, JTextField nombre, JTextField descripcion, JFormattedTextField stockMin, JFormattedTextField precio) {
 		if(controlDatosObl(codigo, nombre, stockMin, precio)) {

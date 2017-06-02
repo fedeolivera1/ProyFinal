@@ -9,6 +9,7 @@ import javax.swing.JFormattedTextField;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
@@ -101,6 +102,10 @@ public abstract class CtrlGenerico {
 		} else if(nombreClase.equals("javax.swing.JFormattedTextField")) {
 			JFormattedTextField jftf = (javax.swing.JFormattedTextField) comp;
 			retornoOk = !jftf.getText().equals("");
+		} else if(nombreClase.equals("javax.swing.JPasswordField")) {
+			JPasswordField jpf = (javax.swing.JPasswordField) comp;
+			retornoOk = jpf.getPassword() != null && 
+					jpf.getPassword().length > 5;
 		} else if(nombreClase.equals("javax.swing.JTextArea")) {
 			JTextArea jta = (javax.swing.JTextArea) comp;
 			retornoOk = !jta.getText().equals("");
@@ -328,6 +333,9 @@ public abstract class CtrlGenerico {
 		} else if (nombreClase.equals("javax.swing.JTextArea")) {
 			// Es un JTextArea asi que lo ponemos en blanco
 			((javax.swing.JTextArea) comp).setText("");
+		} else if (nombreClase.equals("javax.swing.JCheckBox")) {
+			// Es un JCheckBox asi que lo desmarcamos
+			((javax.swing.JCheckBox) comp).setSelected(false);
 		} else if (nombreClase.equals("javax.swing.JPanel")) {
 			// Es un JPanel asi que llamamos a clearPanel
 			clearPanel((javax.swing.JPanel) comp);
@@ -338,7 +346,9 @@ public abstract class CtrlGenerico {
 			// Es un JScrollPane asi que llamamos a clearScrollPane
 			clearTabbedPane((javax.swing.JTabbedPane) comp);
 		} else if (nombreClase.equals("javax.swing.JTable")) {
-			((javax.swing.JTable) comp).removeAll();
+			DefaultTableModel modelo = (DefaultTableModel) ((javax.swing.JTable) comp).getModel();
+			modelo.setColumnCount(0);
+			modelo.setRowCount(0);
 		}
 		//se reinician los bordes para advertencias.
 		getCompVal().removeBorder(comp);
@@ -353,7 +363,7 @@ public abstract class CtrlGenerico {
 	}
 	
 	public void limpiarJTable(JTable tabla){
-        DefaultTableModel modelo= (DefaultTableModel) tabla.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) tabla.getModel();
         int filas = tabla.getRowCount()-1;
         for (int i = 0; i < filas; i++) {
             modelo.removeRow(0);

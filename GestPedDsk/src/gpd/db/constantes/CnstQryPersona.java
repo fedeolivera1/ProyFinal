@@ -10,7 +10,7 @@ public interface CnstQryPersona {
 														+ "on pf.documento = p.id_persona "
 														+ "where p.id_persona = ?";
 	
-	public static final String QRY_SELECT_PJ_XID = "SELECT pj.nombre, pj.razon_social, pj.bps, pj.bse, pj.es_prov, p.direccion, p.puerta, p.solar, "
+	public static final String QRY_SELECT_PJ_XID = "SELECT pj.rut, pj.nombre, pj.razon_social, pj.bps, pj.bse, pj.es_prov, p.direccion, p.puerta, p.solar, "
 															+ "p.manzana, p.km, p.complemento, p.telefono, p.celular, p.email, p.fecha_reg, p.tipo, "
 															+ "p.id_loc, p.origen, p.sinc, p.ult_act "
 														+ "FROM pers_juridica pj "
@@ -29,6 +29,23 @@ public interface CnstQryPersona {
 															+ "AND (pf.nombre1 LIKE ? OR '' = ?) "
 															+ "AND (pf.nombre2 LIKE ? OR '' = ?) ) "
 														+ "AND (pf.sexo = ? OR '' = ?) "
+														+ "AND (p.direccion LIKE ? OR '' = ?) "
+														+ "AND (p.telefono LIKE ? OR '' = ?) "
+														+ "AND (p.celular LIKE ? OR '' = ?) "
+														+ "AND (p.email LIKE ? OR '' = ?) "
+														+ "AND (p.id_loc = ? OR -1 = ?) ";
+	
+	public static final String QRY_SEARCH_PJ = "SELECT pj.rut, pj.nombre, pj.razon_social, pj.bps, pj.bse, pj.es_prov, p.direccion, p.puerta, p.solar, "
+															+ "p.manzana, p.km, p.complemento, p.telefono, p.celular, p.email, p.fecha_reg, p.tipo, "
+															+ "p.id_loc, p.origen, p.sinc, p.ult_act "
+														+ "FROM pers_juridica pj INNER JOIN persona p "
+														+ "ON pj.rut = p.id_persona "
+														+ "WHERE (pj.rut = ? OR -1 = ?) "
+														+ "AND (pj.nombre LIKE ? OR '' = ?) "
+														+ "AND (pj.razon_social LIKE ? OR '' = ?) "
+														+ "AND (pj.bps LIKE ? OR '' = ?) "
+														+ "AND (pj.bse LIKE ? OR '' = ?) "
+														+ "AND (pj.es_prov = ? OR '' = ?) "
 														+ "AND (p.direccion LIKE ? OR '' = ?) "
 														+ "AND (p.telefono LIKE ? OR '' = ?) "
 														+ "AND (p.celular LIKE ? OR '' = ?) "

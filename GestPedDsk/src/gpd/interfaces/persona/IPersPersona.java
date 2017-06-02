@@ -26,7 +26,8 @@ public interface IPersPersona {
 	public Integer eliminarPersFisica(PersonaFisica pf) throws PersistenciaException;
 	//pj
 	public PersonaJuridica obtenerPersJuridicaPorId(Long id) throws PersistenciaException;
-	public List<PersonaJuridica> obtenerBusquedaPersJuridica(String x) throws PersistenciaException;
+	public List<PersonaJuridica> obtenerBusquedaPersJuridica(Long rut, String nombre, String razonSoc, String bps, String bse, 
+			Boolean esProv, String direccion, String telefono, String celular, String email, Integer loc) throws PersistenciaException;
 	public Integer guardarPersJuridica(PersonaJuridica pj) throws PersistenciaException;
 	public Integer modificarPersJuridica(PersonaJuridica pj) throws PersistenciaException;
 	public Integer eliminarPersJuridica(PersonaJuridica pj) throws PersistenciaException;

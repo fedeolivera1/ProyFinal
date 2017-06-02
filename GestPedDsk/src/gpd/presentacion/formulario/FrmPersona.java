@@ -31,13 +31,16 @@ import gpd.dominio.persona.Sexo;
 import gpd.dominio.persona.TipoDoc;
 import gpd.dominio.usuario.UsuarioDsk;
 import gpd.presentacion.controlador.CtrlFrmPersona;
+import javax.swing.JCheckBox;
 
 public class FrmPersona extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(FrmProducto.class);
 	private static FrmPersona instance; 
+	private CtrlFrmPersona ctrlPers;
 	private JPanel contentPane;
+	//pf
 	private JTextField txtPfDoc;
 	private JTextField txtPfApe1;
 	private JTextField txtPfApe2;
@@ -55,10 +58,29 @@ public class FrmPersona extends JFrame {
 	private JTextField txtPfEml;
 	private JComboBox<TipoDoc> cbxPfTipoDoc;
 	private JComboBox<Sexo> cbxPfSexo;
-	private JComboBox<Localidad> cbxPersLoc;
-	private JComboBox<Departamento> cbxPersDep;
-	private CtrlFrmPersona ctrlPers;
+	private JComboBox<Departamento> cbxPfDep;
+	private JComboBox<Localidad> cbxPfLoc;
 	private JTable jtPersFisica;
+
+	//pj
+	private JTextField txtPjRut;
+	private JTextField txtPjNom;
+	private JTextField txtPjRs;
+	private JTextField txtPjBps;
+	private JTextField txtPjBse;
+	private JCheckBox chkPjProv;
+	private JTextField txtPjDir;
+	private JTextField txtPjPue;
+	private JTextField txtPjSol;
+	private JTextField txtPjMan;
+	private JTextField txtPjKm;
+	private JTextField txtPjComp;
+	private JTextField txtPjTel;
+	private JTextField txtPjCel;
+	private JTextField txtPjEml;
+	private JComboBox<Departamento> cbxPjDep;
+	private JComboBox<Localidad> cbxPjLoc;
+	private JTable jtPersJuridica;
 
 	
 	/**
@@ -112,7 +134,6 @@ public class FrmPersona extends JFrame {
 		
 		cbxPfTipoDoc = new JComboBox<>();
 		cbxPfTipoDoc.setBounds(84, 11, 151, 20);
-		ctrlPers.cargarCbxTipoDoc(cbxPfTipoDoc);
 		pnlPersF.add(cbxPfTipoDoc);
 		
 		JLabel lblDocumento = new JLabel("Documento");
@@ -191,12 +212,12 @@ public class FrmPersona extends JFrame {
 		pnlPersF.add(cbxPfSexo);
 		ctrlPers.cargarCbxSexo(cbxPfSexo);
 		
-		JSeparator separator = new JSeparator();
-		separator.setOrientation(SwingConstants.VERTICAL);
-		separator.setForeground(SystemColor.info);
-		separator.setBackground(SystemColor.info);
-		separator.setBounds(245, 11, 2, 268);
-		pnlPersF.add(separator);
+		JSeparator sepPf1 = new JSeparator();
+		sepPf1.setOrientation(SwingConstants.VERTICAL);
+		sepPf1.setForeground(SystemColor.info);
+		sepPf1.setBackground(SystemColor.info);
+		sepPf1.setBounds(245, 11, 2, 268);
+		pnlPersF.add(sepPf1);
 		
 		JLabel lblDireccion = new JLabel("Direccion");
 		lblDireccion.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -288,6 +309,13 @@ public class FrmPersona extends JFrame {
 		txtPfEml.setBounds(338, 197, 151, 20);
 		pnlPersF.add(txtPfEml);
 		
+		JSeparator sepPf2 = new JSeparator();
+		sepPf2.setOrientation(SwingConstants.VERTICAL);
+		sepPf2.setForeground(SystemColor.info);
+		sepPf2.setBackground(SystemColor.info);
+		sepPf2.setBounds(499, 11, 2, 268);
+		pnlPersF.add(sepPf2);
+		
 		JButton btnPfAgr = new JButton("Agregar");
 		btnPfAgr.setBounds(511, 10, 89, 23);
 		pnlPersF.add(btnPfAgr);
@@ -313,62 +341,276 @@ public class FrmPersona extends JFrame {
 		lblDepartamento.setBounds(257, 231, 71, 14);
 		pnlPersF.add(lblDepartamento);
 		
-		cbxPersDep = new JComboBox<>();
-		cbxPersDep.setBounds(338, 228, 151, 20);
-		pnlPersF.add(cbxPersDep);
-		ctrlPers.cargarCbxDep(cbxPersDep);
+		cbxPfDep = new JComboBox<>();
+		cbxPfDep.setBounds(338, 228, 151, 20);
+		pnlPersF.add(cbxPfDep);
 		
 		JLabel lblLocalidad = new JLabel("Localidad");
 		lblLocalidad.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblLocalidad.setBounds(257, 262, 71, 14);
 		pnlPersF.add(lblLocalidad);
 		
-		cbxPersLoc = new JComboBox<>();
-		cbxPersLoc.setBounds(338, 259, 151, 20);
-		pnlPersF.add(cbxPersLoc);
+		cbxPfLoc = new JComboBox<>();
+		cbxPfLoc.setBounds(338, 259, 151, 20);
+		pnlPersF.add(cbxPfLoc);
 		
-		JSeparator separator_1 = new JSeparator();
-		separator_1.setForeground(SystemColor.info);
-		separator_1.setBackground(SystemColor.info);
-		separator_1.setBounds(10, 290, 759, 2);
-		pnlPersF.add(separator_1);
+		JSeparator sepPf3 = new JSeparator();
+		sepPf3.setForeground(SystemColor.info);
+		sepPf3.setBackground(SystemColor.info);
+		sepPf3.setBounds(10, 290, 759, 2);
+		pnlPersF.add(sepPf3);
 		
 		JPanel pnlPersJ = new JPanel();
 		tabbedPane.addTab("Empresa", null, pnlPersJ, null);
 		pnlPersJ.setLayout(null);
 		
-		cbxPersDep.addItemListener(new ItemListener() {
-			public void itemStateChanged(ItemEvent e) {
-				ctrlPers.cargarCbxLoc(cbxPersDep, cbxPersLoc);
-			}
-		});
+		JSeparator sepPj1 = new JSeparator();
+		sepPj1.setOrientation(SwingConstants.VERTICAL);
+		sepPj1.setForeground(SystemColor.info);
+		sepPj1.setBackground(SystemColor.info);
+		sepPj1.setBounds(245, 11, 2, 268);;
 		
-		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(10, 303, 759, 223);
-		pnlPersF.add(scrollPane);
+		JLabel lblRut = new JLabel("Rut");
+		lblRut.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblRut.setBounds(10, 14, 64, 14);
+		pnlPersJ.add(lblRut);
+		
+		txtPjRut = new JTextField();
+		txtPjRut.setColumns(10);
+		txtPjRut.setBounds(84, 11, 151, 20);
+		pnlPersJ.add(txtPjRut);
+		
+		JLabel lblNombre_2 = new JLabel("Nombre");
+		lblNombre_2.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblNombre_2.setBounds(10, 45, 64, 14);
+		pnlPersJ.add(lblNombre_2);
+		
+		txtPjNom = new JTextField();
+		txtPjNom.setColumns(10);
+		txtPjNom.setBounds(84, 42, 151, 20);
+		pnlPersJ.add(txtPjNom);
+		
+		JLabel lblRazonSocial = new JLabel("Razon Social");
+		lblRazonSocial.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblRazonSocial.setBounds(10, 76, 64, 14);
+		pnlPersJ.add(lblRazonSocial);
+		
+		txtPjRs = new JTextField();
+		txtPjRs.setColumns(10);
+		txtPjRs.setBounds(84, 73, 151, 20);
+		pnlPersJ.add(txtPjRs);
+		
+		JLabel lblBps = new JLabel("Bps");
+		lblBps.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblBps.setBounds(10, 107, 64, 14);
+		pnlPersJ.add(lblBps);
+		
+		txtPjBps = new JTextField();
+		txtPjBps.setColumns(10);
+		txtPjBps.setBounds(84, 104, 151, 20);
+		pnlPersJ.add(txtPjBps);
+		
+		JLabel lblBse = new JLabel("Bse");
+		lblBse.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblBse.setBounds(10, 138, 64, 14);
+		pnlPersJ.add(lblBse);
+		
+		txtPjBse = new JTextField();
+		txtPjBse.setColumns(10);
+		txtPjBse.setBounds(84, 135, 151, 20);
+		pnlPersJ.add(txtPjBse);
+		
+		chkPjProv = new JCheckBox("Proveedor  ");
+		chkPjProv.setHorizontalTextPosition(SwingConstants.LEADING);
+		chkPjProv.setBounds(20, 165, 97, 23);
+		pnlPersJ.add(chkPjProv);
+		pnlPersJ.add(sepPj1);
+		
+		JLabel label = new JLabel("Direccion");
+		label.setHorizontalAlignment(SwingConstants.RIGHT);
+		label.setBounds(264, 14, 64, 14);
+		pnlPersJ.add(label);
+		
+		txtPjDir = new JTextField();
+		txtPjDir.setColumns(10);
+		txtPjDir.setBounds(338, 11, 151, 20);
+		pnlPersJ.add(txtPjDir);
+		
+		JLabel label_1 = new JLabel("Puerta");
+		label_1.setHorizontalAlignment(SwingConstants.RIGHT);
+		label_1.setBounds(264, 45, 64, 14);
+		pnlPersJ.add(label_1);
+		
+		txtPjPue = new JTextField();
+		txtPjPue.setColumns(10);
+		txtPjPue.setBounds(338, 42, 50, 20);
+		pnlPersJ.add(txtPjPue);
+		
+		txtPjSol = new JTextField();
+		txtPjSol.setColumns(10);
+		txtPjSol.setBounds(439, 42, 50, 20);
+		pnlPersJ.add(txtPjSol);
+		
+		JLabel label_2 = new JLabel("Manzana");
+		label_2.setHorizontalAlignment(SwingConstants.RIGHT);
+		label_2.setBounds(270, 76, 58, 14);
+		pnlPersJ.add(label_2);
+		
+		txtPjMan = new JTextField();
+		txtPjMan.setColumns(10);
+		txtPjMan.setBounds(338, 73, 50, 20);
+		pnlPersJ.add(txtPjMan);
+		
+		txtPjKm = new JTextField();
+		txtPjKm.setColumns(10);
+		txtPjKm.setBounds(439, 73, 50, 20);
+		pnlPersJ.add(txtPjKm);
+		
+		JLabel label_3 = new JLabel("Complemento");
+		label_3.setHorizontalAlignment(SwingConstants.RIGHT);
+		label_3.setBounds(245, 107, 83, 14);
+		pnlPersJ.add(label_3);
+		
+		txtPjComp = new JTextField();
+		txtPjComp.setColumns(10);
+		txtPjComp.setBounds(338, 104, 151, 20);
+		pnlPersJ.add(txtPjComp);
+		
+		JLabel label_4 = new JLabel("Telefono");
+		label_4.setHorizontalAlignment(SwingConstants.RIGHT);
+		label_4.setBounds(257, 138, 71, 14);
+		pnlPersJ.add(label_4);
+		
+		txtPjTel = new JTextField();
+		txtPjTel.setColumns(10);
+		txtPjTel.setBounds(338, 135, 151, 20);
+		pnlPersJ.add(txtPjTel);
+		
+		JLabel label_5 = new JLabel("Celular");
+		label_5.setHorizontalAlignment(SwingConstants.RIGHT);
+		label_5.setBounds(257, 169, 71, 14);
+		pnlPersJ.add(label_5);
+		
+		txtPjCel = new JTextField();
+		txtPjCel.setColumns(10);
+		txtPjCel.setBounds(338, 166, 151, 20);
+		pnlPersJ.add(txtPjCel);
+		
+		JLabel label_6 = new JLabel("EMail");
+		label_6.setHorizontalAlignment(SwingConstants.RIGHT);
+		label_6.setBounds(257, 200, 71, 14);
+		pnlPersJ.add(label_6);
+		
+		txtPjEml = new JTextField();
+		txtPjEml.setColumns(10);
+		txtPjEml.setBounds(338, 197, 151, 20);
+		pnlPersJ.add(txtPjEml);
+		
+		JLabel label_7 = new JLabel("Departamento");
+		label_7.setHorizontalAlignment(SwingConstants.RIGHT);
+		label_7.setBounds(257, 231, 71, 14);
+		pnlPersJ.add(label_7);
+		
+		cbxPjDep = new JComboBox<Departamento>();
+		cbxPjDep.setBounds(338, 228, 151, 20);
+		pnlPersJ.add(cbxPjDep);
+		
+		JLabel label_8 = new JLabel("Localidad");
+		label_8.setHorizontalAlignment(SwingConstants.RIGHT);
+		label_8.setBounds(257, 262, 71, 14);
+		pnlPersJ.add(label_8);
+		
+		cbxPjLoc = new JComboBox<Localidad>();
+		cbxPjLoc.setBounds(338, 259, 151, 20);
+		pnlPersJ.add(cbxPjLoc);
+		
+		JLabel label_9 = new JLabel("Solar");
+		label_9.setHorizontalAlignment(SwingConstants.RIGHT);
+		label_9.setBounds(393, 45, 36, 14);
+		pnlPersJ.add(label_9);
+		
+		JLabel label_10 = new JLabel("Km");
+		label_10.setHorizontalAlignment(SwingConstants.RIGHT);
+		label_10.setBounds(398, 76, 31, 14);
+		pnlPersJ.add(label_10);
+		
+		JSeparator sepPj2 = new JSeparator();
+		sepPj2.setOrientation(SwingConstants.VERTICAL);
+		sepPj2.setForeground(SystemColor.info);
+		sepPj2.setBackground(SystemColor.info);
+		sepPj2.setBounds(499, 11, 2, 268);
+		pnlPersJ.add(sepPj2);
+		
+		JButton btnPjAgr = new JButton("Agregar");
+		btnPjAgr.setBounds(511, 10, 89, 23);
+		pnlPersJ.add(btnPjAgr);
+		
+		JButton btnPjMod = new JButton("Modificar");
+		btnPjMod.setBounds(511, 41, 89, 23);
+		pnlPersJ.add(btnPjMod);
+		
+		JButton btnPjEli = new JButton("Eliminar");
+		btnPjEli.setBounds(511, 72, 89, 23);
+		pnlPersJ.add(btnPjEli);
+		
+		JButton btnPjBuscar = new JButton("Buscar");
+		btnPjBuscar.setBounds(511, 134, 89, 23);
+		pnlPersJ.add(btnPjBuscar);
+		
+		JButton btnPjLimpiar = new JButton("Limpiar");
+		btnPjLimpiar.setBounds(511, 165, 89, 23);
+		pnlPersJ.add(btnPjLimpiar);
+		
+		JSeparator sepPj3 = new JSeparator();
+		sepPj3.setForeground(SystemColor.info);
+		sepPj3.setBackground(SystemColor.info);
+		sepPj3.setBounds(10, 290, 759, 2);
+		pnlPersJ.add(sepPj3);
+		
+		JScrollPane scrollPanePj = new JScrollPane();
+		scrollPanePj.setBounds(10, 303, 759, 223);
+		pnlPersJ.add(scrollPanePj);
+		
+		JScrollPane scrollPanePf = new JScrollPane();
+		scrollPanePf.setBounds(10, 303, 759, 223);
+		pnlPersF.add(scrollPanePf);
 		
 		jtPersFisica = new JTable();
 		jtPersFisica.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-		scrollPane.setColumnHeaderView(jtPersFisica);
-		scrollPane.setViewportView(jtPersFisica);
+		scrollPanePf.setColumnHeaderView(jtPersFisica);
+		scrollPanePf.setViewportView(jtPersFisica);
 		
-		JSeparator separator_2 = new JSeparator();
-		separator_2.setOrientation(SwingConstants.VERTICAL);
-		separator_2.setForeground(SystemColor.info);
-		separator_2.setBackground(SystemColor.info);
-		separator_2.setBounds(499, 11, 2, 268);
-		pnlPersF.add(separator_2);
+		jtPersJuridica = new JTable();
+		jtPersJuridica.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+		scrollPanePj.setColumnHeaderView(jtPersJuridica);
+		scrollPanePj.setViewportView(jtPersJuridica);
 		
+		//carga combos
+		ctrlPers.cargarCbxTipoDoc(cbxPfTipoDoc);
+		ctrlPers.cargarCbxDep(cbxPfDep);
+		ctrlPers.cargarCbxDep(cbxPjDep);
+		cbxPfDep.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				ctrlPers.cargarCbxLoc(cbxPfDep, cbxPfLoc);
+			}
+		});
+		cbxPjDep.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				ctrlPers.cargarCbxLoc(cbxPjDep, cbxPjLoc);
+			}
+		});
+		
+		//listeners botones
 		btnPfAgr.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ctrlPers.agregarPersFisica(cbxPfTipoDoc, txtPfDoc, txtPfApe1, txtPfApe2, txtPfNom1, txtPfNom2, txtPfFnac, cbxPfSexo, 
-						txtPfDir, txtPfPue, txtPfSol, txtPfMan, txtPfKm, txtPfComp, txtPfTel, txtPfCel, txtPfEml, cbxPersLoc);
+						txtPfDir, txtPfPue, txtPfSol, txtPfMan, txtPfKm, txtPfComp, txtPfTel, txtPfCel, txtPfEml, cbxPfLoc);
 			}
 		});
 		btnPfMod.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				ctrlPers.modificarPersFisica(cbxPfTipoDoc, txtPfDoc, txtPfApe1, txtPfApe2, txtPfNom1, txtPfNom2, txtPfFnac, cbxPfSexo, 
-						txtPfDir, txtPfPue, txtPfSol, txtPfMan, txtPfKm, txtPfComp, txtPfTel, txtPfCel, txtPfEml, cbxPersLoc);
+						txtPfDir, txtPfPue, txtPfSol, txtPfMan, txtPfKm, txtPfComp, txtPfTel, txtPfCel, txtPfEml, cbxPfLoc);
 			}
 		});
 		btnPfEli.addActionListener(new ActionListener() {
@@ -384,7 +626,35 @@ public class FrmPersona extends JFrame {
 		btnPfBuscar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ctrlPers.buscarPersFisica(txtPfDoc, txtPfApe1, txtPfApe2, txtPfNom1, txtPfNom2, cbxPfSexo, txtPfDir, txtPfTel, 
-						txtPfCel, txtPfEml, cbxPersLoc);
+						txtPfCel, txtPfEml, cbxPfLoc);
+			}
+		});
+		btnPjAgr.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ctrlPers.agregarPersJuridica(txtPjRut, txtPjNom, txtPjRs, txtPjBps, txtPjBse, chkPjProv, txtPjDir, txtPjPue, txtPjSol, txtPjMan, 
+						txtPjKm, txtPjComp, txtPjTel, txtPjCel, txtPjEml, cbxPjLoc);
+			}
+		});
+		btnPjMod.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				ctrlPers.modificarPersFisica(cbxPfTipoDoc, txtPfDoc, txtPfApe1, txtPfApe2, txtPfNom1, txtPfNom2, txtPfFnac, cbxPfSexo, 
+						txtPfDir, txtPfPue, txtPfSol, txtPfMan, txtPfKm, txtPfComp, txtPfTel, txtPfCel, txtPfEml, cbxPfLoc);
+			}
+		});
+		btnPjEli.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+//				ctrlPers.eliminarPersJuridica(txtPjRut);
+			}
+		});
+		btnPjLimpiar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ctrlPers.clearForm(getContentPane());
+			}
+		});
+		btnPjBuscar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ctrlPers.buscarPersJuridica(txtPjRut, txtPjNom, txtPjRs, txtPjBps, txtPjBse, chkPjProv,
+						txtPjDir, txtPjTel, txtPjCel, txtPjEml, cbxPjLoc);
 			}
 		});
 	}
@@ -393,6 +663,8 @@ public class FrmPersona extends JFrame {
 	/*****************************************************************************************************************************************************/
 	/* GET Y SET DE CAMPOS */
 	/*****************************************************************************************************************************************************/
+	
+	//pf
 	public JTextField getTxtPfDoc() {
 		return txtPfDoc;
 	}
@@ -512,21 +784,20 @@ public class FrmPersona extends JFrame {
 		this.cbxPfSexo = cbxPfSexo;
 	}
 	
-	public JComboBox<Localidad> getCbxPersLoc() {
-		return cbxPersLoc;
+	public JComboBox<Departamento> getCbxPfDep() {
+		return cbxPfDep;
 	}
-	public void setCbxPersLoc(JComboBox<Localidad> cbxPersLoc) {
-		this.cbxPersLoc = cbxPersLoc;
-	}
-
-	public JComboBox<Departamento> getCbxPersDep() {
-		return cbxPersDep;
-	}
-	public void setCbxPersDep(JComboBox<Departamento> cbxPersDep) {
-		this.cbxPersDep = cbxPersDep;
+	public void setCbxPfDep(JComboBox<Departamento> cbxPfDep) {
+		this.cbxPfDep = cbxPfDep;
 	}
 
-	
+	public JComboBox<Localidad> getCbxPfLoc() {
+		return cbxPfLoc;
+	}
+	public void setCbxPfLoc(JComboBox<Localidad> cbxPfLoc) {
+		this.cbxPfLoc = cbxPfLoc;
+	}
+
 	public JTable getJtPersFisica() {
 		return jtPersFisica;
 	}
@@ -534,4 +805,123 @@ public class FrmPersona extends JFrame {
 		this.jtPersFisica = jtPersFisica;
 	}
 
+	//pj
+	public JTextField getTxtPjRut() {
+		return txtPjRut;
+	}
+	public void setTxtPjRut(JTextField txtPjRut) {
+		this.txtPjRut = txtPjRut;
+	}
+
+	public JTextField getTxtPjNom() {
+		return txtPjNom;
+	}
+	public void setTxtPjNom(JTextField txtPjNom) {
+		this.txtPjNom = txtPjNom;
+	}
+
+	public JTextField getTxtPjRs() {
+		return txtPjRs;
+	}
+	public void setTxtPjRs(JTextField txtPjRs) {
+		this.txtPjRs = txtPjRs;
+	}
+
+	public JTextField getTxtPjBps() {
+		return txtPjBps;
+	}
+	public void setTxtPjBps(JTextField txtPjBps) {
+		this.txtPjBps = txtPjBps;
+	}
+
+	public JTextField getTxtPjBse() {
+		return txtPjBse;
+	}
+	public void setTxtPjBse(JTextField txtPjBse) {
+		this.txtPjBse = txtPjBse;
+	}
+	
+	public JTextField getTxtPjDir() {
+		return txtPjDir;
+	}
+	public void setTxtPjDir(JTextField txtPjDir) {
+		this.txtPjDir = txtPjDir;
+	}
+
+	public JTextField getTxtPjPue() {
+		return txtPjPue;
+	}
+	public void setTxtPjPue(JTextField txtPjPue) {
+		this.txtPjPue = txtPjPue;
+	}
+
+	public JTextField getTxtPjSol() {
+		return txtPjSol;
+	}
+	public void setTxtPjSol(JTextField txtPjSol) {
+		this.txtPjSol = txtPjSol;
+	}
+
+	public JTextField getTxtPjMan() {
+		return txtPjMan;
+	}
+	public void setTxtPjMan(JTextField txtPjMan) {
+		this.txtPjMan = txtPjMan;
+	}
+
+	public JTextField getTxtPjKm() {
+		return txtPjKm;
+	}
+	public void setTxtPjKm(JTextField txtPjKm) {
+		this.txtPjKm = txtPjKm;
+	}
+
+	public JTextField getTxtPjComp() {
+		return txtPjComp;
+	}
+	public void setTxtPjComp(JTextField txtPjComp) {
+		this.txtPjComp = txtPjComp;
+	}
+
+	public JTextField getTxtPjTel() {
+		return txtPjTel;
+	}
+	public void setTxtPjTel(JTextField txtPjTel) {
+		this.txtPjTel = txtPjTel;
+	}
+
+	public JTextField getTxtPjCel() {
+		return txtPjCel;
+	}
+	public void setTxtPjCel(JTextField txtPjCel) {
+		this.txtPjCel = txtPjCel;
+	}
+
+	public JTextField getTxtPjEml() {
+		return txtPjEml;
+	}
+	public void setTxtPjEml(JTextField txtPjEml) {
+		this.txtPjEml = txtPjEml;
+	}
+	
+	public JComboBox<Departamento> getCbxPjDep() {
+		return cbxPjDep;
+	}
+	public void setCbxPjDep(JComboBox<Departamento> cbxPjDep) {
+		this.cbxPjDep = cbxPjDep;
+	}
+
+	public JComboBox<Localidad> getCbxPjLoc() {
+		return cbxPjLoc;
+	}
+	public void setCbxPjLoc(JComboBox<Localidad> cbxPjLoc) {
+		this.cbxPjLoc = cbxPjLoc;
+	}
+	
+	public JTable getJtPersJuridica() {
+		return jtPersJuridica;
+	}
+	public void setJtPersJuridica(JTable jtPersJuridica) {
+		this.jtPersJuridica = jtPersJuridica;
+	}
 }

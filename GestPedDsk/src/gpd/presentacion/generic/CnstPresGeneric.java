@@ -8,6 +8,7 @@ public interface CnstPresGeneric {
 	public final static String USR_NO_AUTENTICADO = "EL usuario no se ha podido autenticar.";
 	
 	//prod
+	public static final String PROD = "Producto";
 	
 	//tipoProd
 	public static final String TP = "Tipo Prod";
@@ -26,5 +27,6 @@ public interface CnstPresGeneric {
 	public static final String PERS_J_P_ING_OK = "Se ha ingresado el proveedor correctamente.";
 	public static final String PERS_J_P_MOD_OK = "Se ha modificado el proveedor correctamente.";
 	public static final String PERS_J_P_ELI_OK = "Se ha eliminado el proveedor correctamente.";
+	public static final String PERS_DATOS_OBLIG = "Los datos marcados son obligatorios.";
 	
 }
