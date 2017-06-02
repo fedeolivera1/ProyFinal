@@ -21,6 +21,8 @@ import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 
 import gpd.dominio.usuario.UsuarioDsk;
+import java.awt.event.ActionListener;
+import javax.swing.JMenuItem;
 
 public class FrmPrincipal extends JFrame {
 
@@ -139,17 +141,66 @@ public class FrmPrincipal extends JFrame {
 		
 		JMenu mnCambiarContraseaDe = new JMenu("Cambiar contrase\u00F1a de trabajador");
 		mnTrabajadores.add(mnCambiarContraseaDe);
-		
-		JMenu mnAgregarUsuario = new JMenu("Agregar usuario");
 		/**Abre frame para agregar un usuario*/
-		mnAgregarUsuario.addMouseListener(new MouseListener() {
+//		mnAgregarUsuario.addMouseListener(new MouseListener() {
+//			
+//		    @Override
+//	        public void mouseClicked(MouseEvent e) {
+//	        	FrmRegUsuario frmRu = new FrmRegUsuario(usr);
+//				frmRu.setLocationRelativeTo(null);
+//				frmRu.setDefaultCloseOperation(FrmPrincipal.EXIT_ON_CLOSE);
+//				frmRu.setVisible(true);
+//	        }
+//			@Override
+//			public void mouseEntered(MouseEvent arg0) {
+//				// TODO Auto-generated method stub
+//				
+//			}
+//			@Override
+//			public void mouseExited(MouseEvent arg0) {
+//				// TODO Auto-generated method stub
+//				
+//			}
+//			@Override
+//			public void mousePressed(MouseEvent arg0) {
+//				// TODO Auto-generated method stub
+//				
+//			}
+//			@Override
+//			public void mouseReleased(MouseEvent arg0) {
+//				// TODO Auto-generated method stub
+//				
+//			}
+//    });
+		
+		JMenuItem mntmAgregarUsuario = new JMenuItem("Agregar usuario");
+		mntmAgregarUsuario.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				FrmRegUsuario frmRu = new FrmRegUsuario(usr);
+				frmRu.setLocationRelativeTo(null);
+				frmRu.setVisible(true);
+			}
+		});
+		mnTrabajadores.add(mntmAgregarUsuario);
+		
+		
+		JMenu mnModificarDatos = new JMenu("Modificar datos");
+		mnEdicin.add(mnModificarDatos);
+		
+		JMenu mnMisDatos = new JMenu("Mis datos");
+		mnModificarDatos.add(mnMisDatos);
+		
+		JMenu mnRacin = new JMenu("Productos");
+		mnEdicin.add(mnRacin);
+		
+		JMenu mnAgregarNuevoTipo = new JMenu("Agregar nuevo producto");
+		mnAgregarNuevoTipo.addMouseListener(new MouseListener() {
 			
 		    @Override
 	        public void mouseClicked(MouseEvent e) {
-	        	FrmRegUsuario frmRu = new FrmRegUsuario();
-				frmRu.setLocationRelativeTo(null);
-				frmRu.setDefaultCloseOperation(FrmPrincipal.EXIT_ON_CLOSE);
-				frmRu.setVisible(true);
+		    	FrmProducto frm = FrmProducto.getFrmProducto(usr);
+				frm.setLocationRelativeTo(null);
+				frm.setVisible(true);
 	        }
 			@Override
 			public void mouseEntered(MouseEvent arg0) {
@@ -172,20 +223,27 @@ public class FrmPrincipal extends JFrame {
 				
 			}
     });
-		mnTrabajadores.add(mnAgregarUsuario);
-		
-		
-		JMenu mnModificarDatos = new JMenu("Modificar datos");
-		mnEdicin.add(mnModificarDatos);
-		
-		JMenu mnMisDatos = new JMenu("Mis datos");
-		mnModificarDatos.add(mnMisDatos);
-		
-		JMenu mnRacin = new JMenu("Raci\u00F3n");
-		mnEdicin.add(mnRacin);
-		
-		JMenu mnAgregarNuevoTipo = new JMenu("Agregar nuevo tipo de raci\u00F3n");
+		//mnAgregarNuevoTipo.addActionListener(new ActionListener() {
+		//	public void actionPerformed(ActionEvent arg0) {
+		//		FrmProducto frm = FrmProducto.getFrmProducto(usr);
+		//		frm.setVisible(true);
+		//	}
+		//});
 		mnRacin.add(mnAgregarNuevoTipo);
+		
+		JMenu mnPersonas = new JMenu("Personas");
+		mnEdicin.add(mnPersonas);
+		
+		JMenuItem mntmAgregarPersona = new JMenuItem("Agregar persona");
+		mntmAgregarPersona.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				FrmPersona frm = FrmPersona.getFrmPersona(usr);
+				frm.setLocationRelativeTo(null);
+				frm.setVisible(true);
+			}
+		});
+		
+		mnPersonas.add(mntmAgregarPersona);
 		
 		JMenu mnFacturas = new JMenu("Facturas");
 		mnEdicin.add(mnFacturas);

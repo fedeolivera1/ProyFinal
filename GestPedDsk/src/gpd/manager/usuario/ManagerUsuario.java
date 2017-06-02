@@ -10,18 +10,9 @@ import gpd.persistencia.usuario.PersistenciaUsuario;
 
 public class ManagerUsuario {
 
-	private static ManagerUsuario instance;
 	private static final Logger logger = Logger.getLogger(ManagerUsuario.class);
 	
 	
-	public static ManagerUsuario getManagerUsuario() {
-		if(instance == null) {
-			instance = new ManagerUsuario();
-			logger.info("Se genera nueva instancia de ManagerUsuario...");
-		}
-		return instance;
-	}
-
 	public UsuarioDsk obtenerUsuario(String nombreUsuario, String passwd) {
 		UsuarioDsk usuario = null;
 		Conector.getConn();

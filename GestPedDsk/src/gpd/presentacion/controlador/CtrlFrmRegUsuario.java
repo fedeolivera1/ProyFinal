@@ -4,18 +4,37 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import javax.swing.JComboBox;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+
+import gpd.dominio.usuario.TipoUsr;
 import gpd.dominio.usuario.UsuarioDsk;
 import gpd.manager.usuario.ManagerUsuario;
+import gpd.presentacion.generic.CnstPresGeneric;
+import gpd.presentacion.generic.GenCompType;
 
-public class ControladorFrmRegUsuario {
+public class CtrlFrmRegUsuario extends CtrlGenerico {
 
 	public void registrarUsuario(UsuarioDsk usr){
 		
 		String cont= usr.getPass();
 		usr.setPass(getMD5(cont));
-		ManagerUsuario mgrUsr = ManagerUsuario.getManagerUsuario();
+		ManagerUsuario mgrUsr = new ManagerUsuario();
 	}
 	
+	public void registrarUsuario(JTextField txtNomUsu, JPasswordField txtPasswd, JPasswordField txtPasswd2, JComboBox<TipoUsr> cbxTipoUsr) {
+		GenCompType genComp = new GenCompType();
+		genComp.setComp(txtNomUsu);
+		genComp.setComp(txtPasswd);
+		genComp.setComp(txtPasswd2);
+		genComp.setComp(cbxTipoUsr);
+		if(controlDatosObl(genComp)) {
+			//llamas a metodo de mgrUsr.agregar
+		} else {
+			enviarWarning(CnstPresGeneric.PERS, "Revise los datos marcados en rojo.");
+		}
+	}
 	
 	private static String getMD5(String input) {
 		 try {

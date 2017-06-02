@@ -24,6 +24,7 @@ import org.apache.log4j.Logger;
 import gpd.dominio.producto.TipoProd;
 import gpd.dominio.usuario.UsuarioDsk;
 import gpd.presentacion.controlador.CtrlFrmProducto;
+import java.awt.Toolkit;
 
 public class FrmProducto extends JFrame {
 
@@ -70,6 +71,7 @@ public class FrmProducto extends JFrame {
 	 * Create the frame.
 	 */
 	private FrmProducto(UsuarioDsk usr) {
+		setIconImage(Toolkit.getDefaultToolkit().getImage(FrmProducto.class.getResource("/gpd/recursos/Icono.png")));
 		setLocationRelativeTo(null);
 		setTitle("Producto");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);

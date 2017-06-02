@@ -1,69 +1,70 @@
 package gpd.presentacion.formulario;
 
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
+
+import org.apache.log4j.Logger;
 
 import gpd.dominio.usuario.TipoUsr;
 import gpd.dominio.usuario.UsuarioDsk;
-import gpd.presentacion.controlador.ControladorFrmRegUsuario;
-
-import java.awt.Toolkit;
-import java.awt.Color;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-
-import java.awt.Font;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
-import java.awt.CardLayout;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.LayoutStyle.ComponentPlacement;
-import javax.swing.BoxLayout;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.SwingConstants;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JTextField;
-import javax.swing.JPasswordField;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
+import gpd.presentacion.controlador.CtrlFrmRegUsuario;
 
 public class FrmRegUsuario extends JFrame {
 
+	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(FrmRegUsuario.class);
+	private static FrmRegUsuario instance;
 	private JPanel contentPane;
 	private JTextField txtNombre;
 	private JPasswordField txtCont;
 	private JPasswordField txtCont2;
-	private ControladorFrmRegUsuario ctrl;
+	private CtrlFrmRegUsuario ctrl;
 
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					FrmRegUsuario frame = new FrmRegUsuario();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+//	public static void main(String[] args) {
+//		EventQueue.invokeLater(new Runnable() {
+//			public void run() {
+//				try {
+//					FrmRegUsuario frame = new FrmRegUsuario();
+//					frame.setVisible(true);
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		});
+//	}
 
+	public static FrmRegUsuario getFrmRegUsuario(UsuarioDsk usr) {
+		if(instance == null) {
+			logger.info("Se genera nueva instancia de FrmPersona > usuario logueado: " + usr.getNomUsu());
+			instance = new FrmRegUsuario(usr);
+		}
+		return instance;
+	}
+	
 	/**
 	 * Create the frame.
 	 */
-	public FrmRegUsuario() {
+	public FrmRegUsuario(UsuarioDsk usr) {
 		
 		//Hago que el controlador funcione
-		ctrl=new ControladorFrmRegUsuario();
+		ctrl=new CtrlFrmRegUsuario();
 		
 		setTitle("Registrar nuevo usuario");
 		setIconImage(Toolkit.getDefaultToolkit().getImage(FrmRegUsuario.class.getResource("/gpd/recursos/Icono.png")));
@@ -103,7 +104,7 @@ public class FrmRegUsuario extends JFrame {
 		btnRegistrarUsuario.setBounds(267, 213, 143, 23);
 		contentPane.add(btnRegistrarUsuario);
 		
-		JComboBox <TipoUsr> cbxTipo = new JComboBox();
+		JComboBox<TipoUsr> cbxTipo = new JComboBox<>();
 		cbxTipo.setBounds(155, 33, 200, 20);
 		cbxTipo.setModel(new DefaultComboBoxModel<>(TipoUsr.values()));
 		contentPane.add(cbxTipo);
@@ -115,7 +116,7 @@ public class FrmRegUsuario extends JFrame {
 		txtNombre.setColumns(10);
 		
 		txtCont = new JPasswordField();
-		txtCont.setBounds(129, 114, 226, 20);
+		txtCont.setBounds(177, 114, 178, 20);
 		contentPane.add(txtCont);
 		
 		txtCont2 = new JPasswordField();
@@ -126,35 +127,35 @@ public class FrmRegUsuario extends JFrame {
 		btnRegistrarUsuario.addActionListener(new ActionListener() {
 			
 			public void actionPerformed(ActionEvent arg0) {
-				
-				String mensaje="ATENCIÓN /n /n";
-				boolean error=false;
-				
-				//Controlando si todo está en órden
-				if(lblNombreDeUsuario.getText()==""){
-					error=true;
-					mensaje=mensaje+"Ingrese un nombre de usuario. /n";
-				}
-				
-				if(txtCont.getPassword()!=txtCont2.getPassword()){
-					error=true;
-					mensaje=mensaje+"Las contraseñas no coinciden. /n";
-				}
-				
-				if(error==true){
-					JOptionPane.showMessageDialog(null, mensaje, "Revise los datos.", JOptionPane.ERROR_MESSAGE);
-				}else{
-					
-					//Pregunto si la contraseña es mayor a 6 caracteres
-					if((txtCont.getPassword()).length<6){
-						mensaje=mensaje+"La contraseña debe tener 6 o más caracteres.";
-						JOptionPane.showMessageDialog(null, mensaje, "Revise los datos.", JOptionPane.ERROR_MESSAGE);
-					}else{
-						UsuarioDsk nuevo=new UsuarioDsk(txtNombre.getText(), new String(txtCont.getPassword()), cbxTipo.getItemAt(cbxTipo.getSelectedIndex()));
-						
-						
-					}
-				}
+				ctrl.registrarUsuario(txtNombre, txtCont, txtCont2, cbxTipo);
+//				String mensaje="ATENCIÓN /n /n";
+//				boolean error=false;
+//				
+//				//Controlando si todo está en órden
+//				if(lblNombreDeUsuario.getText()==""){
+//					error=true;
+//					mensaje=mensaje+"Ingrese un nombre de usuario. /n";
+//				}
+//				
+//				if(txtCont.getPassword()!=txtCont2.getPassword()){
+//					error=true;
+//					mensaje=mensaje+"Las contraseñas no coinciden. /n";
+//				}
+//				
+//				if(error==true){
+//					JOptionPane.showMessageDialog(null, mensaje, "Revise los datos.", JOptionPane.ERROR_MESSAGE);
+//				}else{
+//					
+//					//Pregunto si la contraseña es mayor a 6 caracteres
+//					if((txtCont.getPassword()).length<6){
+//						mensaje=mensaje+"La contraseña debe tener 6 o más caracteres.";
+//						JOptionPane.showMessageDialog(null, mensaje, "Revise los datos.", JOptionPane.ERROR_MESSAGE);
+//					}else{
+//						UsuarioDsk nuevo=new UsuarioDsk(txtNombre.getText(), new String(txtCont.getPassword()), cbxTipo.getItemAt(cbxTipo.getSelectedIndex()));
+//						
+//						
+//					}
+//				}
 				
 				
 				

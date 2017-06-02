@@ -98,9 +98,7 @@ public class FrmLogin extends JFrame {
 		btnLogin.setBounds(299, 171, 89, 23);
 		contentPane.add(btnLogin);
 		
-		txtPass = new JPasswordField();
-		txtPass.setBounds(268, 125, 120, 20);
-		contentPane.add(txtPass);
+		
 		
 		JLabel lblUsuario = new JLabel("Usuario:");
 		lblUsuario.setForeground(Color.WHITE);
@@ -120,6 +118,7 @@ public class FrmLogin extends JFrame {
 		contentPane.add(lblNewLabel_1);
 		
 		txtPass = new JPasswordField();
+		txtPass.setBounds(268, 125, 120, 20);
 		txtPass.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent arg0) {
@@ -129,6 +128,7 @@ public class FrmLogin extends JFrame {
 			}
 		});
 		txtPass.setBounds(304, 125, 120, 20);
+
 		contentPane.add(txtPass);
 		btnLogin.setBounds(335, 166, 89, 23);
 		contentPane.add(btnLogin);

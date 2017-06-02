@@ -31,6 +31,7 @@ import gpd.dominio.persona.Sexo;
 import gpd.dominio.persona.TipoDoc;
 import gpd.dominio.usuario.UsuarioDsk;
 import gpd.presentacion.controlador.CtrlFrmPersona;
+import java.awt.Toolkit;
 
 public class FrmPersona extends JFrame {
 
@@ -89,6 +90,8 @@ public class FrmPersona extends JFrame {
 	 * Create the frame.
 	 */
 	private FrmPersona(UsuarioDsk usr) {
+		setTitle("Persona");
+		setIconImage(Toolkit.getDefaultToolkit().getImage(FrmPersona.class.getResource("/gpd/recursos/Icono.png")));
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 800, 600);
 		contentPane = new JPanel();

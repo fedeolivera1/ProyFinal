@@ -6,6 +6,7 @@ public interface CnstPresGeneric {
 	public static final String USR = "Usuario";
 	public final static String USR_DATOS = "Debe proporcionar nombre de usuario y password.";
 	public final static String USR_NO_AUTENTICADO = "EL usuario no se ha podido autenticar.";
+	public final static String USR_PASS_REP = "La password no coincide.";
 	
 	//prod
 	
@@ -26,5 +27,7 @@ public interface CnstPresGeneric {
 	public static final String PERS_J_P_ING_OK = "Se ha ingresado el proveedor correctamente.";
 	public static final String PERS_J_P_MOD_OK = "Se ha modificado el proveedor correctamente.";
 	public static final String PERS_J_P_ELI_OK = "Se ha eliminado el proveedor correctamente.";
+	
+	//usuario
 	
 }
