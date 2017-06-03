@@ -27,6 +27,9 @@ public interface CnstPresGeneric {
 	public static final String PERS_J_P_ING_OK = "Se ha ingresado el proveedor correctamente.";
 	public static final String PERS_J_P_MOD_OK = "Se ha modificado el proveedor correctamente.";
 	public static final String PERS_J_P_ELI_OK = "Se ha eliminado el proveedor correctamente.";
-	public static final String PERS_DATOS_OBLIG = "Los datos marcados son obligatorios.";
+	
+	//controles genericos
+	public static final String DATOS_OBLIG = "Los datos marcados son obligatorios.";
+	public static final Object JTABLE_EMPTY = "No se encontraron resultados...";
 	
 }

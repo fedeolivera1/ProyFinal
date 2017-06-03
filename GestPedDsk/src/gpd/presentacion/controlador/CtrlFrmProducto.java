@@ -1,16 +1,23 @@
 package gpd.presentacion.controlador;
 
 import java.awt.Component;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.List;
 
+import javax.swing.ComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JComboBox;
 import javax.swing.JDesktopPane;
 import javax.swing.JFormattedTextField;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.table.DefaultTableModel;
 
+import gpd.dominio.producto.Producto;
 import gpd.dominio.producto.TipoProd;
 import gpd.manager.producto.ManagerProducto;
 import gpd.presentacion.formulario.FrmProducto;
@@ -20,7 +27,7 @@ import gpd.presentacion.popup.IfrmTipoProd;
 public class CtrlFrmProducto extends CtrlGenerico {
 
 	private ManagerProducto mgrProd = new ManagerProducto();
-	private FrmProducto frm;
+	private FrmProducto frmProd;
 	private IfrmTipoProd iFrm;
 	private JDesktopPane deskPane;
 	private TipoProd tpSel;
@@ -63,6 +70,56 @@ public class CtrlFrmProducto extends CtrlGenerico {
 			TipoProd tp = (TipoProd) jlTipoProd.getSelectedValue();
 			txtTpDesc.setText(tp.getDescripcion());
 		}
+	}
+	
+	public void cargarJtProd(List<Producto> listaProd) {
+		JTable tabla = frmProd.getJtProd();
+		limpiarJTable(tabla);
+		if(listaProd != null && !listaProd.isEmpty()) {
+			DefaultTableModel modeloJtProd = new DefaultTableModel();
+			tabla.setModel(modeloJtProd);
+			modeloJtProd.addColumn("Id");
+			modeloJtProd.addColumn("Codigo");
+			modeloJtProd.addColumn("Nombre");
+			modeloJtProd.addColumn("Desc");
+			modeloJtProd.addColumn("Stock Min");
+			modeloJtProd.addColumn("Tipo");
+			for(Producto prod : listaProd) {
+				Object [] fila = new Object[6];
+				fila[0] = prod.getIdProducto();
+				fila[1] = prod.getCodigo();
+				fila[2] = prod.getNombre();
+				fila[3] = prod.getDescripcion();
+				fila[4] = prod.getStockMin();
+				fila[5] = prod.getTipoProd().toString();
+				modeloJtProd.addRow(fila);
+			}
+			tabla.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					int fila = tabla.rowAtPoint(e.getPoint());
+					if (fila > -1) {
+						Integer idProd = (Integer) tabla.getModel().getValueAt(fila, 0);
+						Producto prod = mgrProd.obtenerProductoPorId(idProd);
+						cargarControlesProducto(prod);
+					}
+				}
+			});
+		} else {
+			cargarJTableVacia(tabla);
+		}
+	}
+	
+	public void cargarControlesProducto(Producto prod) {
+		ComboBoxModel<TipoProd> cbModelTp = frmProd.getCbxTipoProd().getModel();
+		cbModelTp.setSelectedItem(prod.getTipoProd());
+		frmProd.getCbxTipoProd().setSelectedItem(cbModelTp.getSelectedItem());
+		frmProd.getTxtProId().setText(String.valueOf(prod.getIdProducto()));
+		frmProd.getTxtProCod().setText(prod.getCodigo());
+		frmProd.getTxtProNom().setText(prod.getNombre());
+		frmProd.getTxtProDesc().setText(prod.getDescripcion());
+		frmProd.getFtxtProStockMin().setText(String.valueOf(prod.getStockMin()));
+		frmProd.getFtxtProPrecio().setText(String.valueOf(prod.getPrecio()));
 	}
 	
 	/*****************************************************************************************************************************************************/
@@ -152,11 +209,12 @@ public class CtrlFrmProducto extends CtrlGenerico {
 		comp.setVisible(true);
 	}
 	
+	
 	public FrmProducto getFrm() {
-		return frm;
+		return frmProd;
 	}
 	public void setFrm(FrmProducto frm) {
-		this.frm = frm;
+		this.frmProd = frm;
 	}
 	
 	public JDesktopPane getDeskPane() {
@@ -165,7 +223,6 @@ public class CtrlFrmProducto extends CtrlGenerico {
 	public void setDeskPane(JDesktopPane deskPane) {
 		this.deskPane = deskPane;
 	}
-
 
 	public TipoProd getTpSel() {
 		return tpSel;

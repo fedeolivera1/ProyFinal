@@ -83,22 +83,6 @@ public class FrmPersona extends JFrame {
 	private JTable jtPersJuridica;
 
 	
-	/**
-	 * Launch the application.
-	 */
-//	public static void main(String[] args) {
-//		EventQueue.invokeLater(new Runnable() {
-//			public void run() {
-//				try {
-//					FrmCliente frame = new FrmCliente();
-//					frame.setVisible(true);
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		});
-//	}
-
 	public static FrmPersona getFrmPersona(UsuarioDsk usr) {
 		if(instance == null) {
 			logger.info("Se genera nueva instancia de FrmPersona > usuario logueado: " + usr.getNomUsu());
@@ -192,12 +176,6 @@ public class FrmPersona extends JFrame {
 		pnlPersF.add(lblFNac);
 		
 		txtPfFnac = new JFormattedTextField(ctrlPers.mascNumerica("##/##/####"));
-		txtPfFnac.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyReleased(KeyEvent e) {
-				ctrlPers.formatoFechaEnTxt(txtPfFnac);
-			}
-		});
 		txtPfFnac.setColumns(10);
 		txtPfFnac.setBounds(84, 197, 65, 20);
 		pnlPersF.add(txtPfFnac);
@@ -585,10 +563,19 @@ public class FrmPersona extends JFrame {
 		scrollPanePj.setColumnHeaderView(jtPersJuridica);
 		scrollPanePj.setViewportView(jtPersJuridica);
 		
-		//carga combos
+		/*****************************************************************************************************************************************************/
+		/* ACCIONES CONTROLES */
+		/*****************************************************************************************************************************************************/
 		ctrlPers.cargarCbxTipoDoc(cbxPfTipoDoc);
 		ctrlPers.cargarCbxDep(cbxPfDep);
 		ctrlPers.cargarCbxDep(cbxPjDep);
+		
+		txtPfFnac.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				ctrlPers.formatoFechaEnTxt(txtPfFnac);
+			}
+		});
 		cbxPfDep.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
 				ctrlPers.cargarCbxLoc(cbxPfDep, cbxPfLoc);
@@ -600,7 +587,19 @@ public class FrmPersona extends JFrame {
 			}
 		});
 		
-		//listeners botones
+		txtPfDoc.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				ctrlPers.controlInputNum(e);
+			}
+		});
+		txtPjRut.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				ctrlPers.controlInputNum(e);
+			}
+		});
+		
 		btnPfAgr.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ctrlPers.agregarPersFisica(cbxPfTipoDoc, txtPfDoc, txtPfApe1, txtPfApe2, txtPfNom1, txtPfNom2, txtPfFnac, cbxPfSexo, 

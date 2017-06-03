@@ -28,21 +28,6 @@ public class IfrmTipoProd extends JInternalFrame implements InternalFrameListene
 	private JTextField txtTpDesc;
 	private CtrlFrmProducto ctrlInterno;
 	
-	/**
-	 * Launch the application.
-	 */
-//	public static void main(String[] args) {
-//		EventQueue.invokeLater(new Runnable() {
-//			public void run() {
-//				try {
-//					IntFrmTipoProd frame = new IntFrmTipoProd();
-//					frame.setVisible(true);
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		});
-//	}
 
 	/**
 	 * Create the frame.
@@ -129,7 +114,7 @@ public class IfrmTipoProd extends JInternalFrame implements InternalFrameListene
 	public void internalFrameClosing(InternalFrameEvent e) {
 		if(InternalFrameEvent.INTERNAL_FRAME_CLOSING == e.getID()) {
 			ctrlInterno.cerrarInternalFrame();
-			ctrlInterno.cargarCbxTipoProd(ctrlInterno.getFrm().exponerCbxTipoProd());
+			ctrlInterno.cargarCbxTipoProd(ctrlInterno.getFrm().getCbxTipoProd());
 		}
 	}
 

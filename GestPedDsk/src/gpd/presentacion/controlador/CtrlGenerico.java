@@ -2,6 +2,9 @@ package gpd.presentacion.controlador;
 
 import java.awt.Component;
 import java.awt.event.KeyEvent;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 
 import javax.swing.JComboBox;
@@ -20,6 +23,7 @@ import javax.swing.text.MaskFormatter;
 
 import org.apache.log4j.Logger;
 
+import gpd.presentacion.generic.CnstPresGeneric;
 import gpd.presentacion.generic.CompValidador;
 import gpd.presentacion.generic.GenCompType;
 import gpd.types.Fecha;
@@ -36,6 +40,23 @@ public abstract class CtrlGenerico {
 			instanceCv = new CompValidador();
 		}
 		return instanceCv;
+	}
+	
+	protected static String getMD5(String input) {
+		 try {
+			 MessageDigest md = MessageDigest.getInstance("MD5");
+			 byte[] messageDigest = md.digest(input.getBytes());
+			 BigInteger number = new BigInteger(1, messageDigest);
+			 String hashtext = number.toString(16);
+		 
+			 while (hashtext.length() < 32) {
+			 	hashtext = "0" + hashtext;
+		 	}
+		 	return hashtext;
+	 	}
+		catch (NoSuchAlgorithmException e) {
+			throw new RuntimeException(e);
+		}
 	}
 	
 	public MaskFormatter mascNumerica(String formatter) {
@@ -105,7 +126,7 @@ public abstract class CtrlGenerico {
 		} else if(nombreClase.equals("javax.swing.JPasswordField")) {
 			JPasswordField jpf = (javax.swing.JPasswordField) comp;
 			retornoOk = jpf.getPassword() != null && 
-					jpf.getPassword().length > 5;
+					jpf.getPassword().length > 0;
 		} else if(nombreClase.equals("javax.swing.JTextArea")) {
 			JTextArea jta = (javax.swing.JTextArea) comp;
 			retornoOk = !jta.getText().equals("");
@@ -362,12 +383,33 @@ public abstract class CtrlGenerico {
 		JOptionPane.showMessageDialog(null, msg, cab, JOptionPane.ERROR_MESSAGE);
 	}
 	
+	/**
+	 * limpia la tabla, para ser invocado desde los otros metodos genericos de limpiar
+	 * @param tabla
+	 */
 	public void limpiarJTable(JTable tabla){
         DefaultTableModel modelo = (DefaultTableModel) tabla.getModel();
+        tabla.setEnabled(true);
         int filas = tabla.getRowCount()-1;
         for (int i = 0; i < filas; i++) {
             modelo.removeRow(0);
         }
+    }
+	
+	/**
+	 * genera una fila de informacion de que no se ha podido cargar la tabla
+	 * @param tabla
+	 */
+	public void cargarJTableVacia(JTable tabla) {
+		limpiarJTable(tabla);
+        DefaultTableModel modelo = (DefaultTableModel) tabla.getModel();
+//		DefaultTableModel modelo = new DefaultTableModel();
+        modelo.addColumn("Resultado");
+        Object [] fila = new Object[1];
+        fila[0] = CnstPresGeneric.JTABLE_EMPTY;
+//        tabla.
+        modelo.addRow(fila);
+        tabla.setEnabled(false);
     }
 	
 }

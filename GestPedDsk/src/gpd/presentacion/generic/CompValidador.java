@@ -31,6 +31,14 @@ public class CompValidador {
 					removeBorder(comp);
 				}
 			});
+		} else if (nombreClase.equals("javax.swing.JPasswordField")) {
+			((javax.swing.JPasswordField) comp).setBorder(line);
+			((javax.swing.JPasswordField) comp).addFocusListener(new FocusAdapter() {
+				@Override
+				public void focusGained(FocusEvent arg0) {
+					removeBorder(comp);
+				}
+			});
 		} else if (nombreClase.equals("javax.swing.JComboBox")) {
 			((javax.swing.JComboBox<?>) comp).setBorder(line);
 			((javax.swing.JComboBox<?>) comp).addFocusListener(new FocusAdapter() {
@@ -65,6 +73,8 @@ public class CompValidador {
 			((javax.swing.JTextField) comp).setBorder(empty);
 		} else if (nombreClase.equals("javax.swing.JFormattedTextField")) {
 			((javax.swing.JFormattedTextField) comp).setBorder(empty);
+		} else if (nombreClase.equals("javax.swing.JPasswordField")) {
+			((javax.swing.JPasswordField) comp).setBorder(empty);
 		} else if (nombreClase.equals("javax.swing.JComboBox")) {
 			((javax.swing.JComboBox<?>) comp).setBorder(empty);
 		} else if (nombreClase.equals("javax.swing.JTextArea")) {

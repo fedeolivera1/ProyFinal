@@ -1,11 +1,13 @@
 package test.presentacion;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
 
 import org.junit.Test;
 
 import gpd.dominio.usuario.UsuarioDsk;
-import gpd.exceptions.UsuarioNoExisteException;
 import gpd.presentacion.controlador.CtrlFrmLogin;
 
 public class ControladorFrmLoginTest {
@@ -20,16 +22,18 @@ public class ControladorFrmLoginTest {
 	
 	@Test
 	public void loguearUsuario() {
-		CtrlFrmLogin ctrl = new CtrlFrmLogin();
+		CtrlFrmLogin ctrl = new CtrlFrmLogin(null);
 		UsuarioDsk logueado = null;
-		try {
-			logueado = ctrl.obtenerUsuario("pepe", "loscañaberales");
-			System.out.println("logueado: " + (null!=logueado));
-			logueado = ctrl.obtenerUsuario("admin", "admin");
-			System.out.println("logueado: " + (null!=logueado));
-		} catch (UsuarioNoExisteException e) {
-			e.printStackTrace();
-		}
+		JTextField txtUsu = new JTextField();
+		txtUsu.setText("PEPE");
+		JPasswordField txtPass = new JPasswordField();
+		txtPass.setText("loscañaberales");
+		logueado = ctrl.obtenerUsuario(txtUsu, txtPass);
+		System.out.println("logueado: " + (null!=logueado));
+		txtUsu.setText("admin");
+		txtPass.setText("admin");
+		logueado = ctrl.obtenerUsuario(txtUsu, txtPass);
+		System.out.println("logueado: " + (null!=logueado));
 		assertEquals(logueado, true);
 	}
 

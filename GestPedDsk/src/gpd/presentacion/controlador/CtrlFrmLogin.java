@@ -1,43 +1,59 @@
 package gpd.presentacion.controlador;
 
-import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
 
 import gpd.dominio.usuario.UsuarioDsk;
-import gpd.exceptions.UsuarioNoExisteException;
 import gpd.manager.usuario.ManagerUsuario;
+import gpd.presentacion.formulario.FrmLogin;
+import gpd.presentacion.formulario.FrmPrincipal;
 import gpd.presentacion.generic.CnstPresGeneric;
+import gpd.presentacion.generic.GenCompType;
 
 public class CtrlFrmLogin extends CtrlGenerico {
 
+	
+	ManagerUsuario mgrUsr = new ManagerUsuario();
+	private FrmLogin frmLogin;
+	
+	public CtrlFrmLogin(FrmLogin frmLogin) {
+		super();
+		this.frmLogin = frmLogin;
+	}
+	
 
-	public UsuarioDsk obtenerUsuario(String nombre, String passwd) throws UsuarioNoExisteException {
+	public UsuarioDsk obtenerUsuario(JTextField txtNombre, JPasswordField txtPass) {
 		UsuarioDsk usr = null;
-		if((nombre == null || nombre == "") || (passwd == null || passwd == "")) {
-			throw new UsuarioNoExisteException(CnstPresGeneric.USR_DATOS);
-		} else {
+		GenCompType genComp = new GenCompType();
+		genComp.setComp(txtNombre);
+		genComp.setComp(txtPass);
+		if(controlDatosObl(genComp)) {
+			char[] passwsdChar = txtPass.getPassword(); 
+			String passwd = String.valueOf(passwsdChar);
 			String hashPass = getMD5(passwd);
-			ManagerUsuario mgrUsr = new ManagerUsuario();
-			usr = mgrUsr.obtenerUsuario(nombre, hashPass);
+			usr = mgrUsr.obtenerUsuario(txtNombre.getText(), hashPass);
+			if(usr != null) {
+				FrmPrincipal frmPpl = new FrmPrincipal(usr);
+				frmPpl.setLocationRelativeTo(null);
+				frmPpl.setDefaultCloseOperation(FrmPrincipal.EXIT_ON_CLOSE);
+				frmPpl.setVisible(true);
+				frmLogin.setVisible(false);
+			} else {
+				enviarError(CnstPresGeneric.USR, CnstPresGeneric.USR_NO_AUTENTICADO);
+				
+			}
+		} else {
+//			try{} catch(UsuarioNoExisteException e) {}
+			enviarWarning(CnstPresGeneric.USR, CnstPresGeneric.USR_DATOS);
 		}
 		return usr;
 	}
 	
-	private static String getMD5(String input) {
-		 try {
-			 MessageDigest md = MessageDigest.getInstance("MD5");
-			 byte[] messageDigest = md.digest(input.getBytes());
-			 BigInteger number = new BigInteger(1, messageDigest);
-			 String hashtext = number.toString(16);
-		 
-			 while (hashtext.length() < 32) {
-			 	hashtext = "0" + hashtext;
-		 	}
-		 	return hashtext;
-	 	}
- 		catch (NoSuchAlgorithmException e) {
- 			throw new RuntimeException(e);
- 		}
-	 }
+	
+	public FrmLogin getFrmLogin() {
+		return frmLogin;
+	}
+	public void setFrmLogin(FrmLogin frmLogin) {
+		this.frmLogin = frmLogin;
+	}
 }

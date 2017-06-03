@@ -1,35 +1,27 @@
 package gpd.presentacion.formulario;
 
 import java.awt.EventQueue;
-import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 
-import org.apache.log4j.Logger;
-
-import gpd.dominio.usuario.UsuarioDsk;
-import gpd.exceptions.UsuarioNoExisteException;
 import gpd.presentacion.controlador.CtrlFrmLogin;
-import gpd.presentacion.generic.CnstPresGeneric;
-
-import javax.swing.JPasswordField;
-import javax.swing.JLabel;
-import javax.swing.SwingConstants;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 
 public class FrmLogin extends JFrame {
 
 	private static final long serialVersionUID = 1L;
-	private static Logger logger = Logger.getLogger(FrmLogin.class);
+//	private static Logger logger = Logger.getLogger(FrmLogin.class);
 	private JPanel contentPane;
 	private JTextField txtUsr;
 	private CtrlFrmLogin ctrl;
@@ -58,7 +50,7 @@ public class FrmLogin extends JFrame {
 	 * Create the frame.
 	 */
 	public FrmLogin() {
-		ctrl = new CtrlFrmLogin();
+		ctrl = new CtrlFrmLogin(this);
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
@@ -72,7 +64,7 @@ public class FrmLogin extends JFrame {
 			@Override
 			public void keyPressed(KeyEvent arg0) {
 				if(arg0.getKeyCode() == KeyEvent.VK_ENTER) {
-					obtenerUsuario(txtUsr.getText(), txtPass.getPassword());
+					ctrl.obtenerUsuario(txtUsr, txtPass);
 				}
 			}
 		});
@@ -83,7 +75,7 @@ public class FrmLogin extends JFrame {
 		JButton btnLogin = new JButton("Login");
 		btnLogin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				obtenerUsuario(txtUsr.getText(), txtPass.getPassword());
+				ctrl.obtenerUsuario(txtUsr, txtPass);
 			}
 		});
 		
@@ -92,7 +84,7 @@ public class FrmLogin extends JFrame {
 			@Override
 			public void keyPressed(KeyEvent arg0) {
 				if(arg0.getKeyCode() == KeyEvent.VK_ENTER) {
-					obtenerUsuario(txtUsr.getText(), txtPass.getPassword());
+					ctrl.obtenerUsuario(txtUsr, txtPass);
 				}
 			}
 		});
@@ -112,21 +104,4 @@ public class FrmLogin extends JFrame {
 		contentPane.add(lblPassword);
 	}
 	
-	private void obtenerUsuario(String nombre, char[] passwd) {
-		UsuarioDsk usr = null;
-		try {
-			usr = ctrl.obtenerUsuario(nombre, String.valueOf(passwd));
-		} catch (HeadlessException | UsuarioNoExisteException e) {
-			logger.debug("Presentacion: " + e.getMessage());
-		}
-		if(usr != null) {
-			FrmPrincipal frmPpl = new FrmPrincipal(usr);
-			frmPpl.setLocationRelativeTo(null);
-			frmPpl.setDefaultCloseOperation(FrmPrincipal.EXIT_ON_CLOSE);
-			frmPpl.setVisible(true);
-			setVisible(false);
-		} else {
-			JOptionPane.showMessageDialog(null, CnstPresGeneric.USR_NO_AUTENTICADO, CnstPresGeneric.USR, JOptionPane.ERROR_MESSAGE);
-		}
-	}
 }

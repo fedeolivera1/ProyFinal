@@ -90,71 +90,78 @@ public class CtrlFrmPersona extends CtrlGenerico {
 	public void cargarJtPersFisica(List<PersonaFisica> listaPf) {
 		JTable tabla = frmPers.getJtPersFisica();
 		limpiarJTable(tabla);
-		DefaultTableModel modeloJtPf = new DefaultTableModel();
-		frmPers.getJtPersFisica().setModel(modeloJtPf);
-		modeloJtPf.addColumn("Doc");
-		modeloJtPf.addColumn("Nombre");
-		modeloJtPf.addColumn("Direccion");
-		modeloJtPf.addColumn("Telefono");
-		modeloJtPf.addColumn("Celular");
-		modeloJtPf.addColumn("Email");
-		for(PersonaFisica pf : listaPf) {
-			Object [] fila = new Object[6];
-			fila[0] = pf.getDocumento();
-			fila[1] = pf.getNombre1() + " " + pf.getApellido1();
-			fila[2] = pf.getDireccion() + " " + pf.getPuerta();
-			fila[3] = pf.getTelefono();
-			fila[4] = pf.getCelular();
-			fila[5] = pf.getEmail();
-			modeloJtPf.addRow(fila);
-		}
-		frmPers.getJtPersFisica().addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				int fila = tabla.rowAtPoint(e.getPoint());
-//		        int columna = tabla.columnAtPoint(e.getPoint());
-		        if ((fila > -1) /*&& (columna > -1)*/) {
-		        	Long documento = (Long) tabla.getModel().getValueAt(fila, 0);
-		        	PersonaFisica pf = mgrPers.obtenerPersFisicaPorId(documento);
-		        	cargarControlesPersFisica(pf);
-		        }
+		if(listaPf != null && !listaPf.isEmpty()) {
+			DefaultTableModel modeloJtPf = new DefaultTableModel();
+			tabla.setModel(modeloJtPf);
+			modeloJtPf.addColumn("Doc");
+			modeloJtPf.addColumn("Nombre");
+			modeloJtPf.addColumn("Direccion");
+			modeloJtPf.addColumn("Telefono");
+			modeloJtPf.addColumn("Celular");
+			modeloJtPf.addColumn("Email");
+			for(PersonaFisica pf : listaPf) {
+				Object [] fila = new Object[6];
+				fila[0] = pf.getDocumento();
+				fila[1] = pf.getNombre1() + " " + pf.getApellido1();
+				fila[2] = pf.getDireccion() + " " + pf.getPuerta();
+				fila[3] = pf.getTelefono();
+				fila[4] = pf.getCelular();
+				fila[5] = pf.getEmail();
+				modeloJtPf.addRow(fila);
 			}
-		});
+			tabla.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					int fila = tabla.rowAtPoint(e.getPoint());
+//		        	int columna = tabla.columnAtPoint(e.getPoint());
+					if ((fila > -1) /*&& (columna > -1)*/) {
+						Long documento = (Long) tabla.getModel().getValueAt(fila, 0);
+						PersonaFisica pf = mgrPers.obtenerPersFisicaPorId(documento);
+						cargarControlesPersFisica(pf);
+					}
+				}
+			});
+		} else {
+			cargarJTableVacia(tabla);
+		}
 	}
 	
 	public void cargarJtPersJuridica(List<PersonaJuridica> listaPj) {
 		JTable tabla = frmPers.getJtPersJuridica();
 		limpiarJTable(tabla);
-		DefaultTableModel modeloJtPj = new DefaultTableModel();
-		frmPers.getJtPersJuridica().setModel(modeloJtPj);
-		modeloJtPj.addColumn("Rut");
-		modeloJtPj.addColumn("Nombre");
-		modeloJtPj.addColumn("Direccion");
-		modeloJtPj.addColumn("Telefono");
-		modeloJtPj.addColumn("Celular");
-		modeloJtPj.addColumn("Email");
-		for(PersonaJuridica pj : listaPj) {
-			Object [] fila = new Object[6];
-			fila[0] = pj.getRut();
-			fila[1] = pj.getNombre();
-			fila[2] = pj.getDireccion() + " " + pj.getPuerta();
-			fila[3] = pj.getTelefono();
-			fila[4] = pj.getCelular();
-			fila[5] = pj.getEmail();
-			modeloJtPj.addRow(fila);
-		}
-		frmPers.getJtPersJuridica().addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				int fila = tabla.rowAtPoint(e.getPoint());
-				if (fila > -1) {
-					Long rut = (Long) tabla.getModel().getValueAt(fila, 0);
-					PersonaJuridica pj = mgrPers.obtenerPersJuridicaPorId(rut);
-					cargarControlesPersJuridica(pj);
-				}
+		if(listaPj != null && !listaPj.isEmpty()) {
+			DefaultTableModel modeloJtPj = new DefaultTableModel();
+			tabla.setModel(modeloJtPj);
+			modeloJtPj.addColumn("Rut");
+			modeloJtPj.addColumn("Nombre");
+			modeloJtPj.addColumn("Direccion");
+			modeloJtPj.addColumn("Telefono");
+			modeloJtPj.addColumn("Celular");
+			modeloJtPj.addColumn("Email");
+			for(PersonaJuridica pj : listaPj) {
+				Object [] fila = new Object[6];
+				fila[0] = pj.getRut();
+				fila[1] = pj.getNombre();
+				fila[2] = pj.getDireccion() + " " + pj.getPuerta();
+				fila[3] = pj.getTelefono();
+				fila[4] = pj.getCelular();
+				fila[5] = pj.getEmail();
+				modeloJtPj.addRow(fila);
 			}
-		});
-		
+			tabla.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					int fila = tabla.rowAtPoint(e.getPoint());
+					if (fila > -1) {
+						Long rut = (Long) tabla.getModel().getValueAt(fila, 0);
+						PersonaJuridica pj = mgrPers.obtenerPersJuridicaPorId(rut);
+						cargarControlesPersJuridica(pj);
+					}
+				}
+			});
+		} else {
+			cargarJTableVacia(tabla);
+		}
 	}
 	
 	public void cargarControlesPersFisica(PersonaFisica pf) {
@@ -277,7 +284,7 @@ public class CtrlFrmPersona extends CtrlGenerico {
 			cargarJtPersFisica(lst);
 			clearForm(frmPers.getContentPane());
 		} else {
-			enviarWarning(CnstPresGeneric.PERS, CnstPresGeneric.PERS_DATOS_OBLIG);
+			enviarWarning(CnstPresGeneric.PERS, CnstPresGeneric.DATOS_OBLIG);
 		}
 	}
 	
@@ -325,7 +332,7 @@ public class CtrlFrmPersona extends CtrlGenerico {
 			pf.setUltAct(new Fecha(Fecha.AMDHMS));
 			mgrPers.modificarPersFisica(pf);
 		} else {
-			enviarWarning(CnstPresGeneric.PERS, CnstPresGeneric.PERS_DATOS_OBLIG);
+			enviarWarning(CnstPresGeneric.PERS, CnstPresGeneric.DATOS_OBLIG);
 		}
 	}
 	
@@ -336,7 +343,7 @@ public class CtrlFrmPersona extends CtrlGenerico {
 			PersonaFisica pf = mgrPers.obtenerPersFisicaPorId(ctrlNumLong(txtPfDoc.getText()) ? new Long(txtPfDoc.getText()): null);
 			mgrPers.eliminarPersFisica(pf);
 		} else {
-			enviarWarning(CnstPresGeneric.PERS, CnstPresGeneric.PERS_DATOS_OBLIG);
+			enviarWarning(CnstPresGeneric.PERS, CnstPresGeneric.DATOS_OBLIG);
 		}
 		
 	}
@@ -391,7 +398,7 @@ public class CtrlFrmPersona extends CtrlGenerico {
 			cargarJtPersJuridica(lst);
 			clearForm(frmPers.getContentPane());
 		} else {
-			enviarWarning(CnstPresGeneric.PERS, CnstPresGeneric.PERS_DATOS_OBLIG);
+			enviarWarning(CnstPresGeneric.PERS, CnstPresGeneric.DATOS_OBLIG);
 		}
 	}
 	
@@ -435,7 +442,7 @@ public class CtrlFrmPersona extends CtrlGenerico {
 			cargarJtPersJuridica(lst);
 			clearForm(frmPers.getContentPane());
 		} else {
-			enviarWarning(CnstPresGeneric.PERS, CnstPresGeneric.PERS_DATOS_OBLIG);
+			enviarWarning(CnstPresGeneric.PERS, CnstPresGeneric.DATOS_OBLIG);
 		}
 	}
 	
@@ -446,7 +453,7 @@ public class CtrlFrmPersona extends CtrlGenerico {
 			PersonaJuridica pj = mgrPers.obtenerPersJuridicaPorId(ctrlNumLong(txtPjRut.getText()) ? new Long(txtPjRut.getText()): null);
 			mgrPers.eliminarPersFisica(pj);
 		} else {
-			enviarWarning(CnstPresGeneric.PERS, CnstPresGeneric.PERS_DATOS_OBLIG);
+			enviarWarning(CnstPresGeneric.PERS, CnstPresGeneric.DATOS_OBLIG);
 		}
 		
 	}
