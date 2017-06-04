@@ -17,7 +17,6 @@ import gpd.dominio.persona.Localidad;
 import gpd.dominio.persona.PersonaFisica;
 import gpd.dominio.persona.PersonaJuridica;
 import gpd.dominio.persona.Sexo;
-import gpd.dominio.persona.TipoDoc;
 import gpd.dominio.persona.TipoPersona;
 import gpd.dominio.util.Origen;
 import gpd.dominio.util.Sinc;
@@ -34,74 +33,9 @@ public class PersistenciaPersona extends Conector implements IPersPersona  {
 	
 	
 	@Override
-	public TipoDoc obtenerTipoDocPorId(Integer id) throws PersistenciaException {
-		TipoDoc tipoDoc = null;
-		try {
-			GenSqlSelectType genSel = new GenSqlSelectType(CnstQryPersona.QRY_SELECT_TIPODOC_XID);
-			genSel.setParam(id);
-			ResultSet rs = (ResultSet) runGeneric(genSel);
-			if(rs.next()) {
-				tipoDoc = new TipoDoc();
-				tipoDoc.setIdTipoDoc(rs.getInt("id_tipo_doc"));
-				tipoDoc.setNombre(rs.getString("nombre"));
-			}
-		} catch (ConectorException | SQLException e) {
-			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al obtenerListaTipoDoc: " + e.getMessage(), e);
-			throw new PersistenciaException(e);
-		}
-		return tipoDoc;
-	}
-	
-	@Override
-	public Integer guardarTipoDoc(TipoDoc tipoDoc) throws PersistenciaException {
-		Integer resultado = null;
-		GenSqlExecType genExec = new GenSqlExecType(CnstQryPersona.QRY_INSERT_TIPODOC);
-		genExec.setParam(tipoDoc.getNombre());
-		try {
-			resultado = (Integer) runGeneric(genExec);
-		} catch (ConectorException e) {
-			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al guardarTipoProd: " + e.getMessage(), e);
-			throw new PersistenciaException(e);
-		}
-		return resultado;
-	}
-
-	@Override
-	public Integer modificarTipoDoc(TipoDoc tipoDoc) throws PersistenciaException {
-		Integer resultado = null;
-		GenSqlExecType genExec = new GenSqlExecType(CnstQryPersona.QRY_UPDATE_TIPODOC);
-		genExec.setParam(tipoDoc.getNombre());
-		genExec.setParam(tipoDoc.getIdTipoDoc());
-		try {
-			resultado = (Integer) runGeneric(genExec);
-		} catch (ConectorException e) {
-			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al modificarTipoProd: " + e.getMessage(), e);
-			throw new PersistenciaException(e);
-		}
-		return resultado;
-	}
-
-	@Override
-	public Integer eliminarTipoDoc(TipoDoc tipoDoc) throws PersistenciaException {
-		Integer resultado = null;
-		GenSqlExecType genExec = new GenSqlExecType(CnstQryPersona.QRY_DELETE_TIPODOC);
-		genExec.setParam(tipoDoc.getIdTipoDoc());
-		try {
-			resultado = (Integer) runGeneric(genExec);
-		} catch (ConectorException e) {
-			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al eliminarTipoProd: " + e.getMessage(), e);
-			throw new PersistenciaException(e);
-		}
-		return resultado;
-	}
-	
-	@Override
 	public PersonaFisica obtenerPersFisicaPorId(Long id) throws PersistenciaException {
 		PersonaFisica pf = null;
+		PersistenciaTipoDoc ptd = new PersistenciaTipoDoc();
 		try {
 			GenSqlSelectType genSel = new GenSqlSelectType(CnstQryPersona.QRY_SELECT_PF_XID);
 			genSel.setParam(id);
@@ -109,12 +43,12 @@ public class PersistenciaPersona extends Conector implements IPersPersona  {
 			if(rs.next()) {
 				pf = new PersonaFisica();
 				pf.setDocumento(rs.getLong("documento"));
-				pf.setTipoDoc(obtenerTipoDocPorId(rs.getInt("id_tipo_doc")));
+				pf.setTipoDoc(ptd.obtenerTipoDocPorId(rs.getInt("id_tipo_doc")));
 				pf.setApellido1(rs.getString("apellido1"));
 				pf.setApellido2(rs.getString("apellido2"));
 				pf.setNombre1(rs.getString("nombre1"));
 				pf.setNombre2(rs.getString("nombre2"));
-				pf.setFechaNac(new Fecha(rs.getDate("fecha_nac")));
+				pf.setFechaNac(rs.getDate("fecha_nac") != null ? new Fecha(rs.getDate("fecha_nac")) : null);
 				char[] sexoChar = new char[1];
 				rs.getCharacterStream("sexo").read(sexoChar);
 				Sexo sexoE = Sexo.getSexoPorChar(sexoChar[0]);
@@ -420,29 +354,10 @@ public class PersistenciaPersona extends Conector implements IPersPersona  {
 	}
 
 	@Override
-	public List<TipoDoc> obtenerListaTipoDoc() throws PersistenciaException {
-		List<TipoDoc> listaTipoDoc = new ArrayList<>();
-		try {
-			GenSqlSelectType genType = new GenSqlSelectType(CnstQryPersona.QRY_SELECT_TIPODOC);
-			ResultSet rs = (ResultSet) runGeneric(genType);
-			while(rs.next()) {
-				TipoDoc tipoDoc = new TipoDoc();
-				tipoDoc.setIdTipoDoc(rs.getInt("id_tipo_doc"));
-				tipoDoc.setNombre(rs.getString("nombre"));
-				listaTipoDoc.add(tipoDoc);
-			}
-		} catch (ConectorException | SQLException e) {
-			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al obtenerListaTipoDoc: " + e.getMessage(), e);
-			throw new PersistenciaException(e.getMessage());
-		}
-		return listaTipoDoc;
-	}
-	
-	@Override
 	public List<PersonaFisica> obtenerBusquedaPersFisica(Long documento, String ape1, String ape2, String nom1, String nom2, 
 			Character sexo, String direccion, String telefono, String celular, String email, Integer idLoc) throws PersistenciaException {
 		List<PersonaFisica> listaPf = new ArrayList<>();
+		PersistenciaTipoDoc ptd = new PersistenciaTipoDoc();
 		try {
 			GenSqlSelectType genType = new GenSqlSelectType(CnstQryPersona.QRY_SEARCH_PF);
 			genType.setParamEmptyAsNumber(documento);
@@ -471,12 +386,12 @@ public class PersistenciaPersona extends Conector implements IPersPersona  {
 			while(rs.next()) {
 				PersonaFisica pf = new PersonaFisica();
 				pf.setDocumento(rs.getLong("documento"));
-				pf.setTipoDoc(obtenerTipoDocPorId(rs.getInt("id_tipo_doc")));
+				pf.setTipoDoc(ptd.obtenerTipoDocPorId(rs.getInt("id_tipo_doc")));
 				pf.setApellido1(rs.getString("apellido1"));
 				pf.setApellido2(rs.getString("apellido2"));
 				pf.setNombre1(rs.getString("nombre1"));
 				pf.setNombre2(rs.getString("nombre2"));
-				pf.setFechaNac(new Fecha(rs.getDate("fecha_nac")));
+				pf.setFechaNac(rs.getDate("fecha_nac") != null ? new Fecha(rs.getDate("fecha_nac")) : null);
 				char[] sexoChar = new char[1];
 				rs.getCharacterStream("sexo").read(sexoChar);
 				Sexo sexoE = Sexo.getSexoPorChar(sexoChar[0]);

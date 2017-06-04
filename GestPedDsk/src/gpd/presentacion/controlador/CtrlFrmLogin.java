@@ -40,7 +40,6 @@ public class CtrlFrmLogin extends CtrlGenerico {
 				frmLogin.setVisible(false);
 			} else {
 				enviarError(CnstPresGeneric.USR, CnstPresGeneric.USR_NO_AUTENTICADO);
-				
 			}
 		} else {
 //			try{} catch(UsuarioNoExisteException e) {}

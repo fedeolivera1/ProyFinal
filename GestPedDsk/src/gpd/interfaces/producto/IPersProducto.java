@@ -8,16 +8,11 @@ import gpd.exceptions.PersistenciaException;
 
 public interface IPersProducto {
 
-	//producto
+	public List<Producto> obtenerBusquedaProducto(Integer idTipoProd, String codigo, String nombre, String descripcion) throws PersistenciaException;
 	public Producto obtenerProductoPorId(Integer id) throws PersistenciaException;
 	public List<Producto> obtenerListaProductoPorTipo(TipoProd tipoProd) throws PersistenciaException;
 	public Integer guardarProducto(Producto producto) throws PersistenciaException;
 	public Integer modificarProducto(Producto producto) throws PersistenciaException;
 	public Integer eliminarProducto(Producto producto) throws PersistenciaException;
-	//tipo prod
-	public TipoProd obtenerTipoProdPorId(Integer id) throws PersistenciaException;
-	public List<TipoProd> obtenerListaTipoProd() throws PersistenciaException;
-	public Integer guardarTipoProd(TipoProd tipoProd) throws PersistenciaException;
-	public Integer modificarTipoProd(TipoProd  tipoProd) throws PersistenciaException;
-	public Integer eliminarTipoProd(TipoProd tipoProd) throws PersistenciaException;
+
 }

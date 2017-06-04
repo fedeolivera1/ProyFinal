@@ -2,9 +2,12 @@ package gpd.presentacion.popup;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
@@ -12,35 +15,38 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import gpd.dominio.producto.TipoProd;
+import gpd.dominio.producto.Utilidad;
 import gpd.presentacion.controlador.CtrlFrmProducto;
 
-public class IfrmTipoProd extends JInternalFrame implements InternalFrameListener {
+public class IfrmUtilidad extends JInternalFrame implements InternalFrameListener {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-	private JTextField txtTpDesc;
+	private JTextField txtUtilDesc;
 	private CtrlFrmProducto ctrlInterno;
+	private JFormattedTextField txtUtilPorc;
+	private JList<Utilidad> jlUtil;
 	
 
 	/**
 	 * Create the frame.
 	 */
-	public IfrmTipoProd(CtrlFrmProducto ctrl) {
+	public IfrmUtilidad(CtrlFrmProducto ctrl) {
 		ctrlInterno = ctrl;
         addInternalFrameListener(this);
-        ctrl.setiFrmTp(this);
+        ctrl.setiFrmUtil(this);
         
 		setIconifiable(true);
 		setClosable(true);
 		setBounds(100, 100, 450, 300);
-		setTitle("Tipo Prod");
+		setTitle("Utilidad");
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
@@ -50,59 +56,75 @@ public class IfrmTipoProd extends JInternalFrame implements InternalFrameListene
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		JLabel lblNewLabel = new JLabel("Tipo Prod");
+		JLabel lblNewLabel = new JLabel("Utilidad");
+		lblNewLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblNewLabel.setBounds(10, 11, 46, 14);
 		contentPane.add(lblNewLabel);
 		
-		txtTpDesc = new JTextField();
-		txtTpDesc.setBounds(66, 8, 120, 20);
-		contentPane.add(txtTpDesc);
-		txtTpDesc.setColumns(10);
+		txtUtilDesc = new JTextField();
+		txtUtilDesc.setBounds(66, 8, 120, 20);
+		contentPane.add(txtUtilDesc);
+		txtUtilDesc.setColumns(10);
 		
-		JList<TipoProd> jlTipoProd = new JList<>();
-		jlTipoProd.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		jlTipoProd.setBounds(196, 10, 228, 247);
-		contentPane.add(jlTipoProd);
-		DefaultListModel<TipoProd> dlm = new DefaultListModel<>();
-		jlTipoProd.setModel(dlm);
+		jlUtil = new JList<>();
+		jlUtil.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		jlUtil.setBounds(196, 10, 228, 247);
+		contentPane.add(jlUtil);
+		DefaultListModel<Utilidad> dlm = new DefaultListModel<>();
+		jlUtil.setModel(dlm);
+		
+		JLabel lblPorc = new JLabel("Porc.");
+		lblPorc.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblPorc.setBounds(10, 42, 46, 14);
+		contentPane.add(lblPorc);
+		
+		txtUtilPorc = new JFormattedTextField();
+		txtUtilPorc.setBounds(66, 39, 65, 20);
+		contentPane.add(txtUtilPorc);
+		
+		JButton btnUtilAgr = new JButton("Agregar");
+		btnUtilAgr.setBounds(97, 70, 89, 23);
+		contentPane.add(btnUtilAgr);
+		JButton btnUtilMod = new JButton("Modificar");
+		btnUtilMod.setBounds(97, 104, 89, 23);
+		contentPane.add(btnUtilMod);
+		JButton btnUtilEli = new JButton("Eliminar");
+		btnUtilEli.setBounds(97, 138, 89, 23);
+		contentPane.add(btnUtilEli);
 
 		/*****************************************************************************************************************************************************/
 		/* ACCIONES CONTROLES */
 		/*****************************************************************************************************************************************************/
 		
-		ctrl.cargarListTipoProd(jlTipoProd);
-		jlTipoProd.addListSelectionListener(new ListSelectionListener() {
+		ctrl.cargarListUtil(jlUtil);
+		
+		jlUtil.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent arg0) {
-				ctrl.cargarControlesTipoProd(txtTpDesc, jlTipoProd);
+				ctrl.cargarControlesUtil(txtUtilDesc, txtUtilPorc, jlUtil);
 			}
 		});
-		
-		JButton btnTpAgr = new JButton("Agregar");
-		btnTpAgr.addActionListener(new ActionListener() {
+		btnUtilAgr.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				ctrl.agregarTipoProd(txtTpDesc, jlTipoProd);
+				ctrl.agregarUtilidad(txtUtilDesc, txtUtilPorc, jlUtil);
 			}
 		});
-		btnTpAgr.setBounds(97, 39, 89, 23);
-		contentPane.add(btnTpAgr);
-		
-		JButton btnTpMod = new JButton("Modificar");
-		btnTpMod.addActionListener(new ActionListener() {
+		btnUtilMod.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				ctrl.modificarTipoProd(txtTpDesc, jlTipoProd);
+				ctrl.modificarUtilidad(txtUtilDesc, txtUtilPorc, jlUtil);
 			}
 		});
-		btnTpMod.setBounds(97, 73, 89, 23);
-		contentPane.add(btnTpMod);
-		
-		JButton btnTpEli = new JButton("Eliminar");
-		btnTpEli.addActionListener(new ActionListener() {
+		btnUtilEli.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				ctrl.eliminarTipoProd(jlTipoProd);
+				ctrl.eliminarUtilidad(jlUtil);
 			}
 		});
-		btnTpEli.setBounds(97, 107, 89, 23);
-		contentPane.add(btnTpEli);
+		txtUtilPorc.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				ctrl.controlInputNum(e);
+			}
+		});
+		
 	}
 
 	@Override
@@ -117,7 +139,7 @@ public class IfrmTipoProd extends JInternalFrame implements InternalFrameListene
 	public void internalFrameClosing(InternalFrameEvent e) {
 		if(InternalFrameEvent.INTERNAL_FRAME_CLOSING == e.getID()) {
 			ctrlInterno.cerrarIFrmTp();
-			ctrlInterno.cargarCbxTipoProd(ctrlInterno.getFrm().getCbxTipoProd());
+			ctrlInterno.cargarCbxUtil(ctrlInterno.getFrm().getCbxUtil());
 		}
 	}
 
@@ -136,5 +158,4 @@ public class IfrmTipoProd extends JInternalFrame implements InternalFrameListene
 	@Override
 	public void internalFrameOpened(InternalFrameEvent e) {
 	}
-	
 }

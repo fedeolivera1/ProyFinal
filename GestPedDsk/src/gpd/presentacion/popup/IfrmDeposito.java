@@ -18,24 +18,28 @@ import javax.swing.event.InternalFrameListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import gpd.dominio.producto.TipoProd;
+import gpd.dominio.producto.Deposito;
 import gpd.presentacion.controlador.CtrlFrmProducto;
 
-public class IfrmTipoProd extends JInternalFrame implements InternalFrameListener {
+public class IfrmDeposito extends JInternalFrame implements InternalFrameListener {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-	private JTextField txtTpDesc;
+	private JTextField txtDepNombre;
 	private CtrlFrmProducto ctrlInterno;
+	private JList<Deposito> jlDeposito;
+	private JButton btnDepAgr;
+	private JButton btnDepMod;
+	private JButton btnDepEli;
 	
 
 	/**
 	 * Create the frame.
 	 */
-	public IfrmTipoProd(CtrlFrmProducto ctrl) {
+	public IfrmDeposito(CtrlFrmProducto ctrl) {
 		ctrlInterno = ctrl;
         addInternalFrameListener(this);
-        ctrl.setiFrmTp(this);
+        ctrl.setiFrmDep(this);
         
 		setIconifiable(true);
 		setClosable(true);
@@ -50,59 +54,60 @@ public class IfrmTipoProd extends JInternalFrame implements InternalFrameListene
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		JLabel lblNewLabel = new JLabel("Tipo Prod");
+		JLabel lblNewLabel = new JLabel("Deposito");
 		lblNewLabel.setBounds(10, 11, 46, 14);
 		contentPane.add(lblNewLabel);
 		
-		txtTpDesc = new JTextField();
-		txtTpDesc.setBounds(66, 8, 120, 20);
-		contentPane.add(txtTpDesc);
-		txtTpDesc.setColumns(10);
+		txtDepNombre = new JTextField();
+		txtDepNombre.setBounds(66, 8, 120, 20);
+		contentPane.add(txtDepNombre);
+		txtDepNombre.setColumns(10);
 		
-		JList<TipoProd> jlTipoProd = new JList<>();
-		jlTipoProd.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		jlTipoProd.setBounds(196, 10, 228, 247);
-		contentPane.add(jlTipoProd);
-		DefaultListModel<TipoProd> dlm = new DefaultListModel<>();
-		jlTipoProd.setModel(dlm);
-
+		jlDeposito = new JList<>();
+		jlDeposito.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		jlDeposito.setBounds(196, 10, 228, 247);
+		contentPane.add(jlDeposito);
+		DefaultListModel<Deposito> dlm = new DefaultListModel<>();
+		jlDeposito.setModel(dlm);
+		
+		
+		btnDepAgr = new JButton("Agregar");
+		btnDepAgr.setBounds(97, 39, 89, 23);
+		contentPane.add(btnDepAgr);
+		
+		btnDepMod = new JButton("Modificar");
+		btnDepMod.setBounds(97, 73, 89, 23);
+		contentPane.add(btnDepMod);
+		
+		btnDepEli = new JButton("Eliminar");
+		btnDepEli.setBounds(97, 107, 89, 23);
+		contentPane.add(btnDepEli);
+		
 		/*****************************************************************************************************************************************************/
 		/* ACCIONES CONTROLES */
 		/*****************************************************************************************************************************************************/
 		
-		ctrl.cargarListTipoProd(jlTipoProd);
-		jlTipoProd.addListSelectionListener(new ListSelectionListener() {
-			public void valueChanged(ListSelectionEvent arg0) {
-				ctrl.cargarControlesTipoProd(txtTpDesc, jlTipoProd);
-			}
-		});
-		
-		JButton btnTpAgr = new JButton("Agregar");
-		btnTpAgr.addActionListener(new ActionListener() {
+		ctrl.cargarListDeposito(jlDeposito);
+		btnDepAgr.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				ctrl.agregarTipoProd(txtTpDesc, jlTipoProd);
+				ctrl.agregarDeposito(txtDepNombre, jlDeposito);
 			}
 		});
-		btnTpAgr.setBounds(97, 39, 89, 23);
-		contentPane.add(btnTpAgr);
-		
-		JButton btnTpMod = new JButton("Modificar");
-		btnTpMod.addActionListener(new ActionListener() {
+		btnDepMod.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				ctrl.modificarTipoProd(txtTpDesc, jlTipoProd);
+				ctrl.modificarDeposito(txtDepNombre, jlDeposito);
 			}
 		});
-		btnTpMod.setBounds(97, 73, 89, 23);
-		contentPane.add(btnTpMod);
-		
-		JButton btnTpEli = new JButton("Eliminar");
-		btnTpEli.addActionListener(new ActionListener() {
+		btnDepEli.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				ctrl.eliminarTipoProd(jlTipoProd);
+				ctrl.eliminarDeposito(jlDeposito);
 			}
 		});
-		btnTpEli.setBounds(97, 107, 89, 23);
-		contentPane.add(btnTpEli);
+		jlDeposito.addListSelectionListener(new ListSelectionListener() {
+			public void valueChanged(ListSelectionEvent arg0) {
+				ctrl.cargarControlesDep(txtDepNombre, jlDeposito);
+			}
+		});
 	}
 
 	@Override
@@ -116,8 +121,8 @@ public class IfrmTipoProd extends JInternalFrame implements InternalFrameListene
 	@Override
 	public void internalFrameClosing(InternalFrameEvent e) {
 		if(InternalFrameEvent.INTERNAL_FRAME_CLOSING == e.getID()) {
-			ctrlInterno.cerrarIFrmTp();
-			ctrlInterno.cargarCbxTipoProd(ctrlInterno.getFrm().getCbxTipoProd());
+			ctrlInterno.cerrarIFrmDep();
+			ctrlInterno.cargarCbxDep(ctrlInterno.getFrm().getCbxDep());
 		}
 	}
 

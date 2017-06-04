@@ -1,6 +1,7 @@
 package gpd.presentacion.controlador;
 
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -17,40 +18,56 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
+import gpd.dominio.producto.Deposito;
 import gpd.dominio.producto.Producto;
 import gpd.dominio.producto.TipoProd;
+import gpd.dominio.producto.Utilidad;
 import gpd.manager.producto.ManagerProducto;
 import gpd.presentacion.formulario.FrmProducto;
 import gpd.presentacion.generic.CnstPresGeneric;
+import gpd.presentacion.generic.GenCompType;
+import gpd.presentacion.popup.IfrmDeposito;
 import gpd.presentacion.popup.IfrmTipoProd;
+import gpd.presentacion.popup.IfrmUtilidad;
 
 public class CtrlFrmProducto extends CtrlGenerico {
 
 	private ManagerProducto mgrProd = new ManagerProducto();
 	private FrmProducto frmProd;
-	private IfrmTipoProd iFrm;
+	private IfrmTipoProd iFrmTp;
+	private IfrmDeposito iFrmDep;
+	private IfrmUtilidad iFrmUtil;
 	private JDesktopPane deskPane;
 	private TipoProd tpSel;
 	
-	public CtrlFrmProducto(IfrmTipoProd iFrm) {
+	
+	public CtrlFrmProducto(FrmProducto frmProd) {
 		super();
-		this.setiFrm(iFrm);
+		this.setFrm(frmProd);
 	}
 	
-	public CtrlFrmProducto(FrmProducto frm) {
+	public CtrlFrmProducto(IfrmTipoProd iFrmTp) {
 		super();
-		this.setFrm(frm);
+		this.setiFrmTp(iFrmTp);
+	}
+	
+	public CtrlFrmProducto(IfrmDeposito iFrmDep) {
+		super();
+		this.setiFrmDep(iFrmDep);
 	}
 	
 	/*****************************************************************************************************************************************************/
 	/* CONTROLES */
 	/*****************************************************************************************************************************************************/
-	
+	//tp
 	public void cargarCbxTipoProd(JComboBox<TipoProd> cbxTipoProd) {
 		cbxTipoProd.removeAllItems();
 		ArrayList<TipoProd> listaTipoProd = (ArrayList<TipoProd>) mgrProd.obtenerListaTipoProd();
-		for(TipoProd tipoProd : listaTipoProd) {
-			cbxTipoProd.addItem(tipoProd);
+		if(listaTipoProd != null && !listaTipoProd.isEmpty()) {
+			for(TipoProd tipoProd : listaTipoProd) {
+				cbxTipoProd.addItem(tipoProd);
+			}
+			cbxTipoProd.setSelectedIndex(-1);
 		}
 	}
 	
@@ -58,11 +75,13 @@ public class CtrlFrmProducto extends CtrlGenerico {
 		DefaultListModel<TipoProd> dlm = new DefaultListModel<>();
 		dlm.clear();
 		ArrayList<TipoProd> listaTipoProd = (ArrayList<TipoProd>) mgrProd.obtenerListaTipoProd();
-		for(TipoProd tipoProd : listaTipoProd) {
-			dlm.addElement(tipoProd);
+		if(listaTipoProd != null && !listaTipoProd.isEmpty()) {
+			for(TipoProd tipoProd : listaTipoProd) {
+				dlm.addElement(tipoProd);
+			}
+			jlTipoProd.setModel(dlm);
+			jlTipoProd.setSelectedIndex(-1);
 		}
-		jlTipoProd.setModel(dlm);
-		jlTipoProd.setSelectedIndex(-1);
 	}
 	
 	public void cargarControlesTipoProd(JTextField txtTpDesc, JList<TipoProd> jlTipoProd) {
@@ -72,9 +91,12 @@ public class CtrlFrmProducto extends CtrlGenerico {
 		}
 	}
 	
+	//dep
+	
+	//prod
 	public void cargarJtProd(List<Producto> listaProd) {
 		JTable tabla = frmProd.getJtProd();
-		limpiarJTable(tabla);
+		clearTable(tabla);
 		if(listaProd != null && !listaProd.isEmpty()) {
 			DefaultTableModel modeloJtProd = new DefaultTableModel();
 			tabla.setModel(modeloJtProd);
@@ -101,7 +123,8 @@ public class CtrlFrmProducto extends CtrlGenerico {
 					if (fila > -1) {
 						Integer idProd = (Integer) tabla.getModel().getValueAt(fila, 0);
 						Producto prod = mgrProd.obtenerProductoPorId(idProd);
-						cargarControlesProducto(prod);
+						Container containerJTable = tabla.getParent().getParent().getParent();
+						cargarControlesProducto(prod, containerJTable);
 					}
 				}
 			});
@@ -110,7 +133,8 @@ public class CtrlFrmProducto extends CtrlGenerico {
 		}
 	}
 	
-	public void cargarControlesProducto(Producto prod) {
+	public void cargarControlesProducto(Producto prod, Container panel) {
+		clearControlsInJPanel(panel);
 		ComboBoxModel<TipoProd> cbModelTp = frmProd.getCbxTipoProd().getModel();
 		cbModelTp.setSelectedItem(prod.getTipoProd());
 		frmProd.getCbxTipoProd().setSelectedItem(cbModelTp.getSelectedItem());
@@ -122,42 +146,162 @@ public class CtrlFrmProducto extends CtrlGenerico {
 		frmProd.getFtxtProPrecio().setText(String.valueOf(prod.getPrecio()));
 	}
 	
+	//dep
+	public void cargarCbxDep(JComboBox<Deposito> cbxDep) {
+		cbxDep.removeAllItems();
+		List<Deposito> listaDep = (ArrayList<Deposito>) mgrProd.obtenerListaDeposito();
+		if(listaDep != null && !listaDep.isEmpty()) {
+			for(Deposito dep : listaDep) {
+				cbxDep.addItem(dep);
+			}
+			cbxDep.setSelectedIndex(-1);
+		}
+	}
+	
+	public void cargarListDeposito(JList<Deposito> jlDep) {
+		DefaultListModel<Deposito> dlm = new DefaultListModel<>();
+		dlm.clear();
+		ArrayList<Deposito> listaDep = (ArrayList<Deposito>) mgrProd.obtenerListaDeposito();
+		if(listaDep != null && !listaDep.isEmpty()) {
+			for(Deposito dep : listaDep) {
+				dlm.addElement(dep);
+			}
+			jlDep.setModel(dlm);
+			jlDep.setSelectedIndex(-1);
+		}
+	}
+	
+	public void cargarControlesDep(JTextField txtDepNom, JList<Deposito> jlDep) {
+		if(controlDatosObl(jlDep)) {
+			Deposito dep = (Deposito) jlDep.getSelectedValue();
+			txtDepNom.setText(dep.getNombre());
+		}
+	}
+
+	
+	//util
+	public void cargarCbxUtil(JComboBox<Utilidad> cbxUtil) {
+		cbxUtil.removeAllItems();
+		List<Utilidad> listaUtil = (ArrayList<Utilidad>) mgrProd.obtenerListaUtilidad();
+		if(listaUtil != null && !listaUtil.isEmpty()) {
+			for(Utilidad util : listaUtil) {
+				cbxUtil.addItem(util);
+			}
+			cbxUtil.setSelectedIndex(-1);
+		}
+	}
+	
+	public void cargarListUtil(JList<Utilidad> jlUtil) {
+		DefaultListModel<Utilidad> dlm = new DefaultListModel<>();
+		dlm.clear();
+		List<Utilidad> listaUtil = (ArrayList<Utilidad>) mgrProd.obtenerListaUtilidad();
+		if(listaUtil != null && !listaUtil.isEmpty()) {
+			for(Utilidad util : listaUtil) {
+				dlm.addElement(util);
+			}
+			jlUtil.setModel(dlm);
+			jlUtil.setSelectedIndex(-1);
+		}
+	}
+	
+	public void cargarControlesUtil(JTextField txtUtilDesc, JFormattedTextField txtUtilPorc, JList<Utilidad> jlUtil) {
+		if(controlDatosObl(jlUtil)) {
+			Utilidad util = (Utilidad) jlUtil.getSelectedValue();
+			txtUtilDesc.setText(util.getDescripcion());
+			txtUtilPorc.setText(String.valueOf(util.getPorc()));
+		}
+	}
+	
 	/*****************************************************************************************************************************************************/
 	/* ACCIONES */
 	/*****************************************************************************************************************************************************/
 	
-	public Integer agregarProducto(JTextField codigo, JTextField nombre, JTextField descripcion, JFormattedTextField stockMin, JFormattedTextField precio) {
-		if(controlDatosObl(codigo, nombre, stockMin, precio)) {
-			JOptionPane.showMessageDialog(null, CnstPresGeneric.TP_ING_OK, CnstPresGeneric.TP, JOptionPane.PLAIN_MESSAGE);
+	//producto
+	
+	public void buscarProducto(JComboBox<TipoProd> cbxTp, JTextField txtProCod, JTextField txtProNom, JTextField txtProDesc) {
+		//FIXME chequear que no haya que poner campos obligatorios
+		List<Producto> listaProd = (ArrayList<Producto>) mgrProd.obtenerBusquedaProducto((TipoProd) cbxTp.getSelectedItem(), txtProCod.getText(), txtProNom.getText(), txtProDesc.getText());
+		cargarJtProd(listaProd);
+	}
+	
+	public Integer agregarProducto(JComboBox<TipoProd> cbxTp, JTextField codigo, JTextField nombre, JTextField descripcion, JFormattedTextField stockMin, JFormattedTextField precio) {
+		GenCompType genComp = new GenCompType();
+		genComp.setComp(cbxTp);
+		genComp.setComp(codigo);
+		genComp.setComp(nombre);
+		genComp.setComp(stockMin);
+		genComp.setComp(precio);
+		if(controlDatosObl(genComp)) {
+			Producto prod = new Producto();
+			prod.setTipoProd((TipoProd)cbxTp.getSelectedItem());
+			prod.setCodigo(codigo.getText());
+			prod.setNombre(nombre.getText());
+			prod.setDescripcion(descripcion.getText());
+			prod.setStockMin(new Float(stockMin.getText()));
+			prod.setPrecio(new Double(precio.getText()));
+			mgrProd.guardarProducto(prod);
+			clearForm(frmProd.getContentPane());
+			List<Producto> lst = new ArrayList<>();
+			lst.add(prod);
+			cargarJtProd(lst);
+		} else {
+			enviarWarning(CnstPresGeneric.PROD, CnstPresGeneric.DATOS_OBLIG);
 		}
 		return null;
 	}
 	
-	public Integer modificarProducto(JTextField id, JTextField codigo, JTextField nombre, JTextField descripcion, JFormattedTextField stockMin, JFormattedTextField precio) {
-		if(controlDatosObl(id, codigo, nombre, stockMin, precio)) {
-			return 1;
+	public Integer modificarProducto(JComboBox<TipoProd> cbxTp, JTextField id, JTextField codigo, JTextField nombre, JTextField descripcion, JFormattedTextField stockMin, JFormattedTextField precio) {
+		GenCompType genComp = new GenCompType();
+		genComp.setComp(cbxTp);
+		genComp.setComp(id);
+		genComp.setComp(codigo);
+		genComp.setComp(nombre);
+		genComp.setComp(stockMin);
+		genComp.setComp(precio);
+		if(controlDatosObl(genComp)) {
+			Integer idInt = ctrlNumLong(id.getText()) ? new Integer(id.getText()) : null;
+			Producto prod = mgrProd.obtenerProductoPorId(idInt);
+			prod.setCodigo(codigo.getText());
+			prod.setNombre(nombre.getText());
+			prod.setDescripcion(descripcion.getText());
+			prod.setStockMin(new Float(stockMin.getText()));
+			prod.setPrecio(new Double(precio.getText()));
+			mgrProd.modificarProducto(prod);
+			clearForm(frmProd.getContentPane());
+			List<Producto> lst = new ArrayList<>();
+			lst.add(prod);
+			cargarJtProd(lst);
+		} else {
+			enviarWarning(CnstPresGeneric.PROD, CnstPresGeneric.DATOS_OBLIG);
 		}
 		return null;
 	}
 	
 	public Integer eliminarProducto(JTextField id) {
 		if(controlDatosObl(id)) {
-			return 1;
+			Integer idInt = ctrlNumLong(id.getText()) ? new Integer(id.getText()) : null;
+			clearForm(frmProd.getContentPane());
+			Producto prod = new Producto();
+			prod.setIdProducto(idInt);
+			mgrProd.eliminarProducto(prod);
+		} else {
+			enviarWarning(CnstPresGeneric.PROD, CnstPresGeneric.DATOS_OBLIG);
 		}
 		return null;
 	}
+	
+	//tipo prod
 	
 	public Integer agregarTipoProd(JTextField descripcion, JList<TipoProd> jlTp) {
 		if(controlDatosObl(descripcion)) {
 			TipoProd tipoProd = new TipoProd();
 			tipoProd.setDescripcion(descripcion.getText());
 			mgrProd.guardarTipoProd(tipoProd);
+			clearForm(getiFrmTp().getContentPane());
 			cargarListTipoProd(jlTp);
 			JOptionPane.showMessageDialog(null, CnstPresGeneric.TP_ING_OK, CnstPresGeneric.TP, JOptionPane.PLAIN_MESSAGE);
-			clearForm(getiFrm().getContentPane());
 		} else {
-			//FIXME: aca ver de pasar mensajes de error como excepciones
-			JOptionPane.showMessageDialog(null, "ERROR", CnstPresGeneric.TP, JOptionPane.ERROR);
+			enviarWarning(CnstPresGeneric.TP, CnstPresGeneric.DATOS_OBLIG);
 		}
 		return null;
 	}
@@ -167,12 +311,11 @@ public class CtrlFrmProducto extends CtrlGenerico {
 			TipoProd tp = (TipoProd) jlTp.getSelectedValue();
 			tp.setDescripcion(descripcion.getText());
 			mgrProd.modificarTipoProd(tp);
+			clearForm(getiFrmTp().getContentPane());
 			cargarListTipoProd(jlTp);
 			JOptionPane.showMessageDialog(null, CnstPresGeneric.TP_MOD_OK, CnstPresGeneric.TP, JOptionPane.PLAIN_MESSAGE);
-			clearForm(getiFrm().getContentPane());
 		} else {
-			//FIXME: aca ver de pasar mensajes de error como excepciones
-			JOptionPane.showMessageDialog(null, "ERROR", CnstPresGeneric.TP, JOptionPane.ERROR);
+			enviarWarning(CnstPresGeneric.TP, CnstPresGeneric.DATOS_OBLIG);
 		}
 		return null;
 	}
@@ -181,18 +324,17 @@ public class CtrlFrmProducto extends CtrlGenerico {
 		if(controlDatosObl(jlTp)) {
 			TipoProd tp = (TipoProd) jlTp.getSelectedValue();
 			mgrProd.eliminarTipoProd(tp);
+			clearForm(getiFrmTp().getContentPane());
 			cargarListTipoProd(jlTp);
 			JOptionPane.showMessageDialog(null, CnstPresGeneric.TP_ELI_OK, CnstPresGeneric.TP, JOptionPane.PLAIN_MESSAGE);
-			clearForm(getiFrm().getContentPane());
 		} else {
-			//FIXME: aca ver de pasar mensajes de error como excepciones
-			JOptionPane.showMessageDialog(null, "ERROR", CnstPresGeneric.TP, JOptionPane.ERROR);
+			enviarWarning(CnstPresGeneric.TP, CnstPresGeneric.DATOS_OBLIG);
 		}
 		return null;
 	}
 
 
-	public void abrirInternalFrame() {
+	public void abrirIFrmTp() {
 		IfrmTipoProd ifrmTp = new IfrmTipoProd(this);
 		getDeskPane().setBounds(0, 0, 784, 565);
 		getDeskPane().add(ifrmTp);
@@ -203,12 +345,104 @@ public class CtrlFrmProducto extends CtrlGenerico {
 		ifrmTp.show();
 	}
 	
-	public void cerrarInternalFrame() {
+	public void cerrarIFrmTp() {
 		Component comp = getFrm().getContentPane().getComponent(1);
-		getDeskPane().setBounds(773, 11, 1, 1);
+		getDeskPane().setBounds(773, 11, 0, 0);
 		comp.setVisible(true);
 	}
 	
+	//deposito
+	
+	public Integer agregarDeposito(JTextField nombre, JList<Deposito> jlDep) {
+		if(controlDatosObl(nombre)) {
+			Deposito dep = new Deposito();
+			dep.setNombre(nombre.getText());
+			mgrProd.guardarDeposito(dep);
+			clearForm(getiFrmDep().getContentPane());
+			cargarListDeposito(jlDep);
+			JOptionPane.showMessageDialog(null, CnstPresGeneric.DEP_ING_OK, CnstPresGeneric.DEP, JOptionPane.PLAIN_MESSAGE);
+		} else {
+			enviarWarning(CnstPresGeneric.TP, CnstPresGeneric.DATOS_OBLIG);
+		}
+		return null;
+	}
+	
+	public Integer modificarDeposito(JTextField nombre, JList<Deposito> jlDep) {
+		if(controlDatosObl(nombre, jlDep)) {
+			Deposito dep = (Deposito) jlDep.getSelectedValue();
+			dep.setNombre(nombre.getText());
+			mgrProd.modificarDeposito(dep);
+			clearForm(getiFrmDep().getContentPane());
+			cargarListDeposito(jlDep);
+			JOptionPane.showMessageDialog(null, CnstPresGeneric.DEP_MOD_OK, CnstPresGeneric.DEP, JOptionPane.PLAIN_MESSAGE);
+		} else {
+			enviarWarning(CnstPresGeneric.TP, CnstPresGeneric.DATOS_OBLIG);
+		}
+		return null;
+	}
+	
+	public Integer eliminarDeposito(JList<Deposito> jlDep) {
+		if(controlDatosObl(jlDep)) {
+			Deposito dep = (Deposito) jlDep.getSelectedValue();
+			mgrProd.eliminarDeposito(dep);
+			clearForm(getiFrmDep().getContentPane());
+			cargarListDeposito(jlDep);
+			JOptionPane.showMessageDialog(null, CnstPresGeneric.DEP_ELI_OK, CnstPresGeneric.DEP, JOptionPane.PLAIN_MESSAGE);
+		} else {
+			enviarWarning(CnstPresGeneric.TP, CnstPresGeneric.DATOS_OBLIG);
+		}
+		return null;
+	}
+	
+	public void abrirIFrmDep() {
+		IfrmDeposito ifrmDep = new IfrmDeposito(this);
+		getDeskPane().setBounds(0, 0, 784, 565);
+		getDeskPane().add(ifrmDep);
+		//
+		Component comp = getFrm().getContentPane().getComponent(1);
+		comp.setVisible(false);//FIXME: ver si no existe solucion mejor
+		//
+		ifrmDep.show();
+	}
+	
+	public void cerrarIFrmDep() {
+		Component comp = getFrm().getContentPane().getComponent(1);
+		getDeskPane().setBounds(773, 11, 0, 0);
+		comp.setVisible(true);
+	}
+	
+	//utilidad
+	public Integer agregarUtilidad(JTextField desc, JFormattedTextField txtUtilPorc, JList<Utilidad> jlUtil) {
+		return null;
+	}
+	public Integer modificarUtilidad(JTextField desc,  JFormattedTextField txtUtilPorc, JList<Utilidad> jlUtil) {
+		return null;
+	}
+	public Integer eliminarUtilidad(JList<Utilidad> jlUtil) {
+		return null;
+	}
+	
+	public void abrirIFrmUtil() {
+		IfrmUtilidad ifrmUtil = new IfrmUtilidad(this);
+		getDeskPane().setBounds(0, 0, 784, 565);
+		getDeskPane().add(ifrmUtil);
+		//
+		Component comp = getFrm().getContentPane().getComponent(1);
+		comp.setVisible(false);//FIXME: ver si no existe solucion mejor
+		//
+		ifrmUtil.show();
+	}
+	
+	public void cerrarIFrmUtil() {
+		Component comp = getFrm().getContentPane().getComponent(1);
+		getDeskPane().setBounds(773, 11, 0, 0);
+		comp.setVisible(true);
+	}
+	
+	
+	/*****************************************************************************************************************************************************/
+	/* GET Y SET */
+	/*****************************************************************************************************************************************************/
 	
 	public FrmProducto getFrm() {
 		return frmProd;
@@ -231,13 +465,26 @@ public class CtrlFrmProducto extends CtrlGenerico {
 		this.tpSel = tpSel;
 	}
 
-	public IfrmTipoProd getiFrm() {
-		return iFrm;
+	public IfrmTipoProd getiFrmTp() {
+		return iFrmTp;
 	}
-	public void setiFrm(IfrmTipoProd iFrm) {
-		this.iFrm = iFrm;
+	public void setiFrmTp(IfrmTipoProd iFrmTp) {
+		this.iFrmTp = iFrmTp;
 	}
 
+	public IfrmDeposito getiFrmDep() {
+		return iFrmDep;
+	}
+	public void setiFrmDep(IfrmDeposito iFrmDep) {
+		this.iFrmDep = iFrmDep;
+	}
+
+	public IfrmUtilidad getiFrmUtil() {
+		return iFrmUtil;
+	}
+	public void setiFrmUtil(IfrmUtilidad iFrmUtil) {
+		this.iFrmUtil = iFrmUtil;
+	}
 
 	
 }

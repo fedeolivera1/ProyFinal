@@ -1,6 +1,7 @@
 package gpd.presentacion.controlador;
 
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.event.KeyEvent;
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -11,7 +12,6 @@ import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -42,6 +42,12 @@ public abstract class CtrlGenerico {
 		return instanceCv;
 	}
 	
+	/**
+	 * metodo que transforma una password sin cifrar a una cifrada con el metodo
+	 * MD5. 
+	 * @param input
+	 * @return string con hash md5 de password
+	 */
 	protected static String getMD5(String input) {
 		 try {
 			 MessageDigest md = MessageDigest.getInstance("MD5");
@@ -286,8 +292,21 @@ public abstract class CtrlGenerico {
 		} else if (nombreClase.equals("javax.swing.JTabbedPane")) {
 			// Estamos en el caso de un JScrollPane
 			clearTabbedPane((javax.swing.JTabbedPane) panel);
-		} else if (nombreClase.equals("javax.swing.JTable")) {
-			clearComponent((javax.swing.JTable) panel);
+		} 
+	}
+	
+	/**
+	 * 
+	 * @param JPanel
+	 * metodo que recibe JPanel y limpia controles del tipo Components
+	 * (JTextfield, JTextarea, JComboBox, etc)
+	 */
+	public void clearControlsInJPanel(Container panel) {
+		if(panel.getClass().getName().equals("javax.swing.JPanel")) {
+			java.awt.Component[] componentes = panel.getComponents();
+			for (int i = 0; i < componentes.length; i++) {
+				clearOnlyControls(componentes[i]);
+			}
 		}
 	}
 	
@@ -297,7 +316,7 @@ public abstract class CtrlGenerico {
 	 * si existiera panel interno a panel tambien lo limpia
 	 * llamando a clearComponent
 	 */
-	public void clearPanel(JPanel panel) {
+	public void clearPanel(Container panel) {
 	// Obtenemos todos los componentes que cuelgan del panel
 		java.awt.Component[] componentes = panel.getComponents();
 		for (int i = 0; i < componentes.length; i++) {
@@ -334,10 +353,34 @@ public abstract class CtrlGenerico {
 	}
 
 	/**
+	 * limpia las filas de la tabla
+	 * @param tabla
+	 */
+	public void clearTable(JTable tabla) {
+		DefaultTableModel modelo = (DefaultTableModel) tabla.getModel();
+		tabla.setEnabled(true);
+		int filas = modelo.getRowCount();
+		for (int i = 0; i < filas; i++) {
+			modelo.removeRow(0);
+		}
+	}
+	
+	/**
+	 * 
+	 * @param table
+	 * limpia modelo de tabla (columnas y filas)
+	 */
+	protected void deleteModelTable(JTable table) {
+		DefaultTableModel modelo = (DefaultTableModel) ((javax.swing.JTable) table).getModel();
+		modelo.setColumnCount(0);
+		modelo.setRowCount(0);
+	}
+	
+	/**
 	 * @param Component
 	 * limpieza de componentes recursivo
 	 * recibe componente, consulta de que clase es y realiza accion
-	 * segun definido por el control (en blanco, clear o indice 0, quita bordes).
+	 * segun definido por el control (en blanco, clear o indice -1, quita bordes).
 	 */
 	protected void clearComponent(Component comp) {
 		// Nombre de la clase del componente
@@ -364,50 +407,91 @@ public abstract class CtrlGenerico {
 			// Es un JScrollPane asi que llamamos a clearScrollPane
 			clearScrollPane((javax.swing.JScrollPane) comp);
 		} else if (nombreClase.equals("javax.swing.JTabbedPane")) {
-			// Es un JScrollPane asi que llamamos a clearScrollPane
+			// Es un JTabbedPane asi que llamamos a clearTabbedPane
 			clearTabbedPane((javax.swing.JTabbedPane) comp);
 		} else if (nombreClase.equals("javax.swing.JTable")) {
-			DefaultTableModel modelo = (DefaultTableModel) ((javax.swing.JTable) comp).getModel();
-			modelo.setColumnCount(0);
-			modelo.setRowCount(0);
+			// Es un JTable asi que llamamos a deleteModelTable
+			deleteModelTable((javax.swing.JTable) comp);
 		}
 		//se reinician los bordes para advertencias.
 		getCompVal().removeBorder(comp);
 	}
 	
+	/**
+	 * 
+	 * @param Component
+	 * metodo para limpiar solamente controles de tipo components, no containers
+	 */
+	protected void clearOnlyControls(Component comp) {
+		String nombreClase = comp.getClass().getName();
+		if (nombreClase.equals("javax.swing.JTextField")) {
+			// Es un JTextField asi que lo ponemos en blanco
+			((javax.swing.JTextField) comp).setText("");
+		} else if (nombreClase.equals("javax.swing.JFormattedTextField")) {
+			// Es un JFormattedTextField asi que lo ponemos en blanco
+			((javax.swing.JFormattedTextField) comp).setText("");
+		} else if (nombreClase.equals("javax.swing.JComboBox")) {
+			// Es un JComboBox asi que ponemos el primer elemento
+			((javax.swing.JComboBox<?>) comp).setSelectedIndex(-1);
+		} else if (nombreClase.equals("javax.swing.JTextArea")) {
+			// Es un JTextArea asi que lo ponemos en blanco
+			((javax.swing.JTextArea) comp).setText("");
+		} else if (nombreClase.equals("javax.swing.JCheckBox")) {
+			// Es un JCheckBox asi que lo desmarcamos
+			((javax.swing.JCheckBox) comp).setSelected(false);
+		} 
+		//se reinician los bordes para advertencias.
+		getCompVal().removeBorder(comp);
+	}
+	
+	/**
+	 * metodo para habilitar/deshabilitar contenedor y sus controles internos
+	 * @param cont contenedor a hab/deshab
+	 * @param band booleano para hab/deshab
+	 */
+	public static void setContainerEnabled(Container cont, Boolean enabled) {
+		 Component[] components = cont.getComponents();
+		 cont.setEnabled(enabled);
+		 for(int i = 0; i < components.length; i++) {            
+			 components[i].setEnabled(enabled);
+			 if(components[i] instanceof Container) {
+				 setContainerEnabled((Container)components[i], enabled);
+			 }
+		 }        
+	}
+	
+	
+	/**
+	 * 
+	 * @param string cabezal
+	 * @param string mensaje
+	 * genera un OptionPane con mensaje de warning por defecto
+	 */
 	protected void enviarWarning(String cab, String msg) {
 		JOptionPane.showMessageDialog(null, msg, cab, JOptionPane.WARNING_MESSAGE);
 	}
 	
+	/**
+	 * 
+	 * @param string cabezal
+	 * @param string mensaje
+	 * genera un OptionPane con mensaje de error por defecto
+	 */
 	protected void enviarError(String cab, String msg) {
 		JOptionPane.showMessageDialog(null, msg, cab, JOptionPane.ERROR_MESSAGE);
 	}
 	
-	/**
-	 * limpia la tabla, para ser invocado desde los otros metodos genericos de limpiar
-	 * @param tabla
-	 */
-	public void limpiarJTable(JTable tabla){
-        DefaultTableModel modelo = (DefaultTableModel) tabla.getModel();
-        tabla.setEnabled(true);
-        int filas = tabla.getRowCount()-1;
-        for (int i = 0; i < filas; i++) {
-            modelo.removeRow(0);
-        }
-    }
 	
 	/**
 	 * genera una fila de informacion de que no se ha podido cargar la tabla
 	 * @param tabla
 	 */
 	public void cargarJTableVacia(JTable tabla) {
-		limpiarJTable(tabla);
+		deleteModelTable(tabla);
         DefaultTableModel modelo = (DefaultTableModel) tabla.getModel();
-//		DefaultTableModel modelo = new DefaultTableModel();
         modelo.addColumn("Resultado");
         Object [] fila = new Object[1];
         fila[0] = CnstPresGeneric.JTABLE_EMPTY;
-//        tabla.
         modelo.addRow(fila);
         tabla.setEnabled(false);
     }

@@ -12,9 +12,15 @@ public interface CnstPresGeneric {
 	
 	//tipoProd
 	public static final String TP = "Tipo Prod";
-	public static final String TP_ING_OK = "Se ha ingresado del tipo producto correctamente.";
-	public static final String TP_MOD_OK = "Se ha modificado del tipo producto correctamente.";
-	public static final String TP_ELI_OK = "Se ha eliminado del tipo producto correctamente.";
+	public static final String TP_ING_OK = "Se ha ingresado el tipo producto correctamente.";
+	public static final String TP_MOD_OK = "Se ha modificado el tipo producto correctamente.";
+	public static final String TP_ELI_OK = "Se ha eliminado el tipo producto correctamente.";
+	
+	//deposito
+	public static final String DEP = "Deposito";
+	public static final String DEP_ING_OK = "Se ha ingresado el deposito correctamente.";
+	public static final String DEP_MOD_OK = "Se ha modificado el deposito correctamente.";
+	public static final String DEP_ELI_OK = "Se ha eliminado el deposito correctamente.";
 	
 	//persona
 	public static final String PERS = "Persona";

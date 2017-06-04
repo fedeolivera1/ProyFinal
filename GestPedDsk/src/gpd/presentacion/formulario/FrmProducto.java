@@ -23,7 +23,9 @@ import javax.swing.border.EmptyBorder;
 
 import org.apache.log4j.Logger;
 
+import gpd.dominio.producto.Deposito;
 import gpd.dominio.producto.TipoProd;
+import gpd.dominio.producto.Utilidad;
 import gpd.dominio.usuario.UsuarioDsk;
 import gpd.presentacion.controlador.CtrlFrmProducto;
 
@@ -47,7 +49,16 @@ public class FrmProducto extends JFrame {
 	private JButton btnProAgr;
 	private JButton btnProMod;
 	private JButton btnProEli;
+	private JButton btnProBuscar;
+	private JButton btnProLimpiar;
 	private JTable jtProd;
+	private JComboBox<Deposito> cbxDep;
+	private JComboBox<Utilidad> cbxUtil;
+	private JLabel label_6;
+	private JScrollPane scrollPaneLote;
+	private JLabel lblLotesDisponibles;
+	private JButton btnUtilAgregar;
+	private JTable jtLote;
 
 
 	public static FrmProducto getFrmProducto(UsuarioDsk usr) {
@@ -62,6 +73,7 @@ public class FrmProducto extends JFrame {
 	 * Create the frame.
 	 */
 	private FrmProducto(UsuarioDsk usr) {
+		
 		setLocationRelativeTo(null);
 		setTitle("Producto");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -75,9 +87,9 @@ public class FrmProducto extends JFrame {
 		
 		desktopPane = new JDesktopPane();
 		desktopPane.setBackground(SystemColor.control);
-		desktopPane.setBounds(784, 1, 1, 1);
-		contentPane.add(desktopPane);
+		desktopPane.setBounds(0, 0, 0, 0);
 		desktopPane.setLayout(null);
+		contentPane.add(desktopPane);
 		//agrego desktopPane a controlador
 		ctrlProd.setDeskPane(desktopPane);
 		
@@ -100,7 +112,7 @@ public class FrmProducto extends JFrame {
 		label.setBounds(23, 45, 46, 14);
 		tpProd.add(label);
 		
-		cbxTipoProd = new JComboBox<TipoProd>();
+		cbxTipoProd = new JComboBox<>();
 		cbxTipoProd.setBounds(72, 42, 151, 20);
 		tpProd.add(cbxTipoProd);
 		
@@ -188,18 +200,30 @@ public class FrmProducto extends JFrame {
 		btnTpAgregar.setBounds(228, 41, 32, 23);
 		tpProd.add(btnTpAgregar);
 		
+		btnProBuscar = new JButton("Buscar");
+		btnProBuscar.setBounds(282, 129, 89, 23);
+		tpProd.add(btnProBuscar);
+		
+		btnProLimpiar = new JButton("Limpiar");
+		btnProLimpiar.setBounds(282, 160, 89, 23);
+		tpProd.add(btnProLimpiar);
+		
 		JPanel tpLote = new JPanel();
 		tabbedPane.addTab("Lote", null, tpLote, null);
 		tpLote.setLayout(null);
 		
-		JPanel tpDeposito = new JPanel();
-		tabbedPane.addTab("Deposito", null, tpDeposito, null);
-		tpDeposito.setLayout(null);
+		cbxDep = new JComboBox<>();
+		cbxDep.setBounds(72, 404, 151, 20);
+		tpLote.add(cbxDep);
 		
-		/*****************************************************************************************************************************************************/
-		/* ACCIONES CONTROLES */
-		/*****************************************************************************************************************************************************/
-		ctrlProd.cargarCbxTipoProd(cbxTipoProd);
+		JButton btnDepAgregar = new JButton("...");
+		btnDepAgregar.setBounds(233, 403, 32, 23);
+		tpLote.add(btnDepAgregar);
+		
+		JLabel lblDeposito = new JLabel("Deposito");
+		lblDeposito.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblDeposito.setBounds(16, 407, 46, 14);
+		tpLote.add(lblDeposito);
 		
 		JScrollPane scrollPaneProd = new JScrollPane();
 		scrollPaneProd.setBounds(10, 303, 759, 223);
@@ -207,6 +231,52 @@ public class FrmProducto extends JFrame {
 		
 		jtProd = new JTable();
 		scrollPaneProd.setColumnHeaderView(jtProd);
+		scrollPaneProd.setColumnHeaderView(jtProd);
+		scrollPaneProd.setViewportView(jtProd);
+		
+		cbxUtil = new JComboBox<>();
+		cbxUtil.setBounds(72, 435, 151, 20);
+		tpLote.add(cbxUtil);
+		
+		label_6 = new JLabel("Utilidad");
+		label_6.setHorizontalAlignment(SwingConstants.RIGHT);
+		label_6.setBounds(10, 438, 52, 14);
+		tpLote.add(label_6);
+		
+		scrollPaneLote = new JScrollPane();
+		scrollPaneLote.setBounds(16, 36, 750, 160);
+		tpLote.add(scrollPaneLote);
+		
+		jtLote = new JTable();
+		scrollPaneLote.setColumnHeaderView(jtLote);
+		
+		lblLotesDisponibles = new JLabel("Lotes disponibles");
+		lblLotesDisponibles.setHorizontalAlignment(SwingConstants.LEFT);
+		lblLotesDisponibles.setBounds(16, 11, 95, 14);
+		tpLote.add(lblLotesDisponibles);
+		
+		btnUtilAgregar = new JButton("...");
+		btnUtilAgregar.setBounds(233, 434, 32, 23);
+		tpLote.add(btnUtilAgregar);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(16, 232, 750, 160);
+		tpLote.add(scrollPane);
+		
+		JLabel lblProductosDelLote = new JLabel("Productos del lote");
+		lblProductosDelLote.setHorizontalAlignment(SwingConstants.LEFT);
+		lblProductosDelLote.setBounds(16, 207, 95, 14);
+		tpLote.add(lblProductosDelLote);
+		
+		/*****************************************************************************************************************************************************/
+		/* ACCIONES CONTROLES */
+		/*****************************************************************************************************************************************************/
+
+		ctrlProd.cargarCbxTipoProd(cbxTipoProd);
+		ctrlProd.cargarCbxDep(cbxDep);
+		ctrlProd.cargarCbxUtil(cbxUtil);
+		
+		
 		ftxtProStockMin.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyTyped(KeyEvent e) {
@@ -221,12 +291,12 @@ public class FrmProducto extends JFrame {
 		});
 		btnProAgr.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				ctrlProd.agregarProducto(txtProCod, txtProNom, txtProDesc, ftxtProStockMin, ftxtProPrecio);
+				ctrlProd.agregarProducto(cbxTipoProd, txtProCod, txtProNom, txtProDesc, ftxtProStockMin, ftxtProPrecio);
 			}
 		});
 		btnProMod.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				ctrlProd.modificarProducto(txtProId, txtProCod, txtProNom, txtProDesc, ftxtProStockMin, ftxtProPrecio);
+				ctrlProd.modificarProducto(cbxTipoProd, txtProId, txtProCod, txtProNom, txtProDesc, ftxtProStockMin, ftxtProPrecio);
 			}
 		});
 		btnProEli.addActionListener(new ActionListener() {
@@ -236,7 +306,17 @@ public class FrmProducto extends JFrame {
 		});
 		btnTpAgregar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				ctrlProd.abrirInternalFrame();
+				ctrlProd.abrirIFrmTp();
+			}
+		});
+		btnProBuscar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				ctrlProd.buscarProducto(cbxTipoProd, txtProCod, txtProNom, txtProDesc);
+			}
+		});
+		btnProLimpiar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ctrlProd.clearForm(getContentPane());
 			}
 		});
 		
@@ -247,13 +327,27 @@ public class FrmProducto extends JFrame {
 	/* GET Y SET DE CAMPOS */
 	/*****************************************************************************************************************************************************/
 	
+	public CtrlFrmProducto getCtrlProd() {
+		return ctrlProd;
+	}
+	public void setCtrlProd(CtrlFrmProducto ctrlProd) {
+		this.ctrlProd = ctrlProd;
+	}
+	
 	public JComboBox<TipoProd> getCbxTipoProd() {
 		return this.cbxTipoProd;
 	}
 	public void setCbxTipoProd(JComboBox<TipoProd> cbxTipoProd) {
 		this.cbxTipoProd = cbxTipoProd;
 	}
-
+	
+	public JComboBox<Deposito> getCbxDep() {
+		return cbxDep;
+	}
+	public void setCbxDep(JComboBox<Deposito> cbxDep) {
+		this.cbxDep = cbxDep;
+	}
+	
 	public JTextField getTxtProId() {
 		return txtProId;
 	}
@@ -301,6 +395,13 @@ public class FrmProducto extends JFrame {
 	}
 	public void setJtProd(JTable jtProd) {
 		this.jtProd = jtProd;
+	}
+	
+	public JComboBox<Utilidad> getCbxUtil() {
+		return cbxUtil;
+	}
+	public void setCbxUtil(JComboBox<Utilidad> cbxUtil) {
+		this.cbxUtil = cbxUtil;
 	}
 	
 }

@@ -18,20 +18,6 @@ public class FrmPrincipal extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 
-	/**
-	 * Launch the application.
-	 */
-//	public static void main(String[] args) {
-//		EventQueue.invokeLater(new Runnable() {
-//			public void run() {
-//				try {
-//					
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		});
-//	}
 
 	/**
 	 * Create the frame.
@@ -53,6 +39,9 @@ public class FrmPrincipal extends JFrame {
 				System.exit(0);
 			}
 		});
+		
+		JMenuItem mntmUsuario = new JMenuItem("Usuario");
+		mnArchivo.add(mntmUsuario);
 		mnArchivo.add(mnSalir);
 		
 		JMenu mnCliente = new JMenu("Persona");
@@ -118,13 +107,44 @@ public class FrmPrincipal extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				FrmProducto frmProd = FrmProducto.getFrmProducto(usr);
 				frmProd.setLocationRelativeTo(null);
-				//panel.pestaña("Producto");
 				JTabbedPane comp = (JTabbedPane) frmProd.getContentPane().getComponent(1);
-				comp.setSelectedIndex(2);
+				comp.setSelectedIndex(1);
 				frmProd.setVisible(true);
+				frmProd.getCtrlProd().abrirIFrmDep();
 			}
 		});
 		mnProducto.add(mntmDepositos);
+		
+		JMenuItem mntmUtilidad = new JMenuItem("Utilidad");
+		mntmUtilidad.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				FrmProducto frmProd = FrmProducto.getFrmProducto(usr);
+				frmProd.setLocationRelativeTo(null);
+				JTabbedPane comp = (JTabbedPane) frmProd.getContentPane().getComponent(1);
+				comp.setSelectedIndex(1);
+				frmProd.setVisible(true);
+				frmProd.getCtrlProd().abrirIFrmUtil();
+			}
+		});
+		mnProducto.add(mntmUtilidad);
+		
+		JMenu mnMovimientos = new JMenu("Movimientos");
+		menuBar.add(mnMovimientos);
+		
+		JMenuItem mntmCompras = new JMenuItem("Compras");
+		mnMovimientos.add(mntmCompras);
+		
+		JMenuItem mntmVentas = new JMenuItem("Ventas");
+		mnMovimientos.add(mntmVentas);
+		
+		JMenu mnPedidos = new JMenu("Pedidos");
+		menuBar.add(mnPedidos);
+		
+		JMenuItem mntmPedidos = new JMenuItem("Pedidos");
+		mnPedidos.add(mntmPedidos);
+		
+		JMenu mnConsultas = new JMenu("Consultas");
+		menuBar.add(mnConsultas);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);

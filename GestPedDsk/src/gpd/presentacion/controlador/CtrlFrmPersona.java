@@ -1,5 +1,6 @@
 package gpd.presentacion.controlador;
 
+import java.awt.Container;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -21,7 +22,6 @@ import gpd.dominio.persona.Sexo;
 import gpd.dominio.persona.TipoDoc;
 import gpd.dominio.persona.TipoPersona;
 import gpd.dominio.util.Origen;
-import gpd.dominio.util.Sinc;
 import gpd.manager.persona.ManagerPersona;
 import gpd.presentacion.formulario.FrmPersona;
 import gpd.presentacion.generic.CnstPresGeneric;
@@ -89,7 +89,7 @@ public class CtrlFrmPersona extends CtrlGenerico {
 	
 	public void cargarJtPersFisica(List<PersonaFisica> listaPf) {
 		JTable tabla = frmPers.getJtPersFisica();
-		limpiarJTable(tabla);
+		clearTable(tabla);
 		if(listaPf != null && !listaPf.isEmpty()) {
 			DefaultTableModel modeloJtPf = new DefaultTableModel();
 			tabla.setModel(modeloJtPf);
@@ -114,10 +114,12 @@ public class CtrlFrmPersona extends CtrlGenerico {
 				public void mouseClicked(MouseEvent e) {
 					int fila = tabla.rowAtPoint(e.getPoint());
 //		        	int columna = tabla.columnAtPoint(e.getPoint());
-					if ((fila > -1) /*&& (columna > -1)*/) {
+					if (fila > -1) {
 						Long documento = (Long) tabla.getModel().getValueAt(fila, 0);
 						PersonaFisica pf = mgrPers.obtenerPersFisicaPorId(documento);
-						cargarControlesPersFisica(pf);
+						//obtengo jpanel contenedor de la tabla (2 niveles up)
+						Container containerJTable = tabla.getParent().getParent().getParent();
+						cargarControlesPersFisica(pf, containerJTable);
 					}
 				}
 			});
@@ -128,7 +130,7 @@ public class CtrlFrmPersona extends CtrlGenerico {
 	
 	public void cargarJtPersJuridica(List<PersonaJuridica> listaPj) {
 		JTable tabla = frmPers.getJtPersJuridica();
-		limpiarJTable(tabla);
+		clearTable(tabla);
 		if(listaPj != null && !listaPj.isEmpty()) {
 			DefaultTableModel modeloJtPj = new DefaultTableModel();
 			tabla.setModel(modeloJtPj);
@@ -155,7 +157,9 @@ public class CtrlFrmPersona extends CtrlGenerico {
 					if (fila > -1) {
 						Long rut = (Long) tabla.getModel().getValueAt(fila, 0);
 						PersonaJuridica pj = mgrPers.obtenerPersJuridicaPorId(rut);
-						cargarControlesPersJuridica(pj);
+						//obtengo jpanel contenedor de la tabla (2 niveles up)
+						Container containerJTable = tabla.getParent().getParent().getParent();
+						cargarControlesPersJuridica(pj, containerJTable);
 					}
 				}
 			});
@@ -164,7 +168,8 @@ public class CtrlFrmPersona extends CtrlGenerico {
 		}
 	}
 	
-	public void cargarControlesPersFisica(PersonaFisica pf) {
+	public void cargarControlesPersFisica(PersonaFisica pf, Container panel) {
+		clearControlsInJPanel(panel);
 		//datos pf
 		ComboBoxModel<TipoDoc> cbModelTd = frmPers.getCbxPfTipoDoc().getModel();
 		cbModelTd.setSelectedItem(pf.getTipoDoc());
@@ -194,7 +199,8 @@ public class CtrlFrmPersona extends CtrlGenerico {
 		frmPers.getCbxPfLoc().setSelectedItem(cbModelLoc.getSelectedItem());
 	}
 	
-	public void cargarControlesPersJuridica(PersonaJuridica pj) {
+	public void cargarControlesPersJuridica(PersonaJuridica pj, Container panel) {
+		clearControlsInJPanel(panel);
 		//datos pj
 		frmPers.getTxtPjRut().setText(String.valueOf(pj.getRut()));
 		frmPers.getTxtPjNom().setText(pj.getNombre());
@@ -276,13 +282,13 @@ public class CtrlFrmPersona extends CtrlGenerico {
 			Localidad loc = (Localidad) cbxPersLoc.getSelectedItem();
 			pf.setLocalidad(loc);
 			pf.setOrigen(Origen.D);
-			pf.setSinc(Sinc.N);
-			pf.setUltAct(new Fecha(Fecha.AMDHMS));
+//			pf.setSinc(Sinc.N);
+//			pf.setUltAct(new Fecha(Fecha.AMDHMS));
 			mgrPers.guardarPersFisica(pf);
+			clearPanel(frmPers.getContentPane());
 			List<PersonaFisica> lst = new ArrayList<>();
 			lst.add(pf);
 			cargarJtPersFisica(lst);
-			clearForm(frmPers.getContentPane());
 		} else {
 			enviarWarning(CnstPresGeneric.PERS, CnstPresGeneric.DATOS_OBLIG);
 		}
@@ -328,9 +334,13 @@ public class CtrlFrmPersona extends CtrlGenerico {
 			Localidad loc = (Localidad) cbxPersLoc.getSelectedItem();
 			pf.setLocalidad(loc);
 			pf.setOrigen(Origen.D);
-			pf.setSinc(Sinc.N);
-			pf.setUltAct(new Fecha(Fecha.AMDHMS));
+//			pf.setSinc(Sinc.N);
+//			pf.setUltAct(new Fecha(Fecha.AMDHMS));
 			mgrPers.modificarPersFisica(pf);
+			clearPanel(frmPers.getContentPane());
+			List<PersonaFisica> lst = new ArrayList<>();
+			lst.add(pf);
+			cargarJtPersFisica(lst);
 		} else {
 			enviarWarning(CnstPresGeneric.PERS, CnstPresGeneric.DATOS_OBLIG);
 		}
@@ -342,6 +352,7 @@ public class CtrlFrmPersona extends CtrlGenerico {
 		if(controlDatosObl(genComp)) {
 			PersonaFisica pf = mgrPers.obtenerPersFisicaPorId(ctrlNumLong(txtPfDoc.getText()) ? new Long(txtPfDoc.getText()): null);
 			mgrPers.eliminarPersFisica(pf);
+			clearPanel(frmPers.getContentPane());
 		} else {
 			enviarWarning(CnstPresGeneric.PERS, CnstPresGeneric.DATOS_OBLIG);
 		}
@@ -352,7 +363,7 @@ public class CtrlFrmPersona extends CtrlGenerico {
 			JTextField txtPjBse, JCheckBox chkPjProv, JTextField txtPjDir, JTextField txtPjTel, JTextField txtPjCel, 
 			JTextField txtPjEml, JComboBox<Localidad> cbxPjLoc) {
 		Long rut = ctrlNumLong(txtPjRut.getText()) ? new Long(txtPjRut.getText()) : null;
-		ArrayList<PersonaJuridica> listaPj = (ArrayList<PersonaJuridica>) mgrPers.obtenerBusquedaPersJuridica(rut, txtPjNom.getText(), txtPjRs.getText(), 
+		List<PersonaJuridica> listaPj = (ArrayList<PersonaJuridica>) mgrPers.obtenerBusquedaPersJuridica(rut, txtPjNom.getText(), txtPjRs.getText(), 
 				txtPjBps.getText(), txtPjBse.getText(), Boolean.valueOf(chkPjProv.isSelected()), txtPjDir.getText(), txtPjTel.getText(), txtPjCel.getText(), 
 				txtPjEml.getText(), (Localidad) cbxPjLoc.getSelectedItem());
 			cargarJtPersJuridica(listaPj);
@@ -390,13 +401,13 @@ public class CtrlFrmPersona extends CtrlGenerico {
 			Localidad loc = (Localidad) cbxPersLoc.getSelectedItem();
 			pj.setLocalidad(loc);
 			pj.setOrigen(Origen.D);
-			pj.setSinc(Sinc.N);
-			pj.setUltAct(new Fecha(Fecha.AMDHMS));
+//			pj.setSinc(Sinc.N);
+//			pj.setUltAct(new Fecha(Fecha.AMDHMS));
 			mgrPers.guardarPersJuridica(pj);
+			clearPanel(frmPers.getContentPane());
 			List<PersonaJuridica> lst = new ArrayList<>();
 			lst.add(pj);
 			cargarJtPersJuridica(lst);
-			clearForm(frmPers.getContentPane());
 		} else {
 			enviarWarning(CnstPresGeneric.PERS, CnstPresGeneric.DATOS_OBLIG);
 		}
@@ -434,13 +445,13 @@ public class CtrlFrmPersona extends CtrlGenerico {
 			Localidad loc = (Localidad) cbxPersLoc.getSelectedItem();
 			pj.setLocalidad(loc);
 			pj.setOrigen(Origen.D);
-			pj.setSinc(Sinc.N);
-			pj.setUltAct(new Fecha(Fecha.AMDHMS));
+//			pj.setSinc(Sinc.N);
+//			pj.setUltAct(new Fecha(Fecha.AMDHMS));
 			mgrPers.modificarPersJuridica(pj);
+			clearPanel(frmPers.getContentPane());
 			List<PersonaJuridica> lst = new ArrayList<>();
 			lst.add(pj);
 			cargarJtPersJuridica(lst);
-			clearForm(frmPers.getContentPane());
 		} else {
 			enviarWarning(CnstPresGeneric.PERS, CnstPresGeneric.DATOS_OBLIG);
 		}
@@ -452,6 +463,7 @@ public class CtrlFrmPersona extends CtrlGenerico {
 		if(controlDatosObl(genComp)) {
 			PersonaJuridica pj = mgrPers.obtenerPersJuridicaPorId(ctrlNumLong(txtPjRut.getText()) ? new Long(txtPjRut.getText()): null);
 			mgrPers.eliminarPersFisica(pj);
+			clearPanel(frmPers.getContentPane());
 		} else {
 			enviarWarning(CnstPresGeneric.PERS, CnstPresGeneric.DATOS_OBLIG);
 		}

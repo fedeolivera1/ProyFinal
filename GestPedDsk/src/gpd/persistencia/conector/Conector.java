@@ -19,7 +19,7 @@ import gpd.util.ConfigDriver;
 public abstract class Conector {
 	
 	private static final Logger logger = Logger.getLogger(Conector.class);
-	private static Connection conn = null;
+	protected static Connection conn = null;
 	
 	/**
 	 * obtiene la conexion con info de la base de datos
@@ -99,7 +99,7 @@ public abstract class Conector {
 	 * @throws ConectorException 
 	 */
 	protected static ResultSet selectGeneric(GenSqlSelectType genType) throws ConectorException {
-		logger.info("Ejecucion selectGeneric");
+		logger.debug("Ejecucion selectGeneric");
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
@@ -128,7 +128,7 @@ public abstract class Conector {
 	 * @throws ConectorException 
 	 */
 	protected static Integer executeNonQuery(GenSqlExecType genType) throws ConectorException {
-		logger.info("Ejecucion executeNonQuery");
+		logger.debug("Ejecucion executeNonQuery");
 		Integer retorno = null;
 		PreparedStatement ps = null;
 		try {

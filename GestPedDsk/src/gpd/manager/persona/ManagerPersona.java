@@ -11,15 +11,19 @@ import gpd.dominio.persona.PersonaFisica;
 import gpd.dominio.persona.PersonaJuridica;
 import gpd.dominio.persona.Sexo;
 import gpd.dominio.persona.TipoDoc;
+import gpd.dominio.util.Sinc;
 import gpd.exceptions.PersistenciaException;
 import gpd.interfaces.persona.IPersPersona;
+import gpd.interfaces.persona.IPersTipoDoc;
 import gpd.persistencia.conector.Conector;
 import gpd.persistencia.persona.PersistenciaPersona;
+import gpd.types.Fecha;
 
 public class ManagerPersona {
 
 	private static final Logger logger = Logger.getLogger(ManagerPersona.class);
 	private IPersPersona interfacePersona;
+	private IPersTipoDoc interfaceTipoDoc;
 	
 	
 	/* TIPO DOC */
@@ -30,7 +34,7 @@ public class ManagerPersona {
 		interfacePersona = new PersistenciaPersona();
 		try {
 			Conector.getConn();
-			listaTipoDoc = interfacePersona.obtenerListaTipoDoc();
+			listaTipoDoc = interfaceTipoDoc.obtenerListaTipoDoc();
 			Conector.closeConn("obtenerListaTipoDoc", null);
 		} catch (PersistenciaException e) {
 			e.printStackTrace();
@@ -77,6 +81,8 @@ public class ManagerPersona {
 		if(persFisica != null) {
 			interfacePersona = new PersistenciaPersona();
 			try {
+				persFisica.setSinc(Sinc.N);
+				persFisica.setUltAct(new Fecha(Fecha.AMDHMS));
 				Conector.getConn();
 				resultado = interfacePersona.guardarPersFisica(persFisica);
 				Conector.closeConn("guardarPersFisica", null);
@@ -93,6 +99,8 @@ public class ManagerPersona {
 		if(persFisica != null) {
 			interfacePersona = new PersistenciaPersona();
 			try {
+				persFisica.setSinc(Sinc.N);
+				persFisica.setUltAct(new Fecha(Fecha.AMDHMS));
 				Conector.getConn();
 				resultado = interfacePersona.modificarPersFisica(persFisica);
 				Conector.closeConn("modificarPersFisica", null);
@@ -159,6 +167,8 @@ public class ManagerPersona {
 		if(persJuridica != null) {
 			interfacePersona = new PersistenciaPersona();
 			try {
+				persJuridica.setSinc(Sinc.N);
+				persJuridica.setUltAct(new Fecha(Fecha.AMDHMS));
 				Conector.getConn();
 				resultado = interfacePersona.guardarPersJuridica(persJuridica);
 				Conector.closeConn("guardarPersJuridica", null);
@@ -175,6 +185,8 @@ public class ManagerPersona {
 		if(persJuridica != null) {
 			interfacePersona = new PersistenciaPersona();
 			try {
+				persJuridica.setSinc(Sinc.N);
+				persJuridica.setUltAct(new Fecha(Fecha.AMDHMS));
 				Conector.getConn();
 				resultado = interfacePersona.modificarPersJuridica(persJuridica);
 				Conector.closeConn("modificarPersJuridica", null);

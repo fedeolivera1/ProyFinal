@@ -25,9 +25,7 @@ public class TipoProd implements Serializable {
 	
 	@Override
 	public String toString() {
-		return idTipoProd + " | " + descripcion + "";
+		return idTipoProd + " | " + descripcion;
 	}
-	
-	
 	
 }

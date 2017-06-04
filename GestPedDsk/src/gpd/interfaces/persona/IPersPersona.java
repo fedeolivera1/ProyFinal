@@ -6,17 +6,10 @@ import gpd.dominio.persona.Departamento;
 import gpd.dominio.persona.Localidad;
 import gpd.dominio.persona.PersonaFisica;
 import gpd.dominio.persona.PersonaJuridica;
-import gpd.dominio.persona.TipoDoc;
 import gpd.exceptions.PersistenciaException;
 
 public interface IPersPersona {
 	
-	//tipo doc
-	public TipoDoc obtenerTipoDocPorId(Integer id) throws PersistenciaException;
-	public List<TipoDoc> obtenerListaTipoDoc() throws PersistenciaException;
-	public Integer guardarTipoDoc(TipoDoc tipoDoc) throws PersistenciaException;
-	public Integer modificarTipoDoc(TipoDoc  tipoDoc) throws PersistenciaException;
-	public Integer eliminarTipoDoc(TipoDoc tipoDoc) throws PersistenciaException;
 	//pf
 	public PersonaFisica obtenerPersFisicaPorId(Long id) throws PersistenciaException;
 	public List<PersonaFisica> obtenerBusquedaPersFisica(Long documento, String ape1, String ape2, String nom1, String nom2, 
