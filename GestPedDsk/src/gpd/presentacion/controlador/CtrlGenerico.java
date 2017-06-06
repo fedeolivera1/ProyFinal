@@ -33,6 +33,9 @@ public abstract class CtrlGenerico {
 	private static final Logger logger = Logger.getLogger(CtrlGenerico.class);
 	private static CompValidador instanceCv;
 	
+	public static int CONFIRM_OK = 0;
+	public static int CONFIRM_CANCEL = 2;
+	
 	
 	public static CompValidador getCompVal() {
 		if(instanceCv == null) {
@@ -449,7 +452,7 @@ public abstract class CtrlGenerico {
 	 * @param cont contenedor a hab/deshab
 	 * @param band booleano para hab/deshab
 	 */
-	public static void setContainerEnabled(Container cont, Boolean enabled) {
+	public void setContainerEnabled(Container cont, Boolean enabled) {
 		 Component[] components = cont.getComponents();
 		 cont.setEnabled(enabled);
 		 for(int i = 0; i < components.length; i++) {            
@@ -457,7 +460,7 @@ public abstract class CtrlGenerico {
 			 if(components[i] instanceof Container) {
 				 setContainerEnabled((Container)components[i], enabled);
 			 }
-		 }        
+		 }
 	}
 	
 	
@@ -465,7 +468,7 @@ public abstract class CtrlGenerico {
 	 * 
 	 * @param string cabezal
 	 * @param string mensaje
-	 * genera un OptionPane con mensaje de warning por defecto
+	 * genera un MessageDialog con mensaje de warning por defecto
 	 */
 	protected void enviarWarning(String cab, String msg) {
 		JOptionPane.showMessageDialog(null, msg, cab, JOptionPane.WARNING_MESSAGE);
@@ -475,10 +478,20 @@ public abstract class CtrlGenerico {
 	 * 
 	 * @param string cabezal
 	 * @param string mensaje
-	 * genera un OptionPane con mensaje de error por defecto
+	 * genera un MessageDialog con mensaje de error por defecto
 	 */
 	protected void enviarError(String cab, String msg) {
 		JOptionPane.showMessageDialog(null, msg, cab, JOptionPane.ERROR_MESSAGE);
+	}
+
+	/**
+	 * 
+	 * @param string cabezal
+	 * @param string mensaje
+	 * genera un ConfirmDialog con opcion aceptar/cancelar
+	 */
+	protected int enviarConfirm(String cab, String msg) {
+		return JOptionPane.showConfirmDialog(null, msg, cab, JOptionPane.OK_CANCEL_OPTION);
 	}
 	
 	

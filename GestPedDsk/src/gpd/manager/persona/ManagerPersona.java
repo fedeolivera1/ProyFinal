@@ -17,6 +17,7 @@ import gpd.interfaces.persona.IPersPersona;
 import gpd.interfaces.persona.IPersTipoDoc;
 import gpd.persistencia.conector.Conector;
 import gpd.persistencia.persona.PersistenciaPersona;
+import gpd.persistencia.persona.PersistenciaTipoDoc;
 import gpd.types.Fecha;
 
 public class ManagerPersona {
@@ -31,7 +32,7 @@ public class ManagerPersona {
 	public List<TipoDoc> obtenerListaTipoDoc() {
 		logger.info("Se ingresa a obtenerListaTipoDoc");
 		List<TipoDoc> listaTipoDoc = null;
-		interfacePersona = new PersistenciaPersona();
+		interfaceTipoDoc = new PersistenciaTipoDoc();
 		try {
 			Conector.getConn();
 			listaTipoDoc = interfaceTipoDoc.obtenerListaTipoDoc();
@@ -141,6 +142,34 @@ public class ManagerPersona {
 			Integer idLoc = (loc != null ? loc.getIdLocalidad() : CnstQryGeneric.NUMBER_INVALID);
 			listaPj = interfacePersona.obtenerBusquedaPersJuridica(rut, nombre, razonSoc, bps, bse, esProv, direccion, telefono, celular, email, idLoc);
 			Conector.closeConn("obtenerBusquedaPersJuridica", null);
+		} catch (PersistenciaException e) {
+			e.printStackTrace();//FIXME ver como manejar esta excep
+		}
+		return listaPj;
+	}
+	
+	public List<PersonaJuridica> obtenerListaProveedor() {
+		logger.info("Ingresa obtenerListaProveedor");
+		List<PersonaJuridica> listaPj = null;
+		interfacePersona = new PersistenciaPersona();
+		try {
+			Conector.getConn();
+			listaPj = interfacePersona.obtenerListaEmpresasPorTipo(true);
+			Conector.closeConn("obtenerListaProveedor", null);
+		} catch (PersistenciaException e) {
+			e.printStackTrace();//FIXME ver como manejar esta excep
+		}
+		return listaPj;
+	}
+	
+	public List<PersonaJuridica> obtenerListaEmpresas() {
+		logger.info("Ingresa obtenerListaProveedor");
+		List<PersonaJuridica> listaPj = null;
+		interfacePersona = new PersistenciaPersona();
+		try {
+			Conector.getConn();
+			listaPj = interfacePersona.obtenerListaEmpresasPorTipo(null);
+			Conector.closeConn("obtenerListaProveedor", null);
 		} catch (PersistenciaException e) {
 			e.printStackTrace();//FIXME ver como manejar esta excep
 		}

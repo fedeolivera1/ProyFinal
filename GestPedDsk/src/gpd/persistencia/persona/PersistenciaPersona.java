@@ -169,13 +169,15 @@ public class PersistenciaPersona extends Conector implements IPersPersona  {
 	public Integer modificarPersFisica(PersonaFisica pf) throws PersistenciaException {
 		try {
 			Long documento = pf.getDocumento();
+			Long docAnt = pf.getDocumentoAnt() != null ? pf.getDocumentoAnt() : null;
 			
-			modificarPersona(documento, pf.getDireccion(), pf.getPuerta(), pf.getSolar(), pf.getManzana(),
+			modificarPersona(documento, docAnt, pf.getDireccion(), pf.getPuerta(), pf.getSolar(), pf.getManzana(),
 					pf.getKm(), pf.getComplemento(), pf.getTelefono(), pf.getCelular(), pf.getEmail(),
 					pf.getFechaReg(), pf.getLocalidad().getIdLocalidad(), pf.getOrigen(),
 					pf.getSinc(), pf.getUltAct());
 			
 			GenSqlExecType genExec = new GenSqlExecType(CnstQryPersona.QRY_UPDATE_PF);
+			genExec.setParam(documento);
 			genExec.setParam(pf.getTipoDoc().getIdTipoDoc());
 			genExec.setParam(pf.getApellido1());
 			genExec.setParam(pf.getApellido2());
@@ -183,7 +185,7 @@ public class PersistenciaPersona extends Conector implements IPersPersona  {
 			genExec.setParam(pf.getNombre2());
 			genExec.setParam(pf.getFechaNac());
 			genExec.setParam(pf.getSexo().getAsChar());
-			genExec.setParam(documento);
+			genExec.setParam(docAnt != null ? docAnt : documento);
 			resultado = (Integer) runGeneric(genExec);
 			
 		} catch (ConectorException e) {
@@ -240,19 +242,21 @@ public class PersistenciaPersona extends Conector implements IPersPersona  {
 	public Integer modificarPersJuridica(PersonaJuridica pj) throws PersistenciaException {
 		try {
 			Long rut = pj.getRut();
+			Long rutAnt = pj.getRutAnt() != null ? pj.getRutAnt() : null;
 			
-			modificarPersona(rut, pj.getDireccion(), pj.getPuerta(), pj.getSolar(), pj.getManzana(),
+			modificarPersona(rut, rutAnt, pj.getDireccion(), pj.getPuerta(), pj.getSolar(), pj.getManzana(),
 					pj.getKm(), pj.getComplemento(), pj.getTelefono(), pj.getCelular(), pj.getEmail(),
 					pj.getFechaReg(), pj.getLocalidad().getIdLocalidad(), pj.getOrigen(),
 					pj.getSinc(), pj.getUltAct());
 			
 			GenSqlExecType genExec = new GenSqlExecType(CnstQryPersona.QRY_UPDATE_PJ);
+			genExec.setParam(rut);
 			genExec.setParam(pj.getNombre());
 			genExec.setParam(pj.getRazonSocial());
 			genExec.setParam(pj.getBps());
 			genExec.setParam(pj.getBse());
 			genExec.setParam(pj.getEsProv() ? 'S' : 'N');
-			genExec.setParam(rut);
+			genExec.setParam(rutAnt != null ? rutAnt : rut);
 			resultado = (Integer) runGeneric(genExec);
 			
 		} catch (ConectorException e) {
@@ -310,12 +314,13 @@ public class PersistenciaPersona extends Conector implements IPersPersona  {
 		return resultado;
 	}
 	
-	private Integer modificarPersona(Long idPersona, String direccion, String puerta, String solar, String manzana,
+	private Integer modificarPersona(Long idPersona, Long idPersonaAnt, String direccion, String puerta, String solar, String manzana,
 			Float km, String complemento, String telefono, String celular, String email, Fecha fechaReg, Integer idLoc,
 			Origen origen, Sinc sinc, Fecha ultAct) 
 					throws ConectorException {
 		try {
 			GenSqlExecType genExec = new GenSqlExecType(CnstQryPersona.QRY_UPDATE_PERS);
+			genExec.setParam(idPersona);
 			genExec.setParam(direccion);
 			genExec.setParam(puerta);
 			genExec.setParam(solar);
@@ -327,10 +332,10 @@ public class PersistenciaPersona extends Conector implements IPersPersona  {
 			genExec.setParam(email);
 			genExec.setParam(fechaReg);
 			genExec.setParam(idLoc);
-			genExec.setParam(origen);
-			genExec.setParam(sinc);
+			genExec.setParam(origen.getAsChar());
+			genExec.setParam(sinc.getAsChar());
 			genExec.setParam(ultAct);
-			genExec.setParam(idPersona);
+			genExec.setParam(idPersonaAnt != null ? idPersonaAnt : idPersona);
 			resultado = (Integer) runGeneric(genExec);
 		} catch (ConectorException e) {
 			Conector.rollbackConn();
@@ -459,6 +464,59 @@ public class PersistenciaPersona extends Conector implements IPersPersona  {
 			genType.setParam(email);
 			genType.setParamEmptyAsNumber(idLoc);
 			genType.setParamEmptyAsNumber(idLoc);
+			ResultSet rs = (ResultSet) runGeneric(genType);
+			while(rs.next()) {
+				PersonaJuridica pj = new PersonaJuridica();
+				pj.setRut(rs.getLong("rut"));
+				pj.setNombre(rs.getString("nombre"));
+				pj.setRazonSocial(rs.getString("razon_social"));
+				pj.setBps(rs.getString("bps"));
+				pj.setBse(rs.getString("bse"));
+				char[] esProvChar = new char[1];
+				rs.getCharacterStream("es_prov").read(esProvChar);
+				pj.setEsProv(esProvChar.equals('S') ? true : false);
+				//persona
+				pj.setDireccion(rs.getString("direccion"));
+				pj.setPuerta(rs.getString("puerta"));
+				pj.setSolar(rs.getString("solar"));
+				pj.setManzana(rs.getString("manzana"));
+				pj.setKm(rs.getFloat("km"));
+				pj.setComplemento(rs.getString("complemento"));
+				pj.setTelefono(rs.getString("telefono"));
+				pj.setCelular(rs.getString("celular"));
+				pj.setEmail(rs.getString("email"));
+				pj.setFechaReg(new Fecha(rs.getDate("fecha_reg")));
+				char[] tipoChar = new char[1];
+				rs.getCharacterStream("tipo").read(tipoChar);
+				pj.setTipoPers(TipoPersona.getTipoPersonaPorChar(tipoChar[0]));
+				pj.setLocalidad(obtenerLocalidadPorId(rs.getInt("id_loc")));
+				char[] origenChar = new char[1];
+				rs.getCharacterStream("origen").read(origenChar);
+				Origen origen = Origen.getOrigenPorChar(origenChar[0]);
+				pj.setOrigen(origen);
+				char[] sincChar = new char[1];
+				rs.getCharacterStream("sinc").read(sincChar);
+				Sinc sinc = Sinc.getSincPorChar(sincChar[0]);
+				pj.setSinc(sinc);
+				pj.setUltAct(new Fecha(rs.getTimestamp("ult_act")));
+				
+				listaPj.add(pj);
+			}
+		} catch (ConectorException | SQLException | IOException e) {
+			Conector.rollbackConn();
+			logger.log(Level.FATAL, "Excepcion al obtenerListaTipoDoc: " + e.getMessage(), e);
+			throw new PersistenciaException(e.getMessage());
+		}
+		return listaPj;
+	}
+	
+	@Override
+	public List<PersonaJuridica> obtenerListaEmpresasPorTipo(Boolean esProv) throws PersistenciaException {
+		List<PersonaJuridica> listaPj = new ArrayList<>();
+		try {
+			GenSqlSelectType genType = new GenSqlSelectType(CnstQryPersona.QRY_SELECT_PJ);
+			genType.setParam(esProv != null && esProv ? 'S' : ' ');
+			genType.setParam(esProv != null && esProv ? 'S' : ' ');
 			ResultSet rs = (ResultSet) runGeneric(genType);
 			while(rs.next()) {
 				PersonaJuridica pj = new PersonaJuridica();

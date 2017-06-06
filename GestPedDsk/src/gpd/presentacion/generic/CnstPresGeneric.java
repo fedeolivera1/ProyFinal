@@ -34,6 +34,10 @@ public interface CnstPresGeneric {
 	public static final String PERS_J_P_MOD_OK = "Se ha modificado el proveedor correctamente.";
 	public static final String PERS_J_P_ELI_OK = "Se ha eliminado el proveedor correctamente.";
 	
+	//compra
+	public static final String MOV = "Movimiento";
+	public static final String COMPRA_CONF_LIMPIAR = "Confirma que desea limpiar el formulario ? ";
+	
 	//controles genericos
 	public static final String DATOS_OBLIG = "Los datos marcados son obligatorios.";
 	public static final Object JTABLE_EMPTY = "No se encontraron resultados...";

@@ -8,6 +8,7 @@ public class PersonaJuridica extends Persona {
 	private String bps;
 	private String bse;
 	private Boolean esProv;
+	private Long rutAnt;
 	
 	
 	public Long getRut() {
@@ -52,6 +53,16 @@ public class PersonaJuridica extends Persona {
 		this.esProv = esProv;
 	}
 	
+	public Long getRutAnt() {
+		return rutAnt;
+	}
+	public void setRutAnt(Long rutAnt) {
+		this.rutAnt = rutAnt;
+	}
 	
 	
+	@Override
+	public String toString() {
+		return rut + " | " + nombre;
+	}
 }

@@ -207,6 +207,7 @@ public class CtrlFrmPersona extends CtrlGenerico {
 		frmPers.getTxtPjRs().setText(pj.getRazonSocial());
 		frmPers.getTxtPjBps().setText(pj.getBps());
 		frmPers.getTxtPjBse().setText(pj.getBse());
+		frmPers.getChkPjProv().setSelected(pj.getEsProv());
 		//datos persona
 		frmPers.getTxtPjDir().setText(pj.getDireccion());
 		frmPers.getTxtPjPue().setText(pj.getPuerta());
@@ -282,8 +283,6 @@ public class CtrlFrmPersona extends CtrlGenerico {
 			Localidad loc = (Localidad) cbxPersLoc.getSelectedItem();
 			pf.setLocalidad(loc);
 			pf.setOrigen(Origen.D);
-//			pf.setSinc(Sinc.N);
-//			pf.setUltAct(new Fecha(Fecha.AMDHMS));
 			mgrPers.guardarPersFisica(pf);
 			clearPanel(frmPers.getContentPane());
 			List<PersonaFisica> lst = new ArrayList<>();
@@ -334,8 +333,6 @@ public class CtrlFrmPersona extends CtrlGenerico {
 			Localidad loc = (Localidad) cbxPersLoc.getSelectedItem();
 			pf.setLocalidad(loc);
 			pf.setOrigen(Origen.D);
-//			pf.setSinc(Sinc.N);
-//			pf.setUltAct(new Fecha(Fecha.AMDHMS));
 			mgrPers.modificarPersFisica(pf);
 			clearPanel(frmPers.getContentPane());
 			List<PersonaFisica> lst = new ArrayList<>();
@@ -401,8 +398,6 @@ public class CtrlFrmPersona extends CtrlGenerico {
 			Localidad loc = (Localidad) cbxPersLoc.getSelectedItem();
 			pj.setLocalidad(loc);
 			pj.setOrigen(Origen.D);
-//			pj.setSinc(Sinc.N);
-//			pj.setUltAct(new Fecha(Fecha.AMDHMS));
 			mgrPers.guardarPersJuridica(pj);
 			clearPanel(frmPers.getContentPane());
 			List<PersonaJuridica> lst = new ArrayList<>();
@@ -445,8 +440,6 @@ public class CtrlFrmPersona extends CtrlGenerico {
 			Localidad loc = (Localidad) cbxPersLoc.getSelectedItem();
 			pj.setLocalidad(loc);
 			pj.setOrigen(Origen.D);
-//			pj.setSinc(Sinc.N);
-//			pj.setUltAct(new Fecha(Fecha.AMDHMS));
 			mgrPers.modificarPersJuridica(pj);
 			clearPanel(frmPers.getContentPane());
 			List<PersonaJuridica> lst = new ArrayList<>();

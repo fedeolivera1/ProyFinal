@@ -51,6 +51,13 @@ public interface CnstQryPersona {
 														+ "AND (p.celular LIKE ? OR '' = ?) "
 														+ "AND (p.email LIKE ? OR '' = ?) "
 														+ "AND (p.id_loc = ? OR -1 = ?) ";
+	
+	public static final String QRY_SELECT_PJ = "SELECT pj.rut, pj.nombre, pj.razon_social, pj.bps, pj.bse, pj.es_prov, p.direccion, p.puerta, p.solar, "
+															+ "p.manzana, p.km, p.complemento, p.telefono, p.celular, p.email, p.fecha_reg, p.tipo, "
+															+ "p.id_loc, p.origen, p.sinc, p.ult_act "
+														+ "FROM pers_juridica pj INNER JOIN persona p "
+														+ "ON pj.rut = p.id_persona "
+														+ "WHERE (pj.es_prov = ? OR ' ' =  ?)";
 
 	public static final String QRY_INSERT_PERS = "INSERT INTO persona "
 														+ "(id_persona, direccion, puerta, solar, manzana, km, complemento, telefono, celular, email, fecha_reg, tipo, id_loc, origen, sinc, ult_act) "
@@ -73,7 +80,7 @@ public interface CnstQryPersona {
 														+ "WHERE documento = ?";
 	
 	public static final String QRY_UPDATE_PJ = "UPDATE pers_juridica "
-														+ "SET rut = ?, nombre = ?, razon_social = ?, bps = ?, bse = ?, es_prov = ?,  "
+														+ "SET rut = ?, nombre = ?, razon_social = ?, bps = ?, bse = ?, es_prov = ? "
 														+ "WHERE rut = ?";
 	
 	public static final String QRY_DELETE_PF = "DELETE FROM pers_fisica WHERE documento = ?";

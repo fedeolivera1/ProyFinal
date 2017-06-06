@@ -35,6 +35,7 @@ public class FrmProducto extends JFrame {
 	private static final Logger logger = Logger.getLogger(FrmProducto.class);
 
 	private static FrmProducto instance; 
+	private CtrlFrmProducto ctrlProd;
 	private JPanel contentPane;
 	private JTextField txtProId;
 	private JTextField txtProCod;
@@ -44,7 +45,6 @@ public class FrmProducto extends JFrame {
 	private JFormattedTextField ftxtProPrecio;
 	private JComboBox<TipoProd> cbxTipoProd;
 	private JDesktopPane desktopPane;
-	private CtrlFrmProducto ctrlProd;
 	private JButton btnTpAgregar;
 	private JButton btnProAgr;
 	private JButton btnProMod;
@@ -231,7 +231,6 @@ public class FrmProducto extends JFrame {
 		
 		jtProd = new JTable();
 		scrollPaneProd.setColumnHeaderView(jtProd);
-		scrollPaneProd.setColumnHeaderView(jtProd);
 		scrollPaneProd.setViewportView(jtProd);
 		
 		cbxUtil = new JComboBox<>();
@@ -319,12 +318,22 @@ public class FrmProducto extends JFrame {
 				ctrlProd.clearForm(getContentPane());
 			}
 		});
+		btnDepAgregar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				ctrlProd.abrirIFrmDep();
+			}
+		});
+		btnUtilAgregar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ctrlProd.abrirIFrmUtil();
+			}
+		});
 		
 	}
 	
 
 	/*****************************************************************************************************************************************************/
-	/* GET Y SET DE CAMPOS */
+	/* GET Y SET */
 	/*****************************************************************************************************************************************************/
 	
 	public CtrlFrmProducto getCtrlProd() {

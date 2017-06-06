@@ -12,6 +12,7 @@ public class PersonaFisica extends Persona {
 	private String nombre2;
 	private Fecha fechaNac;
 	private Sexo sexo;
+	private Long documentoAnt;
 	
 	
 	public Long getDocumento() {
@@ -68,6 +69,13 @@ public class PersonaFisica extends Persona {
 	}
 	public void setSexo(Sexo sexo) {
 		this.sexo = sexo;
+	}
+	
+	public Long getDocumentoAnt() {
+		return documentoAnt;
+	}
+	public void setDocumentoAnt(Long documentoAnt) {
+		this.documentoAnt = documentoAnt;
 	}
 	
 	

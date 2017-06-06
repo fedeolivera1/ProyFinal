@@ -6,9 +6,9 @@ public interface CnstQryProducto {
 													+ "FROM producto p INNER JOIN tipo_prod tp "
 													+ "ON p.id_tipo_prod = tp.id_tipo_prod "
 													+ "WHERE (p.id_tipo_prod = ? OR -1 = ?) "
-													+ "AND (p.codigo = ? OR '' = ?) "
-													+ "AND (p.nombre = ? OR '' = ?) "
-													+ "AND (p.descripcion = ? OR '' = ?) ";
+													+ "AND (p.codigo LIKE ? OR '' = ?) "
+													+ "AND (p.nombre LIKE ? OR '' = ?) "
+													+ "AND (p.descripcion LIKE ? OR '' = ?) ";
 			
 	public static final String QRY_SELECT_PROD_XID = "SELECT id_producto, id_tipo_prod, codigo, nombre, descripcion, stock_min, precio, sinc, ult_act "
 													+ "FROM producto p "

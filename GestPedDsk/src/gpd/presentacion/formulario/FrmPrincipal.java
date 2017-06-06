@@ -89,8 +89,8 @@ public class FrmPrincipal extends JFrame {
 		});
 		mnProducto.add(mntmMantProducto);
 		
-		JMenuItem mntmLotes = new JMenuItem("Lote");
-		mntmLotes.addActionListener(new ActionListener() {
+		JMenuItem mntmLote = new JMenuItem("Lote");
+		mntmLote.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				FrmProducto frmProd = FrmProducto.getFrmProducto(usr);
 				frmProd.setLocationRelativeTo(null);
@@ -100,10 +100,10 @@ public class FrmPrincipal extends JFrame {
 				frmProd.setVisible(true);
 			}
 		});
-		mnProducto.add(mntmLotes);
+		mnProducto.add(mntmLote);
 		
-		JMenuItem mntmDepositos = new JMenuItem("Depositos");
-		mntmDepositos.addActionListener(new ActionListener() {
+		JMenuItem mntmDeposito = new JMenuItem("Deposito");
+		mntmDeposito.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				FrmProducto frmProd = FrmProducto.getFrmProducto(usr);
 				frmProd.setLocationRelativeTo(null);
@@ -113,7 +113,7 @@ public class FrmPrincipal extends JFrame {
 				frmProd.getCtrlProd().abrirIFrmDep();
 			}
 		});
-		mnProducto.add(mntmDepositos);
+		mnProducto.add(mntmDeposito);
 		
 		JMenuItem mntmUtilidad = new JMenuItem("Utilidad");
 		mntmUtilidad.addActionListener(new ActionListener() {
@@ -128,23 +128,41 @@ public class FrmPrincipal extends JFrame {
 		});
 		mnProducto.add(mntmUtilidad);
 		
-		JMenu mnMovimientos = new JMenu("Movimientos");
-		menuBar.add(mnMovimientos);
+		JMenu mnMovimiento = new JMenu("Movimiento");
+		menuBar.add(mnMovimiento);
 		
-		JMenuItem mntmCompras = new JMenuItem("Compras");
-		mnMovimientos.add(mntmCompras);
+		JMenuItem mntmCompra = new JMenuItem("Compra");
+		mntmCompra.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				FrmMovimiento frmMov = FrmMovimiento.getFrmMovimiento(usr);
+				frmMov.setLocationRelativeTo(null);
+				//panel.pestaña("Compra");
+				JTabbedPane comp = (JTabbedPane) frmMov.getContentPane().getComponent(1);
+				comp.setSelectedIndex(0);
+				frmMov.setVisible(true);
+			}
+		});
+		mnMovimiento.add(mntmCompra);
 		
-		JMenuItem mntmVentas = new JMenuItem("Ventas");
-		mnMovimientos.add(mntmVentas);
+		JMenuItem mntmVenta = new JMenuItem("Venta");
+		mntmVenta.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+		mnMovimiento.add(mntmVenta);
 		
-		JMenu mnPedidos = new JMenu("Pedidos");
-		menuBar.add(mnPedidos);
+		JMenu mnPedido = new JMenu("Pedido");
+		menuBar.add(mnPedido);
 		
-		JMenuItem mntmPedidos = new JMenuItem("Pedidos");
-		mnPedidos.add(mntmPedidos);
+		JMenuItem mntmPedido = new JMenuItem("Pedido");
+		mntmPedido.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+		mnPedido.add(mntmPedido);
 		
-		JMenu mnConsultas = new JMenu("Consultas");
-		menuBar.add(mnConsultas);
+		JMenu mnConsulta = new JMenu("Consulta");
+		menuBar.add(mnConsulta);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -155,6 +173,5 @@ public class FrmPrincipal extends JFrame {
 		contentPane.add(pnlPpal);
 		pnlPpal.setLayout(null);
 		
-		//listeners botones
 	}
 }

@@ -224,7 +224,8 @@ public class CtrlFrmProducto extends CtrlGenerico {
 		cargarJtProd(listaProd);
 	}
 	
-	public Integer agregarProducto(JComboBox<TipoProd> cbxTp, JTextField codigo, JTextField nombre, JTextField descripcion, JFormattedTextField stockMin, JFormattedTextField precio) {
+	public Integer agregarProducto(JComboBox<TipoProd> cbxTp, JTextField codigo, JTextField nombre, JTextField descripcion, JFormattedTextField stockMin, 
+			JFormattedTextField precio) {
 		GenCompType genComp = new GenCompType();
 		genComp.setComp(cbxTp);
 		genComp.setComp(codigo);
@@ -250,7 +251,8 @@ public class CtrlFrmProducto extends CtrlGenerico {
 		return null;
 	}
 	
-	public Integer modificarProducto(JComboBox<TipoProd> cbxTp, JTextField id, JTextField codigo, JTextField nombre, JTextField descripcion, JFormattedTextField stockMin, JFormattedTextField precio) {
+	public Integer modificarProducto(JComboBox<TipoProd> cbxTp, JTextField id, JTextField codigo, JTextField nombre, JTextField descripcion, 
+			JFormattedTextField stockMin, JFormattedTextField precio) {
 		GenCompType genComp = new GenCompType();
 		genComp.setComp(cbxTp);
 		genComp.setComp(id);
@@ -261,6 +263,7 @@ public class CtrlFrmProducto extends CtrlGenerico {
 		if(controlDatosObl(genComp)) {
 			Integer idInt = ctrlNumLong(id.getText()) ? new Integer(id.getText()) : null;
 			Producto prod = mgrProd.obtenerProductoPorId(idInt);
+			prod.setTipoProd((TipoProd)cbxTp.getSelectedItem());
 			prod.setCodigo(codigo.getText());
 			prod.setNombre(nombre.getText());
 			prod.setDescripcion(descripcion.getText());

@@ -1,6 +1,8 @@
 package gpd.dominio.transaccion;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import gpd.dominio.persona.Persona;
 import gpd.types.Fecha;
@@ -15,6 +17,7 @@ public class Transaccion implements Serializable {
 	private Double subTotal;
 	private Float iva;
 	private Double total;
+	private List<TranLinea> listaTranLinea;
 	
 	
 	public Long getNroTransac() {
@@ -66,5 +69,14 @@ public class Transaccion implements Serializable {
 		this.total = total;
 	}
 	
+	public List<TranLinea> getListaTranLinea() {
+		if(listaTranLinea == null) {
+			listaTranLinea = new ArrayList<>();
+		}
+		return listaTranLinea;
+	}
+	public void setListaTranLinea(List<TranLinea> listaTranLinea) {
+		this.listaTranLinea = listaTranLinea;
+	}
 	
 }

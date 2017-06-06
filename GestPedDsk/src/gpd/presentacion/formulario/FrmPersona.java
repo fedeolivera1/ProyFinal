@@ -637,8 +637,8 @@ public class FrmPersona extends JFrame {
 		});
 		btnPjMod.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				ctrlPers.modificarPersFisica(cbxPfTipoDoc, txtPfDoc, txtPfApe1, txtPfApe2, txtPfNom1, txtPfNom2, txtPfFnac, cbxPfSexo, 
-						txtPfDir, txtPfPue, txtPfSol, txtPfMan, txtPfKm, txtPfComp, txtPfTel, txtPfCel, txtPfEml, cbxPfLoc);
+				ctrlPers.modificarPersJuridica(txtPjRut, txtPjNom, txtPjRs, txtPjBps, txtPjBse, chkPjProv, txtPjDir, txtPjPue, txtPjSol, txtPjMan, 
+						txtPjKm, txtPjComp, txtPjTel, txtPjCel, txtPjEml, cbxPjLoc);
 			}
 		});
 		btnPjEli.addActionListener(new ActionListener() {
@@ -839,6 +839,14 @@ public class FrmPersona extends JFrame {
 	}
 	public void setTxtPjBse(JTextField txtPjBse) {
 		this.txtPjBse = txtPjBse;
+	}
+	
+	public JCheckBox getChkPjProv() {
+		return chkPjProv;
+	}
+
+	public void setChkPjProv(JCheckBox chkPjProv) {
+		this.chkPjProv = chkPjProv;
 	}
 	
 	public JTextField getTxtPjDir() {

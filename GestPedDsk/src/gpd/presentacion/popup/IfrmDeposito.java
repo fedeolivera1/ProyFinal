@@ -44,7 +44,7 @@ public class IfrmDeposito extends JInternalFrame implements InternalFrameListene
 		setIconifiable(true);
 		setClosable(true);
 		setBounds(100, 100, 450, 300);
-		setTitle("Tipo Prod");
+		setTitle("Deposito");
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
