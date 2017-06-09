@@ -2,8 +2,6 @@ package gpd.interfaces.persona;
 
 import java.util.List;
 
-import gpd.dominio.persona.Departamento;
-import gpd.dominio.persona.Localidad;
 import gpd.dominio.persona.PersonaFisica;
 import gpd.dominio.persona.PersonaJuridica;
 import gpd.exceptions.PersistenciaException;
@@ -25,9 +23,5 @@ public interface IPersPersona {
 	public Integer guardarPersJuridica(PersonaJuridica pj) throws PersistenciaException;
 	public Integer modificarPersJuridica(PersonaJuridica pj) throws PersistenciaException;
 	public Integer eliminarPersJuridica(PersonaJuridica pj) throws PersistenciaException;
-	//loc_dep
-	public List<Departamento> obtenerListaDepartamentos() throws PersistenciaException;
-	public Departamento obtenerDepartamentoPorId(Integer id) throws PersistenciaException;
-	public List<Localidad> obtenerListaLocPorDep(Integer idDep) throws PersistenciaException;
-	public Localidad obtenerLocalidadPorId(Integer idLoc) throws PersistenciaException;
+	
 }

@@ -114,7 +114,7 @@ public class CtrlFrmPersona extends CtrlGenerico {
 				public void mouseClicked(MouseEvent e) {
 					int fila = tabla.rowAtPoint(e.getPoint());
 //		        	int columna = tabla.columnAtPoint(e.getPoint());
-					if (fila > -1) {
+					if (fila > -1 && tabla.getModel().getColumnCount() > 1) {
 						Long documento = (Long) tabla.getModel().getValueAt(fila, 0);
 						PersonaFisica pf = mgrPers.obtenerPersFisicaPorId(documento);
 						//obtengo jpanel contenedor de la tabla (2 niveles up)

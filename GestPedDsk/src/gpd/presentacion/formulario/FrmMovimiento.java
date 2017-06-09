@@ -27,6 +27,8 @@ import gpd.dominio.producto.Producto;
 import gpd.dominio.producto.TipoProd;
 import gpd.dominio.usuario.UsuarioDsk;
 import gpd.presentacion.controlador.CtrlFrmMovimiento;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class FrmMovimiento extends JFrame {
 
@@ -39,6 +41,8 @@ public class FrmMovimiento extends JFrame {
 	private JComboBox<TipoProd> cbxCompraTp;
 	private JComboBox<Producto> cbxCompraProd;
 	private JComboBox<PersonaJuridica> cbxCompraProv;
+	private JFormattedTextField ftxtCompraCant;
+	private JFormattedTextField ftxtCompraPu;
 	private JTable jtCompra;
 	private JPanel pnlCompraProv;
 	private JPanel pnlCompraDatos;
@@ -99,7 +103,7 @@ public class FrmMovimiento extends JFrame {
 		
 		pnlCompraDatos = new JPanel();
 		pnlCompraDatos.setBorder(new LineBorder(Color.DARK_GRAY));
-		pnlCompraDatos.setBounds(10, 98, 380, 113);
+		pnlCompraDatos.setBounds(10, 98, 380, 139);
 		tpCompra.add(pnlCompraDatos);
 		pnlCompraDatos.setLayout(null);
 		
@@ -126,21 +130,42 @@ public class FrmMovimiento extends JFrame {
 		pnlCompraDatos.add(lblUtilidad_1);
 		lblUtilidad_1.setHorizontalAlignment(SwingConstants.RIGHT);
 		
-		JFormattedTextField formattedTextField = new JFormattedTextField();
-		formattedTextField.setBounds(72, 73, 65, 20);
-		pnlCompraDatos.add(formattedTextField);
+		ftxtCompraCant = new JFormattedTextField();
+		ftxtCompraCant.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				ctrlMov.controlInputNum(e);
+			}
+		});
+		ftxtCompraCant.setBounds(72, 73, 65, 20);
+		pnlCompraDatos.add(ftxtCompraCant);
 		
-		JButton btnCompraAgrItem = new JButton("Agregar Item");
-		btnCompraAgrItem.setBounds(233, 72, 124, 23);
-		pnlCompraDatos.add(btnCompraAgrItem);
+		JLabel lblPrecioUnit = new JLabel("Precio Unit");
+		lblPrecioUnit.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblPrecioUnit.setBounds(10, 107, 52, 14);
+		pnlCompraDatos.add(lblPrecioUnit);
+		
+		ftxtCompraPu = new JFormattedTextField();
+		ftxtCompraPu.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				ctrlMov.controlInputNum(e);
+			}
+		});
+		ftxtCompraPu.setBounds(72, 104, 65, 20);
+		pnlCompraDatos.add(ftxtCompraPu);
 		
 		JPanel tpVenta = new JPanel();
 		tabbedPane.addTab("Venta", null, tpVenta, null);
 		tpVenta.setLayout(null);
 		
 		JButton btnLimpiar = new JButton("Limpiar");
-		btnLimpiar.setBounds(266, 222, 124, 23);
+		btnLimpiar.setBounds(645, 265, 124, 23);
 		tpCompra.add(btnLimpiar);
+		
+		JButton btnCompraGenerar = new JButton("Generar Compra");
+		btnCompraGenerar.setBounds(511, 265, 124, 23);
+		tpCompra.add(btnCompraGenerar);
 		
 		JScrollPane scrollPaneCompra = new JScrollPane();
 		scrollPaneCompra.setBounds(10, 299, 759, 223);
@@ -150,6 +175,10 @@ public class FrmMovimiento extends JFrame {
 		scrollPaneCompra.setColumnHeaderView(jtCompra);
 		scrollPaneCompra.setViewportView(jtCompra);
 		
+		JButton btnCompraEliItem = new JButton("Eliminar Item");
+		btnCompraEliItem.setBounds(10, 265, 124, 23);
+		tpCompra.add(btnCompraEliItem);
+		
 		/*****************************************************************************************************************************************************/
 		/* ACCIONES CONTROLES */
 		/*****************************************************************************************************************************************************/
@@ -158,6 +187,17 @@ public class FrmMovimiento extends JFrame {
 		ctrlMov.setContainerEnabled(pnlCompraDatos, false);
 		ctrlMov.cargarCbxProveedor(cbxCompraProv);
 		ctrlMov.cargarCbxTipoProd(cbxCompraTp);
+		
+		JButton btnCompraAgrItem = new JButton("Agregar Item");
+		btnCompraAgrItem.setBounds(246, 103, 124, 23);
+		pnlCompraDatos.add(btnCompraAgrItem);
+		btnCompraAgrItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				ctrlMov.agregarItemCompra(cbxCompraProv, cbxCompraProd, ftxtCompraCant, ftxtCompraPu);
+			}
+		});
+		
+		
 		
 		
 		cbxCompraProv.addItemListener(new ItemListener() {
@@ -170,6 +210,7 @@ public class FrmMovimiento extends JFrame {
 		});
 		cbxCompraTp.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
+				ctrlMov.cargarCbxProd(cbxCompraTp, cbxCompraProd);
 			}
 		});
 		btnCompraNueva.addActionListener(new ActionListener() {
@@ -177,14 +218,19 @@ public class FrmMovimiento extends JFrame {
 				ctrlMov.iniciarCompra(getFrmMovimiento(usr));
 			}
 		});
-		btnCompraAgrItem.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				//TODO
-			}
-		});
 		btnLimpiar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				ctrlMov.limpiarCompra(getFrmMovimiento(usr));
+				ctrlMov.limpiarCompra(getFrmMovimiento(usr), true);
+			}
+		});
+		btnCompraGenerar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				ctrlMov.generarCompra();
+			}
+		});
+		btnCompraEliItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				ctrlMov.eliminarItemCompra();
 			}
 		});
 
@@ -223,6 +269,20 @@ public class FrmMovimiento extends JFrame {
 		this.cbxCompraProv = cbxCompraProv;
 	}
 	
+	public JFormattedTextField getFtxtCompraCant() {
+		return ftxtCompraCant;
+	}
+	public void setFtxtCompraCant(JFormattedTextField ftxtCompraCant) {
+		this.ftxtCompraCant = ftxtCompraCant;
+	}
+	
+	public JFormattedTextField getFtxtCompraPu() {
+		return ftxtCompraPu;
+	}
+	public void setFtxtCompraPu(JFormattedTextField ftxtCompraPu) {
+		this.ftxtCompraPu = ftxtCompraPu;
+	}
+
 	public JPanel getPnlCompraProv() {
 		return pnlCompraProv;
 	}
@@ -243,5 +303,4 @@ public class FrmMovimiento extends JFrame {
 	public void setJtCompra(JTable jtCompra) {
 		this.jtCompra = jtCompra;
 	}
-
 }

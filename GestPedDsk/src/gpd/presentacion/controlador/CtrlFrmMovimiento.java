@@ -4,9 +4,12 @@ import java.awt.Container;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
+import javax.swing.ComboBoxModel;
 import javax.swing.JComboBox;
+import javax.swing.JFormattedTextField;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
@@ -19,16 +22,19 @@ import gpd.dominio.transaccion.TranLinea;
 import gpd.dominio.transaccion.Transaccion;
 import gpd.manager.persona.ManagerPersona;
 import gpd.manager.producto.ManagerProducto;
+import gpd.manager.transaccion.ManagerTransaccion;
 import gpd.presentacion.formulario.FrmMovimiento;
 import gpd.presentacion.generic.CnstPresGeneric;
+import gpd.presentacion.generic.GenCompType;
 
 public class CtrlFrmMovimiento extends CtrlGenerico {
 
-	//	private ManagerTransaccion mgrTran = new ManagerTransaccion();
+	private ManagerTransaccion mgrTran = new ManagerTransaccion();
 	private ManagerProducto mgrProd = new ManagerProducto();
 	private ManagerPersona mgrPers = new ManagerPersona();
 	private FrmMovimiento frm;
 	private Transaccion transac;
+	private HashMap<Integer, TranLinea> mapLineasTran;
 	
 	
 	public CtrlFrmMovimiento(FrmMovimiento frmMov) {
@@ -85,41 +91,56 @@ public class CtrlFrmMovimiento extends CtrlGenerico {
 		}
 	}
 	
-	private void cargarControlesCompra(PersonaJuridica pj, Container containerJTable) {
-		// TODO Auto-generated method stub
-		
+	private void cargarControlesCompra(TranLinea tl, Container containerJTable) {
+		clearControlsInJPanel(containerJTable);
+		ComboBoxModel<TipoProd> cbModelTp = frm.getCbxCompraTp().getModel();
+		cbModelTp.setSelectedItem(tl.getProducto().getTipoProd());
+		frm.getCbxCompraTp().setSelectedItem(cbModelTp.getSelectedItem());
+		ComboBoxModel<Producto> cbModelProd = frm.getCbxCompraProd().getModel();
+		cbModelProd.setSelectedItem(tl.getProducto());
+		frm.getCbxCompraTp().setSelectedItem(cbModelTp.getSelectedItem());
+		frm.getFtxtCompraCant().setText(String.valueOf(tl.getCantidad()));
+		frm.getFtxtCompraPu().setText(String.valueOf(tl.getCantidad()));
 	}
 	
-	public void cargarJtCompra(List<TranLinea> listaTran) {
+	public void cargarJtCompra() {
 		JTable tabla = frm.getJtCompra();
 		clearTable(tabla);
-		if(listaTran != null && !listaTran.isEmpty()) {
-			DefaultTableModel modeloJtProd = new DefaultTableModel();
-			tabla.setModel(modeloJtProd);
-			modeloJtProd.addColumn("Id Prod");
-			modeloJtProd.addColumn("Producto");
-			modeloJtProd.addColumn("Proveedor");
-			modeloJtProd.addColumn("Precio Unit");
-			modeloJtProd.addColumn("Cantidad");
-			for(TranLinea tl : listaTran) {
-				Object [] fila = new Object[6];
-				fila[0] = tl.getProducto().getIdProducto();
-				fila[1] = tl.getProducto().getNombre();
-				PersonaJuridica pj = (PersonaJuridica) tl.getTransaccion().getPersona(); 
-				fila[2] = pj.getNombre();
-				fila[3] = tl.getPrecioUnit();
-				fila[4] = tl.getCantidad();
-				modeloJtProd.addRow(fila);
+		deleteModelTable(tabla);
+		if(mapLineasTran != null && !mapLineasTran.isEmpty()) {
+			DefaultTableModel modeloJtCompra = new DefaultTableModel() {
+				private static final long serialVersionUID = 1L;
+				@Override
+	            public Class<?> getColumnClass(int column) {
+	                return column == 0 ? Boolean.class : Object.class;
+	            }
+	        };
+			tabla.setModel(modeloJtCompra);
+			modeloJtCompra.addColumn("");
+			modeloJtCompra.addColumn("Producto");
+			modeloJtCompra.addColumn("Proveedor");
+			modeloJtCompra.addColumn("Cantidad");
+			modeloJtCompra.addColumn("Precio Unit");
+			for(TranLinea tl : mapLineasTran.values()) {
+				Object [] fila = new Object[5];
+				fila[0] = false;
+				fila[1] = tl.getProducto();
+				fila[2] = (PersonaJuridica) tl.getTransaccion().getPersona();
+				fila[3] = tl.getCantidad();
+				fila[4] = tl.getPrecioUnit();
+				modeloJtCompra.addRow(fila);
 			}
+			
 			tabla.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseClicked(MouseEvent e) {
 					int fila = tabla.rowAtPoint(e.getPoint());
-					if (fila > -1) {
-//						Integer idProd = (Integer) tabla.getModel().getValueAt(fila, 0);
-//						Producto prod = mgrProd.obtenerProductoPorId(idProd);
-//						Container containerJTable = tabla.getParent().getParent().getParent();
-//						cargarControlesCompra(null, containerJTable);
+					int cols = tabla.getModel().getColumnCount();
+					if (fila > -1 && cols > 1) {
+						Producto prod = (Producto) tabla.getModel().getValueAt(fila, 1);
+						TranLinea tl = mapLineasTran.get(prod.getIdProducto());
+						Container containerJTable = tabla.getParent().getParent().getParent();
+						cargarControlesCompra(tl, containerJTable);
 					}
 				}
 			});
@@ -134,20 +155,90 @@ public class CtrlFrmMovimiento extends CtrlGenerico {
 	/*****************************************************************************************************************************************************/
 	
 	public void iniciarCompra(FrmMovimiento frm) {
+		nuevaTransaccion();
 		setContainerEnabled(frm.getPnlCompraProv(), true);
 		setContainerEnabled(frm.getPnlCompraDatos(), false);
-		this.setTransac(new Transaccion());
-		this.getTransac().setTipoTran(TipoTran.C);
 	}
 	
-	public void limpiarCompra(FrmMovimiento frm) {
-		if(enviarConfirm(CnstPresGeneric.MOV, CnstPresGeneric.COMPRA_CONF_LIMPIAR) == CONFIRM_OK) {
+	public void limpiarCompra(FrmMovimiento frm, Boolean confirma) {
+		if(confirma ? enviarConfirm(CnstPresGeneric.MOV, CnstPresGeneric.COMPRA_CONF_LIMPIAR) == CONFIRM_OK : true) {
 			setContainerEnabled(frm.getPnlCompraDatos(), false);
 			setContainerEnabled(frm.getPnlCompraProv(), false);
 			clearForm(frm.getContentPane());
 			this.setTransac(null);
+			mapLineasTran = null;
 		}
 	}
+	
+	public void agregarItemCompra(JComboBox<PersonaJuridica> cbxCompraPj, JComboBox<Producto> cbxCompraProd, JFormattedTextField ftxtCompraCant,
+			JFormattedTextField ftxtCompraPu) {
+		GenCompType genComp = new GenCompType();
+		genComp.setComp(cbxCompraPj);
+		genComp.setComp(cbxCompraProd); 
+		genComp.setComp(ftxtCompraCant);
+		genComp.setComp(ftxtCompraPu);
+		if(controlDatosObl(genComp)) {
+			if(getTransac().equals(null)) {
+				nuevaTransaccion();
+			}
+			Producto prod = (Producto) cbxCompraProd.getSelectedItem();
+			if(!mapLineasTran.containsKey(prod.getIdProducto())) {
+				getTransac().setPersona((PersonaJuridica) cbxCompraPj.getSelectedItem());
+				TranLinea tl = new TranLinea();
+				tl.setProducto(prod);
+				tl.setCantidad(new Integer(ftxtCompraCant.getText()));
+				tl.setPrecioUnit(new Double(ftxtCompraPu.getText()));
+				tl.setTransaccion(getTransac());
+				mapLineasTran.put(prod.getIdProducto(), tl);
+				//cargo tabla con lista de lineas
+				cargarJtCompra();
+			} else {
+				enviarWarning(CnstPresGeneric.MOV, CnstPresGeneric.COMPRA_PROD_YA_ING);
+			}
+		} else {
+			enviarWarning(CnstPresGeneric.MOV, CnstPresGeneric.DATOS_OBLIG);
+		}
+	}
+	
+	private void nuevaTransaccion() {
+		setTransac(new Transaccion(TipoTran.C));
+		mapLineasTran = new HashMap<>();
+	}
+	
+	public void generarCompra() {
+		if(getTransac() != null) {
+			if(mapLineasTran != null && !mapLineasTran.isEmpty()) {
+				getTransac().getListaTranLinea().addAll(mapLineasTran.values());
+				mgrTran.generarTransaccion(getTransac());
+				limpiarCompra(getFrm(), false);
+				enviarInfo(CnstPresGeneric.MOV, CnstPresGeneric.COMPRA_CONFIRMADA);
+			} else {
+				enviarWarning(CnstPresGeneric.MOV, CnstPresGeneric.COMPRA_SIN_LINEAS);
+			}
+		} else {
+			enviarWarning(CnstPresGeneric.MOV, CnstPresGeneric.DATOS_OBLIG);
+		}
+	}
+	
+	public void eliminarItemCompra() {
+		if(this.getFrm().getJtCompra().getModel().getRowCount() > 0 && 
+				this.getFrm().getJtCompra().getModel().getColumnCount() > 1) {
+			for(int i=0; i<getFrm().getJtCompra().getModel().getRowCount(); i++) {
+				Boolean checked = (Boolean) getFrm().getJtCompra().getModel().getValueAt(i, 0);
+				if (checked) {
+					Producto prod = (Producto) getFrm().getJtCompra().getModel().getValueAt(i, 1);
+					if(mapLineasTran.containsKey(prod.getIdProducto())) {
+						mapLineasTran.remove(prod.getIdProducto());
+					}
+					System.out.println(prod);
+				}
+				System.out.println("#########################################");
+			}
+			cargarJtCompra();
+		}
+		//FIXME completar con mensajes de error
+	}
+
 	
 	
 	/*****************************************************************************************************************************************************/
@@ -169,6 +260,8 @@ public class CtrlFrmMovimiento extends CtrlGenerico {
 		this.transac = transac;
 	}
 
+
+	
 
 	
 }

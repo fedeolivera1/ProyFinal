@@ -14,9 +14,9 @@ public interface CnstQryProducto {
 													+ "FROM producto p "
 													+ "WHERE p.id_producto = ?";
 	
-	public static final String QRY_SELECT_PROD_X_TIPOPROD = "SELECT id_prodcuto, id_tipo_prod, codigo, nombre, descripcion, stock_min, precio, sinc, ult_act "
-													+ "FROM producto p "
-													+ "WHERE p.id_tipo_prod = ?";
+	public static final String QRY_SELECT_PROD_X_TIPOPROD = "SELECT id_producto, id_tipo_prod, codigo, nombre, descripcion, stock_min, precio, sinc, ult_act "
+													+ "FROM producto "
+													+ "WHERE id_tipo_prod = ?";
 	
 	public static final String QRY_INSERT_PROD = "INSERT INTO producto "
 													+ "(id_tipo_prod, codigo, nombre, descripcion, stock_min, precio, sinc, ult_act) "

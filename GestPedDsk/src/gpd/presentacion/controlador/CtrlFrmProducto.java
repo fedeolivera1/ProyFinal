@@ -234,7 +234,8 @@ public class CtrlFrmProducto extends CtrlGenerico {
 		genComp.setComp(precio);
 		if(controlDatosObl(genComp)) {
 			Producto prod = new Producto();
-			prod.setTipoProd((TipoProd)cbxTp.getSelectedItem());
+			TipoProd tp = (TipoProd)cbxTp.getSelectedItem();
+			prod.setTipoProd(tp);
 			prod.setCodigo(codigo.getText());
 			prod.setNombre(nombre.getText());
 			prod.setDescripcion(descripcion.getText());
@@ -242,8 +243,9 @@ public class CtrlFrmProducto extends CtrlGenerico {
 			prod.setPrecio(new Double(precio.getText()));
 			mgrProd.guardarProducto(prod);
 			clearForm(frmProd.getContentPane());
-			List<Producto> lst = new ArrayList<>();
-			lst.add(prod);
+//			List<Producto> lst = new ArrayList<>();
+//			lst.add(prod);
+			List<Producto> lst = mgrProd.obtenerListaProductoPorTipoProd(tp);
 			cargarJtProd(lst);
 		} else {
 			enviarWarning(CnstPresGeneric.PROD, CnstPresGeneric.DATOS_OBLIG);
@@ -262,8 +264,9 @@ public class CtrlFrmProducto extends CtrlGenerico {
 		genComp.setComp(precio);
 		if(controlDatosObl(genComp)) {
 			Integer idInt = ctrlNumLong(id.getText()) ? new Integer(id.getText()) : null;
+			TipoProd tp = (TipoProd)cbxTp.getSelectedItem();
 			Producto prod = mgrProd.obtenerProductoPorId(idInt);
-			prod.setTipoProd((TipoProd)cbxTp.getSelectedItem());
+			prod.setTipoProd(tp);
 			prod.setCodigo(codigo.getText());
 			prod.setNombre(nombre.getText());
 			prod.setDescripcion(descripcion.getText());
@@ -271,8 +274,9 @@ public class CtrlFrmProducto extends CtrlGenerico {
 			prod.setPrecio(new Double(precio.getText()));
 			mgrProd.modificarProducto(prod);
 			clearForm(frmProd.getContentPane());
-			List<Producto> lst = new ArrayList<>();
-			lst.add(prod);
+//			List<Producto> lst = new ArrayList<>();
+//			lst.add(prod);
+			List<Producto> lst = mgrProd.obtenerListaProductoPorTipoProd(tp);
 			cargarJtProd(lst);
 		} else {
 			enviarWarning(CnstPresGeneric.PROD, CnstPresGeneric.DATOS_OBLIG);

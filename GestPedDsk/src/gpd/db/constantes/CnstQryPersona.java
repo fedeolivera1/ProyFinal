@@ -89,22 +89,4 @@ public interface CnstQryPersona {
 	
 	public static final String QRY_DELETE_PERS = "DELETE FROM persona WHERE id_persona = ?";
 	
-	public static final String QRY_SELECT_TIPODOC = "SELECT id_tipo_doc, nombre FROM tipo_doc order by id_tipo_doc";
-	
-	public static final String QRY_SELECT_TIPODOC_XID = "SELECT id_tipo_doc, nombre FROM tipo_doc WHERE id_tipo_doc = ?";
-	
-	public static final String QRY_INSERT_TIPODOC = "INSERT INTO tipo_doc (nombre) VALUES (?)";
-	
-	public static final String QRY_UPDATE_TIPODOC = "UPDATE tipo_doc SET nombre = ? WHERE id_tipo_doc = ?";
-	
-	public static final String QRY_DELETE_TIPODOC = "DELETE FROM tipo_doc WHERE id_tipo_doc = ?";
-	
-	public static final String QRY_SELECT_DEP = "SELECT id_dep, nombre FROM departamento order by id_dep";
-	
-	public static final String QRY_SELECT_DEP_XID = "SELECT id_dep, nombre FROM departamento WHERE id_dep = ?";
-	
-	public static final String QRY_SELECT_LOC_XDEP = "SELECT id_loc, nombre, id_dep FROM localidad WHERE id_dep = ? order by id_loc";
-	
-	public static final String QRY_SELECT_LOC_XID = "SELECT id_loc, nombre, id_dep FROM localidad WHERE id_loc = ?";
-	
 }

@@ -21,7 +21,7 @@ import gpd.interfaces.producto.IPersProducto;
 import gpd.persistencia.conector.Conector;
 import gpd.types.Fecha;
 
-public class PersistenciaProducto extends Conector implements IPersProducto {
+public class PersistenciaProducto extends Conector implements IPersProducto, CnstQryProducto {
 	
 	private static final Logger logger = Logger.getLogger(PersistenciaProducto.class);
 
@@ -31,7 +31,7 @@ public class PersistenciaProducto extends Conector implements IPersProducto {
 		List<Producto> listaProd = new ArrayList<>();
 		PersistenciaTipoProd ptp = new PersistenciaTipoProd();
 		try {
-			GenSqlSelectType genSel = new GenSqlSelectType(CnstQryProducto.QRY_SEARCH_PROD);
+			GenSqlSelectType genSel = new GenSqlSelectType(QRY_SEARCH_PROD);
 			genSel.setParamEmptyAsNumber(idTipoProd);
 			genSel.setParamEmptyAsNumber(idTipoProd);
 			genSel.setParamLikeRight(codigo);
@@ -70,7 +70,7 @@ public class PersistenciaProducto extends Conector implements IPersProducto {
 		Producto producto = null;
 		PersistenciaTipoProd ptp = new PersistenciaTipoProd();
 		try {
-			GenSqlSelectType genSel = new GenSqlSelectType(CnstQryProducto.QRY_SELECT_PROD_XID);
+			GenSqlSelectType genSel = new GenSqlSelectType(QRY_SELECT_PROD_XID);
 			genSel.setParam(id);
 			ResultSet rs = (ResultSet) runGeneric(genSel);
 			if(rs.next()) {
@@ -101,7 +101,7 @@ public class PersistenciaProducto extends Conector implements IPersProducto {
 		List<Producto> listaProducto = new ArrayList<>();
 		PersistenciaTipoProd ptp = new PersistenciaTipoProd();
 		try {
-			GenSqlSelectType genSel = new GenSqlSelectType(CnstQryProducto.QRY_SELECT_PROD_X_TIPOPROD);
+			GenSqlSelectType genSel = new GenSqlSelectType(QRY_SELECT_PROD_X_TIPOPROD);
 			genSel.setParam(tipoProd.getIdTipoProd());
 			ResultSet rs = (ResultSet) runGeneric(genSel);
 			while(rs.next()) {
@@ -133,7 +133,7 @@ public class PersistenciaProducto extends Conector implements IPersProducto {
 	@Override
 	public Integer guardarProducto(Producto producto) throws PersistenciaException {
 		Integer resultado = null;
-		GenSqlExecType genExec = new GenSqlExecType(CnstQryProducto.QRY_INSERT_PROD);
+		GenSqlExecType genExec = new GenSqlExecType(QRY_INSERT_PROD);
 		genExec.setParam(producto.getTipoProd().getIdTipoProd());
 		genExec.setParam(producto.getCodigo());
 		genExec.setParam(producto.getNombre());
@@ -155,7 +155,7 @@ public class PersistenciaProducto extends Conector implements IPersProducto {
 	@Override
 	public Integer modificarProducto(Producto producto) throws PersistenciaException {
 		Integer resultado = null;
-		GenSqlExecType genExec = new GenSqlExecType(CnstQryProducto.QRY_UPDATE_PROD);
+		GenSqlExecType genExec = new GenSqlExecType(QRY_UPDATE_PROD);
 		genExec.setParam(producto.getTipoProd().getIdTipoProd());
 		genExec.setParam(producto.getCodigo());
 		genExec.setParam(producto.getNombre());
@@ -178,7 +178,7 @@ public class PersistenciaProducto extends Conector implements IPersProducto {
 	@Override
 	public Integer eliminarProducto(Producto producto) throws PersistenciaException {
 		Integer resultado = null;
-		GenSqlExecType genExec = new GenSqlExecType(CnstQryProducto.QRY_DELETE_PROD);
+		GenSqlExecType genExec = new GenSqlExecType(QRY_DELETE_PROD);
 		genExec.getExecuteDatosCond().put(1, producto.getIdProducto());
 		try {
 			resultado = (Integer) runGeneric(genExec);

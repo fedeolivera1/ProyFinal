@@ -16,7 +16,7 @@ import gpd.exceptions.PersistenciaException;
 import gpd.interfaces.producto.IPersUtilidad;
 import gpd.persistencia.conector.Conector;
 
-public class PersistenciaUtilidad extends Conector implements IPersUtilidad {
+public class PersistenciaUtilidad extends Conector implements IPersUtilidad, CnstQryUtilidad {
 	
 	private static final Logger logger = Logger.getLogger(PersistenciaTipoProd.class);
 	
@@ -25,7 +25,7 @@ public class PersistenciaUtilidad extends Conector implements IPersUtilidad {
 	public Utilidad obtenerUtilidadPorId(Integer id) throws PersistenciaException {
 		Utilidad utilidad = null;
 		try {
-			GenSqlSelectType genType = new GenSqlSelectType(CnstQryUtilidad.QRY_SELECT_UTIL_X_ID);
+			GenSqlSelectType genType = new GenSqlSelectType(QRY_SELECT_UTIL_X_ID);
 			genType.setParam(id);
 			ResultSet rs = (ResultSet) runGeneric(genType);
 			if(rs.next()) {
@@ -46,7 +46,7 @@ public class PersistenciaUtilidad extends Conector implements IPersUtilidad {
 	public List<Utilidad> obtenerListaUtilidad() throws PersistenciaException {
 		List<Utilidad> listaUtilidad = new ArrayList<>();
 		try {
-			GenSqlSelectType genType = new GenSqlSelectType(CnstQryUtilidad.QRY_SELECT_UTIL);
+			GenSqlSelectType genType = new GenSqlSelectType(QRY_SELECT_UTIL);
 			ResultSet rs = (ResultSet) runGeneric(genType);
 			while(rs.next()) {
 				Utilidad utilidad = new Utilidad();

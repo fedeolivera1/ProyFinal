@@ -20,6 +20,11 @@ public class Transaccion implements Serializable {
 	private List<TranLinea> listaTranLinea;
 	
 	
+	public Transaccion(TipoTran tipoTran) {
+		super();
+		this.tipoTran = tipoTran;
+	}
+	
 	public Long getNroTransac() {
 		return nroTransac;
 	}

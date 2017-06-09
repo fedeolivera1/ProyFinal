@@ -21,6 +21,10 @@ public abstract class Conector {
 	private static final Logger logger = Logger.getLogger(Conector.class);
 	protected static Connection conn = null;
 	
+	protected static final Character EMPTY_CHAR = ' ';
+	protected static final Character S_CHAR = 'S';
+	protected static final Character N_CHAR = 'N';
+	
 	/**
 	 * obtiene la conexion con info de la base de datos
 	 */
@@ -35,11 +39,12 @@ public abstract class Conector {
 			try {
 				conn.rollback();
 			} catch (SQLException e1) {
-				logger.fatal("Error al hacer rollback: " + e.getMessage(), e);
+				logger.error("Error al hacer rollback: " + e.getMessage(), e);
 			}
 			logger.fatal("Error al conectar a la base de datos: " + e.getMessage(), e);
 		    System.err.println(e.getClass().getName()+": "+e.getMessage());
 		} catch (Exception e) {
+			logger.fatal("Error excepcion generica: " + e.getMessage(), e);
 			System.err.println(e.getClass().getName()+": "+e.getMessage());
 		} finally {
 			logger.info("Conector instanciado correctamente...");
@@ -51,7 +56,7 @@ public abstract class Conector {
 	 * Hace commit de la conexion activa
 	 *
 	 */
-	private static void commitConn() {
+	protected static void commitConn() {
 		try {
 			conn.commit();
 		} catch (SQLException e) {
@@ -87,7 +92,7 @@ public abstract class Conector {
 			}
 			logger.debug("Se cierra la conexion en el metodo - " + nameOp + ". Thread: " + Thread.currentThread().getId());
 		} catch (SQLException e) {
-			logger.error("ERROR - Conector al cerrar conexion en el metodo - " + nameOp + ". Error al cerrar las conexiones a BD." + e.getMessage(), e);
+			logger.fatal("ERROR - Conector al cerrar conexion en el metodo - " + nameOp + ". Error al cerrar las conexiones a BD." + e.getMessage(), e);
 		}
 	}
 	
@@ -114,7 +119,7 @@ public abstract class Conector {
 			logger.error("Excepcion de SQL al ejecutar 'selectGeneric': " + e.getMessage(), e);
 			throw new ConectorException(e.getMessage(), e);
 		} catch (Exception e) {
-			logger.error("Excepcion genérica al ejecutar 'selectGeneric': " + e.getMessage(), e);
+			logger.fatal("Excepcion genérica al ejecutar 'selectGeneric': " + e.getMessage(), e);
 			throw new ConectorException(e.getMessage(), e);
 		}
 		return rs;
@@ -271,5 +276,22 @@ public abstract class Conector {
 		return resultado;
 	}
 	
+	
+	public static Long obtenerSecuencia(String nombreSec) throws ConectorException {
+		Long resultado = null;
+		StringBuilder sb = new StringBuilder();
+		sb.append("select nextval('").append(nombreSec).append("') as seq");
+		GenSqlSelectType genType = new GenSqlSelectType(sb.toString());
+		ResultSet rs = selectGeneric(genType);
+		try {
+			if(rs.next()) {
+				resultado = rs.getLong("seq");
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return resultado;
+	}
 	
 }

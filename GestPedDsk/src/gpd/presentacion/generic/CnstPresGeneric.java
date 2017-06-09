@@ -36,7 +36,11 @@ public interface CnstPresGeneric {
 	
 	//compra
 	public static final String MOV = "Movimiento";
-	public static final String COMPRA_CONF_LIMPIAR = "Confirma que desea limpiar el formulario ? ";
+	public static final String COMPRA_CONF_LIMPIAR = "Confirma que desea limpiar el formulario ?";
+	public static final String COMPRA_PROD_YA_ING = "El producto ya ha sido ingresado, revise los datos.";
+	public static final String COMPRA_SIN_TRANSAC = "No existe compra abierta, revise los datos.";
+	public static final String COMPRA_SIN_LINEAS = "No existen items en la compra, revise los datos.";
+	public static final String COMPRA_CONFIRMADA = "La compra se ha confirmado.";
 	
 	//controles genericos
 	public static final String DATOS_OBLIG = "Los datos marcados son obligatorios.";

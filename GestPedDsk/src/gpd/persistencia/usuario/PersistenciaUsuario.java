@@ -19,7 +19,7 @@ import gpd.persistencia.conector.Conector;
  * no se utilizaran los metodos genericos de persistencia, ya que se requiere NO
  * loguear los datos de passwords de los usuarios.  
  */
-public class PersistenciaUsuario extends Conector implements IPersUsuario {
+public class PersistenciaUsuario extends Conector implements IPersUsuario, CnstQryUsuario {
 
 	private static final Logger logger = Logger.getLogger(PersistenciaUsuario.class);
 	
@@ -30,7 +30,7 @@ public class PersistenciaUsuario extends Conector implements IPersUsuario {
 		UsuarioDsk usuario = null;
 		ResultSet resultado;
 		try {
-			PreparedStatement ps = conn.prepareStatement(CnstQryUsuario.QRY_LOGIN);
+			PreparedStatement ps = conn.prepareStatement(QRY_LOGIN);
 			ps.setString(1, nombreUsuario);
 			ps.setString(2, passwd);
 			resultado = ps.executeQuery();
@@ -56,7 +56,7 @@ public class PersistenciaUsuario extends Conector implements IPersUsuario {
 		logger.info("Ejecucion de guardarUsuario para: " + usuario.getNomUsu());
 		Integer resultado = null;
 		try {
-			PreparedStatement ps = conn.prepareStatement(CnstQryUsuario.QRY_INSERT_USR);
+			PreparedStatement ps = conn.prepareStatement(QRY_INSERT_USR);
 			ps.setString(1, usuario.getNomUsu());
 			ps.setString(2, usuario.getPass());
 			ps.setString(2, usuario.getPass());
@@ -74,7 +74,7 @@ public class PersistenciaUsuario extends Conector implements IPersUsuario {
 		logger.info("Ejecucion de modificarUsuario para: " + usuario.getNomUsu());
 		Integer resultado = null;
 		try {
-			PreparedStatement ps = conn.prepareStatement(CnstQryUsuario.QRY_UPDATE_USR);
+			PreparedStatement ps = conn.prepareStatement(QRY_UPDATE_USR);
 			ps.setString(1, usuario.getPass());
 			ps.setString(2, usuario.getNomUsu());
 			resultado = ps.executeUpdate();
@@ -91,7 +91,7 @@ public class PersistenciaUsuario extends Conector implements IPersUsuario {
 		logger.info("Ejecucion de eliminarUsuario para: " + usuario.getNomUsu());
 		Integer resultado = null;
 		try {
-			PreparedStatement ps = conn.prepareStatement(CnstQryUsuario.QRY_DELETE_USR);
+			PreparedStatement ps = conn.prepareStatement(QRY_DELETE_USR);
 			ps.setString(1, usuario.getNomUsu());
 			resultado = ps.executeUpdate();
 		} catch (SQLException e) {

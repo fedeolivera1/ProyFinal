@@ -494,6 +494,16 @@ public abstract class CtrlGenerico {
 		return JOptionPane.showConfirmDialog(null, msg, cab, JOptionPane.OK_CANCEL_OPTION);
 	}
 	
+	/**
+	 * 
+	 * @param string cabezal
+	 * @param string mensaje
+	 * genera un MessageDialog con mensaje de warning por defecto
+	 */
+	protected void enviarInfo(String cab, String msg) {
+		JOptionPane.showMessageDialog(null, msg, cab, JOptionPane.INFORMATION_MESSAGE);
+	}
+	
 	
 	/**
 	 * genera una fila de informacion de que no se ha podido cargar la tabla
@@ -501,11 +511,12 @@ public abstract class CtrlGenerico {
 	 */
 	public void cargarJTableVacia(JTable tabla) {
 		deleteModelTable(tabla);
-        DefaultTableModel modelo = (DefaultTableModel) tabla.getModel();
-        modelo.addColumn("Resultado");
+        DefaultTableModel modelo = new DefaultTableModel();
+        modelo.addColumn("");
         Object [] fila = new Object[1];
         fila[0] = CnstPresGeneric.JTABLE_EMPTY;
         modelo.addRow(fila);
+        tabla.setModel(modelo);
         tabla.setEnabled(false);
     }
 	

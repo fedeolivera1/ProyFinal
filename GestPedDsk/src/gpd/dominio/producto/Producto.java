@@ -82,5 +82,10 @@ public class Producto implements Serializable {
 		this.ultAct = ultAct;
 	}
 	
+	@Override
+	public String toString() {
+		return idProducto + " | " + codigo + " | " + nombre;
+	}
+	
 	
 }

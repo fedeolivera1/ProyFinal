@@ -17,7 +17,7 @@ import gpd.exceptions.PersistenciaException;
 import gpd.interfaces.producto.IPersTipoProd;
 import gpd.persistencia.conector.Conector;
 
-public class PersistenciaTipoProd extends Conector implements IPersTipoProd {
+public class PersistenciaTipoProd extends Conector implements IPersTipoProd, CnstQryTipoProd {
 
 	private static final Logger logger = Logger.getLogger(PersistenciaTipoProd.class);
 	
@@ -26,7 +26,7 @@ public class PersistenciaTipoProd extends Conector implements IPersTipoProd {
 	public TipoProd obtenerTipoProdPorId(Integer id) throws PersistenciaException {
 		TipoProd tipoProd = null;
 		try {
-			GenSqlSelectType genType = new GenSqlSelectType(CnstQryTipoProd.QRY_SELECT_TIPOPROD_X_ID);
+			GenSqlSelectType genType = new GenSqlSelectType(QRY_SELECT_TIPOPROD_X_ID);
 			genType.setParam(id);
 			ResultSet rs = (ResultSet) runGeneric(genType);
 			if(rs.next()) {
@@ -46,7 +46,7 @@ public class PersistenciaTipoProd extends Conector implements IPersTipoProd {
 	public List<TipoProd> obtenerListaTipoProd() throws PersistenciaException {
 		List<TipoProd> listaTipoProd = new ArrayList<>();
 		try {
-			GenSqlSelectType genType = new GenSqlSelectType(CnstQryTipoProd.QRY_SELECT_TIPOPROD);
+			GenSqlSelectType genType = new GenSqlSelectType(QRY_SELECT_TIPOPROD);
 			ResultSet rs = (ResultSet) runGeneric(genType);
 			while(rs.next()) {
 				TipoProd tipoProd = new TipoProd();
@@ -65,7 +65,7 @@ public class PersistenciaTipoProd extends Conector implements IPersTipoProd {
 	@Override
 	public Integer guardarTipoProd(TipoProd tipoProd) throws PersistenciaException {
 		Integer resultado = null;
-		GenSqlExecType genExec = new GenSqlExecType(CnstQryTipoProd.QRY_INSERT_TIPOPROD);
+		GenSqlExecType genExec = new GenSqlExecType(QRY_INSERT_TIPOPROD);
 		genExec.setParam(tipoProd.getDescripcion());
 		try {
 			resultado = (Integer) runGeneric(genExec);
@@ -80,7 +80,7 @@ public class PersistenciaTipoProd extends Conector implements IPersTipoProd {
 	@Override
 	public Integer modificarTipoProd(TipoProd tipoProd) throws PersistenciaException {
 		Integer resultado = null;
-		GenSqlExecType genExec = new GenSqlExecType(CnstQryTipoProd.QRY_UPDATE_TIPOPROD);
+		GenSqlExecType genExec = new GenSqlExecType(QRY_UPDATE_TIPOPROD);
 		genExec.setParam(tipoProd.getDescripcion());
 		genExec.setParam(tipoProd.getIdTipoProd());
 		try {
@@ -96,7 +96,7 @@ public class PersistenciaTipoProd extends Conector implements IPersTipoProd {
 	@Override
 	public Integer eliminarTipoProd(TipoProd tipoProd) throws PersistenciaException {
 		Integer resultado = null;
-		GenSqlExecType genExec = new GenSqlExecType(CnstQryTipoProd.QRY_DELETE_TIPOPROD);
+		GenSqlExecType genExec = new GenSqlExecType(QRY_DELETE_TIPOPROD);
 		genExec.setParam(tipoProd.getIdTipoProd());
 		try {
 			resultado = (Integer) runGeneric(genExec);

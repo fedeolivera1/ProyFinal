@@ -17,7 +17,7 @@ import gpd.exceptions.PersistenciaException;
 import gpd.interfaces.producto.IPersDeposito;
 import gpd.persistencia.conector.Conector;
 
-public class PersistenciaDeposito extends Conector implements IPersDeposito {
+public class PersistenciaDeposito extends Conector implements IPersDeposito, CnstQryDeposito {
 
 	private static final Logger logger = Logger.getLogger(PersistenciaDeposito.class);
 	
@@ -26,7 +26,7 @@ public class PersistenciaDeposito extends Conector implements IPersDeposito {
 	public Deposito obtenerDepositoPorId(Integer id) throws PersistenciaException {
 		Deposito deposito = null;
 		try {
-			GenSqlSelectType genType = new GenSqlSelectType(CnstQryDeposito.QRY_SELECT_DEPOSITO_X_ID);
+			GenSqlSelectType genType = new GenSqlSelectType(QRY_SELECT_DEPOSITO_X_ID);
 			genType.setParam(id);
 			ResultSet rs = (ResultSet) runGeneric(genType);
 			if(rs.next()) {
@@ -46,7 +46,7 @@ public class PersistenciaDeposito extends Conector implements IPersDeposito {
 	public List<Deposito> obtenerListaDeposito() throws PersistenciaException {
 		List<Deposito> listaDeposito = new ArrayList<>();
 		try {
-			GenSqlSelectType genType = new GenSqlSelectType(CnstQryDeposito.QRY_SELECT_DEPOSITO);
+			GenSqlSelectType genType = new GenSqlSelectType(QRY_SELECT_DEPOSITO);
 			ResultSet rs = (ResultSet) runGeneric(genType);
 			while(rs.next()) {
 				Deposito deposito = new Deposito();
@@ -65,7 +65,7 @@ public class PersistenciaDeposito extends Conector implements IPersDeposito {
 	@Override
 	public Integer guardarDeposito(Deposito deposito) throws PersistenciaException {
 		Integer resultado = null;
-		GenSqlExecType genExec = new GenSqlExecType(CnstQryDeposito.QRY_INSERT_DEPOSITO);
+		GenSqlExecType genExec = new GenSqlExecType(QRY_INSERT_DEPOSITO);
 		genExec.setParam(deposito.getNombre());
 		try {
 			resultado = (Integer) runGeneric(genExec);
@@ -80,7 +80,7 @@ public class PersistenciaDeposito extends Conector implements IPersDeposito {
 	@Override
 	public Integer modificarDeposito(Deposito deposito) throws PersistenciaException {
 		Integer resultado = null;
-		GenSqlExecType genExec = new GenSqlExecType(CnstQryDeposito.QRY_UPDATE_DEPOSITO);
+		GenSqlExecType genExec = new GenSqlExecType(QRY_UPDATE_DEPOSITO);
 		genExec.setParam(deposito.getNombre());
 		genExec.setParam(deposito.getNroDep());
 		try {
@@ -96,7 +96,7 @@ public class PersistenciaDeposito extends Conector implements IPersDeposito {
 	@Override
 	public Integer eliminarDeposito(Deposito deposito) throws PersistenciaException {
 		Integer resultado = null;
-		GenSqlExecType genExec = new GenSqlExecType(CnstQryDeposito.QRY_DELETE_DEPOSITO);
+		GenSqlExecType genExec = new GenSqlExecType(QRY_DELETE_DEPOSITO);
 		genExec.setParam(deposito.getNroDep());
 		try {
 			resultado = (Integer) runGeneric(genExec);
