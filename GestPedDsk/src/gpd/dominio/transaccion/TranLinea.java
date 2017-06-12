@@ -41,4 +41,9 @@ public class TranLinea implements Serializable {
 		this.precioUnit = precioUnit;
 	}
 	
+	@Override
+	public String toString() {
+		return "Prod: " + producto.getCodigo() + " - " +  producto.getNombre() + " | Cant: " + cantidad + " | pu $"  + precioUnit;
+	}
+	
 }

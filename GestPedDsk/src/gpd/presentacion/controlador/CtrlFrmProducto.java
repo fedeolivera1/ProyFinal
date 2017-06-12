@@ -129,7 +129,7 @@ public class CtrlFrmProducto extends CtrlGenerico {
 				}
 			});
 		} else {
-			cargarJTableVacia(tabla);
+			cargarJTableVacia(tabla, null);
 		}
 	}
 	
@@ -419,13 +419,44 @@ public class CtrlFrmProducto extends CtrlGenerico {
 	}
 	
 	//utilidad
-	public Integer agregarUtilidad(JTextField desc, JFormattedTextField txtUtilPorc, JList<Utilidad> jlUtil) {
+	public Integer agregarUtilidad(JTextField txtUtilDesc, JFormattedTextField txtUtilPorc, JList<Utilidad> jlUtil) {
+		if(controlDatosObl(txtUtilDesc, txtUtilPorc)) {
+			Utilidad util = new Utilidad();
+			util.setDescripcion(txtUtilDesc.getText());
+			util.setPorc(new Float(txtUtilPorc.getText()));
+			mgrProd.guardarUtilidad(util);
+			clearForm(getiFrmUtil().getContentPane());
+			cargarListUtil(jlUtil);
+			enviarInfo(CnstPresGeneric.UTIL, CnstPresGeneric.UTIL_ING_OK);
+		} else {
+			enviarWarning(CnstPresGeneric.TP, CnstPresGeneric.DATOS_OBLIG);
+		}
 		return null;
 	}
-	public Integer modificarUtilidad(JTextField desc,  JFormattedTextField txtUtilPorc, JList<Utilidad> jlUtil) {
+	public Integer modificarUtilidad(JTextField txtUtilDesc,  JFormattedTextField txtUtilPorc, JList<Utilidad> jlUtil) {
+		if(controlDatosObl(txtUtilDesc, txtUtilPorc, jlUtil)) {
+			Utilidad util = (Utilidad) jlUtil.getSelectedValue();
+			util.setDescripcion(txtUtilDesc.getText());
+			util.setPorc(new Float(txtUtilPorc.getText()));
+			mgrProd.modificarUtilidad(util);
+			clearForm(getiFrmUtil().getContentPane());
+			cargarListUtil(jlUtil);
+			enviarInfo(CnstPresGeneric.UTIL, CnstPresGeneric.UTIL_MOD_OK);
+		} else {
+			enviarWarning(CnstPresGeneric.TP, CnstPresGeneric.DATOS_OBLIG);
+		}
 		return null;
 	}
 	public Integer eliminarUtilidad(JList<Utilidad> jlUtil) {
+		if(controlDatosObl(jlUtil)) {
+			Utilidad util = (Utilidad) jlUtil.getSelectedValue();
+			mgrProd.eliminarUtilidad(util);
+			clearForm(getiFrmUtil().getContentPane());
+			cargarListUtil(jlUtil);
+			enviarInfo(CnstPresGeneric.UTIL, CnstPresGeneric.UTIL_ELI_OK);
+		} else {
+			enviarWarning(CnstPresGeneric.UTIL, CnstPresGeneric.DATOS_OBLIG);
+		}
 		return null;
 	}
 	

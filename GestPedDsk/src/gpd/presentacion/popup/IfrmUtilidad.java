@@ -24,6 +24,7 @@ import javax.swing.event.ListSelectionListener;
 
 import gpd.dominio.producto.Utilidad;
 import gpd.presentacion.controlador.CtrlFrmProducto;
+import javax.swing.JScrollPane;
 
 public class IfrmUtilidad extends JInternalFrame implements InternalFrameListener {
 
@@ -32,6 +33,7 @@ public class IfrmUtilidad extends JInternalFrame implements InternalFrameListene
 	private JTextField txtUtilDesc;
 	private CtrlFrmProducto ctrlInterno;
 	private JFormattedTextField txtUtilPorc;
+	private JScrollPane scrollPaneUtil;
 	private JList<Utilidad> jlUtil;
 	
 
@@ -65,13 +67,7 @@ public class IfrmUtilidad extends JInternalFrame implements InternalFrameListene
 		txtUtilDesc.setBounds(66, 8, 120, 20);
 		contentPane.add(txtUtilDesc);
 		txtUtilDesc.setColumns(10);
-		
-		jlUtil = new JList<>();
-		jlUtil.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		jlUtil.setBounds(196, 10, 228, 247);
-		contentPane.add(jlUtil);
 		DefaultListModel<Utilidad> dlm = new DefaultListModel<>();
-		jlUtil.setModel(dlm);
 		
 		JLabel lblPorc = new JLabel("Porc.");
 		lblPorc.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -91,7 +87,16 @@ public class IfrmUtilidad extends JInternalFrame implements InternalFrameListene
 		JButton btnUtilEli = new JButton("Eliminar");
 		btnUtilEli.setBounds(97, 138, 89, 23);
 		contentPane.add(btnUtilEli);
+		
+		scrollPaneUtil = new JScrollPane();
+		jlUtil = new JList<>();
+		jlUtil.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		jlUtil.setModel(dlm);
+		scrollPaneUtil.setViewportView(jlUtil);
+		scrollPaneUtil.setBounds(196, 0, 238, 270);
+		contentPane.add(scrollPaneUtil);
 
+		
 		/*****************************************************************************************************************************************************/
 		/* ACCIONES CONTROLES */
 		/*****************************************************************************************************************************************************/

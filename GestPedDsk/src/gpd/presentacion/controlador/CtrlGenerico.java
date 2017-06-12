@@ -18,7 +18,10 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 import javax.swing.text.MaskFormatter;
 
 import org.apache.log4j.Logger;
@@ -508,16 +511,44 @@ public abstract class CtrlGenerico {
 	/**
 	 * genera una fila de informacion de que no se ha podido cargar la tabla
 	 * @param tabla
+	 * @param [opcional] mensaje a mostrar cuando se carga vacia, por def carga predefinido
 	 */
-	public void cargarJTableVacia(JTable tabla) {
+	public void cargarJTableVacia(JTable tabla, String displayMsg) {
 		deleteModelTable(tabla);
         DefaultTableModel modelo = new DefaultTableModel();
         modelo.addColumn("");
         Object [] fila = new Object[1];
-        fila[0] = CnstPresGeneric.JTABLE_EMPTY;
+        fila[0] = displayMsg != null ? displayMsg : CnstPresGeneric.JTABLE_EMPTY;
         modelo.addRow(fila);
         tabla.setModel(modelo);
         tabla.setEnabled(false);
     }
+	
+	//FIXME revisar esto (packColumn)
+	public static void packColumn(JTable table, int colIndex, int margin) { 
+//	    TableModel model = table.getModel(); 
+		DefaultTableColumnModel colModel = (DefaultTableColumnModel) table.getColumnModel(); 
+        TableColumn col = colModel.getColumn(colIndex); 
+        int width = 0; 
+        // Get width of column header 
+        TableCellRenderer renderer = col.getHeaderRenderer(); 
+        if (renderer == null) { 
+            renderer = table.getTableHeader().getDefaultRenderer(); 
+        } 
+        Component comp = renderer.getTableCellRendererComponent( 
+                table, col.getHeaderValue(), false, false, 0, 0); 
+        width = comp.getPreferredSize().width; 
+        // Get maximum width of column data 
+        for (int r=0; r<table.getRowCount(); r++) { 
+            renderer = table.getCellRenderer(r, colIndex); 
+            comp = renderer.getTableCellRendererComponent( 
+                    table, table.getValueAt(r, colIndex), false, false, r, colIndex); 
+            width = Math.max(width, comp.getPreferredSize().width); 
+        } 
+        // Add margin 
+        width += 2 * margin; 
+        // Set the width 
+        col.setPreferredWidth(width); 
+    }   
 	
 }

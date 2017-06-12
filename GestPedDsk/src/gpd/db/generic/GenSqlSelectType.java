@@ -7,6 +7,8 @@ public class GenSqlSelectType {
 	private String statement;
 	private HashMap<Integer, Object> selectDatosCond;
 	private int cnt = 0;
+	protected static final Character EMPTY_CHAR = ' ';
+	protected static final String EMPTY_STR = "";
 
 
 	public GenSqlSelectType(String statement) {
@@ -44,11 +46,15 @@ public class GenSqlSelectType {
 		this.getSelectDatosCond().put(cnt, obj);
 	}
 
-	public void setParamEmptyAsNull(Object obj) {
+	public void setParamStringIfNull(Object obj) {
 		cnt++;
-		if(obj instanceof String) {
-			obj = String.valueOf(obj).equals("") ? null : obj;
-		}
+		obj = (obj == null) ? EMPTY_STR : obj;
+		this.getSelectDatosCond().put(cnt, obj);
+	}
+	
+	public void setParamCharIfNull(Object obj) {
+		cnt++;
+		obj = (obj == null) ? EMPTY_CHAR : obj;
 		this.getSelectDatosCond().put(cnt, obj);
 	}
 

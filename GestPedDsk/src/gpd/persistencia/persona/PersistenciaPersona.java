@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
 import gpd.db.constantes.CnstQryPersona;
 import gpd.db.generic.GenSqlExecType;
 import gpd.db.generic.GenSqlSelectType;
+import gpd.dominio.persona.Persona;
 import gpd.dominio.persona.PersonaFisica;
 import gpd.dominio.persona.PersonaJuridica;
 import gpd.dominio.persona.Sexo;
@@ -564,6 +565,33 @@ public class PersistenciaPersona extends Conector implements IPersPersona, CnstQ
 			throw new PersistenciaException(e.getMessage());
 		}
 		return listaPj;
+	}
+
+	@Override
+	public Persona obtenerPersGenerico(Long idPersona) throws PersistenciaException {
+		Persona persona = null;
+		try {
+			GenSqlSelectType genType = new GenSqlSelectType(QRY_SELECT_PERS_GENERIC);
+			genType.setParam(idPersona);
+			ResultSet rs = (ResultSet) runGeneric(genType);
+			if(rs.next()) {
+				char[] tipoChar = new char[1];
+				rs.getCharacterStream("tipo").read(tipoChar);
+				TipoPersona tp = TipoPersona.getTipoPersonaPorChar(tipoChar[0]);
+				if(tp.equals(TipoPersona.F)) {
+					persona = obtenerPersFisicaPorId(idPersona);
+				} else if(tp.equals(TipoPersona.J)) {
+					persona = obtenerPersJuridicaPorId(idPersona);
+				} else {
+					throw new PersistenciaException("Tipo de Persona no soportado...");
+				}
+			}
+		} catch (ConectorException | SQLException | IOException e) {
+			Conector.rollbackConn();
+			logger.log(Level.FATAL, "Excepcion al obtenerProductoPorId: " + e.getMessage(), e);
+			throw new PersistenciaException(e);
+		}
+		return persona;
 	}
 
 

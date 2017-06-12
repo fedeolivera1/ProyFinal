@@ -20,6 +20,7 @@ import javax.swing.event.ListSelectionListener;
 
 import gpd.dominio.producto.TipoProd;
 import gpd.presentacion.controlador.CtrlFrmProducto;
+import javax.swing.JScrollPane;
 
 public class IfrmTipoProd extends JInternalFrame implements InternalFrameListener {
 
@@ -27,6 +28,8 @@ public class IfrmTipoProd extends JInternalFrame implements InternalFrameListene
 	private JPanel contentPane;
 	private JTextField txtTpDesc;
 	private CtrlFrmProducto ctrlInterno;
+	private JScrollPane scrollPaneTp;
+	private JList<TipoProd> jlTipoProd;
 	
 
 	/**
@@ -58,51 +61,52 @@ public class IfrmTipoProd extends JInternalFrame implements InternalFrameListene
 		txtTpDesc.setBounds(66, 8, 120, 20);
 		contentPane.add(txtTpDesc);
 		txtTpDesc.setColumns(10);
-		
-		JList<TipoProd> jlTipoProd = new JList<>();
-		jlTipoProd.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		jlTipoProd.setBounds(196, 10, 228, 247);
-		contentPane.add(jlTipoProd);
 		DefaultListModel<TipoProd> dlm = new DefaultListModel<>();
-		jlTipoProd.setModel(dlm);
+		
+		scrollPaneTp = new JScrollPane();
+		scrollPaneTp.setBounds(196, 0, 238, 270);
+		contentPane.add(scrollPaneTp);
 
+		jlTipoProd = new JList<>();
+		scrollPaneTp.setViewportView(jlTipoProd);
+		jlTipoProd.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		jlTipoProd.setModel(dlm);
+		
+		JButton btnTpAgr = new JButton("Agregar");
+		btnTpAgr.setBounds(97, 39, 89, 23);
+		contentPane.add(btnTpAgr);
+		JButton btnTpMod = new JButton("Modificar");
+		btnTpMod.setBounds(97, 73, 89, 23);
+		contentPane.add(btnTpMod);
+		JButton btnTpEli = new JButton("Eliminar");
+		btnTpEli.setBounds(97, 107, 89, 23);
+		contentPane.add(btnTpEli);
+		
 		/*****************************************************************************************************************************************************/
 		/* ACCIONES CONTROLES */
 		/*****************************************************************************************************************************************************/
-		
 		ctrl.cargarListTipoProd(jlTipoProd);
-		jlTipoProd.addListSelectionListener(new ListSelectionListener() {
-			public void valueChanged(ListSelectionEvent arg0) {
-				ctrl.cargarControlesTipoProd(txtTpDesc, jlTipoProd);
-			}
-		});
 		
-		JButton btnTpAgr = new JButton("Agregar");
 		btnTpAgr.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				ctrl.agregarTipoProd(txtTpDesc, jlTipoProd);
 			}
 		});
-		btnTpAgr.setBounds(97, 39, 89, 23);
-		contentPane.add(btnTpAgr);
-		
-		JButton btnTpMod = new JButton("Modificar");
 		btnTpMod.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ctrl.modificarTipoProd(txtTpDesc, jlTipoProd);
 			}
 		});
-		btnTpMod.setBounds(97, 73, 89, 23);
-		contentPane.add(btnTpMod);
-		
-		JButton btnTpEli = new JButton("Eliminar");
 		btnTpEli.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ctrl.eliminarTipoProd(jlTipoProd);
 			}
 		});
-		btnTpEli.setBounds(97, 107, 89, 23);
-		contentPane.add(btnTpEli);
+		jlTipoProd.addListSelectionListener(new ListSelectionListener() {
+			public void valueChanged(ListSelectionEvent arg0) {
+				ctrl.cargarControlesTipoProd(txtTpDesc, jlTipoProd);
+			}
+		});
 	}
 
 	@Override

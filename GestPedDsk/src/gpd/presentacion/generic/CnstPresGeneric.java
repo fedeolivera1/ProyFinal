@@ -41,9 +41,18 @@ public interface CnstPresGeneric {
 	public static final String COMPRA_SIN_TRANSAC = "No existe compra abierta, revise los datos.";
 	public static final String COMPRA_SIN_LINEAS = "No existen items en la compra, revise los datos.";
 	public static final String COMPRA_CONFIRMADA = "La compra se ha confirmado.";
+	public static final String COMPRA_NOMODIF_PROD = "El prodcuto que intenta modificar no es parte de la compra.";
+	public static final String JTABLE_SIN_ITEMS = "No hay items para mostrar...";
+	public static final String JTABLE_SIN_COMPRAS = "No hay compras para mostrar...";
+	
+	//utilidad
+	public static final String UTIL = "Utilidad";
+	public static final String UTIL_ING_OK = "Se ha ingresado la utilidad correctamente.";
+	public static final String UTIL_MOD_OK = "Se ha modificado la utilidad correctamente.";
+	public static final String UTIL_ELI_OK = "Se ha eliminado la utilidad correctamente.";
 	
 	//controles genericos
 	public static final String DATOS_OBLIG = "Los datos marcados son obligatorios.";
-	public static final Object JTABLE_EMPTY = "No se encontraron resultados...";
+	public static final String JTABLE_EMPTY = "No se encontraron resultados...";
 	
 }

@@ -1,17 +1,22 @@
 package gpd.persistencia.transaccion;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import gpd.db.constantes.CnstQryTranLinea;
 import gpd.db.generic.GenSqlExecType;
+import gpd.db.generic.GenSqlSelectType;
 import gpd.dominio.transaccion.TranLinea;
 import gpd.exceptions.ConectorException;
 import gpd.exceptions.PersistenciaException;
 import gpd.interfaces.transaccion.IPersTranLinea;
 import gpd.persistencia.conector.Conector;
+import gpd.persistencia.producto.PersistenciaProducto;
 
 public class PersistenciaTranLinea extends Conector implements IPersTranLinea, CnstQryTranLinea {
 
@@ -36,6 +41,44 @@ public class PersistenciaTranLinea extends Conector implements IPersTranLinea, C
 		} catch (ConectorException e) {
 			Conector.rollbackConn();
 			logger.error("Excepcion al guardarTranLinea: " + e.getMessage(), e);
+			throw new PersistenciaException(e);
+		}
+		return resultado;
+	}
+
+	@Override
+	public List<TranLinea> obtenerListaTranLinea(Long nroTransac) throws PersistenciaException {
+		List<TranLinea> listaTranLinea = new ArrayList<>();
+		PersistenciaProducto pp = new PersistenciaProducto();
+		try {
+			GenSqlSelectType genType = new GenSqlSelectType(QRY_SELECT_TRANLINEA_XTRANSAC);
+			genType.setParam(nroTransac);
+			ResultSet rs = (ResultSet) runGeneric(genType);
+			while(rs.next()) {
+				TranLinea tranLinea = new TranLinea();
+				tranLinea.setProducto(pp.obtenerProductoPorId(rs.getInt("id_producto")));
+				tranLinea.setCantidad(rs.getInt("cantidad"));
+				tranLinea.setPrecioUnit(rs.getDouble("precio_unit"));
+				listaTranLinea.add(tranLinea);
+			}
+		} catch (ConectorException | SQLException e) {
+			Conector.rollbackConn();
+			logger.log(Level.FATAL, "Excepcion al obtenerListaTranLinea: " + e.getMessage(), e);
+			throw new PersistenciaException(e);
+		}
+		return listaTranLinea;
+	}
+
+	@Override
+	public Integer eliminarTranLinea(Long nroTransac) throws PersistenciaException {
+		Integer resultado = null;
+		GenSqlExecType genExec = new GenSqlExecType(QRY_DELETE_TRANLINEA);
+		genExec.setParam(nroTransac);
+		try {
+			resultado = (Integer) runGeneric(genExec);
+		} catch (ConectorException e) {
+			Conector.rollbackConn();
+			logger.log(Level.FATAL, "Excepcion al eliminarTranLinea: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		}
 		return resultado;

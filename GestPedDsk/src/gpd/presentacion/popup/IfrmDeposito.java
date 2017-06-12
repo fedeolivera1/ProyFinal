@@ -20,6 +20,7 @@ import javax.swing.event.ListSelectionListener;
 
 import gpd.dominio.producto.Deposito;
 import gpd.presentacion.controlador.CtrlFrmProducto;
+import javax.swing.JScrollPane;
 
 public class IfrmDeposito extends JInternalFrame implements InternalFrameListener {
 
@@ -27,10 +28,8 @@ public class IfrmDeposito extends JInternalFrame implements InternalFrameListene
 	private JPanel contentPane;
 	private JTextField txtDepNombre;
 	private CtrlFrmProducto ctrlInterno;
+	private JScrollPane scrollPaneDep;
 	private JList<Deposito> jlDeposito;
-	private JButton btnDepAgr;
-	private JButton btnDepMod;
-	private JButton btnDepEli;
 	
 
 	/**
@@ -62,24 +61,18 @@ public class IfrmDeposito extends JInternalFrame implements InternalFrameListene
 		txtDepNombre.setBounds(66, 8, 120, 20);
 		contentPane.add(txtDepNombre);
 		txtDepNombre.setColumns(10);
-		
-		jlDeposito = new JList<>();
-		jlDeposito.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		jlDeposito.setBounds(196, 10, 228, 247);
-		contentPane.add(jlDeposito);
 		DefaultListModel<Deposito> dlm = new DefaultListModel<>();
-		jlDeposito.setModel(dlm);
 		
 		
-		btnDepAgr = new JButton("Agregar");
+		JButton btnDepAgr = new JButton("Agregar");
 		btnDepAgr.setBounds(97, 39, 89, 23);
 		contentPane.add(btnDepAgr);
 		
-		btnDepMod = new JButton("Modificar");
+		JButton btnDepMod = new JButton("Modificar");
 		btnDepMod.setBounds(97, 73, 89, 23);
 		contentPane.add(btnDepMod);
 		
-		btnDepEli = new JButton("Eliminar");
+		JButton btnDepEli = new JButton("Eliminar");
 		btnDepEli.setBounds(97, 107, 89, 23);
 		contentPane.add(btnDepEli);
 		
@@ -87,7 +80,21 @@ public class IfrmDeposito extends JInternalFrame implements InternalFrameListene
 		/* ACCIONES CONTROLES */
 		/*****************************************************************************************************************************************************/
 		
+		scrollPaneDep = new JScrollPane();
+		scrollPaneDep.setBounds(196, 0, 238, 270);
+		contentPane.add(scrollPaneDep);
+		
+		jlDeposito = new JList<>();
+		scrollPaneDep.setViewportView(jlDeposito);
+		jlDeposito.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		jlDeposito.setModel(dlm);
+		
 		ctrl.cargarListDeposito(jlDeposito);
+		jlDeposito.addListSelectionListener(new ListSelectionListener() {
+			public void valueChanged(ListSelectionEvent arg0) {
+				ctrl.cargarControlesDep(txtDepNombre, jlDeposito);
+			}
+		});
 		btnDepAgr.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				ctrl.agregarDeposito(txtDepNombre, jlDeposito);
@@ -101,11 +108,6 @@ public class IfrmDeposito extends JInternalFrame implements InternalFrameListene
 		btnDepEli.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ctrl.eliminarDeposito(jlDeposito);
-			}
-		});
-		jlDeposito.addListSelectionListener(new ListSelectionListener() {
-			public void valueChanged(ListSelectionEvent arg0) {
-				ctrl.cargarControlesDep(txtDepNombre, jlDeposito);
 			}
 		});
 	}

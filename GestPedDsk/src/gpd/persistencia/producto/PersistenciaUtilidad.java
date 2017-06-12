@@ -5,10 +5,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import gpd.db.constantes.CnstQryUtilidad;
+import gpd.db.generic.GenSqlExecType;
 import gpd.db.generic.GenSqlSelectType;
 import gpd.dominio.producto.Utilidad;
 import gpd.exceptions.ConectorException;
@@ -36,7 +36,7 @@ public class PersistenciaUtilidad extends Conector implements IPersUtilidad, Cns
 			}
 		} catch (ConectorException | SQLException e) {
 			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al obtenerUtilidadPorId: " + e.getMessage(), e);
+			logger.fatal("Excepcion al obtenerUtilidadPorId: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		}
 		return utilidad;
@@ -57,7 +57,7 @@ public class PersistenciaUtilidad extends Conector implements IPersUtilidad, Cns
 			}
 		} catch (ConectorException | SQLException e) {
 			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al obtenerListaUtilidad: " + e.getMessage(), e);
+			logger.fatal("Excepcion al obtenerListaUtilidad: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		}
 		return listaUtilidad;
@@ -65,20 +65,50 @@ public class PersistenciaUtilidad extends Conector implements IPersUtilidad, Cns
 
 	@Override
 	public Integer guardarUtilidad(Utilidad utilidad) throws PersistenciaException {
-		// TODO Auto-generated method stub
-		return null;
+		Integer resultado = null;
+		GenSqlExecType genExec = new GenSqlExecType(QRY_INSERT_UTIL);
+		genExec.setParam(utilidad.getDescripcion());
+		genExec.setParam(utilidad.getPorc());
+		try {
+			resultado = (Integer) runGeneric(genExec);
+		} catch (ConectorException e) {
+			Conector.rollbackConn();
+			logger.fatal("Excepcion al guardarUtilidad: " + e.getMessage(), e);
+			throw new PersistenciaException(e);
+		}
+		return resultado;
 	}
 
 	@Override
 	public Integer modificarUtilidad(Utilidad utilidad) throws PersistenciaException {
-		// TODO Auto-generated method stub
-		return null;
+		Integer resultado = null;
+		GenSqlExecType genExec = new GenSqlExecType(QRY_UPDATE_UTIL);
+		genExec.setParam(utilidad.getDescripcion());
+		genExec.setParam(utilidad.getPorc());
+		genExec.setParam(utilidad.getIdUtil());
+		try {
+			resultado = (Integer) runGeneric(genExec);
+		} catch (ConectorException e) {
+			Conector.rollbackConn();
+			logger.fatal("Excepcion al modificarUtilidad: " + e.getMessage(), e);
+			throw new PersistenciaException(e);
+		}
+		return resultado;
 	}
 
 	@Override
 	public Integer eliminarUtilidad(Utilidad utilidad) throws PersistenciaException {
-		// TODO Auto-generated method stub
-		return null;
+		Integer resultado = null;
+		GenSqlExecType genExec = new GenSqlExecType(QRY_DELETE_UTIL);
+		genExec.setParam(utilidad.getIdUtil());
+		try {
+			resultado = (Integer) runGeneric(genExec);
+		} catch (ConectorException e) {
+			Conector.rollbackConn();
+			logger.fatal("Excepcion al eliminarUtilidad: " + e.getMessage(), e);
+			throw new PersistenciaException(e);
+		}
+		return resultado;
 	}
 
 }

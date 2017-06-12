@@ -124,7 +124,7 @@ public class CtrlFrmPersona extends CtrlGenerico {
 				}
 			});
 		} else {
-			cargarJTableVacia(tabla);
+			cargarJTableVacia(tabla, null);
 		}
 	}
 	
@@ -164,7 +164,7 @@ public class CtrlFrmPersona extends CtrlGenerico {
 				}
 			});
 		} else {
-			cargarJTableVacia(tabla);
+			cargarJTableVacia(tabla, null);
 		}
 	}
 	

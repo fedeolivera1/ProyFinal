@@ -7,4 +7,26 @@ public interface CnstQryTransaccion {
 	public static final String QRY_INSERT_TRANSACCION = "INSERT INTO transaccion "
 															+ "(nro_transac, id_persona, operacion, fecha_hora, sub_total, iva, total) "
 															+ "VALUES (?, ?, ?, ?, ?, ?, ?)";
+	
+	public static final String QRY_SELECT_TRAN_XPERS = "SELECT t.nro_transac, t.id_persona, t.operacion, t.fecha_hora, t.sub_total, t.iva, t.total, te.estado "
+															+ "FROM transaccion t "
+															+ "INNER JOIN tran_estado te "
+															+ "ON t.nro_transac = te.nro_transac "
+															+ "WHERE id_persona = ? "
+															+ "AND (operacion = ? OR '' = ?) "
+															+ "AND ( (te.estado = (SELECT te2.estado from tran_estado te2 WHERE te2.nro_transac = t.nro_transac ORDER BY fecha_hora DESC LIMIT 1) "
+																+ "AND te.ESTADO = ?) "
+																+ "OR (te.estado = (SELECT te2.estado from tran_estado te2 WHERE te2.nro_transac = t.nro_transac ORDER BY fecha_hora DESC LIMIT 1)) "
+																+ "AND ('' = ?) ) "
+															+ "ORDER BY te.fecha_hora DESC";
+	
+	public static final String QRY_SELECT_ULT_TRANESTADO_XID = "SELECT te.estado FROM tran_estado te "
+															+ "WHERE te.nro_transac = ? "
+															+ "ORDER BY te.fecha_hora DESC "
+															+ "LIMIT 1";
+	
+	public static final String QRY_INSERT_TRANESTADO = "INSERT INTO TRAN_ESTADO "
+															+ "(nro_transac, estado, fecha_hora) "
+															+ "VALUES (?, ?, ?)";
+	
 }

@@ -13,9 +13,10 @@ public class Transaccion implements Serializable {
 	private Long nroTransac;
 	private Persona persona;
 	private TipoTran tipoTran;
+	private EstadoTran estadoTran;
 	private Fecha fechaHora;
 	private Double subTotal;
-	private Float iva;
+	private Double iva;
 	private Double total;
 	private List<TranLinea> listaTranLinea;
 	
@@ -46,6 +47,13 @@ public class Transaccion implements Serializable {
 		this.tipoTran = tipoTran;
 	}
 	
+	public EstadoTran getEstadoTran() {
+		return estadoTran;
+	}
+	public void setEstadoTran(EstadoTran estadoTran) {
+		this.estadoTran = estadoTran;
+	}
+	
 	public Fecha getFechaHora() {
 		return fechaHora;
 	}
@@ -60,10 +68,10 @@ public class Transaccion implements Serializable {
 		this.subTotal = subTotal;
 	}
 	
-	public Float getIva() {
+	public Double getIva() {
 		return iva;
 	}
-	public void setIva(Float iva) {
+	public void setIva(Double iva) {
 		this.iva = iva;
 	}
 	
@@ -82,6 +90,17 @@ public class Transaccion implements Serializable {
 	}
 	public void setListaTranLinea(List<TranLinea> listaTranLinea) {
 		this.listaTranLinea = listaTranLinea;
+	}
+	
+	public String toStringLineas() {
+		StringBuilder strBld = new StringBuilder();
+		if(this.listaTranLinea != null && !listaTranLinea.isEmpty()) {
+			for(TranLinea tl : listaTranLinea) {
+				strBld.append(tl.toString()).append(" || ");
+			}
+			strBld.delete(strBld.length()-4, strBld.length());
+		}
+		return strBld.toString();
 	}
 	
 }

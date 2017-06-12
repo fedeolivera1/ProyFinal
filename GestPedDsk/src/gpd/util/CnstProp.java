@@ -5,6 +5,7 @@ public interface CnstProp {
 	//archivos properties
 	public static final String PROP_DB	= "dbdsk";
 	public static final String PROP_LOG4J = "log4j";
+	public static final String PROP_CONFIG = "config";
 	
 	//datos properties dbdsk
 	public static final String DB_URL_VAL = "dbdskurl";
@@ -13,4 +14,7 @@ public interface CnstProp {
 	public static final String DB_PASS_VAL = "dbpass";
 	public static final String DB_DRIVER_VAL = "dbdriver";
 
+	//datos properties config
+	public static final String CFG_IVA = "iva";
+	
 }

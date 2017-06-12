@@ -58,6 +58,8 @@ public interface CnstQryPersona {
 														+ "FROM pers_juridica pj INNER JOIN persona p "
 														+ "ON pj.rut = p.id_persona "
 														+ "WHERE (pj.es_prov = ? OR ' ' =  ?)";
+	
+	public static final String QRY_SELECT_PERS_GENERIC = "SELECT tipo FROM persona WHERE id_persona = ?";
 
 	public static final String QRY_INSERT_PERS = "INSERT INTO persona "
 														+ "(id_persona, direccion, puerta, solar, manzana, km, complemento, telefono, celular, email, fecha_reg, tipo, id_loc, origen, sinc, ult_act) "

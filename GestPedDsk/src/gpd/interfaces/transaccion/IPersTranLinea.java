@@ -7,6 +7,8 @@ import gpd.exceptions.PersistenciaException;
 
 public interface IPersTranLinea {
 
+	public List<TranLinea> obtenerListaTranLinea(Long nroTransac) throws PersistenciaException;
 	public Integer guardarListaTranLinea(List<TranLinea> tranLinea) throws PersistenciaException;
+	public Integer eliminarTranLinea(Long nroTransac) throws PersistenciaException;
 	
 }

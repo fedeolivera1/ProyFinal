@@ -17,6 +17,7 @@ import gpd.dominio.persona.PersonaJuridica;
 import gpd.dominio.producto.Producto;
 import gpd.dominio.producto.TipoProd;
 import gpd.dominio.producto.Utilidad;
+import gpd.dominio.transaccion.EstadoTran;
 import gpd.dominio.transaccion.TipoTran;
 import gpd.dominio.transaccion.TranLinea;
 import gpd.dominio.transaccion.Transaccion;
@@ -26,6 +27,7 @@ import gpd.manager.transaccion.ManagerTransaccion;
 import gpd.presentacion.formulario.FrmMovimiento;
 import gpd.presentacion.generic.CnstPresGeneric;
 import gpd.presentacion.generic.GenCompType;
+import gpd.types.Fecha;
 
 public class CtrlFrmMovimiento extends CtrlGenerico {
 
@@ -103,8 +105,8 @@ public class CtrlFrmMovimiento extends CtrlGenerico {
 		frm.getFtxtCompraPu().setText(String.valueOf(tl.getCantidad()));
 	}
 	
-	public void cargarJtCompra() {
-		JTable tabla = frm.getJtCompra();
+	public void cargarJtCompraItems() {
+		JTable tabla = frm.getJtCompraItems();
 		clearTable(tabla);
 		deleteModelTable(tabla);
 		if(mapLineasTran != null && !mapLineasTran.isEmpty()) {
@@ -145,7 +147,51 @@ public class CtrlFrmMovimiento extends CtrlGenerico {
 				}
 			});
 		} else {
-			cargarJTableVacia(tabla);
+			cargarJTableVacia(tabla, CnstPresGeneric.JTABLE_SIN_ITEMS);
+		}
+	}
+	
+	public void cargarJtComprasPend(JComboBox<PersonaJuridica> cbxCompraPj) {
+		JTable tabla = frm.getJtComprasPend();
+		clearTable(tabla);
+		deleteModelTable(tabla);
+		if(cbxCompraPj.getSelectedIndex() > -1) {
+			PersonaJuridica pj = (PersonaJuridica) cbxCompraPj.getSelectedItem();
+			List<Transaccion> listaTransac = mgrTran.obtenerListaTransaccionPorPersona(pj.getRut(), TipoTran.C, EstadoTran.P);
+			if(listaTransac != null && !listaTransac.isEmpty()) {
+				DefaultTableModel modeloJtComprasPend = new DefaultTableModel();
+				tabla.setModel(modeloJtComprasPend);
+				modeloJtComprasPend.addColumn("Id Transac");
+				modeloJtComprasPend.addColumn("Persona");
+				modeloJtComprasPend.addColumn("Fecha - Hora");
+				modeloJtComprasPend.addColumn("Items (cod|nom|cant|$unit)");
+				for(Transaccion transac : listaTransac) {
+					Object [] fila = new Object[4];
+					fila[0] = transac.getNroTransac();
+					fila[1] = pj.getRut() + " " + pj.getNombre();
+					fila[2] = transac.getFechaHora().toString(Fecha.AMDHMS);
+					fila[3] = transac.toStringLineas(); 
+					modeloJtComprasPend.addRow(fila);
+				}
+				tabla.addMouseListener(new MouseAdapter() {
+					@Override
+					public void mouseClicked(MouseEvent e) {
+					}
+				});
+				packColumn(tabla, 4, 0);
+			}
+		} else {
+			cargarJTableVacia(tabla, CnstPresGeneric.JTABLE_SIN_COMPRAS);
+		}
+	}
+	
+	public void cargarPrecioProd(JComboBox<Producto> cbxCompraProd) {
+		if(cbxCompraProd.getSelectedItem() != null) {
+			Producto prod = (Producto) cbxCompraProd.getSelectedItem();
+			clearComponent(frm.getFtxtCompraCant());
+			frm.getFtxtCompraPu().setText(String.valueOf(prod.getPrecio()));
+		} else {
+			clearComponent(frm.getFtxtCompraPu());
 		}
 	}
 
@@ -191,7 +237,7 @@ public class CtrlFrmMovimiento extends CtrlGenerico {
 				tl.setTransaccion(getTransac());
 				mapLineasTran.put(prod.getIdProducto(), tl);
 				//cargo tabla con lista de lineas
-				cargarJtCompra();
+				cargarJtCompraItems();
 			} else {
 				enviarWarning(CnstPresGeneric.MOV, CnstPresGeneric.COMPRA_PROD_YA_ING);
 			}
@@ -220,21 +266,42 @@ public class CtrlFrmMovimiento extends CtrlGenerico {
 		}
 	}
 	
+	public void modificarItemCompra(JComboBox<PersonaJuridica> cbxCompraPj, JComboBox<Producto> cbxCompraProd, JFormattedTextField ftxtCompraCant,
+			JFormattedTextField ftxtCompraPu) {
+		GenCompType genComp = new GenCompType();
+		genComp.setComp(cbxCompraPj);
+		genComp.setComp(cbxCompraProd); 
+		genComp.setComp(ftxtCompraCant);
+		genComp.setComp(ftxtCompraPu);
+		if(controlDatosObl(genComp)) {
+			Producto prod = (Producto) cbxCompraProd.getSelectedItem();
+			if(getTransac() != null && mapLineasTran != null && 
+					mapLineasTran.containsKey(prod.getIdProducto())) {
+				TranLinea tl = mapLineasTran.get(prod.getIdProducto());
+				tl.setProducto(prod);
+				tl.setCantidad(new Integer(ftxtCompraCant.getText()));
+				tl.setPrecioUnit(new Double(ftxtCompraPu.getText()));
+				tl.setTransaccion(getTransac());
+			} else {
+				enviarWarning(CnstPresGeneric.MOV, CnstPresGeneric.COMPRA_NOMODIF_PROD);
+			}
+			cargarJtCompraItems();
+		}
+	}
+	
 	public void eliminarItemCompra() {
-		if(this.getFrm().getJtCompra().getModel().getRowCount() > 0 && 
-				this.getFrm().getJtCompra().getModel().getColumnCount() > 1) {
-			for(int i=0; i<getFrm().getJtCompra().getModel().getRowCount(); i++) {
-				Boolean checked = (Boolean) getFrm().getJtCompra().getModel().getValueAt(i, 0);
+		if(this.getFrm().getJtCompraItems().getModel().getRowCount() > 0 && 
+				this.getFrm().getJtCompraItems().getModel().getColumnCount() > 1) {
+			for(int i=0; i<getFrm().getJtCompraItems().getModel().getRowCount(); i++) {
+				Boolean checked = (Boolean) getFrm().getJtCompraItems().getModel().getValueAt(i, 0);
 				if (checked) {
-					Producto prod = (Producto) getFrm().getJtCompra().getModel().getValueAt(i, 1);
+					Producto prod = (Producto) getFrm().getJtCompraItems().getModel().getValueAt(i, 1);
 					if(mapLineasTran.containsKey(prod.getIdProducto())) {
 						mapLineasTran.remove(prod.getIdProducto());
 					}
-					System.out.println(prod);
 				}
-				System.out.println("#########################################");
 			}
-			cargarJtCompra();
+			cargarJtCompraItems();
 		}
 		//FIXME completar con mensajes de error
 	}
@@ -259,7 +326,6 @@ public class CtrlFrmMovimiento extends CtrlGenerico {
 	public void setTransac(Transaccion transac) {
 		this.transac = transac;
 	}
-
 
 	
 

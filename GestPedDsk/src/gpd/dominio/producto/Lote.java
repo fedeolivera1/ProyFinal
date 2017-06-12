@@ -2,13 +2,14 @@ package gpd.dominio.producto;
 
 import java.io.Serializable;
 
+import gpd.dominio.transaccion.TranLinea;
 import gpd.types.Fecha;
 
 public class Lote implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	private Integer idLote;
-	private Producto producto;
+	private TranLinea tranLinea;
 	private Fecha venc;
 	private Deposito deposito;
 	private Utilidad utilidad;
@@ -22,11 +23,11 @@ public class Lote implements Serializable {
 		this.idLote = idLote;
 	}
 	
-	public Producto getProducto() {
-		return producto;
+	public TranLinea getTranLinea() {
+		return tranLinea;
 	}
-	public void setProducto(Producto producto) {
-		this.producto = producto;
+	public void setTranLinea(TranLinea tranLinea) {
+		this.tranLinea = tranLinea;
 	}
 	
 	public Fecha getVenc() {

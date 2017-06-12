@@ -2,6 +2,7 @@ package gpd.interfaces.persona;
 
 import java.util.List;
 
+import gpd.dominio.persona.Persona;
 import gpd.dominio.persona.PersonaFisica;
 import gpd.dominio.persona.PersonaJuridica;
 import gpd.exceptions.PersistenciaException;
@@ -23,5 +24,6 @@ public interface IPersPersona {
 	public Integer guardarPersJuridica(PersonaJuridica pj) throws PersistenciaException;
 	public Integer modificarPersJuridica(PersonaJuridica pj) throws PersistenciaException;
 	public Integer eliminarPersJuridica(PersonaJuridica pj) throws PersistenciaException;
-	
+	//generico
+	public Persona obtenerPersGenerico(Long idPersona) throws PersistenciaException;
 }
