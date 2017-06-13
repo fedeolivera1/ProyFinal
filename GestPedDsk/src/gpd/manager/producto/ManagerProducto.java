@@ -44,10 +44,9 @@ public class ManagerProducto {
 			Conector.getConn();
 			Integer idTipoProd = (tipoProd != null ? tipoProd.getIdTipoProd() : CnstQryGeneric.NUMBER_INVALID);
 			listaProd = interfaceProducto.obtenerBusquedaProducto(idTipoProd, codigo, nombre, descripcion);
+			Conector.closeConn("obtenerBusquedaProducto", null);
 		} catch (PersistenciaException e) {
 			e.printStackTrace();//FIXME ver como manejar esta excep
-		} finally {
-			Conector.closeConn("obtenerBusquedaProducto", null);
 		}
 		return listaProd;
 	}
@@ -59,10 +58,9 @@ public class ManagerProducto {
 		try {
 			Conector.getConn();
 			producto = interfaceProducto.obtenerProductoPorId(id);
+			Conector.closeConn("obtenerUsuario", null);
 		} catch (PersistenciaException e) {
 			e.printStackTrace();
-		} finally {
-			Conector.closeConn("obtenerUsuario", null);
 		}
 		return producto;
 	}
@@ -74,10 +72,9 @@ public class ManagerProducto {
 		try {
 			Conector.getConn();
 			listaProducto = interfaceProducto.obtenerListaProductoPorTipo(tipoProd);
+			Conector.closeConn("obtenerListaProductoPorTipoProd", null);
 		} catch (PersistenciaException e) {
 			e.printStackTrace();
-		} finally {
-			Conector.closeConn("obtenerListaProductoPorTipoProd", null);
 		}
 		return listaProducto;
 	}
@@ -91,11 +88,10 @@ public class ManagerProducto {
 				producto.setUltAct(new Fecha(Fecha.AMDHMS));
 				Conector.getConn();
 				resultado = interfaceProducto.guardarProducto(producto);
+				Conector.closeConn("guardarProducto", null);
 			} catch (PersistenciaException e) {
 				//FIXME ver como manejar esta excep
 				e.printStackTrace();
-			} finally {
-				Conector.closeConn("guardarProducto", null);
 			}
 		}
 		return resultado;
@@ -110,11 +106,10 @@ public class ManagerProducto {
 				producto.setUltAct(new Fecha(Fecha.AMDHMS));
 				Conector.getConn();
 				resultado = interfaceProducto.modificarProducto(producto);
+				Conector.closeConn("modificarProducto", null);
 			} catch (PersistenciaException e) {
 				//FIXME ver como manejar esta excep
 				e.printStackTrace();
-			} finally {
-				Conector.closeConn("modificarProducto", null);
 			}
 		}
 		return resultado;
@@ -127,11 +122,10 @@ public class ManagerProducto {
 			try {
 				Conector.getConn();
 				resultado = interfaceProducto.eliminarProducto(producto);
+				Conector.closeConn("eliminarProducto", null);
 			} catch (PersistenciaException e) {
 				//FIXME ver como manejar esta excep
 				e.printStackTrace();
-			} finally {
-				Conector.closeConn("eliminarProducto", null);
 			}
 		}
 		return resultado;
@@ -148,11 +142,10 @@ public class ManagerProducto {
 		try {
 			Conector.getConn();
 			tipoProd = interfaceTipoProd.obtenerTipoProdPorId(id);
+			Conector.closeConn("obtenerTipoProdPorId", null);
 		} catch (PersistenciaException e) {
 			//FIXME ver como manejar esta excep
 			e.printStackTrace();
-		} finally {
-			Conector.closeConn("obtenerTipoProdPorId", null);
 		}
 		return tipoProd;
 	}
@@ -164,11 +157,10 @@ public class ManagerProducto {
 		try {
 			Conector.getConn();
 			listaTipoProd = interfaceTipoProd.obtenerListaTipoProd();
+			Conector.closeConn("obtenerListaTipoProd", null);
 		} catch (PersistenciaException e) {
 			//FIXME ver como manejar esta excep
 			e.printStackTrace();
-		} finally {
-			Conector.closeConn("obtenerListaTipoProd", null);
 		}
 		return listaTipoProd;
 	}
@@ -180,11 +172,10 @@ public class ManagerProducto {
 			try {
 				Conector.getConn();
 				resultado = interfaceTipoProd.guardarTipoProd(tipoProd);
+				Conector.closeConn("guardarTipoProd", null);
 			} catch (PersistenciaException e) {
 				//FIXME ver como manejar esta excep
 				e.printStackTrace();
-			} finally {
-				Conector.closeConn("guardarTipoProd", null);
 			}
 		}
 		return resultado;
@@ -197,11 +188,10 @@ public class ManagerProducto {
 			try {
 				Conector.getConn();
 				resultado = interfaceTipoProd.modificarTipoProd(tipoProd);
+				Conector.closeConn("modificarTipoProd", null);
 			} catch (PersistenciaException e) {
 				//FIXME ver como manejar esta excep
 				e.printStackTrace();
-			} finally {
-				Conector.closeConn("modificarTipoProd", null);
 			}
 		}
 		return resultado;
@@ -214,11 +204,10 @@ public class ManagerProducto {
 			try {
 				Conector.getConn();
 				resultado = interfaceTipoProd.eliminarTipoProd(tipoProd);
+				Conector.closeConn("eliminarTipoProd", null);
 			} catch (PersistenciaException e) {
 				//FIXME ver como manejar esta excep
 				e.printStackTrace();
-			} finally {
-				Conector.closeConn("eliminarTipoProd", null);
 			}
 		}
 		return resultado;
@@ -235,10 +224,9 @@ public class ManagerProducto {
 		try {
 			Conector.getConn();
 			deposito = interfaceDeposito.obtenerDepositoPorId(id);
+			Conector.closeConn("obtenerDepositoPorId", null);
 		} catch (PersistenciaException e) {
 			e.printStackTrace();
-		} finally {
-			Conector.closeConn("obtenerDepositoPorId", null);
 		}
 		return deposito;
 	}
@@ -250,11 +238,10 @@ public class ManagerProducto {
 		try {
 			Conector.getConn();
 			listaDeposito = interfaceDeposito.obtenerListaDeposito();
+			Conector.closeConn("obtenerListaDeposito", null);
 		} catch (PersistenciaException e) {
 			//FIXME ver como manejar esta excep
 			e.printStackTrace();
-		} finally {
-			Conector.closeConn("obtenerListaDeposito", null);
 		}
 		return listaDeposito;
 	}
@@ -266,11 +253,10 @@ public class ManagerProducto {
 			try {
 				Conector.getConn();
 				resultado = interfaceDeposito.guardarDeposito(deposito);
+				Conector.closeConn("guardarDeposito", null);
 			} catch (PersistenciaException e) {
 				//FIXME ver como manejar esta excep
 				e.printStackTrace();
-			} finally {
-				Conector.closeConn("guardarDeposito", null);
 			}
 		}
 		return resultado;
@@ -283,11 +269,10 @@ public class ManagerProducto {
 			try {
 				Conector.getConn();
 				resultado = interfaceDeposito.modificarDeposito(deposito);
+				Conector.closeConn("modificarDeposito", null);
 			} catch (PersistenciaException e) {
 				//FIXME ver como manejar esta excep
 				e.printStackTrace();
-			} finally {
-				Conector.closeConn("modificarDeposito", null);
 			}
 		}
 		return resultado;
@@ -300,11 +285,10 @@ public class ManagerProducto {
 			try {
 				Conector.getConn();
 				resultado = interfaceDeposito.eliminarDeposito(deposito);
+				Conector.closeConn("eliminarDeposito", null);
 			} catch (PersistenciaException e) {
 				//FIXME ver como manejar esta excep
 				e.printStackTrace();
-			} finally {	
-				Conector.closeConn("eliminarDeposito", null);
 			}
 		}
 		return resultado;
@@ -321,10 +305,9 @@ public class ManagerProducto {
 		try {
 			Conector.getConn();
 			utilidad = interfaceUtilidad.obtenerUtilidadPorId(id);
+			Conector.closeConn("obtenerUtilidadPorId", null);
 		} catch (PersistenciaException e) {
 			e.printStackTrace();
-		} finally {
-			Conector.closeConn("obtenerUtilidadPorId", null);
 		}
 		return utilidad;
 	}
@@ -336,11 +319,10 @@ public class ManagerProducto {
 		try {
 			Conector.getConn();
 			listaUtilidad = interfaceUtilidad.obtenerListaUtilidad();
+			Conector.closeConn("obtenerListaUtilidad", null);
 		} catch (PersistenciaException e) {
 			//FIXME ver como manejar esta excep
 			e.printStackTrace();
-		} finally {
-			Conector.closeConn("obtenerListaUtilidad", null);
 		}
 		return listaUtilidad;
 	}
@@ -352,11 +334,10 @@ public class ManagerProducto {
 			try {
 				Conector.getConn();
 				resultado = interfaceUtilidad.guardarUtilidad(utilidad);
+				Conector.closeConn("guardarUtilidad", null);
 			} catch (PersistenciaException e) {
 				//FIXME ver como manejar esta excep
 				e.printStackTrace();
-			} finally {
-				Conector.closeConn("guardarUtilidad", null);
 			}
 		}
 		return resultado;
@@ -369,11 +350,10 @@ public class ManagerProducto {
 			try {
 				Conector.getConn();
 				resultado = interfaceUtilidad.modificarUtilidad(utilidad);
+				Conector.closeConn("modificarUtilidad", null);
 			} catch (PersistenciaException e) {
 				//FIXME ver como manejar esta excep
 				e.printStackTrace();
-			} finally {
-				Conector.closeConn("modificarUtilidad", null);
 			}
 		}
 		return resultado;
@@ -386,11 +366,10 @@ public class ManagerProducto {
 			try {
 				Conector.getConn();
 				resultado = interfaceUtilidad.eliminarUtilidad(utilidad);
+				Conector.closeConn("eliminarTipoProd", null);
 			} catch (PersistenciaException e) {
 				//FIXME ver como manejar esta excep
 				e.printStackTrace();
-			} finally {
-				Conector.closeConn("eliminarTipoProd", null);
 			}
 		}
 		return resultado;

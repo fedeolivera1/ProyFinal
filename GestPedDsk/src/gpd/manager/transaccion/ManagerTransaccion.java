@@ -83,16 +83,15 @@ public class ManagerTransaccion {
 				//se persisten las lineas de la transaccion
 				interfaceTranLinea.guardarListaTranLinea(transaccion.getListaTranLinea());
 				
-				/*a modo de prueba*/ //throw new PersistenciaException(); /**/
+//				if(1==1) {throw new PersistenciaException("el nene malo");} /**/
 				
 				//se periste el lote para cada producto de las lineas
 				interfaceLote.guardarListaLote(listaLote);
+				Conector.closeConn("guardarTransaccion", null);
 			} catch (ConectorException | PersistenciaException e) {
 				e.printStackTrace();//FIXME ver como manejar esta excep
 			} catch (Exception e) {
 				e.printStackTrace();
-			} finally {
-				Conector.closeConn("guardarTransaccion", null);
 			}
 		}
 		return resultado;
@@ -113,12 +112,11 @@ public class ManagerTransaccion {
 					}
 				}
 			}
+			Conector.closeConn("obtenerListaTransaccionPorPersona", null);
 		} catch (PersistenciaException e) {
 			e.printStackTrace();//FIXME ver como manejar esta excep
 		} catch (Exception e) {
 			e.printStackTrace();//FIXME ver como manejar esta excep
-		} finally {
-			Conector.closeConn("obtenerListaTransaccionPorPersona", null);
 		}
 		return listaTransac;
 	}

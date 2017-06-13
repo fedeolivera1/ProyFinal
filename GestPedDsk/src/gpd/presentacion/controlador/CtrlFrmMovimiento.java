@@ -34,14 +34,14 @@ public class CtrlFrmMovimiento extends CtrlGenerico {
 	private ManagerTransaccion mgrTran = new ManagerTransaccion();
 	private ManagerProducto mgrProd = new ManagerProducto();
 	private ManagerPersona mgrPers = new ManagerPersona();
-	private FrmMovimiento frm;
+	private FrmMovimiento frmMov;
 	private Transaccion transac;
 	private HashMap<Integer, TranLinea> mapLineasTran;
 	
 	
 	public CtrlFrmMovimiento(FrmMovimiento frmMov) {
 		super();
-		this.frm = frmMov;
+		this.frmMov = frmMov;
 	}
 
 
@@ -95,18 +95,18 @@ public class CtrlFrmMovimiento extends CtrlGenerico {
 	
 	private void cargarControlesCompra(TranLinea tl, Container containerJTable) {
 		clearControlsInJPanel(containerJTable);
-		ComboBoxModel<TipoProd> cbModelTp = frm.getCbxCompraTp().getModel();
+		ComboBoxModel<TipoProd> cbModelTp = frmMov.getCbxCompraTp().getModel();
 		cbModelTp.setSelectedItem(tl.getProducto().getTipoProd());
-		frm.getCbxCompraTp().setSelectedItem(cbModelTp.getSelectedItem());
-		ComboBoxModel<Producto> cbModelProd = frm.getCbxCompraProd().getModel();
+		frmMov.getCbxCompraTp().setSelectedItem(cbModelTp.getSelectedItem());
+		ComboBoxModel<Producto> cbModelProd = frmMov.getCbxCompraProd().getModel();
 		cbModelProd.setSelectedItem(tl.getProducto());
-		frm.getCbxCompraTp().setSelectedItem(cbModelTp.getSelectedItem());
-		frm.getFtxtCompraCant().setText(String.valueOf(tl.getCantidad()));
-		frm.getFtxtCompraPu().setText(String.valueOf(tl.getCantidad()));
+		frmMov.getCbxCompraTp().setSelectedItem(cbModelTp.getSelectedItem());
+		frmMov.getFtxtCompraCant().setText(String.valueOf(tl.getCantidad()));
+		frmMov.getFtxtCompraPu().setText(String.valueOf(tl.getCantidad()));
 	}
 	
 	public void cargarJtCompraItems() {
-		JTable tabla = frm.getJtCompraItems();
+		JTable tabla = frmMov.getJtCompraItems();
 		clearTable(tabla);
 		deleteModelTable(tabla);
 		if(mapLineasTran != null && !mapLineasTran.isEmpty()) {
@@ -152,7 +152,7 @@ public class CtrlFrmMovimiento extends CtrlGenerico {
 	}
 	
 	public void cargarJtComprasPend(JComboBox<PersonaJuridica> cbxCompraPj) {
-		JTable tabla = frm.getJtComprasPend();
+		JTable tabla = frmMov.getJtComprasPend();
 		clearTable(tabla);
 		deleteModelTable(tabla);
 		if(cbxCompraPj.getSelectedIndex() > -1) {
@@ -179,19 +179,19 @@ public class CtrlFrmMovimiento extends CtrlGenerico {
 					}
 				});
 				packColumn(tabla, 4, 0);
+			} else {
+				cargarJTableVacia(tabla, CnstPresGeneric.JTABLE_SIN_COMPRAS);
 			}
-		} else {
-			cargarJTableVacia(tabla, CnstPresGeneric.JTABLE_SIN_COMPRAS);
 		}
 	}
 	
 	public void cargarPrecioProd(JComboBox<Producto> cbxCompraProd) {
 		if(cbxCompraProd.getSelectedItem() != null) {
 			Producto prod = (Producto) cbxCompraProd.getSelectedItem();
-			clearComponent(frm.getFtxtCompraCant());
-			frm.getFtxtCompraPu().setText(String.valueOf(prod.getPrecio()));
+			clearComponent(frmMov.getFtxtCompraCant());
+			frmMov.getFtxtCompraPu().setText(String.valueOf(prod.getPrecio()));
 		} else {
-			clearComponent(frm.getFtxtCompraPu());
+			clearComponent(frmMov.getFtxtCompraPu());
 		}
 	}
 
@@ -313,10 +313,10 @@ public class CtrlFrmMovimiento extends CtrlGenerico {
 	/*****************************************************************************************************************************************************/
 	
 	public FrmMovimiento getFrm() {
-		return frm;
+		return frmMov;
 	}
 	public void setFrm(FrmMovimiento frm) {
-		this.frm = frm;
+		this.frmMov = frm;
 	}
 
 

@@ -22,10 +22,9 @@ public class ManagerUsuario {
 		try {
 			Conector.getConn();
 			usuario = interfaceUsuario.obtenerUsuario(nombreUsuario, passwd);
+			Conector.closeConn("obtenerUsuario", null);
 		} catch (PersistenciaException e) {
 			e.printStackTrace();//FIXME controlar
-		} finally {
-			Conector.closeConn("obtenerUsuario", null);
 		}
 		return usuario;
 	}
@@ -34,13 +33,12 @@ public class ManagerUsuario {
 		logger.info("Ingresa guardarUsuario");
 		if(usuario != null) {
 			try {
-				Conector.getConn();
 				interfaceUsuario = new PersistenciaUsuario();
+				Conector.getConn();
 				resultado = interfaceUsuario.guardarUsuario(usuario);
+				Conector.closeConn("guardarUsuario", null);
 			} catch (PersistenciaException e) {
 				e.printStackTrace();//FIXME controlar
-			} finally {
-				Conector.closeConn("guardarUsuario", null);
 			}
 		}
 		return resultado;
@@ -50,13 +48,12 @@ public class ManagerUsuario {
 		logger.info("Ingresa modificarUsuario");
 		if(usuario != null) {
 			try {
-				Conector.getConn();
 				interfaceUsuario = new PersistenciaUsuario();
+				Conector.getConn();
 				resultado = interfaceUsuario.modificarUsuario(usuario);
+				Conector.closeConn("modificarUsuario", null);
 			} catch (PersistenciaException e) {
 				e.printStackTrace();//FIXME controlar
-			} finally {
-				Conector.closeConn("modificarUsuario", null);
 			}
 		}
 		return resultado;
@@ -66,13 +63,12 @@ public class ManagerUsuario {
 		logger.info("Ingresa eliminarUsuario");
 		if(usuario != null) {
 			try {
-				Conector.getConn();
 				interfaceUsuario = new PersistenciaUsuario();
+				Conector.getConn();
 				resultado = interfaceUsuario.eliminarUsuario(usuario);
+				Conector.closeConn("eliminarUsuario", null);
 			} catch (PersistenciaException e) {
 				e.printStackTrace();//FIXME controlar
-			} finally {
-				Conector.closeConn("eliminarUsuario", null);
 			}
 		}
 		return resultado;

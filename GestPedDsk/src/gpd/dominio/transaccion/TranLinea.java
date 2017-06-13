@@ -43,7 +43,7 @@ public class TranLinea implements Serializable {
 	
 	@Override
 	public String toString() {
-		return "Prod: " + producto.getCodigo() + " - " +  producto.getNombre() + " | Cant: " + cantidad + " | pu $"  + precioUnit;
+		return "Cod: " + producto.getCodigo() + " | #: " + cantidad;
 	}
 	
 }
