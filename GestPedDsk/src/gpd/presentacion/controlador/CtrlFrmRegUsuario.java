@@ -31,6 +31,10 @@ public class CtrlFrmRegUsuario extends CtrlGenerico {
 		genComp.setComp(cbxTipoUsr);
 		if(controlDatosObl(genComp)) {
 			//llamas a metodo de mgrUsr.agregar
+			String cont=getMD5(String.valueOf(txtPasswd.getPassword()));
+			UsuarioDsk usr = new UsuarioDsk(txtNomUsu.getText(), cont, cbxTipoUsr.getItemAt(cbxTipoUsr.getSelectedIndex()));
+			ManagerUsuario mgrUsr= new ManagerUsuario();
+			mgrUsr.guardarUsuario(usr);
 		} else {
 			enviarWarning(CnstPresGeneric.PERS, "Revise los datos marcados en rojo.");
 		}

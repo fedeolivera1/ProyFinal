@@ -29,6 +29,7 @@ public class FrmPrincipal extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private final Action action = new SwingAction();
 	private final Action action_1 = new SwingAction_1();
+	private UsuarioDsk usu;
 
 	/**
 	 * Launch the application.
@@ -50,6 +51,8 @@ public class FrmPrincipal extends JFrame {
 	 */
 	
 	public FrmPrincipal(UsuarioDsk usr) {
+		
+		usu=usr;
 		getContentPane().setBackground(Color.BLACK);
 		
 		JPanel panel = new JPanel();
@@ -136,10 +139,17 @@ public class FrmPrincipal extends JFrame {
 		JMenu mnEdicin = new JMenu("Edici\u00F3n");
 		menuBar.add(mnEdicin);
 		
-		JMenu mnTrabajadores = new JMenu("Trabajadores");
+		JMenu mnTrabajadores = new JMenu("Usuarios");
 		mnEdicin.add(mnTrabajadores);
 		
-		JMenu mnCambiarContraseaDe = new JMenu("Cambiar contrase\u00F1a de trabajador");
+		JMenu mnCambiarContraseaDe = new JMenu("Cambiar contrase\u00F1a de un usuario");
+		mnCambiarContraseaDe.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				FrmCambiarCont frmCambUs = new FrmCambiarCont(usr);
+				frmCambUs.setLocationRelativeTo(null);
+				frmCambUs.setVisible(true);
+			}
+		});
 		mnTrabajadores.add(mnCambiarContraseaDe);
 		/**Abre frame para agregar un usuario*/
 //		mnAgregarUsuario.addMouseListener(new MouseListener() {
@@ -183,12 +193,22 @@ public class FrmPrincipal extends JFrame {
 		});
 		mnTrabajadores.add(mntmAgregarUsuario);
 		
+		JMenuItem mntmEliminarUnUsuario = new JMenuItem("Eliminar un usuario");
+		mntmEliminarUnUsuario.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				FrmElimUsuario frmEu = new FrmElimUsuario(usr);
+				frmEu.setLocationRelativeTo(null);
+				frmEu.setVisible(true);
+			}
+		});
+		mnTrabajadores.add(mntmEliminarUnUsuario);
+		
 		
 		JMenu mnModificarDatos = new JMenu("Modificar datos");
 		mnEdicin.add(mnModificarDatos);
 		
-		JMenu mnMisDatos = new JMenu("Mis datos");
-		mnModificarDatos.add(mnMisDatos);
+		JMenuItem mntmMisDatos = new JMenuItem("Mis datos");
+		mnModificarDatos.add(mntmMisDatos);
 		
 		JMenu mnRacin = new JMenu("Productos");
 		mnEdicin.add(mnRacin);
@@ -274,6 +294,9 @@ public class FrmPrincipal extends JFrame {
 		
 		JMenu mnAyuda = new JMenu("Ayuda");
 		menuBar.add(mnAyuda);
+		
+		lblBienvenido.setText("Bienvenido "+usu.getNomUsu());
+		
 	}
 
 	private class SwingAction extends AbstractAction {
