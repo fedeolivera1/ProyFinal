@@ -1,18 +1,24 @@
 package gpd.persistencia.producto;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import gpd.db.constantes.CnstQryLote;
 import gpd.db.generic.GenSqlExecType;
+import gpd.db.generic.GenSqlSelectType;
 import gpd.dominio.producto.Lote;
-import gpd.dominio.producto.Producto;
+import gpd.dominio.transaccion.EstadoTran;
 import gpd.exceptions.ConectorException;
 import gpd.exceptions.PersistenciaException;
 import gpd.interfaces.producto.IPersLote;
 import gpd.persistencia.conector.Conector;
+import gpd.persistencia.transaccion.PersistenciaTranLinea;
+import gpd.types.Fecha;
 
 public class PersistenciaLote extends Conector implements IPersLote, CnstQryLote {
 
@@ -20,9 +26,44 @@ public class PersistenciaLote extends Conector implements IPersLote, CnstQryLote
 	
 	
 	@Override
-	public List<Lote> obtenerLotesActivosPorProducto(Producto prod) throws PersistenciaException {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Lote> obtenerListaLotePorEstado(EstadoTran estado) throws PersistenciaException {
+		List<Lote> listaLote = new ArrayList<>();
+		PersistenciaTranLinea ptl = new PersistenciaTranLinea();
+		PersistenciaUtilidad pu = new PersistenciaUtilidad();
+		PersistenciaDeposito pd = new PersistenciaDeposito();
+		try {
+			GenSqlSelectType genType = new GenSqlSelectType(QRY_SELECT_LOTES_XEST);
+			genType.setParamCharIfNull(estado.getAsChar());
+			genType.setParamCharIfNull(estado.getAsChar());
+			ResultSet rs = (ResultSet) runGeneric(genType);
+			while(rs.next()) {
+				Lote lote = new Lote();
+				lote.setIdLote(rs.getInt("id_lote"));
+				Long nroTransac = rs.getLong("nro_transac");
+				Integer idProducto = rs.getInt("id_producto");
+				lote.setTranLinea(ptl.obtenerTranLineaPorId(nroTransac, idProducto));
+				Fecha venc = new Fecha(rs.getDate("venc"));
+				if(!rs.wasNull()) {
+					lote.setVenc(venc);
+				}
+				Integer idUtil = rs.getInt("id_util");
+				if(!rs.wasNull()) {
+					lote.setUtilidad(pu.obtenerUtilidadPorId(idUtil));
+				}
+				Integer nroDep = rs.getInt("nro_dep");
+				if(!rs.wasNull()) {
+					lote.setDeposito(pd.obtenerDepositoPorId(nroDep));
+				}
+				lote.setStock(rs.getInt("stock"));
+				listaLote.add(lote);
+			}
+		
+		} catch (ConectorException | SQLException e) {
+			Conector.rollbackConn();
+			logger.log(Level.FATAL, "Excepcion al obtenerListaTransaccionPorPersona: " + e.getMessage(), e);
+			throw new PersistenciaException(e);
+		}
+		return listaLote;
 	}
 
 	@Override

@@ -94,9 +94,11 @@ public class Fecha extends GregorianCalendar {
 	 * setea una fecha a partir de un tiempo (long) en milisegundos
 	 */
 	public Fecha(Long time) {
-		super.setTimeInMillis(time);
-		complete();
-		setFormato(AMDHMS);
+		if(time != null) {
+			super.setTimeInMillis(time);
+			complete();
+			setFormato(AMDHMS);
+		}
 	}
 	
 	/**
@@ -105,9 +107,11 @@ public class Fecha extends GregorianCalendar {
 	 * setea una fecha a partir de un java.sql.Time en milisegundos
 	 */
 	public Fecha(Time time) {
-		super.setTimeInMillis(time.getTime());
-		complete();
-		setFormato(AMD);
+		if(time != null) {
+			super.setTimeInMillis(time.getTime());
+			complete();
+			setFormato(AMD);
+		}
 	}
 	
 	/**
@@ -116,9 +120,11 @@ public class Fecha extends GregorianCalendar {
 	 * setea una fecha a partir de un java.sql.Date en milisegundos
 	 */
 	public Fecha(Date date) {
-		super.setTimeInMillis(date.getTime());
-		complete();
-		setFormato(AMD);
+		if(date != null) {
+			super.setTimeInMillis(date.getTime());
+			complete();
+			setFormato(AMD);
+		}
 	}
 	
 	/**
@@ -127,9 +133,11 @@ public class Fecha extends GregorianCalendar {
 	 * setea una fecha a partir de un java.sql.Timestamp en milisegundos
 	 */
 	public Fecha(Timestamp timestamp) {
-		super.setTimeInMillis(timestamp.getTime());
-		complete();
-		setFormato(AMDHMS);
+		if(timestamp != null) {
+			super.setTimeInMillis(timestamp.getTime());
+			complete();
+			setFormato(AMDHMS);
+		}
 	}
 	
 	/**

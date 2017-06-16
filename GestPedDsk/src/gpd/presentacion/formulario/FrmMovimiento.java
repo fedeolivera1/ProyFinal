@@ -46,6 +46,7 @@ public class FrmMovimiento extends JFrame {
 	private JTable jtCompraItems;
 	private JPanel pnlCompraProv;
 	private JPanel pnlCompraDatos;
+	private JPanel pnlCompraItems;
 	private JTable jtComprasPend;
 
 
@@ -168,18 +169,6 @@ public class FrmMovimiento extends JFrame {
 		btnCompraGenerar.setBounds(645, 299, 124, 23);
 		tpCompra.add(btnCompraGenerar);
 		
-		JButton btnCompraEliItem = new JButton("Eliminar Item");
-		btnCompraEliItem.setBounds(645, 248, 124, 23);
-		tpCompra.add(btnCompraEliItem);
-		
-		JScrollPane scrollPaneCompraItems = new JScrollPane();
-		scrollPaneCompraItems.setBounds(400, 45, 369, 192);
-		tpCompra.add(scrollPaneCompraItems);
-		
-		jtCompraItems = new JTable();
-		scrollPaneCompraItems.setColumnHeaderView(jtCompraItems);
-		scrollPaneCompraItems.setViewportView(jtCompraItems);
-		
 		JScrollPane scrollPaneComprasPend = new JScrollPane();
 		scrollPaneComprasPend.setBounds(10, 299, 625, 223);
 		tpCompra.add(scrollPaneComprasPend);
@@ -197,13 +186,23 @@ public class FrmMovimiento extends JFrame {
 		btnCompraAnular.setBounds(645, 333, 124, 23);
 		tpCompra.add(btnCompraAnular);
 		
-		JButton btnCompraAgrItem = new JButton("Agregar Item");
-		btnCompraAgrItem.setBounds(266, 248, 124, 23);
-		tpCompra.add(btnCompraAgrItem);
+		pnlCompraItems = new JPanel();
+		pnlCompraItems.setBorder(new LineBorder(new Color(0, 0, 0)));
+		pnlCompraItems.setBounds(400, 45, 369, 192);
+		tpCompra.add(pnlCompraItems);
+		pnlCompraItems.setLayout(null);
 		
-		JButton btnCompraModItem = new JButton("Modificar Item");
-		btnCompraModItem.setBounds(132, 248, 124, 23);
-		tpCompra.add(btnCompraModItem);
+		JScrollPane scrollPaneCompraItems = new JScrollPane();
+		scrollPaneCompraItems.setBounds(0, 0, 369, 155);
+		pnlCompraItems.add(scrollPaneCompraItems);
+		
+		jtCompraItems = new JTable();
+		scrollPaneCompraItems.setColumnHeaderView(jtCompraItems);
+		scrollPaneCompraItems.setViewportView(jtCompraItems);
+		
+		JButton btnCompraEliItem = new JButton("Eliminar Item");
+		btnCompraEliItem.setBounds(235, 158, 124, 23);
+		pnlCompraItems.add(btnCompraEliItem);
 		
 		
 		/*****************************************************************************************************************************************************/
@@ -215,7 +214,28 @@ public class FrmMovimiento extends JFrame {
 		ctrlMov.cargarCbxProveedor(cbxCompraProv);
 		ctrlMov.cargarCbxTipoProd(cbxCompraTp);
 		
+		JButton btnCompraAgrItem = new JButton("Agregar Item");
+		btnCompraAgrItem.setBounds(246, 73, 124, 23);
+		pnlCompraDatos.add(btnCompraAgrItem);
 		
+		JButton btnCompraModItem = new JButton("Modificar Item");
+		btnCompraModItem.setBounds(246, 103, 124, 23);
+		pnlCompraDatos.add(btnCompraModItem);
+		btnCompraModItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				ctrlMov.modificarItemCompra(cbxCompraProv, cbxCompraProd, ftxtCompraCant, ftxtCompraPu);
+			}
+		});
+		btnCompraAgrItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				ctrlMov.agregarItemCompra(cbxCompraProv, cbxCompraProd, ftxtCompraCant, ftxtCompraPu);
+			}
+		});
+		btnCompraEliItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				ctrlMov.eliminarItemCompra();
+			}
+		});
 		cbxCompraProv.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent arg0) {
 				if(cbxCompraProv.getSelectedIndex() > -1) {
@@ -250,24 +270,9 @@ public class FrmMovimiento extends JFrame {
 				ctrlMov.generarCompra();
 			}
 		});
-		btnCompraAgrItem.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				ctrlMov.agregarItemCompra(cbxCompraProv, cbxCompraProd, ftxtCompraCant, ftxtCompraPu);
-			}
-		});
-		btnCompraModItem.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				ctrlMov.modificarItemCompra(cbxCompraProv, cbxCompraProd, ftxtCompraCant, ftxtCompraPu);
-			}
-		});
-		btnCompraEliItem.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				ctrlMov.eliminarItemCompra();
-			}
-		});
 		btnCompraAnular.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				//TODO
+				ctrlMov.anularCompra();
 			}
 		});
 
@@ -347,5 +352,11 @@ public class FrmMovimiento extends JFrame {
 	public void setJtComprasPend(JTable jtComprasPend) {
 		this.jtComprasPend = jtComprasPend;
 	}
-
+	
+	public JPanel getPnlCompraItems() {
+		return pnlCompraItems;
+	}
+	public void setPnlCompraItems(JPanel pnlCompraItems) {
+		this.pnlCompraItems = pnlCompraItems;
+	}
 }

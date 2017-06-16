@@ -19,9 +19,11 @@ import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 import gpd.dominio.producto.Deposito;
+import gpd.dominio.producto.Lote;
 import gpd.dominio.producto.Producto;
 import gpd.dominio.producto.TipoProd;
 import gpd.dominio.producto.Utilidad;
+import gpd.dominio.transaccion.EstadoTran;
 import gpd.manager.producto.ManagerProducto;
 import gpd.presentacion.formulario.FrmProducto;
 import gpd.presentacion.generic.CnstPresGeneric;
@@ -91,8 +93,6 @@ public class CtrlFrmProducto extends CtrlGenerico {
 		}
 	}
 	
-	//dep
-	
 	//prod
 	public void cargarJtProd(List<Producto> listaProd) {
 		JTable tabla = frmProd.getJtProd();
@@ -130,6 +130,55 @@ public class CtrlFrmProducto extends CtrlGenerico {
 			});
 		} else {
 			cargarJTableVacia(tabla, null);
+		}
+	}
+	
+	public void cargarCbxFiltroLote(JComboBox<EstadoTran> cbxFiltroLote) {
+		cbxFiltroLote.removeAllItems();
+		for(EstadoTran estado : EstadoTran.values()) {
+			cbxFiltroLote.addItem(estado);
+		}
+		cbxFiltroLote.setSelectedIndex(-1);
+	}
+	
+	public void cargarJtLote(JComboBox<EstadoTran> cbxFiltroLote) {
+		JTable tabla = frmProd.getJtLote();
+		clearTable(tabla);
+		if(cbxFiltroLote.getSelectedIndex() > -1) {
+			EstadoTran estado = (EstadoTran) cbxFiltroLote.getSelectedItem();
+			List<Lote> listaLote = (ArrayList<Lote>) mgrProd.obtenerListaLotePorEstado(estado);
+			if(listaLote != null && !listaLote.isEmpty()) {
+				DefaultTableModel modeloJtLote = new DefaultTableModel();
+				tabla.setModel(modeloJtLote);
+				modeloJtLote.addColumn("Lote");
+				modeloJtLote.addColumn("Producto");
+				modeloJtLote.addColumn("Transaccion");
+				modeloJtLote.addColumn("Stock");
+				for(Lote lote : listaLote) {
+					Object [] fila = new Object[4];
+					fila[0] = lote.getIdLote();
+					fila[1] = lote.getTranLinea().getProducto();
+					fila[2] = lote.getTranLinea().getTransaccion().getNroTransac();
+					fila[3] = lote.getStock();
+					modeloJtLote.addRow(fila);
+				}
+				tabla.addMouseListener(new MouseAdapter() {
+					@Override
+					public void mouseClicked(MouseEvent e) {
+						int fila = tabla.rowAtPoint(e.getPoint());
+						if (fila > -1) {
+							Integer idLote = (Integer) tabla.getModel().getValueAt(fila, 0);
+//							Producto prod = mgrProd.obtenerProductoPorId(idProd);
+//							Container containerJTable = tabla.getParent().getParent().getParent();
+//							cargarControlesLote(prod, containerJTable);
+							
+							//FIXME terminar esta parte
+						}
+					}
+				});
+			} else {
+				cargarJTableVacia(tabla, CnstPresGeneric.JTABLE_SIN_LOTES);
+			}
 		}
 	}
 	
@@ -243,8 +292,6 @@ public class CtrlFrmProducto extends CtrlGenerico {
 			prod.setPrecio(new Double(precio.getText()));
 			mgrProd.guardarProducto(prod);
 			clearForm(frmProd.getContentPane());
-//			List<Producto> lst = new ArrayList<>();
-//			lst.add(prod);
 			List<Producto> lst = mgrProd.obtenerListaProductoPorTipoProd(tp);
 			cargarJtProd(lst);
 		} else {
@@ -274,8 +321,6 @@ public class CtrlFrmProducto extends CtrlGenerico {
 			prod.setPrecio(new Double(precio.getText()));
 			mgrProd.modificarProducto(prod);
 			clearForm(frmProd.getContentPane());
-//			List<Producto> lst = new ArrayList<>();
-//			lst.add(prod);
 			List<Producto> lst = mgrProd.obtenerListaProductoPorTipoProd(tp);
 			cargarJtProd(lst);
 		} else {

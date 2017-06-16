@@ -6,13 +6,18 @@ public interface CnstQryLote {
 												+ "(nro_transac, id_producto, stock) "
 												+ "VALUES (?, ?, ?)";
 	
-	public static final String QRY_SELECT_LOTES_ACT = "SELECT l.* "
+	public static final String QRY_UPDATE_LOTE = "UPDATE lote SET "
+												+ "venc = ?, nro_dep = ?, id_util = ? "
+												+ "WHERE id_lote = ?";
+	
+	public static final String QRY_SELECT_LOTES_XEST = "SELECT l.id_lote, l.nro_transac, l.id_producto, l.venc, l.nro_dep, l.id_util, l.stock "
 												+ "FROM lote l "
-												+ "INNER JOIN TRAN_LINEA tl "
+												+ "INNER JOIN tran_linea tl "
 												+ "ON l.nro_transac = tl.nro_transac "
 												+ "AND l.id_producto = tl.id_producto "
+												+ "INNER JOIN transaccion t "
+												+ "ON t.nro_transac = tl.nro_transac "
 												+ "WHERE l.venc IS NULL "
-												+ "AND NOT EXISTS (SELECT ta.nro_transac FROM TRAN_ESTADO ta WHERE ta.nro_transac = l.nro_transac "
-																										+ "AND ta.ESTADO <> 'P') "
+												+ "AND t.estado_act = ? OR '' = ? "
 												+ "ORDER BY l.id_lote DESC";
 }

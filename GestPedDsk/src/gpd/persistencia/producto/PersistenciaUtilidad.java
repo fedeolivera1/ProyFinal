@@ -22,11 +22,11 @@ public class PersistenciaUtilidad extends Conector implements IPersUtilidad, Cns
 	
 
 	@Override
-	public Utilidad obtenerUtilidadPorId(Integer id) throws PersistenciaException {
+	public Utilidad obtenerUtilidadPorId(Integer idUtil) throws PersistenciaException {
 		Utilidad utilidad = null;
 		try {
 			GenSqlSelectType genType = new GenSqlSelectType(QRY_SELECT_UTIL_X_ID);
-			genType.setParam(id);
+			genType.setParam(idUtil);
 			ResultSet rs = (ResultSet) runGeneric(genType);
 			if(rs.next()) {
 				utilidad = new Utilidad();

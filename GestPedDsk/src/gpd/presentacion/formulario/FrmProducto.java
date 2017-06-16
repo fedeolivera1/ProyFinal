@@ -30,8 +30,11 @@ import com.toedter.calendar.JDateChooser;
 import gpd.dominio.producto.Deposito;
 import gpd.dominio.producto.TipoProd;
 import gpd.dominio.producto.Utilidad;
+import gpd.dominio.transaccion.EstadoTran;
 import gpd.dominio.usuario.UsuarioDsk;
 import gpd.presentacion.controlador.CtrlFrmProducto;
+import java.awt.event.ItemListener;
+import java.awt.event.ItemEvent;
 
 public class FrmProducto extends JFrame {
 
@@ -62,6 +65,7 @@ public class FrmProducto extends JFrame {
 	private JButton btnUtilAgregar;
 	private JTable jtLote;
 	private JTable jtLoteDep;
+	private JComboBox<EstadoTran> cbxFiltroLote;
 
 
 	public static FrmProducto getFrmProducto(UsuarioDsk usr) {
@@ -204,7 +208,6 @@ public class FrmProducto extends JFrame {
 		scrollPaneProd.setColumnHeaderView(jtProd);
 		scrollPaneProd.setViewportView(jtProd);
 		
-		ctrlProd.cargarCbxTipoProd(cbxTipoProd);
 		
 		JSeparator sepProd2 = new JSeparator();
 		sepProd2.setForeground(SystemColor.info);
@@ -224,6 +227,7 @@ public class FrmProducto extends JFrame {
 		
 		jtLote = new JTable();
 		scrollPaneLote.setColumnHeaderView(jtLote);
+		scrollPaneLote.setViewportView(jtLote);
 		
 		JLabel lblLotesDisponibles = new JLabel("Lotes disponibles");
 		lblLotesDisponibles.setHorizontalAlignment(SwingConstants.LEFT);
@@ -243,7 +247,7 @@ public class FrmProducto extends JFrame {
 		cbxDep = new JComboBox<>();
 		cbxDep.setBounds(66, 12, 151, 20);
 		panelLoteDatos.add(cbxDep);
-		ctrlProd.cargarCbxDep(cbxDep);
+		
 		
 		JLabel lblDeposito = new JLabel("Deposito");
 		lblDeposito.setBounds(10, 15, 46, 14);
@@ -258,7 +262,6 @@ public class FrmProducto extends JFrame {
 		cbxUtil = new JComboBox<>();
 		cbxUtil.setBounds(66, 43, 151, 20);
 		panelLoteDatos.add(cbxUtil);
-		ctrlProd.cargarCbxUtil(cbxUtil);
 		
 		JDateChooser dateChooser = new JDateChooser();
 		dateChooser.setBounds(130, 74, 87, 20);
@@ -295,15 +298,20 @@ public class FrmProducto extends JFrame {
 		
 		jtLoteDep = new JTable();
 		scrollPaneLoteDep.setColumnHeaderView(jtLoteDep);
+		scrollPaneLoteDep.setViewportView(jtLoteDep);
 		
-		JComboBox<?> cbxFiltroLote = new JComboBox<>();
-		cbxFiltroLote.setBounds(647, 5, 122, 20);
+		cbxFiltroLote = new JComboBox<>();
+		cbxFiltroLote.setBounds(103, 8, 122, 20);
 		tpLote.add(cbxFiltroLote);
-		
 		
 		/*****************************************************************************************************************************************************/
 		/* ACCIONES CONTROLES */
 		/*****************************************************************************************************************************************************/
+		
+		ctrlProd.cargarCbxTipoProd(cbxTipoProd);
+		ctrlProd.cargarCbxDep(cbxDep);
+		ctrlProd.cargarCbxUtil(cbxUtil);
+		ctrlProd.cargarCbxFiltroLote(cbxFiltroLote);
 		
 		btnUtilAgregar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -360,6 +368,16 @@ public class FrmProducto extends JFrame {
 			}
 		});
 		
+		btnLoteMod.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+			}
+		});
+		
+		cbxFiltroLote.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent arg0) {
+				ctrlProd.cargarJtLote(cbxFiltroLote);
+			}
+		});
 	}
 	
 
@@ -442,5 +460,26 @@ public class FrmProducto extends JFrame {
 	}
 	public void setCbxUtil(JComboBox<Utilidad> cbxUtil) {
 		this.cbxUtil = cbxUtil;
+	}
+	
+	public JTable getJtLote() {
+		return jtLote;
+	}
+	public void setJtLote(JTable jtLote) {
+		this.jtLote = jtLote;
+	}
+
+	public JTable getJtLoteDep() {
+		return jtLoteDep;
+	}
+	public void setJtLoteDep(JTable jtLoteDep) {
+		this.jtLoteDep = jtLoteDep;
+	}
+
+	public JComboBox<EstadoTran> getCbxFiltroLote() {
+		return cbxFiltroLote;
+	}
+	public void setCbxFiltroLote(JComboBox<EstadoTran> cbxFiltroLote) {
+		this.cbxFiltroLote = cbxFiltroLote;
 	}
 }

@@ -97,6 +97,28 @@ public class ManagerTransaccion {
 		return resultado;
 	}
 	
+	public Transaccion obtenerTransaccionPorId(Long idTransac) {
+		Transaccion transac = null;
+		interfaceTransaccion = new PersistenciaTransaccion();
+		interfaceTranLinea = new PersistenciaTranLinea();
+		try {
+			Conector.getConn();
+			transac = interfaceTransaccion.obtenerTransaccionPorId(idTransac);
+			if(transac != null) {
+				List<TranLinea> listaTranLinea = interfaceTranLinea.obtenerListaTranLinea(transac);
+				if(listaTranLinea != null && !listaTranLinea.isEmpty()) {
+					transac.setListaTranLinea(listaTranLinea);
+				}
+			}
+			Conector.closeConn("obtenerTransaccionPorId", null);
+		} catch (PersistenciaException e) {
+			e.printStackTrace();//FIXME ver como manejar esta excep
+		} catch (Exception e) {
+			e.printStackTrace();//FIXME ver como manejar esta excep
+		}
+		return transac;
+	}
+	
 	public List<Transaccion> obtenerListaTransaccionPorPersona(Long idPersona, TipoTran tipoTran, EstadoTran estadoTran) {
 		List<Transaccion> listaTransac = null;
 		interfaceTransaccion = new PersistenciaTransaccion();
@@ -106,7 +128,7 @@ public class ManagerTransaccion {
 			listaTransac = interfaceTransaccion.obtenerListaTransaccionPorPersona(idPersona, tipoTran, estadoTran);
 			if(listaTransac != null && !listaTransac.isEmpty()) {
 				for(Transaccion transac : listaTransac) {
-					List<TranLinea> listaTranLinea = interfaceTranLinea.obtenerListaTranLinea(transac.getNroTransac());
+					List<TranLinea> listaTranLinea = interfaceTranLinea.obtenerListaTranLinea(transac);
 					if(listaTranLinea != null && !listaTranLinea.isEmpty()) {
 						transac.setListaTranLinea(listaTranLinea);
 					}
@@ -126,7 +148,22 @@ public class ManagerTransaccion {
 	}
 	
 	public Integer anularTransaccion(Transaccion transaccion) {
-		return null;
+		interfaceTransaccion = new PersistenciaTransaccion();
+		try {
+			Conector.getConn();
+			if(transaccion != null) {
+				transaccion.setEstadoTran(EstadoTran.A);
+				transaccion.setFechaHora(new Fecha(Fecha.AMDHMS));
+				interfaceTransaccion.guardarTranEstado(transaccion);
+				interfaceTransaccion.modificarEstadoTransaccion(transaccion);
+			}
+			Conector.closeConn("anularTransaccion", null);
+		} catch (PersistenciaException e) {
+			e.printStackTrace();//FIXME ver como manejar esta excep
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+			return null;
 	}
 	
 }

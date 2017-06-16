@@ -6,17 +6,21 @@ import org.apache.log4j.Logger;
 
 import gpd.db.constantes.CnstQryGeneric;
 import gpd.dominio.producto.Deposito;
+import gpd.dominio.producto.Lote;
 import gpd.dominio.producto.Producto;
 import gpd.dominio.producto.TipoProd;
 import gpd.dominio.producto.Utilidad;
+import gpd.dominio.transaccion.EstadoTran;
 import gpd.dominio.util.Sinc;
 import gpd.exceptions.PersistenciaException;
 import gpd.interfaces.producto.IPersDeposito;
+import gpd.interfaces.producto.IPersLote;
 import gpd.interfaces.producto.IPersProducto;
 import gpd.interfaces.producto.IPersTipoProd;
 import gpd.interfaces.producto.IPersUtilidad;
 import gpd.persistencia.conector.Conector;
 import gpd.persistencia.producto.PersistenciaDeposito;
+import gpd.persistencia.producto.PersistenciaLote;
 import gpd.persistencia.producto.PersistenciaProducto;
 import gpd.persistencia.producto.PersistenciaTipoProd;
 import gpd.persistencia.producto.PersistenciaUtilidad;
@@ -29,6 +33,7 @@ public class ManagerProducto {
 	private IPersTipoProd interfaceTipoProd;
 	private IPersDeposito interfaceDeposito;
 	private IPersUtilidad interfaceUtilidad;
+	private IPersLote interfaceLote;
 	private Integer resultado;
 	
 	
@@ -129,6 +134,25 @@ public class ManagerProducto {
 			}
 		}
 		return resultado;
+	}
+	
+	
+	/*****************************************************************************************************************************************************/
+	/** LOTE */
+	/*****************************************************************************************************************************************************/
+	
+	public List<Lote> obtenerListaLotePorEstado(EstadoTran estado) {
+		logger.info("Se ingresa a obtenerListaLotePorEstado");
+		List<Lote> listaLote = null;
+		interfaceLote = new PersistenciaLote();
+		try {
+			Conector.getConn();
+			listaLote = interfaceLote.obtenerListaLotePorEstado(estado);
+			Conector.closeConn("obtenerListaLotePorEstado", null);
+		} catch (PersistenciaException e) {
+			e.printStackTrace();
+		}
+		return listaLote;
 	}
 	
 	/*****************************************************************************************************************************************************/

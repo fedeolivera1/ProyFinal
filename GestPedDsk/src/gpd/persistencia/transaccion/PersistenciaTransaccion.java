@@ -41,6 +41,7 @@ public class PersistenciaTransaccion extends Conector implements IPersTransaccio
 		genExec.setParam(transaccion.getSubTotal());
 		genExec.setParam(transaccion.getIva());
 		genExec.setParam(transaccion.getTotal());
+		genExec.setParam(transaccion.getEstadoTran().getAsChar());
 		try {
 			resultado = (Integer) runGeneric(genExec);
 		} catch (ConectorException e) {
@@ -69,6 +70,23 @@ public class PersistenciaTransaccion extends Conector implements IPersTransaccio
 		genExec.setParam(transaccion.getSubTotal());
 		genExec.setParam(transaccion.getIva());
 		genExec.setParam(transaccion.getTotal());
+		genExec.setParam(transaccion.getEstadoTran().getAsChar());
+		try {
+			resultado = (Integer) runGeneric(genExec);
+		} catch (ConectorException e) {
+			Conector.rollbackConn();
+			logger.error("Excepcion al guardarTransaccionVenta: " + e.getMessage(), e);
+			throw new PersistenciaException(e);
+		}
+		return resultado;
+	}
+	
+	@Override
+	public Integer modificarEstadoTransaccion(Transaccion transaccion) throws PersistenciaException {
+		Integer resultado = null;
+		GenSqlExecType genExec = new GenSqlExecType(QRY_UPDATE_TRAN_EST);
+		genExec.setParam(transaccion.getEstadoTran().getAsChar());
+		genExec.setParam(transaccion.getNroTransac());
 		try {
 			resultado = (Integer) runGeneric(genExec);
 		} catch (ConectorException e) {
@@ -79,6 +97,40 @@ public class PersistenciaTransaccion extends Conector implements IPersTransaccio
 		return resultado;
 	}
 
+
+	@Override
+	public Transaccion obtenerTransaccionPorId(Long idTransac) throws PersistenciaException {
+		Transaccion transac = null;
+		PersistenciaPersona pp = new PersistenciaPersona();
+		try {
+			GenSqlSelectType genType = new GenSqlSelectType(QRY_SELECT_TRAN_XID);
+			genType.setParam(idTransac);
+			ResultSet rs = (ResultSet) runGeneric(genType);
+			if(rs.next()) {
+				transac = new Transaccion(null);
+				transac.setNroTransac(rs.getLong("nro_transac"));
+				transac.setPersona(pp.obtenerPersGenerico(rs.getLong("id_persona")));
+				char[] tipo = new char[1];
+				rs.getCharacterStream("operacion").read(tipo);
+				TipoTran tipoTx = TipoTran.getTipoTranPorChar(tipo[0]);
+				transac.setTipoTran(tipoTx);
+				char[] estado = new char[1];
+				rs.getCharacterStream("estado_act").read(estado);
+				EstadoTran estadoTx = EstadoTran.getEstadoTranPorChar(estado[0]);
+				transac.setEstadoTran(estadoTx);
+				transac.setFechaHora(new Fecha(rs.getTimestamp("fecha_hora")));
+				transac.setSubTotal(rs.getDouble("sub_total"));
+				transac.setIva(rs.getDouble("iva"));
+				transac.setTotal(rs.getDouble("total"));
+			}
+		} catch (ConectorException | SQLException | IOException e) {
+			Conector.rollbackConn();
+			logger.log(Level.FATAL, "Excepcion al obtenerListaTransaccionPorPersona: " + e.getMessage(), e);
+			throw new PersistenciaException(e);
+		}
+		return transac;
+	}
+	
 	@Override
 	public List<Transaccion> obtenerListaTransaccionPorPersona(Long idPersona, TipoTran tipoTran, EstadoTran estadoTran) throws PersistenciaException {
 		List<Transaccion> listaTransac = new ArrayList<>();
@@ -100,7 +152,7 @@ public class PersistenciaTransaccion extends Conector implements IPersTransaccio
 				TipoTran tipoTx = TipoTran.getTipoTranPorChar(tipo[0]);
 				transac.setTipoTran(tipoTx);
 				char[] estado = new char[1];
-				rs.getCharacterStream("estado").read(estado);
+				rs.getCharacterStream("estado_act").read(estado);
 				EstadoTran estadoTx = EstadoTran.getEstadoTranPorChar(estado[0]);
 				transac.setEstadoTran(estadoTx);
 				transac.setFechaHora(new Fecha(rs.getTimestamp("fecha_hora")));
@@ -155,6 +207,5 @@ public class PersistenciaTransaccion extends Conector implements IPersTransaccio
 		}
 		return estadoTran;
 	}
-
 
 }

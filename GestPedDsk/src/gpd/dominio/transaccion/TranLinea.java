@@ -13,6 +13,12 @@ public class TranLinea implements Serializable {
 	private Double precioUnit;
 	
 	
+	public TranLinea(Transaccion transaccion) {
+		super();
+		this.transaccion = transaccion;
+	}
+	
+	
 	public Transaccion getTransaccion() {
 		return transaccion;
 	}

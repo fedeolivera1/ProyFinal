@@ -12,6 +12,7 @@ import gpd.db.constantes.CnstQryTranLinea;
 import gpd.db.generic.GenSqlExecType;
 import gpd.db.generic.GenSqlSelectType;
 import gpd.dominio.transaccion.TranLinea;
+import gpd.dominio.transaccion.Transaccion;
 import gpd.exceptions.ConectorException;
 import gpd.exceptions.PersistenciaException;
 import gpd.interfaces.transaccion.IPersTranLinea;
@@ -47,15 +48,40 @@ public class PersistenciaTranLinea extends Conector implements IPersTranLinea, C
 	}
 
 	@Override
-	public List<TranLinea> obtenerListaTranLinea(Long nroTransac) throws PersistenciaException {
+	public TranLinea obtenerTranLineaPorId(Long nroTransac, Integer idProducto) throws PersistenciaException {
+		TranLinea tranLinea = null;
+		PersistenciaProducto pp = new PersistenciaProducto();
+		PersistenciaTransaccion pt = new PersistenciaTransaccion();
+		try {
+			GenSqlSelectType genType = new GenSqlSelectType(QRY_SELECT_TRANLINEA_XID);
+			genType.setParam(nroTransac);
+			genType.setParam(idProducto);
+			ResultSet rs = (ResultSet) runGeneric(genType);
+			if(rs.next()) {
+				Transaccion transac = pt.obtenerTransaccionPorId(nroTransac);
+				tranLinea = new TranLinea(transac);
+				tranLinea.setProducto(pp.obtenerProductoPorId(rs.getInt("id_producto")));
+				tranLinea.setCantidad(rs.getInt("cantidad"));
+				tranLinea.setPrecioUnit(rs.getDouble("precio_unit"));
+			}
+		} catch (ConectorException | SQLException e) {
+			Conector.rollbackConn();
+			logger.log(Level.FATAL, "Excepcion al obtenerListaTranLinea: " + e.getMessage(), e);
+			throw new PersistenciaException(e);
+		}
+		return tranLinea;
+	}
+	
+	@Override
+	public List<TranLinea> obtenerListaTranLinea(Transaccion transac) throws PersistenciaException {
 		List<TranLinea> listaTranLinea = new ArrayList<>();
 		PersistenciaProducto pp = new PersistenciaProducto();
 		try {
 			GenSqlSelectType genType = new GenSqlSelectType(QRY_SELECT_TRANLINEA_XTRANSAC);
-			genType.setParam(nroTransac);
+			genType.setParam(transac.getNroTransac());
 			ResultSet rs = (ResultSet) runGeneric(genType);
 			while(rs.next()) {
-				TranLinea tranLinea = new TranLinea();
+				TranLinea tranLinea = new TranLinea(transac);
 				tranLinea.setProducto(pp.obtenerProductoPorId(rs.getInt("id_producto")));
 				tranLinea.setCantidad(rs.getInt("cantidad"));
 				tranLinea.setPrecioUnit(rs.getDouble("precio_unit"));
