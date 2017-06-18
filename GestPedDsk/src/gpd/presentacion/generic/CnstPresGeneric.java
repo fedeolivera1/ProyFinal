@@ -59,5 +59,6 @@ public interface CnstPresGeneric {
 	//controles genericos
 	public static final String DATOS_OBLIG = "Los datos marcados son obligatorios.";
 	public static final String JTABLE_EMPTY = "No se encontraron resultados...";
+	public static final String N_A = "N/A";
 	
 }

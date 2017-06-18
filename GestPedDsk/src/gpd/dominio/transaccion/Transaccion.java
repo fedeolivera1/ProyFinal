@@ -92,6 +92,13 @@ public class Transaccion implements Serializable {
 		this.listaTranLinea = listaTranLinea;
 	}
 	
+	
+	@Override
+	public String toString() {
+		return "Tx: " + nroTransac + " |Tipo: " + tipoTran.getTipoTran() + " |Est: " + estadoTran.getEstadoTran()
+				+ " |Fec: " + fechaHora.toString(Fecha.AMDHMS);
+	}
+
 	public String toStringLineas() {
 		StringBuilder strBld = new StringBuilder();
 		if(this.listaTranLinea != null && !listaTranLinea.isEmpty()) {

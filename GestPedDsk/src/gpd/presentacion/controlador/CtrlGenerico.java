@@ -26,6 +26,8 @@ import javax.swing.text.MaskFormatter;
 
 import org.apache.log4j.Logger;
 
+import com.toedter.calendar.JDateChooser;
+
 import gpd.presentacion.generic.CnstPresGeneric;
 import gpd.presentacion.generic.CompValidador;
 import gpd.presentacion.generic.GenCompType;
@@ -131,23 +133,29 @@ public abstract class CtrlGenerico {
 		Boolean retornoOk = true;
 		if(comp != null && (nombreClase.equals("javax.swing.JTextField"))) {
 			JTextField jtf = (javax.swing.JTextField) comp;
-			retornoOk = !jtf.getText().equals("");
+			retornoOk = !jtf.getText().isEmpty();
 		} else if(nombreClase.equals("javax.swing.JFormattedTextField")) {
 			JFormattedTextField jftf = (javax.swing.JFormattedTextField) comp;
-			retornoOk = !jftf.getText().equals("");
+			retornoOk = !jftf.getText().isEmpty();
 		} else if(nombreClase.equals("javax.swing.JPasswordField")) {
 			JPasswordField jpf = (javax.swing.JPasswordField) comp;
 			retornoOk = jpf.getPassword() != null && 
 					jpf.getPassword().length > 0;
 		} else if(nombreClase.equals("javax.swing.JTextArea")) {
 			JTextArea jta = (javax.swing.JTextArea) comp;
-			retornoOk = !jta.getText().equals("");
+			retornoOk = !jta.getText().isEmpty();
 		} else if(nombreClase.equals("javax.swing.JList")) {
 			JList<?> jl = (javax.swing.JList<?>) comp;
 			retornoOk = !jl.isSelectionEmpty();
+		} else if(nombreClase.equals("javax.swing.JTable")) {
+			JTable jt = (javax.swing.JTable) comp;
+			retornoOk = jt.getSelectedRow() > -1;
 		} else if (nombreClase.equals("javax.swing.JComboBox")) {
 			JComboBox<?> jcb = (javax.swing.JComboBox<?>) comp;
 			retornoOk = jcb.getSelectedItem() != null;
+		} else if (nombreClase.equals("com.toedter.calendar.JDateChooser")) {
+			JDateChooser jdc = (com.toedter.calendar.JDateChooser) comp;
+			retornoOk = jdc.getDate() != null && !jdc.getDate().toString().isEmpty();
 		}
 		if(!retornoOk) {
 			getCompVal().addBorder(comp);
@@ -275,6 +283,19 @@ public abstract class CtrlGenerico {
 				(caracter != '\b' && caracter != '.')) {
 			e.consume();  // ignorar el evento de teclado
 		}
+	}
+	
+	/**
+	 * 
+	 * @param obj
+	 * metodo generico para controlar inputs para tipos numericos
+	 */
+	public Boolean controlFechas(Fecha fini, Fecha ffin) {
+		if(fini.compareTo(ffin) > 0) {
+			enviarWarning("Control fechas", "La fecha de inicio no puede ser posterior a la fecha de fin.");
+			return false;
+		}
+		return true;
 	}
 	
 	
@@ -418,6 +439,12 @@ public abstract class CtrlGenerico {
 		} else if (nombreClase.equals("javax.swing.JTable")) {
 			// Es un JTable asi que llamamos a deleteModelTable
 			deleteModelTable((javax.swing.JTable) comp);
+		} else if (nombreClase.equals("javax.swing.JFormattedTextField")) {
+			// Es un JFormattedTextField asi que lo ponemos en blanco
+			((javax.swing.JFormattedTextField) comp).setText("");
+		} else if (nombreClase.equals("com.toedter.calendar.JDateChooser")) {
+			//JDateChooser pruebo metodo cleanup
+			((com.toedter.calendar.JDateChooser) comp).cleanup();
 		}
 		//se reinician los bordes para advertencias.
 		getCompVal().removeBorder(comp);
@@ -445,6 +472,9 @@ public abstract class CtrlGenerico {
 		} else if (nombreClase.equals("javax.swing.JCheckBox")) {
 			// Es un JCheckBox asi que lo desmarcamos
 			((javax.swing.JCheckBox) comp).setSelected(false);
+		} else if (nombreClase.equals("com.toedter.calendar.JDateChooser")) {
+			//JDateChooser pruebo metodo cleanup
+			((com.toedter.calendar.JDateChooser) comp).cleanup();
 		} 
 		//se reinician los bordes para advertencias.
 		getCompVal().removeBorder(comp);

@@ -28,4 +28,9 @@ public enum EstadoTran {
     	}
         return null;
     }
+	
+	 @Override
+	 public String toString() {
+		 return estadoTran;
+	 }
 }

@@ -4,6 +4,10 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.border.Border;
@@ -63,6 +67,21 @@ public class CompValidador {
 					removeBorder(comp);
 				}
 			});
+		} else if (nombreClase.equals("javax.swing.JTable")) {
+			((javax.swing.JTable) comp).setBorder(line);
+			((javax.swing.JTable) comp).addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					removeBorder(comp);
+				}
+			});
+		} else if (nombreClase.equals("com.toedter.calendar.JDateChooser")) {
+			((com.toedter.calendar.JDateChooser) comp).setBorder(line);
+			((com.toedter.calendar.JDateChooser) comp).getDateEditor().addPropertyChangeListener(new PropertyChangeListener(){ 
+		        public void propertyChange(PropertyChangeEvent e) {
+		        	removeBorder(comp);
+		        }
+			});
 		}
 	}
 	
@@ -81,6 +100,10 @@ public class CompValidador {
 			((javax.swing.JTextArea) comp).setBorder(empty);
 		} else if (nombreClase.equals("javax.swing.JList")) {
 			((javax.swing.JList<?>) comp).setBorder(empty);
+		} else if (nombreClase.equals("javax.swing.JTable")) {
+			((javax.swing.JTable) comp).setBorder(empty);
+		} else if (nombreClase.equals("com.toedter.calendar.JDateChooser")) {
+			((com.toedter.calendar.JDateChooser) comp).setBorder(empty);
 		}
 	}
 	

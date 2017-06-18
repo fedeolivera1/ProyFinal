@@ -6,6 +6,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -31,6 +33,7 @@ import gpd.dominio.producto.Deposito;
 import gpd.dominio.producto.TipoProd;
 import gpd.dominio.producto.Utilidad;
 import gpd.dominio.transaccion.EstadoTran;
+import gpd.dominio.transaccion.Transaccion;
 import gpd.dominio.usuario.UsuarioDsk;
 import gpd.presentacion.controlador.CtrlFrmProducto;
 import java.awt.event.ItemListener;
@@ -59,13 +62,17 @@ public class FrmProducto extends JFrame {
 	private JButton btnProBuscar;
 	private JButton btnProLimpiar;
 	private JTable jtProd;
-	private JComboBox<Deposito> cbxDep;
-	private JComboBox<Utilidad> cbxUtil;
+	private JComboBox<Deposito> cbxLoteDep;
+	private JComboBox<Utilidad> cbxLoteUtil;
 	private JScrollPane scrollPaneLote;
 	private JButton btnUtilAgregar;
 	private JTable jtLote;
 	private JTable jtLoteDep;
 	private JComboBox<EstadoTran> cbxFiltroLote;
+	private JDateChooser dchLoteVenc;
+	private JComboBox<Transaccion> cbxLoteCompras;
+	private JDateChooser dchLoteIni;
+	private JDateChooser dchLoteFin;
 
 
 	public static FrmProducto getFrmProducto(UsuarioDsk usr) {
@@ -222,21 +229,21 @@ public class FrmProducto extends JFrame {
 		tpLote.setLayout(null);
 		
 		scrollPaneLote = new JScrollPane();
-		scrollPaneLote.setBounds(10, 36, 759, 160);
+		scrollPaneLote.setBounds(10, 80, 759, 160);
 		tpLote.add(scrollPaneLote);
 		
 		jtLote = new JTable();
 		scrollPaneLote.setColumnHeaderView(jtLote);
 		scrollPaneLote.setViewportView(jtLote);
 		
-		JLabel lblLotesDisponibles = new JLabel("Lotes disponibles");
-		lblLotesDisponibles.setHorizontalAlignment(SwingConstants.LEFT);
-		lblLotesDisponibles.setBounds(16, 11, 95, 14);
+		JLabel lblLotesDisponibles = new JLabel("Estado");
+		lblLotesDisponibles.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblLotesDisponibles.setBounds(16, 11, 56, 14);
 		tpLote.add(lblLotesDisponibles);
 		
 		JPanel panelLoteDatos = new JPanel();
 		panelLoteDatos.setBorder(new LineBorder(new Color(0, 0, 0)));
-		panelLoteDatos.setBounds(10, 220, 322, 195);
+		panelLoteDatos.setBounds(10, 264, 322, 195);
 		tpLote.add(panelLoteDatos);
 		panelLoteDatos.setLayout(null);
 		
@@ -244,9 +251,9 @@ public class FrmProducto extends JFrame {
 		btnDepAgregar.setBounds(227, 11, 32, 23);
 		panelLoteDatos.add(btnDepAgregar);
 		
-		cbxDep = new JComboBox<>();
-		cbxDep.setBounds(66, 12, 151, 20);
-		panelLoteDatos.add(cbxDep);
+		cbxLoteDep = new JComboBox<>();
+		cbxLoteDep.setBounds(66, 12, 151, 20);
+		panelLoteDatos.add(cbxLoteDep);
 		
 		
 		JLabel lblDeposito = new JLabel("Deposito");
@@ -259,17 +266,17 @@ public class FrmProducto extends JFrame {
 		panelLoteDatos.add(label_6);
 		label_6.setHorizontalAlignment(SwingConstants.RIGHT);
 		
-		cbxUtil = new JComboBox<>();
-		cbxUtil.setBounds(66, 43, 151, 20);
-		panelLoteDatos.add(cbxUtil);
+		cbxLoteUtil = new JComboBox<>();
+		cbxLoteUtil.setBounds(66, 43, 151, 20);
+		panelLoteDatos.add(cbxLoteUtil);
 		
-		JDateChooser dateChooser = new JDateChooser();
-		dateChooser.setBounds(130, 74, 87, 20);
-		panelLoteDatos.add(dateChooser);
+		dchLoteVenc = new JDateChooser();
+		dchLoteVenc.setBounds(130, 74, 87, 20);
+		panelLoteDatos.add(dchLoteVenc);
 		
-		JButton btnLoteMod = new JButton("Completar");
-		btnLoteMod.setBounds(128, 105, 89, 23);
-		panelLoteDatos.add(btnLoteMod);
+		JButton btnLoteAct = new JButton("Actualizar");
+		btnLoteAct.setBounds(128, 105, 89, 23);
+		panelLoteDatos.add(btnLoteAct);
 		
 		JButton btnLimpiar = new JButton("Limpiar");
 		btnLimpiar.setBounds(128, 139, 89, 23);
@@ -282,18 +289,18 @@ public class FrmProducto extends JFrame {
 		JSeparator separator = new JSeparator();
 		separator.setForeground(SystemColor.info);
 		separator.setBackground(SystemColor.info);
-		separator.setBounds(16, 207, 759, 2);
+		separator.setBounds(10, 251, 759, 2);
 		tpLote.add(separator);
 		
 		JSeparator separator_1 = new JSeparator();
 		separator_1.setOrientation(SwingConstants.VERTICAL);
 		separator_1.setForeground(SystemColor.info);
 		separator_1.setBackground(SystemColor.info);
-		separator_1.setBounds(342, 220, 2, 195);
+		separator_1.setBounds(342, 264, 2, 195);
 		tpLote.add(separator_1);
 		
 		JScrollPane scrollPaneLoteDep = new JScrollPane();
-		scrollPaneLoteDep.setBounds(354, 220, 415, 195);
+		scrollPaneLoteDep.setBounds(354, 264, 415, 195);
 		tpLote.add(scrollPaneLoteDep);
 		
 		jtLoteDep = new JTable();
@@ -301,16 +308,52 @@ public class FrmProducto extends JFrame {
 		scrollPaneLoteDep.setViewportView(jtLoteDep);
 		
 		cbxFiltroLote = new JComboBox<>();
-		cbxFiltroLote.setBounds(103, 8, 122, 20);
+		cbxFiltroLote.setBounds(82, 8, 122, 20);
 		tpLote.add(cbxFiltroLote);
+		
+		cbxLoteCompras = new JComboBox<>();
+		cbxLoteCompras.setBounds(82, 49, 381, 20);
+		tpLote.add(cbxLoteCompras);
+		
+		JLabel lblCompras = new JLabel("Compras");
+		lblCompras.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblCompras.setBounds(16, 52, 56, 14);
+		tpLote.add(lblCompras);
+		
+		dchLoteIni = new JDateChooser();
+		dchLoteIni.setBounds(278, 8, 87, 20);
+		GregorianCalendar gc = new GregorianCalendar();
+		gc.add(Calendar.DAY_OF_YEAR, -10);
+		dchLoteIni.setCalendar(gc);
+		tpLote.add(dchLoteIni);
+		
+		dchLoteFin = new JDateChooser();
+		dchLoteFin.setBounds(376, 8, 87, 20);
+		dchLoteFin.setCalendar(new GregorianCalendar());
+		tpLote.add(dchLoteFin);
+		
+		JLabel lblPeriodo = new JLabel("Periodo");
+		lblPeriodo.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblPeriodo.setBounds(214, 11, 56, 14);
+		tpLote.add(lblPeriodo);
+		
+		JButton btnLoteObtener = new JButton("Obtener");
+		btnLoteObtener.setBounds(473, 7, 89, 23);
+		tpLote.add(btnLoteObtener);
+		
+		JSeparator separator_2 = new JSeparator();
+		separator_2.setForeground(SystemColor.info);
+		separator_2.setBackground(SystemColor.info);
+		separator_2.setBounds(10, 36, 759, 2);
+		tpLote.add(separator_2);
 		
 		/*****************************************************************************************************************************************************/
 		/* ACCIONES CONTROLES */
 		/*****************************************************************************************************************************************************/
 		
 		ctrlProd.cargarCbxTipoProd(cbxTipoProd);
-		ctrlProd.cargarCbxDep(cbxDep);
-		ctrlProd.cargarCbxUtil(cbxUtil);
+		ctrlProd.cargarCbxDep(cbxLoteDep);
+		ctrlProd.cargarCbxUtil(cbxLoteUtil);
 		ctrlProd.cargarCbxFiltroLote(cbxFiltroLote);
 		
 		btnUtilAgregar.addActionListener(new ActionListener() {
@@ -324,7 +367,6 @@ public class FrmProducto extends JFrame {
 			}
 		});
 		
-		
 		ftxtProStockMin.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyTyped(KeyEvent e) {
@@ -335,6 +377,11 @@ public class FrmProducto extends JFrame {
 			@Override
 			public void keyTyped(KeyEvent e) {
 				ctrlProd.controlInputNum(e);
+			}
+		});
+		btnLoteObtener.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				ctrlProd.obtenerTransac(cbxFiltroLote, dchLoteIni, dchLoteFin);
 			}
 		});
 		btnProAgr.addActionListener(new ActionListener() {
@@ -368,14 +415,15 @@ public class FrmProducto extends JFrame {
 			}
 		});
 		
-		btnLoteMod.addActionListener(new ActionListener() {
+		btnLoteAct.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				ctrlProd.actualizarLote(jtLote, cbxLoteDep, cbxLoteUtil, dchLoteVenc);
 			}
 		});
 		
-		cbxFiltroLote.addItemListener(new ItemListener() {
+		cbxLoteCompras.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent arg0) {
-				ctrlProd.cargarJtLote(cbxFiltroLote);
+				ctrlProd.cargarJtLote(cbxLoteCompras);
 			}
 		});
 	}
@@ -400,10 +448,10 @@ public class FrmProducto extends JFrame {
 	}
 	
 	public JComboBox<Deposito> getCbxDep() {
-		return cbxDep;
+		return cbxLoteDep;
 	}
 	public void setCbxDep(JComboBox<Deposito> cbxDep) {
-		this.cbxDep = cbxDep;
+		this.cbxLoteDep = cbxDep;
 	}
 	
 	public JTextField getTxtProId() {
@@ -456,10 +504,10 @@ public class FrmProducto extends JFrame {
 	}
 	
 	public JComboBox<Utilidad> getCbxUtil() {
-		return cbxUtil;
+		return cbxLoteUtil;
 	}
 	public void setCbxUtil(JComboBox<Utilidad> cbxUtil) {
-		this.cbxUtil = cbxUtil;
+		this.cbxLoteUtil = cbxUtil;
 	}
 	
 	public JTable getJtLote() {
@@ -481,5 +529,47 @@ public class FrmProducto extends JFrame {
 	}
 	public void setCbxFiltroLote(JComboBox<EstadoTran> cbxFiltroLote) {
 		this.cbxFiltroLote = cbxFiltroLote;
+	}
+	
+	public JDateChooser getDchLoteVenc() {
+		return dchLoteVenc;
+	}
+	public void setDchLoteVenc(JDateChooser dchLoteVenc) {
+		this.dchLoteVenc = dchLoteVenc;
+	}
+	
+	public JComboBox<Deposito> getCbxLoteDep() {
+		return cbxLoteDep;
+	}
+	public void setCbxLoteDep(JComboBox<Deposito> cbxLoteDep) {
+		this.cbxLoteDep = cbxLoteDep;
+	}
+
+	public JComboBox<Utilidad> getCbxLoteUtil() {
+		return cbxLoteUtil;
+	}
+	public void setCbxLoteUtil(JComboBox<Utilidad> cbxLoteUtil) {
+		this.cbxLoteUtil = cbxLoteUtil;
+	}
+
+	public JComboBox<Transaccion> getCbxLoteCompras() {
+		return cbxLoteCompras;
+	}
+	public void setCbxLoteCompras(JComboBox<Transaccion> cbxLoteCompras) {
+		this.cbxLoteCompras = cbxLoteCompras;
+	}
+
+	public JDateChooser getDchLoteIni() {
+		return dchLoteIni;
+	}
+	public void setDchLoteIni(JDateChooser dchLoteIni) {
+		this.dchLoteIni = dchLoteIni;
+	}
+
+	public JDateChooser getDchLoteFin() {
+		return dchLoteFin;
+	}
+	public void setDchLoteFin(JDateChooser dchLoteFin) {
+		this.dchLoteFin = dchLoteFin;
 	}
 }

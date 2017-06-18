@@ -12,7 +12,6 @@ import gpd.db.constantes.CnstQryLote;
 import gpd.db.generic.GenSqlExecType;
 import gpd.db.generic.GenSqlSelectType;
 import gpd.dominio.producto.Lote;
-import gpd.dominio.transaccion.EstadoTran;
 import gpd.exceptions.ConectorException;
 import gpd.exceptions.PersistenciaException;
 import gpd.interfaces.producto.IPersLote;
@@ -26,22 +25,21 @@ public class PersistenciaLote extends Conector implements IPersLote, CnstQryLote
 	
 	
 	@Override
-	public List<Lote> obtenerListaLotePorEstado(EstadoTran estado) throws PersistenciaException {
+	public List<Lote> obtenerListaLotePorTransac(Long nroTransac) throws PersistenciaException {
 		List<Lote> listaLote = new ArrayList<>();
 		PersistenciaTranLinea ptl = new PersistenciaTranLinea();
 		PersistenciaUtilidad pu = new PersistenciaUtilidad();
 		PersistenciaDeposito pd = new PersistenciaDeposito();
 		try {
-			GenSqlSelectType genType = new GenSqlSelectType(QRY_SELECT_LOTES_XEST);
-			genType.setParamCharIfNull(estado.getAsChar());
-			genType.setParamCharIfNull(estado.getAsChar());
+			GenSqlSelectType genType = new GenSqlSelectType(QRY_SELECT_LOTES_XTRANSAC);
+			genType.setParamCharIfNull(nroTransac);
 			ResultSet rs = (ResultSet) runGeneric(genType);
 			while(rs.next()) {
 				Lote lote = new Lote();
 				lote.setIdLote(rs.getInt("id_lote"));
-				Long nroTransac = rs.getLong("nro_transac");
+				Long nroTransaccion = rs.getLong("nro_transac");
 				Integer idProducto = rs.getInt("id_producto");
-				lote.setTranLinea(ptl.obtenerTranLineaPorId(nroTransac, idProducto));
+				lote.setTranLinea(ptl.obtenerTranLineaPorId(nroTransaccion, idProducto));
 				Fecha venc = new Fecha(rs.getDate("venc"));
 				if(!rs.wasNull()) {
 					lote.setVenc(venc);
@@ -95,9 +93,21 @@ public class PersistenciaLote extends Conector implements IPersLote, CnstQryLote
 	}
 
 	@Override
-	public Integer modificarLote(Lote lote) throws PersistenciaException {
-		// TODO Auto-generated method stub
-		return null;
+	public Integer actualizarLote(Lote lote) throws PersistenciaException {
+		Integer resultado = null;
+		GenSqlExecType genExec = new GenSqlExecType(QRY_UPDATE_LOTE);
+		genExec.setParam(lote.getVenc());
+		genExec.setParam(lote.getDeposito().getNroDep());
+		genExec.setParam(lote.getUtilidad().getIdUtil());
+		genExec.setParam(lote.getIdLote());
+		try {
+			resultado = (Integer) runGeneric(genExec);
+		} catch (ConectorException e) {
+			Conector.rollbackConn();
+			logger.error("Excepcion al actualizarLote: " + e.getMessage(), e);
+			throw new PersistenciaException(e);
+		}
+		return resultado;
 	}
 
 	@Override

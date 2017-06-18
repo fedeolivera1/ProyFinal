@@ -18,23 +18,30 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
+import com.toedter.calendar.JDateChooser;
+
 import gpd.dominio.producto.Deposito;
 import gpd.dominio.producto.Lote;
 import gpd.dominio.producto.Producto;
 import gpd.dominio.producto.TipoProd;
 import gpd.dominio.producto.Utilidad;
 import gpd.dominio.transaccion.EstadoTran;
+import gpd.dominio.transaccion.TipoTran;
+import gpd.dominio.transaccion.Transaccion;
 import gpd.manager.producto.ManagerProducto;
+import gpd.manager.transaccion.ManagerTransaccion;
 import gpd.presentacion.formulario.FrmProducto;
 import gpd.presentacion.generic.CnstPresGeneric;
 import gpd.presentacion.generic.GenCompType;
 import gpd.presentacion.popup.IfrmDeposito;
 import gpd.presentacion.popup.IfrmTipoProd;
 import gpd.presentacion.popup.IfrmUtilidad;
+import gpd.types.Fecha;
 
 public class CtrlFrmProducto extends CtrlGenerico {
 
 	private ManagerProducto mgrProd = new ManagerProducto();
+	private ManagerTransaccion mgrTransac = new ManagerTransaccion();
 	private FrmProducto frmProd;
 	private IfrmTipoProd iFrmTp;
 	private IfrmDeposito iFrmDep;
@@ -141,12 +148,12 @@ public class CtrlFrmProducto extends CtrlGenerico {
 		cbxFiltroLote.setSelectedIndex(-1);
 	}
 	
-	public void cargarJtLote(JComboBox<EstadoTran> cbxFiltroLote) {
+	public void cargarJtLote(JComboBox<Transaccion> cbxLoteTransac) {
 		JTable tabla = frmProd.getJtLote();
 		clearTable(tabla);
-		if(cbxFiltroLote.getSelectedIndex() > -1) {
-			EstadoTran estado = (EstadoTran) cbxFiltroLote.getSelectedItem();
-			List<Lote> listaLote = (ArrayList<Lote>) mgrProd.obtenerListaLotePorEstado(estado);
+		if(cbxLoteTransac.getSelectedIndex() > -1) {
+			Transaccion transac = (Transaccion) cbxLoteTransac.getSelectedItem();
+			List<Lote> listaLote = (ArrayList<Lote>) mgrProd.obtenerListaLotePorTransac(transac.getNroTransac());
 			if(listaLote != null && !listaLote.isEmpty()) {
 				DefaultTableModel modeloJtLote = new DefaultTableModel();
 				tabla.setModel(modeloJtLote);
@@ -154,12 +161,18 @@ public class CtrlFrmProducto extends CtrlGenerico {
 				modeloJtLote.addColumn("Producto");
 				modeloJtLote.addColumn("Transaccion");
 				modeloJtLote.addColumn("Stock");
+				modeloJtLote.addColumn("Venc");
+				modeloJtLote.addColumn("Dep");
+				modeloJtLote.addColumn("Util");
 				for(Lote lote : listaLote) {
-					Object [] fila = new Object[4];
-					fila[0] = lote.getIdLote();
+					Object [] fila = new Object[7];
+					fila[0] = lote;
 					fila[1] = lote.getTranLinea().getProducto();
 					fila[2] = lote.getTranLinea().getTransaccion().getNroTransac();
 					fila[3] = lote.getStock();
+					fila[4] = lote.getVenc() != null ? lote.getVenc().toString(Fecha.DMA) : CnstPresGeneric.N_A;
+					fila[5] = lote.getDeposito() != null ? lote.getDeposito() : CnstPresGeneric.N_A;
+					fila[6] = lote.getUtilidad() != null ? lote.getUtilidad() : CnstPresGeneric.N_A;
 					modeloJtLote.addRow(fila);
 				}
 				tabla.addMouseListener(new MouseAdapter() {
@@ -168,11 +181,9 @@ public class CtrlFrmProducto extends CtrlGenerico {
 						int fila = tabla.rowAtPoint(e.getPoint());
 						if (fila > -1) {
 							Integer idLote = (Integer) tabla.getModel().getValueAt(fila, 0);
-//							Producto prod = mgrProd.obtenerProductoPorId(idProd);
-//							Container containerJTable = tabla.getParent().getParent().getParent();
-//							cargarControlesLote(prod, containerJTable);
-							
-							//FIXME terminar esta parte
+							Lote lote = mgrProd.obtenerLotePorId(idLote);
+							Container containerJTable = tabla.getParent().getParent().getParent();
+							cargarControlesLote(lote, containerJTable);
 						}
 					}
 				});
@@ -181,6 +192,12 @@ public class CtrlFrmProducto extends CtrlGenerico {
 			}
 		}
 	}
+	
+	private void cargarControlesLote(Lote lote, Container panel) {
+		clearControlsInJPanel(panel);
+		
+	}
+	
 	
 	public void cargarControlesProducto(Producto prod, Container panel) {
 		clearControlsInJPanel(panel);
@@ -522,7 +539,50 @@ public class CtrlFrmProducto extends CtrlGenerico {
 		comp.setVisible(true);
 	}
 	
+	//lote
+	public void obtenerTransac(JComboBox<EstadoTran> cbxLoteEt, JDateChooser dchLoteFini, JDateChooser dchLoteFfin) {
+		GenCompType genComp = new GenCompType();
+		genComp.setComp(cbxLoteEt);
+		genComp.setComp(dchLoteFini);
+		genComp.setComp(dchLoteFfin);
+		if(controlDatosObl(genComp)) {
+			Fecha fechaIni = new Fecha(dchLoteFini.getDate());
+			Fecha fechaFin = new Fecha(dchLoteFfin.getDate());
+			if(controlFechas(fechaIni, fechaFin)) {
+				List<Transaccion> listaTransac = (ArrayList<Transaccion>) mgrTransac.obtenerListaTransaccionPorPeriodo(TipoTran.C, (EstadoTran) cbxLoteEt.getSelectedItem(), fechaIni, fechaFin);
+				cargarCbxLoteTransac(getFrm().getCbxLoteCompras(), listaTransac);
+			}
+		}
+	}
 	
+	private void cargarCbxLoteTransac(JComboBox<Transaccion> cbxLoteTransac, List<Transaccion> listaTransac) {
+		cbxLoteTransac.removeAllItems();
+		if(listaTransac != null && !listaTransac.isEmpty()) {
+			for(Transaccion transac : listaTransac) {
+				cbxLoteTransac.addItem(transac);
+			}
+			cbxLoteTransac.setSelectedIndex(-1);
+		}
+	}
+	
+	public void actualizarLote(JTable jtLote, JComboBox<Deposito> cbxLoteDep, JComboBox<Utilidad> cbxLoteUtil, JDateChooser dchLoteVenc) {
+		GenCompType genComp = new GenCompType();
+		genComp.setComp(jtLote);
+		genComp.setComp(cbxLoteDep);
+		genComp.setComp(cbxLoteUtil);
+		genComp.setComp(dchLoteVenc);
+		if(controlDatosObl(genComp)) {
+			Lote lote = (Lote) jtLote.getModel().getValueAt(jtLote.getSelectedRow(), 0);
+			lote.setDeposito((Deposito) cbxLoteDep.getSelectedItem());
+			lote.setUtilidad((Utilidad) cbxLoteUtil.getSelectedItem());
+			lote.setVenc(new Fecha(dchLoteVenc.getDate().getTime()));
+			//ver de actualizar la tabla para cada uno de los datos
+//			mgrProd.actualizarLote(lote);
+		} else {
+			enviarWarning(CnstPresGeneric.LOTE, CnstPresGeneric.DATOS_OBLIG);
+		}
+	}
+
 	/*****************************************************************************************************************************************************/
 	/* GET Y SET */
 	/*****************************************************************************************************************************************************/

@@ -27,18 +27,38 @@ import gpd.util.ConfigDriver;
 public class ManagerTransaccion {
 
 	private static final Logger logger = Logger.getLogger(ManagerTransaccion.class);
-	private IPersTransaccion interfaceTransaccion;
-	private IPersTranLinea interfaceTranLinea;
-	private IPersLote interfaceLote;
+	private static IPersTransaccion interfaceTransaccion;
+	private static IPersTranLinea interfaceTranLinea;
+	private static IPersLote interfaceLote;
 	
+	private static IPersTransaccion getInterfaceTransaccion() {
+		if(interfaceTransaccion == null) {
+			interfaceTransaccion = new PersistenciaTransaccion();
+		}
+		return interfaceTransaccion;
+	}
+	private static IPersTranLinea getInterfaceTranLinea() {
+		if(interfaceTranLinea == null) {
+			interfaceTranLinea = new PersistenciaTranLinea();
+		}
+		return interfaceTranLinea;
+	}
+	private static IPersLote getInterfaceLote() {
+		if(interfaceLote == null) {
+			interfaceLote = new PersistenciaLote();
+		}
+		return interfaceLote;
+	}
+	
+	
+	/*****************************************************************************************************************************************************/
+	/** TRANSACCION */
+	/*****************************************************************************************************************************************************/
 	
 	public Integer generarTransaccion(Transaccion transaccion) {
 		logger.info("Ingresa guardarTransaccion");
 		Integer resultado = null;
 		if(transaccion != null) {
-			interfaceTransaccion = new PersistenciaTransaccion();
-			interfaceTranLinea = new PersistenciaTranLinea();
-			interfaceLote = new PersistenciaLote();
 			try {
 				Conector.getConn();
 				ConfigDriver cfgDrv = ConfigDriver.getConfigDriver();
@@ -72,21 +92,19 @@ public class ManagerTransaccion {
 				transaccion.setIva(ivaSt);
 				transaccion.setTotal(total);
 				if(TipoTran.C.equals(transaccion.getTipoTran())) {
-					resultado = interfaceTransaccion.guardarTransaccionCompra(transaccion);
+					resultado = getInterfaceTransaccion().guardarTransaccionCompra(transaccion);
 				} else if(TipoTran.V.equals(transaccion.getTipoTran())) {
-					resultado = interfaceTransaccion.guardarTransaccionVenta(transaccion);
+					resultado = getInterfaceTransaccion().guardarTransaccionVenta(transaccion);
 				} else {
 					throw new PersistenciaException("El tipo de transaccion no es compatible.");
 				}
 				//se persiste el estado de la transaccion con estado 'P'
-				interfaceTransaccion.guardarTranEstado(transaccion);
+				getInterfaceTransaccion().guardarTranEstado(transaccion);
 				//se persisten las lineas de la transaccion
-				interfaceTranLinea.guardarListaTranLinea(transaccion.getListaTranLinea());
-				
-//				if(1==1) {throw new PersistenciaException("el nene malo");} /**/
+				getInterfaceTranLinea().guardarListaTranLinea(transaccion.getListaTranLinea());
 				
 				//se periste el lote para cada producto de las lineas
-				interfaceLote.guardarListaLote(listaLote);
+				getInterfaceLote().guardarListaLote(listaLote);
 				Conector.closeConn("guardarTransaccion", null);
 			} catch (ConectorException | PersistenciaException e) {
 				e.printStackTrace();//FIXME ver como manejar esta excep
@@ -99,13 +117,11 @@ public class ManagerTransaccion {
 	
 	public Transaccion obtenerTransaccionPorId(Long idTransac) {
 		Transaccion transac = null;
-		interfaceTransaccion = new PersistenciaTransaccion();
-		interfaceTranLinea = new PersistenciaTranLinea();
 		try {
 			Conector.getConn();
-			transac = interfaceTransaccion.obtenerTransaccionPorId(idTransac);
+			transac = getInterfaceTransaccion().obtenerTransaccionPorId(idTransac);
 			if(transac != null) {
-				List<TranLinea> listaTranLinea = interfaceTranLinea.obtenerListaTranLinea(transac);
+				List<TranLinea> listaTranLinea = getInterfaceTranLinea().obtenerListaTranLinea(transac);
 				if(listaTranLinea != null && !listaTranLinea.isEmpty()) {
 					transac.setListaTranLinea(listaTranLinea);
 				}
@@ -121,14 +137,34 @@ public class ManagerTransaccion {
 	
 	public List<Transaccion> obtenerListaTransaccionPorPersona(Long idPersona, TipoTran tipoTran, EstadoTran estadoTran) {
 		List<Transaccion> listaTransac = null;
-		interfaceTransaccion = new PersistenciaTransaccion();
-		interfaceTranLinea = new PersistenciaTranLinea();
 		try {
 			Conector.getConn();
-			listaTransac = interfaceTransaccion.obtenerListaTransaccionPorPersona(idPersona, tipoTran, estadoTran);
+			listaTransac = getInterfaceTransaccion().obtenerListaTransaccionPorPersona(idPersona, tipoTran, estadoTran);
 			if(listaTransac != null && !listaTransac.isEmpty()) {
 				for(Transaccion transac : listaTransac) {
-					List<TranLinea> listaTranLinea = interfaceTranLinea.obtenerListaTranLinea(transac);
+					List<TranLinea> listaTranLinea = getInterfaceTranLinea().obtenerListaTranLinea(transac);
+					if(listaTranLinea != null && !listaTranLinea.isEmpty()) {
+						transac.setListaTranLinea(listaTranLinea);
+					}
+				}
+			}
+			Conector.closeConn("obtenerListaTransaccionPorPersona", null);
+		} catch (PersistenciaException e) {
+			e.printStackTrace();//FIXME ver como manejar esta excep
+		} catch (Exception e) {
+			e.printStackTrace();//FIXME ver como manejar esta excep
+		}
+		return listaTransac;
+	}
+	
+	public List<Transaccion> obtenerListaTransaccionPorPeriodo(TipoTran tipoTran, EstadoTran estadoTran, Fecha fechaIni, Fecha fechaFin) {
+		List<Transaccion> listaTransac = null;
+		try {
+			Conector.getConn();
+			listaTransac = getInterfaceTransaccion().obtenerListaTransaccionPorPeriodo(tipoTran, estadoTran, fechaIni, fechaFin);
+			if(listaTransac != null && !listaTransac.isEmpty()) {
+				for(Transaccion transac : listaTransac) {
+					List<TranLinea> listaTranLinea = getInterfaceTranLinea().obtenerListaTranLinea(transac);
 					if(listaTranLinea != null && !listaTranLinea.isEmpty()) {
 						transac.setListaTranLinea(listaTranLinea);
 					}
@@ -148,14 +184,13 @@ public class ManagerTransaccion {
 	}
 	
 	public Integer anularTransaccion(Transaccion transaccion) {
-		interfaceTransaccion = new PersistenciaTransaccion();
 		try {
 			Conector.getConn();
 			if(transaccion != null) {
 				transaccion.setEstadoTran(EstadoTran.A);
 				transaccion.setFechaHora(new Fecha(Fecha.AMDHMS));
-				interfaceTransaccion.guardarTranEstado(transaccion);
-				interfaceTransaccion.modificarEstadoTransaccion(transaccion);
+				getInterfaceTransaccion().guardarTranEstado(transaccion);
+				getInterfaceTransaccion().modificarEstadoTransaccion(transaccion);
 			}
 			Conector.closeConn("anularTransaccion", null);
 		} catch (PersistenciaException e) {

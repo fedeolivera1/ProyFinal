@@ -455,7 +455,7 @@ public class CtrlFrmPersona extends CtrlGenerico {
 		genComp.setComp(txtPjRut);
 		if(controlDatosObl(genComp)) {
 			PersonaJuridica pj = mgrPers.obtenerPersJuridicaPorId(ctrlNumLong(txtPjRut.getText()) ? new Long(txtPjRut.getText()): null);
-			mgrPers.eliminarPersFisica(pj);
+			mgrPers.eliminarPersJuridica(pj);
 			clearPanel(frmPers.getContentPane());
 		} else {
 			enviarWarning(CnstPresGeneric.PERS, CnstPresGeneric.DATOS_OBLIG);

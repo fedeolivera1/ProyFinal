@@ -146,7 +146,9 @@ public abstract class Conector {
  			logger.debug("Ejecucion query: " + genType.getStatement());
 			retorno = ps.executeUpdate();
 		} catch (SQLException e) {
-			logger.error("Excepcion de SQL al ejecutar 'executeNonQuery': " + e.getMessage(), e);
+			logger.error("Excepcion de SQL al ejecutar 'executeNonQuery': " + e.getMessage() + 
+			"\n -- SQLCode: " + e.getErrorCode() + 
+			"\n -- Cause: " + e.getCause(), e);
 			throw new ConectorException(e.getMessage(), e);
 		} catch (Exception e) {
 			logger.error("Excepcion genérica al ejecutar 'executeNonQuery': " + e.getMessage(), e);

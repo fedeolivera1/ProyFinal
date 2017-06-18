@@ -116,6 +116,19 @@ public class Fecha extends GregorianCalendar {
 	
 	/**
 	 * 
+	 * @param java.util.Date
+	 * setea una fecha a partir de un java.util.Date
+	 */
+	public Fecha(java.util.Date date) {
+		if(date != null) {
+			super.setTimeInMillis(date.getTime());
+			complete();
+			setFormato(AMD);
+		}
+	}
+	
+	/**
+	 * 
 	 * @param date sql
 	 * setea una fecha a partir de un java.sql.Date en milisegundos
 	 */

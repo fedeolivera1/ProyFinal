@@ -6,6 +6,7 @@ import gpd.dominio.transaccion.EstadoTran;
 import gpd.dominio.transaccion.TipoTran;
 import gpd.dominio.transaccion.Transaccion;
 import gpd.exceptions.PersistenciaException;
+import gpd.types.Fecha;
 
 public interface IPersTransaccion {
 
@@ -15,6 +16,7 @@ public interface IPersTransaccion {
 	
 	public Transaccion obtenerTransaccionPorId(Long idTransac) throws PersistenciaException;
 	public List<Transaccion> obtenerListaTransaccionPorPersona(Long idPersona, TipoTran tipoTran, EstadoTran estadoTran) throws PersistenciaException;
+	public List<Transaccion> obtenerListaTransaccionPorPeriodo(TipoTran tipoTran, EstadoTran estadoTran, Fecha fechaIni, Fecha fechaFin) throws PersistenciaException;
 	
 	public Integer guardarTranEstado(Transaccion transaccion) throws PersistenciaException;
 	public EstadoTran obtenerUltTranEstadoPorId(Long idTransac) throws PersistenciaException;

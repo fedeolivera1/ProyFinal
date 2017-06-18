@@ -169,6 +169,45 @@ public class PersistenciaTransaccion extends Conector implements IPersTransaccio
 		return listaTransac;
 	}
 	
+	@Override
+	public List<Transaccion> obtenerListaTransaccionPorPeriodo(TipoTran tipoTran, EstadoTran estadoTran, Fecha fechaIni, Fecha fechaFin) throws PersistenciaException {
+		List<Transaccion> listaTransac = new ArrayList<>();
+		PersistenciaPersona pp = new PersistenciaPersona();
+		try {
+			GenSqlSelectType genType = new GenSqlSelectType(QRY_SELECT_TRAN_XPERIODO);
+			genType.setParamCharIfNull(tipoTran.getAsChar());
+			genType.setParamCharIfNull(tipoTran.getAsChar());
+			genType.setParamCharIfNull(estadoTran.getAsChar());
+			genType.setParamCharIfNull(estadoTran.getAsChar());
+			genType.setParam(fechaIni);
+			genType.setParam(fechaFin);
+			ResultSet rs = (ResultSet) runGeneric(genType);
+			while(rs.next()) {
+				Transaccion transac = new Transaccion(null);
+				transac.setNroTransac(rs.getLong("nro_transac"));
+				transac.setPersona(pp.obtenerPersGenerico(rs.getLong("id_persona")));
+				char[] tipo = new char[1];
+				rs.getCharacterStream("operacion").read(tipo);
+				TipoTran tipoTx = TipoTran.getTipoTranPorChar(tipo[0]);
+				transac.setTipoTran(tipoTx);
+				char[] estado = new char[1];
+				rs.getCharacterStream("estado_act").read(estado);
+				EstadoTran estadoTx = EstadoTran.getEstadoTranPorChar(estado[0]);
+				transac.setEstadoTran(estadoTx);
+				transac.setFechaHora(new Fecha(rs.getTimestamp("fecha_hora")));
+				transac.setSubTotal(rs.getDouble("sub_total"));
+				transac.setIva(rs.getDouble("iva"));
+				transac.setTotal(rs.getDouble("total"));
+				listaTransac.add(transac);
+			}
+		} catch (ConectorException | SQLException | IOException e) {
+			Conector.rollbackConn();
+			logger.log(Level.FATAL, "Excepcion al obtenerListaTransaccionPorPersona: " + e.getMessage(), e);
+			throw new PersistenciaException(e);
+		}
+		return listaTransac;
+	}
+	
 	/*****************************************************************************************************************************************************/
 	
 	@Override

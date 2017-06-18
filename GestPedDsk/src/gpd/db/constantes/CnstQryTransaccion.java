@@ -28,6 +28,16 @@ public interface CnstQryTransaccion {
 															+ "AND (t.estado_act = ? OR '' = ?) "
 															+ "ORDER BY te.fecha_hora DESC";
 	
+	public static final String QRY_SELECT_TRAN_XPERIODO = "SELECT t.nro_transac, t.id_persona, t.operacion, t.fecha_hora, t.sub_total, t.iva, t.total, t.estado_act "
+															+ "FROM transaccion t "
+															+ "INNER JOIN tran_estado te "
+															+ "ON t.nro_transac = te.nro_transac "
+															+ "AND t.estado_act = te.estado "
+															+ "WHERE (operacion = ? OR '' = ?) "
+															+ "AND (t.estado_act = ? OR '' = ?) "
+															+ "AND (t.fecha_hora BETWEEN ? AND ?) "
+															+ "ORDER BY te.fecha_hora DESC";
+	
 	public static final String QRY_SELECT_ULT_TRANESTADO_XID = "SELECT te.estado FROM tran_estado te "
 															+ "WHERE te.nro_transac = ? "
 															+ "ORDER BY te.fecha_hora DESC "

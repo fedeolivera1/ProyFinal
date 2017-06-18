@@ -11,17 +11,26 @@ import gpd.persistencia.usuario.PersistenciaUsuario;
 public class ManagerUsuario {
 
 	private static final Logger logger = Logger.getLogger(ManagerUsuario.class);
-	private IPersUsuario interfaceUsuario;
+	private static IPersUsuario interfaceUsuario;
 	private Integer resultado;
 	
-
+	private static IPersUsuario getInterfaceUsuario() {
+		if(interfaceUsuario == null) {
+			interfaceUsuario = new PersistenciaUsuario();
+		}
+		return interfaceUsuario;
+	}
+	
+	/*****************************************************************************************************************************************************/
+	/** USUARIO */
+	/*****************************************************************************************************************************************************/
+	
 	public UsuarioDsk obtenerUsuario(String nombreUsuario, String passwd) {
 		logger.info("Se ingresa a obtenerUsuario para " + nombreUsuario);
 		UsuarioDsk usuario = null;
-		interfaceUsuario = new PersistenciaUsuario();
 		try {
 			Conector.getConn();
-			usuario = interfaceUsuario.obtenerUsuario(nombreUsuario, passwd);
+			usuario = getInterfaceUsuario().obtenerUsuario(nombreUsuario, passwd);
 			Conector.closeConn("obtenerUsuario", null);
 		} catch (PersistenciaException e) {
 			e.printStackTrace();//FIXME controlar
@@ -33,9 +42,8 @@ public class ManagerUsuario {
 		logger.info("Ingresa guardarUsuario");
 		if(usuario != null) {
 			try {
-				interfaceUsuario = new PersistenciaUsuario();
 				Conector.getConn();
-				resultado = interfaceUsuario.guardarUsuario(usuario);
+				resultado = getInterfaceUsuario().guardarUsuario(usuario);
 				Conector.closeConn("guardarUsuario", null);
 			} catch (PersistenciaException e) {
 				e.printStackTrace();//FIXME controlar
@@ -48,9 +56,8 @@ public class ManagerUsuario {
 		logger.info("Ingresa modificarUsuario");
 		if(usuario != null) {
 			try {
-				interfaceUsuario = new PersistenciaUsuario();
 				Conector.getConn();
-				resultado = interfaceUsuario.modificarUsuario(usuario);
+				resultado = getInterfaceUsuario().modificarUsuario(usuario);
 				Conector.closeConn("modificarUsuario", null);
 			} catch (PersistenciaException e) {
 				e.printStackTrace();//FIXME controlar
@@ -63,9 +70,8 @@ public class ManagerUsuario {
 		logger.info("Ingresa eliminarUsuario");
 		if(usuario != null) {
 			try {
-				interfaceUsuario = new PersistenciaUsuario();
 				Conector.getConn();
-				resultado = interfaceUsuario.eliminarUsuario(usuario);
+				resultado = getInterfaceUsuario().eliminarUsuario(usuario);
 				Conector.closeConn("eliminarUsuario", null);
 			} catch (PersistenciaException e) {
 				e.printStackTrace();//FIXME controlar

@@ -57,6 +57,12 @@ public class Lote implements Serializable {
 	public void setStock(Integer stock) {
 		this.stock = stock;
 	}
+	
+	
+	@Override
+	public String toString() {
+		return String.valueOf(idLote);
+	}
 
 	
 }
