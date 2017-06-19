@@ -12,6 +12,7 @@ import gpd.dominio.persona.TipoDoc;
 import gpd.dominio.persona.TipoPersona;
 import gpd.dominio.util.Origen;
 import gpd.dominio.util.Sinc;
+import gpd.exceptions.PresentacionException;
 import gpd.manager.persona.ManagerPersona;
 import gpd.types.Fecha;
 
@@ -54,7 +55,13 @@ public class ManagerPersonaTest {
 		cli.setUltAct(new Fecha(Fecha.AMDHMS));
 		
 		ManagerPersona mgrPersona = new ManagerPersona();
-		Integer resultado = mgrPersona.guardarPersFisica(cli);
+		Integer resultado = null;
+		try {
+			resultado = mgrPersona.guardarPersFisica(cli);
+		} catch (PresentacionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		assertTrue(1==resultado);
 	}
 
@@ -83,7 +90,13 @@ public class ManagerPersonaTest {
 		emp.setBse("bse");
 		
 		ManagerPersona mgrPersona = new ManagerPersona();
-		Integer resultado = mgrPersona.guardarPersJuridica(emp);
+		Integer resultado = null;
+		try {
+			resultado = mgrPersona.guardarPersJuridica(emp);
+		} catch (PresentacionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		assertTrue(1==resultado);
 	}
 

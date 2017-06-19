@@ -433,7 +433,7 @@ public class PersistenciaPersona extends Conector implements IPersPersona, CnstQ
 		} catch (ConectorException | SQLException | IOException e) {
 			Conector.rollbackConn();
 			logger.log(Level.FATAL, "Excepcion al obtenerListaTipoDoc: " + e.getMessage(), e);
-			throw new PersistenciaException(e.getMessage());
+			throw new PersistenciaException(e);
 		}
 		return listaPf;
 	}
@@ -508,7 +508,7 @@ public class PersistenciaPersona extends Conector implements IPersPersona, CnstQ
 		} catch (ConectorException | SQLException | IOException e) {
 			Conector.rollbackConn();
 			logger.log(Level.FATAL, "Excepcion al obtenerListaTipoDoc: " + e.getMessage(), e);
-			throw new PersistenciaException(e.getMessage());
+			throw new PersistenciaException(e);
 		}
 		return listaPj;
 	}
@@ -562,7 +562,7 @@ public class PersistenciaPersona extends Conector implements IPersPersona, CnstQ
 		} catch (ConectorException | SQLException | IOException e) {
 			Conector.rollbackConn();
 			logger.log(Level.FATAL, "Excepcion al obtenerListaTipoDoc: " + e.getMessage(), e);
-			throw new PersistenciaException(e.getMessage());
+			throw new PersistenciaException(e);
 		}
 		return listaPj;
 	}

@@ -22,8 +22,10 @@ import gpd.dominio.persona.Sexo;
 import gpd.dominio.persona.TipoDoc;
 import gpd.dominio.persona.TipoPersona;
 import gpd.dominio.util.Origen;
+import gpd.exceptions.PresentacionException;
 import gpd.manager.persona.ManagerPersona;
 import gpd.presentacion.formulario.FrmPersona;
+import gpd.presentacion.generic.CnstPresExceptions;
 import gpd.presentacion.generic.CnstPresGeneric;
 import gpd.presentacion.generic.GenCompType;
 import gpd.types.Fecha;
@@ -59,73 +61,88 @@ public class CtrlFrmPersona extends CtrlGenerico {
 	}
 
 	public void cargarCbxTipoDoc(JComboBox<TipoDoc> cbxPfTipoDoc) {
-		cbxPfTipoDoc.removeAllItems();
-		ArrayList<TipoDoc> listaTipoDoc = (ArrayList<TipoDoc>) mgrPers.obtenerListaTipoDoc();
-		for(TipoDoc tipoDoc : listaTipoDoc) {
-			cbxPfTipoDoc.addItem(tipoDoc);
+		try {
+			cbxPfTipoDoc.removeAllItems();
+			ArrayList<TipoDoc> listaTipoDoc = (ArrayList<TipoDoc>) mgrPers.obtenerListaTipoDoc();
+			for(TipoDoc tipoDoc : listaTipoDoc) {
+				cbxPfTipoDoc.addItem(tipoDoc);
+			}
+			cbxPfTipoDoc.setSelectedIndex(-1);
+		} catch (PresentacionException e) {
+			enviarError(CnstPresExceptions.DB, e.getMessage());
 		}
-		cbxPfTipoDoc.setSelectedIndex(-1);
 	}
 	
 	public void cargarCbxDep(JComboBox<Departamento> cbxDep) {
-		cbxDep.removeAllItems();
-		ArrayList<Departamento> listaDep = (ArrayList<Departamento>) mgrPers.obtenerListaDepartamento();
-		for(Departamento dep : listaDep) {
-			cbxDep.addItem(dep);
+		try {
+			cbxDep.removeAllItems();
+			ArrayList<Departamento> listaDep = (ArrayList<Departamento>) mgrPers.obtenerListaDepartamento();
+			for(Departamento dep : listaDep) {
+				cbxDep.addItem(dep);
+			}
+			cbxDep.setSelectedIndex(-1);
+		} catch (PresentacionException e) {
+			enviarError(CnstPresExceptions.DB, e.getMessage());
 		}
-		cbxDep.setSelectedIndex(-1);
 	}
 	
 	public void cargarCbxLoc(JComboBox<Departamento> cbxDep, JComboBox<Localidad> cbxLoc) {
-		cbxLoc.removeAllItems();
-		if(controlDatosObl(cbxDep)) {
-			Departamento dep = (Departamento) cbxDep.getSelectedItem();
-			ArrayList<Localidad> listaLoc = (ArrayList<Localidad>) mgrPers.obtenerListaLocalidadPorDep(dep.getIdDepartamento());
-			for(Localidad loc : listaLoc) {
-				cbxLoc.addItem(loc);
+		try {
+			cbxLoc.removeAllItems();
+			if(controlDatosObl(cbxDep)) {
+				Departamento dep = (Departamento) cbxDep.getSelectedItem();
+				ArrayList<Localidad> listaLoc = (ArrayList<Localidad>) mgrPers.obtenerListaLocalidadPorDep(dep.getIdDepartamento());
+				for(Localidad loc : listaLoc) {
+					cbxLoc.addItem(loc);
+				}
 			}
+		} catch (PresentacionException e) {
+			enviarError(CnstPresExceptions.DB, e.getMessage());
 		}
 	}
 	
 	public void cargarJtPersFisica(List<PersonaFisica> listaPf) {
-		JTable tabla = frmPers.getJtPersFisica();
-		clearTable(tabla);
-		if(listaPf != null && !listaPf.isEmpty()) {
-			DefaultTableModel modeloJtPf = new DefaultTableModel();
-			tabla.setModel(modeloJtPf);
-			modeloJtPf.addColumn("Doc");
-			modeloJtPf.addColumn("Nombre");
-			modeloJtPf.addColumn("Direccion");
-			modeloJtPf.addColumn("Telefono");
-			modeloJtPf.addColumn("Celular");
-			modeloJtPf.addColumn("Email");
-			for(PersonaFisica pf : listaPf) {
-				Object [] fila = new Object[6];
-				fila[0] = pf.getDocumento();
-				fila[1] = pf.getNombre1() + " " + pf.getApellido1();
-				fila[2] = pf.getDireccion() + " " + pf.getPuerta();
-				fila[3] = pf.getTelefono();
-				fila[4] = pf.getCelular();
-				fila[5] = pf.getEmail();
-				modeloJtPf.addRow(fila);
-			}
-			tabla.addMouseListener(new MouseAdapter() {
-				@Override
-				public void mouseClicked(MouseEvent e) {
-					int fila = tabla.rowAtPoint(e.getPoint());
-//		        	int columna = tabla.columnAtPoint(e.getPoint());
-					if (fila > -1 && tabla.getModel().getColumnCount() > 1) {
-						Long documento = (Long) tabla.getModel().getValueAt(fila, 0);
-						PersonaFisica pf = mgrPers.obtenerPersFisicaPorId(documento);
-						//obtengo jpanel contenedor de la tabla (2 niveles up)
-						Container containerJTable = tabla.getParent().getParent().getParent();
-						cargarControlesPersFisica(pf, containerJTable);
-					}
+			JTable tabla = frmPers.getJtPersFisica();
+			clearTable(tabla);
+			if(listaPf != null && !listaPf.isEmpty()) {
+				DefaultTableModel modeloJtPf = new DefaultTableModel();
+				tabla.setModel(modeloJtPf);
+				modeloJtPf.addColumn("Doc");
+				modeloJtPf.addColumn("Nombre");
+				modeloJtPf.addColumn("Direccion");
+				modeloJtPf.addColumn("Telefono");
+				modeloJtPf.addColumn("Celular");
+				modeloJtPf.addColumn("Email");
+				for(PersonaFisica pf : listaPf) {
+					Object [] fila = new Object[6];
+					fila[0] = pf.getDocumento();
+					fila[1] = pf.getNombre1() + " " + pf.getApellido1();
+					fila[2] = pf.getDireccion() + " " + pf.getPuerta();
+					fila[3] = pf.getTelefono();
+					fila[4] = pf.getCelular();
+					fila[5] = pf.getEmail();
+					modeloJtPf.addRow(fila);
 				}
-			});
-		} else {
-			cargarJTableVacia(tabla, null);
-		}
+				tabla.addMouseListener(new MouseAdapter() {
+					@Override
+					public void mouseClicked(MouseEvent me) {
+						try {
+							int fila = tabla.rowAtPoint(me.getPoint());
+							if (fila > -1 && tabla.getModel().getColumnCount() > 1) {
+								Long documento = (Long) tabla.getModel().getValueAt(fila, 0);
+								PersonaFisica pf = mgrPers.obtenerPersFisicaPorId(documento);
+								//obtengo jpanel contenedor de la tabla (2 niveles up)
+								Container containerJTable = tabla.getParent().getParent().getParent();
+								cargarControlesPersFisica(pf, containerJTable);
+							}
+						} catch (PresentacionException e) {
+							enviarError(CnstPresExceptions.DB, e.getMessage());
+						}
+					}
+				});
+			} else {
+				cargarJTableVacia(tabla, null);
+			}
 	}
 	
 	public void cargarJtPersJuridica(List<PersonaJuridica> listaPj) {
@@ -152,14 +169,18 @@ public class CtrlFrmPersona extends CtrlGenerico {
 			}
 			tabla.addMouseListener(new MouseAdapter() {
 				@Override
-				public void mouseClicked(MouseEvent e) {
-					int fila = tabla.rowAtPoint(e.getPoint());
-					if (fila > -1) {
-						Long rut = (Long) tabla.getModel().getValueAt(fila, 0);
-						PersonaJuridica pj = mgrPers.obtenerPersJuridicaPorId(rut);
-						//obtengo jpanel contenedor de la tabla (2 niveles up)
-						Container containerJTable = tabla.getParent().getParent().getParent();
-						cargarControlesPersJuridica(pj, containerJTable);
+				public void mouseClicked(MouseEvent me) {
+					try {
+						int fila = tabla.rowAtPoint(me.getPoint());
+						if (fila > -1) {
+							Long rut = (Long) tabla.getModel().getValueAt(fila, 0);
+							PersonaJuridica pj = mgrPers.obtenerPersJuridicaPorId(rut);
+							//obtengo jpanel contenedor de la tabla (2 niveles up)
+							Container containerJTable = tabla.getParent().getParent().getParent();
+							cargarControlesPersJuridica(pj, containerJTable);
+						}
+					} catch (PresentacionException e) {
+						enviarError(CnstPresExceptions.DB, e.getMessage());
 					}
 				}
 			});
@@ -235,11 +256,15 @@ public class CtrlFrmPersona extends CtrlGenerico {
 	public void buscarPersFisica(JTextField txtPfDoc, JTextField txtPfApe1, JTextField txtPfApe2, JTextField txtPfNom1,
 			JTextField txtPfNom2, JComboBox<Sexo> cbxPfSexo, JTextField txtPfDir, JTextField txtPfTel, JTextField txtPfCel, 
 			JTextField txtPfEml, JComboBox<Localidad> cbxPfLoc) {
-		Long doc = ctrlNumLong(txtPfDoc.getText()) ? new Long(txtPfDoc.getText()) : null;
-		ArrayList<PersonaFisica> listaPf = (ArrayList<PersonaFisica>) mgrPers.obtenerBusquedaPersFisica(doc, txtPfApe1.getText(), txtPfApe2.getText(), 
-				txtPfNom1.getText(), txtPfNom2.getText(), (Sexo) cbxPfSexo.getSelectedItem(), txtPfDir.getText(), txtPfTel.getText(), txtPfCel.getText(), 
-				txtPfEml.getText(), (Localidad) cbxPfLoc.getSelectedItem());
+		try {
+			Long doc = ctrlNumLong(txtPfDoc.getText()) ? new Long(txtPfDoc.getText()) : null;
+			ArrayList<PersonaFisica> listaPf = (ArrayList<PersonaFisica>) mgrPers.obtenerBusquedaPersFisica(doc, txtPfApe1.getText(), txtPfApe2.getText(), 
+					txtPfNom1.getText(), txtPfNom2.getText(), (Sexo) cbxPfSexo.getSelectedItem(), txtPfDir.getText(), txtPfTel.getText(), txtPfCel.getText(), 
+					txtPfEml.getText(), (Localidad) cbxPfLoc.getSelectedItem());
 			cargarJtPersFisica(listaPf);
+		} catch (PresentacionException e) {
+			enviarError(CnstPresExceptions.DB, e.getMessage());
+		}	
 	}
 	
 	public void agregarPersFisica(JComboBox<TipoDoc> cbxPfTipoDoc, JTextField txtPfDoc, JTextField txtPfApe1, JTextField txtPfApe2, JTextField txtPfNom1,
@@ -247,49 +272,53 @@ public class CtrlFrmPersona extends CtrlGenerico {
 			JTextField txtPfPue, JTextField txtPfSol, JTextField txtPfMan, JTextField txtPfKm, JTextField txtPfComp,
 			JTextField txtPfTel, JTextField txtPfCel, JTextField txtPfEml, JComboBox<Localidad> cbxPersLoc) {
 
-		GenCompType genComp = new GenCompType();
-		genComp.setComp(cbxPfTipoDoc);
-		genComp.setComp(txtPfDoc);
-		genComp.setComp(txtPfApe1);
-		genComp.setComp(txtPfNom1);
-		genComp.setComp(txtPfDir);
-		genComp.setComp(cbxPfSexo);
-		genComp.setComp(cbxPersLoc);
-		
-		if(controlDatosObl(genComp)) {
-			PersonaFisica pf = new PersonaFisica();
-			TipoDoc tipoDoc = (TipoDoc) cbxPfTipoDoc.getSelectedItem();
-			pf.setTipoDoc(tipoDoc);
-			//datos pf
-			pf.setDocumento(new Long(txtPfDoc.getText()));
-			pf.setApellido1(txtPfApe1.getText());
-			pf.setApellido2(txtPfApe2.getText());
-			pf.setNombre1(txtPfNom1.getText());
-			pf.setNombre2(txtPfNom2.getText());
-			pf.setFechaNac(convertirFechaDesdeTxt(txtPfFnac.getText()));
-			pf.setSexo((Sexo) cbxPfSexo.getSelectedItem());
-			//datos persona
-			pf.setDireccion(txtPfDir.getText());
-			pf.setPuerta(txtPfPue.getText());
-			pf.setSolar(txtPfSol.getText());
-			pf.setManzana(txtPfMan.getText());
-			pf.setKm(ctrlNumDec(txtPfKm.getText()) ? new Float(txtPfKm.getText()) : null);
-			pf.setComplemento(txtPfComp.getText());
-			pf.setTelefono(txtPfTel.getText());
-			pf.setCelular(txtPfCel.getText());
-			pf.setEmail(txtPfEml.getText());
-			pf.setFechaReg(new Fecha(Fecha.AMD));
-			pf.setTipoPers(TipoPersona.F);
-			Localidad loc = (Localidad) cbxPersLoc.getSelectedItem();
-			pf.setLocalidad(loc);
-			pf.setOrigen(Origen.D);
-			mgrPers.guardarPersFisica(pf);
-			clearPanel(frmPers.getContentPane());
-			List<PersonaFisica> lst = new ArrayList<>();
-			lst.add(pf);
-			cargarJtPersFisica(lst);
-		} else {
-			enviarWarning(CnstPresGeneric.PERS, CnstPresGeneric.DATOS_OBLIG);
+		try {
+			GenCompType genComp = new GenCompType();
+			genComp.setComp(cbxPfTipoDoc);
+			genComp.setComp(txtPfDoc);
+			genComp.setComp(txtPfApe1);
+			genComp.setComp(txtPfNom1);
+			genComp.setComp(txtPfDir);
+			genComp.setComp(cbxPfSexo);
+			genComp.setComp(cbxPersLoc);
+			
+			if(controlDatosObl(genComp)) {
+				PersonaFisica pf = new PersonaFisica();
+				TipoDoc tipoDoc = (TipoDoc) cbxPfTipoDoc.getSelectedItem();
+				pf.setTipoDoc(tipoDoc);
+				//datos pf
+				pf.setDocumento(new Long(txtPfDoc.getText()));
+				pf.setApellido1(txtPfApe1.getText());
+				pf.setApellido2(txtPfApe2.getText());
+				pf.setNombre1(txtPfNom1.getText());
+				pf.setNombre2(txtPfNom2.getText());
+				pf.setFechaNac(convertirFechaDesdeTxt(txtPfFnac.getText()));
+				pf.setSexo((Sexo) cbxPfSexo.getSelectedItem());
+				//datos persona
+				pf.setDireccion(txtPfDir.getText());
+				pf.setPuerta(txtPfPue.getText());
+				pf.setSolar(txtPfSol.getText());
+				pf.setManzana(txtPfMan.getText());
+				pf.setKm(ctrlNumDec(txtPfKm.getText()) ? new Float(txtPfKm.getText()) : null);
+				pf.setComplemento(txtPfComp.getText());
+				pf.setTelefono(txtPfTel.getText());
+				pf.setCelular(txtPfCel.getText());
+				pf.setEmail(txtPfEml.getText());
+				pf.setFechaReg(new Fecha(Fecha.AMD));
+				pf.setTipoPers(TipoPersona.F);
+				Localidad loc = (Localidad) cbxPersLoc.getSelectedItem();
+				pf.setLocalidad(loc);
+				pf.setOrigen(Origen.D);
+				mgrPers.guardarPersFisica(pf);
+				clearPanel(frmPers.getContentPane());
+				List<PersonaFisica> lst = new ArrayList<>();
+				lst.add(pf);
+				cargarJtPersFisica(lst);
+			} else {
+				enviarWarning(CnstPresGeneric.PERS, CnstPresGeneric.DATOS_OBLIG);
+			}
+		} catch (PresentacionException e) {
+			enviarError(CnstPresExceptions.DB, e.getMessage());
 		}
 	}
 	
@@ -297,170 +326,192 @@ public class CtrlFrmPersona extends CtrlGenerico {
 			JTextField txtPfNom2, JTextField txtPfFnac, JComboBox<Sexo> cbxPfSexo, JTextField txtPfDir,
 			JTextField txtPfPue, JTextField txtPfSol, JTextField txtPfMan, JTextField txtPfKm, JTextField txtPfComp,
 			JTextField txtPfTel, JTextField txtPfCel, JTextField txtPfEml, JComboBox<Localidad> cbxPersLoc) {
-		GenCompType genComp = new GenCompType();
-		genComp.setComp(cbxPfTipoDpc);
-		genComp.setComp(txtPfDoc);
-		genComp.setComp(txtPfApe1);
-		genComp.setComp(txtPfNom1);
-		genComp.setComp(txtPfDir);
-		genComp.setComp(cbxPfSexo);
-		genComp.setComp(cbxPersLoc);
-		
-		if(controlDatosObl(genComp)) {
-			PersonaFisica pf = new PersonaFisica();
-			TipoDoc tipoDoc = (TipoDoc) cbxPfTipoDpc.getSelectedItem();
-			pf.setTipoDoc(tipoDoc);
-			//datos pf
-			pf.setDocumento(ctrlNumLong(txtPfDoc.getText()) ? new Long(txtPfDoc.getText()): null);
-			pf.setApellido1(txtPfApe1.getText());
-			pf.setApellido2(txtPfApe2.getText());
-			pf.setNombre1(txtPfNom1.getText());
-			pf.setNombre2(txtPfNom2.getText());
-			pf.setFechaNac(convertirFechaDesdeTxt(txtPfFnac.getText()));
-			pf.setSexo((Sexo) cbxPfSexo.getSelectedItem());
-			//datos persona
-			pf.setDireccion(txtPfDir.getText());
-			pf.setPuerta(txtPfPue.getText());
-			pf.setSolar(txtPfSol.getText());
-			pf.setManzana(txtPfMan.getText());
-			pf.setKm(ctrlNumDec(txtPfKm.getText()) ? new Float(txtPfKm.getText()) : null);
-			pf.setComplemento(txtPfComp.getText());
-			pf.setTelefono(txtPfTel.getText());
-			pf.setCelular(txtPfCel.getText());
-			pf.setEmail(txtPfEml.getText());
-			pf.setFechaReg(new Fecha(Fecha.AMD));
-			pf.setTipoPers(TipoPersona.F);
-			Localidad loc = (Localidad) cbxPersLoc.getSelectedItem();
-			pf.setLocalidad(loc);
-			pf.setOrigen(Origen.D);
-			mgrPers.modificarPersFisica(pf);
-			clearPanel(frmPers.getContentPane());
-			List<PersonaFisica> lst = new ArrayList<>();
-			lst.add(pf);
-			cargarJtPersFisica(lst);
-		} else {
-			enviarWarning(CnstPresGeneric.PERS, CnstPresGeneric.DATOS_OBLIG);
+		try {
+			GenCompType genComp = new GenCompType();
+			genComp.setComp(cbxPfTipoDpc);
+			genComp.setComp(txtPfDoc);
+			genComp.setComp(txtPfApe1);
+			genComp.setComp(txtPfNom1);
+			genComp.setComp(txtPfDir);
+			genComp.setComp(cbxPfSexo);
+			genComp.setComp(cbxPersLoc);
+			
+			if(controlDatosObl(genComp)) {
+				PersonaFisica pf = new PersonaFisica();
+				TipoDoc tipoDoc = (TipoDoc) cbxPfTipoDpc.getSelectedItem();
+				pf.setTipoDoc(tipoDoc);
+				//datos pf
+				pf.setDocumento(ctrlNumLong(txtPfDoc.getText()) ? new Long(txtPfDoc.getText()): null);
+				pf.setApellido1(txtPfApe1.getText());
+				pf.setApellido2(txtPfApe2.getText());
+				pf.setNombre1(txtPfNom1.getText());
+				pf.setNombre2(txtPfNom2.getText());
+				pf.setFechaNac(convertirFechaDesdeTxt(txtPfFnac.getText()));
+				pf.setSexo((Sexo) cbxPfSexo.getSelectedItem());
+				//datos persona
+				pf.setDireccion(txtPfDir.getText());
+				pf.setPuerta(txtPfPue.getText());
+				pf.setSolar(txtPfSol.getText());
+				pf.setManzana(txtPfMan.getText());
+				pf.setKm(ctrlNumDec(txtPfKm.getText()) ? new Float(txtPfKm.getText()) : null);
+				pf.setComplemento(txtPfComp.getText());
+				pf.setTelefono(txtPfTel.getText());
+				pf.setCelular(txtPfCel.getText());
+				pf.setEmail(txtPfEml.getText());
+				pf.setFechaReg(new Fecha(Fecha.AMD));
+				pf.setTipoPers(TipoPersona.F);
+				Localidad loc = (Localidad) cbxPersLoc.getSelectedItem();
+				pf.setLocalidad(loc);
+				pf.setOrigen(Origen.D);
+				mgrPers.modificarPersFisica(pf);
+				clearPanel(frmPers.getContentPane());
+				List<PersonaFisica> lst = new ArrayList<>();
+				lst.add(pf);
+				cargarJtPersFisica(lst);
+			} else {
+				enviarWarning(CnstPresGeneric.PERS, CnstPresGeneric.DATOS_OBLIG);
+			}
+		} catch (PresentacionException e) {
+			enviarError(CnstPresExceptions.DB, e.getMessage());
 		}
 	}
 	
 	public void eliminarPersFisica(JTextField txtPfDoc) {
-		GenCompType genComp = new GenCompType();
-		genComp.setComp(txtPfDoc);
-		if(controlDatosObl(genComp)) {
-			PersonaFisica pf = mgrPers.obtenerPersFisicaPorId(ctrlNumLong(txtPfDoc.getText()) ? new Long(txtPfDoc.getText()): null);
-			mgrPers.eliminarPersFisica(pf);
-			clearPanel(frmPers.getContentPane());
-		} else {
-			enviarWarning(CnstPresGeneric.PERS, CnstPresGeneric.DATOS_OBLIG);
+		try {
+			GenCompType genComp = new GenCompType();
+			genComp.setComp(txtPfDoc);
+			if(controlDatosObl(genComp)) {
+				PersonaFisica pf = mgrPers.obtenerPersFisicaPorId(ctrlNumLong(txtPfDoc.getText()) ? new Long(txtPfDoc.getText()): null);
+				mgrPers.eliminarPersFisica(pf);
+				clearPanel(frmPers.getContentPane());
+			} else {
+				enviarWarning(CnstPresGeneric.PERS, CnstPresGeneric.DATOS_OBLIG);
+			}
+		} catch (PresentacionException e) {
+			enviarError(CnstPresExceptions.DB, e.getMessage());
 		}
-		
 	}
 	
 	public void buscarPersJuridica(JTextField txtPjRut, JTextField txtPjNom, JTextField txtPjRs, JTextField txtPjBps,
 			JTextField txtPjBse, JCheckBox chkPjProv, JTextField txtPjDir, JTextField txtPjTel, JTextField txtPjCel, 
 			JTextField txtPjEml, JComboBox<Localidad> cbxPjLoc) {
-		Long rut = ctrlNumLong(txtPjRut.getText()) ? new Long(txtPjRut.getText()) : null;
-		List<PersonaJuridica> listaPj = (ArrayList<PersonaJuridica>) mgrPers.obtenerBusquedaPersJuridica(rut, txtPjNom.getText(), txtPjRs.getText(), 
-				txtPjBps.getText(), txtPjBse.getText(), Boolean.valueOf(chkPjProv.isSelected()), txtPjDir.getText(), txtPjTel.getText(), txtPjCel.getText(), 
-				txtPjEml.getText(), (Localidad) cbxPjLoc.getSelectedItem());
+		try {
+			Long rut = ctrlNumLong(txtPjRut.getText()) ? new Long(txtPjRut.getText()) : null;
+			List<PersonaJuridica> listaPj = (ArrayList<PersonaJuridica>) mgrPers.obtenerBusquedaPersJuridica(rut, txtPjNom.getText(), txtPjRs.getText(), 
+					txtPjBps.getText(), txtPjBse.getText(), Boolean.valueOf(chkPjProv.isSelected()), txtPjDir.getText(), txtPjTel.getText(), txtPjCel.getText(), 
+					txtPjEml.getText(), (Localidad) cbxPjLoc.getSelectedItem());
 			cargarJtPersJuridica(listaPj);
+		} catch (PresentacionException e) {
+			enviarError(CnstPresExceptions.DB, e.getMessage());
+		}
 	}
 	
 	public void agregarPersJuridica(JTextField txtPjRut, JTextField txtPjNom, JTextField txtPjRs, JTextField txtPjBps, JTextField txtPjBse, 
 			JCheckBox chkPjProv, JTextField txtPfDir, JTextField txtPfPue, JTextField txtPfSol, JTextField txtPfMan, JTextField txtPfKm, 
 			JTextField txtPfComp, JTextField txtPfTel, JTextField txtPfCel, JTextField txtPfEml, JComboBox<Localidad> cbxPersLoc) {
-		GenCompType genComp = new GenCompType();
-		genComp.setComp(txtPjRut);
-		genComp.setComp(txtPjNom);
-		genComp.setComp(txtPfDir);
-		genComp.setComp(cbxPersLoc);
-		if(controlDatosObl(genComp)) {
-			PersonaJuridica pj = new PersonaJuridica();
-			//datos pj
-			pj.setRut(ctrlNumLong(txtPjRut.getText()) ? new Long(txtPjRut.getText()): null);
-			pj.setNombre(txtPjNom.getText());
-			pj.setRazonSocial(txtPjRs.getText());
-			pj.setBps(txtPjBps.getText());
-			pj.setBse(txtPjBse.getText());
-			pj.setEsProv(chkPjProv.isSelected());
-			//datos persona
-			pj.setDireccion(txtPfDir.getText());
-			pj.setPuerta(txtPfPue.getText());
-			pj.setSolar(txtPfSol.getText());
-			pj.setManzana(txtPfMan.getText());
-			pj.setKm(ctrlNumDec(txtPfKm.getText()) ? new Float(txtPfKm.getText()) : null);
-			pj.setComplemento(txtPfComp.getText());
-			pj.setTelefono(txtPfTel.getText());
-			pj.setCelular(txtPfCel.getText());
-			pj.setEmail(txtPfEml.getText());
-			pj.setFechaReg(new Fecha(Fecha.AMD));
-			pj.setTipoPers(TipoPersona.J);
-			Localidad loc = (Localidad) cbxPersLoc.getSelectedItem();
-			pj.setLocalidad(loc);
-			pj.setOrigen(Origen.D);
-			mgrPers.guardarPersJuridica(pj);
-			clearPanel(frmPers.getContentPane());
-			List<PersonaJuridica> lst = new ArrayList<>();
-			lst.add(pj);
-			cargarJtPersJuridica(lst);
-		} else {
-			enviarWarning(CnstPresGeneric.PERS, CnstPresGeneric.DATOS_OBLIG);
+		try {
+			GenCompType genComp = new GenCompType();
+			genComp.setComp(txtPjRut);
+			genComp.setComp(txtPjNom);
+			genComp.setComp(txtPfDir);
+			genComp.setComp(cbxPersLoc);
+			if(controlDatosObl(genComp)) {
+				PersonaJuridica pj = new PersonaJuridica();
+				//datos pj
+				pj.setRut(ctrlNumLong(txtPjRut.getText()) ? new Long(txtPjRut.getText()): null);
+				pj.setNombre(txtPjNom.getText());
+				pj.setRazonSocial(txtPjRs.getText());
+				pj.setBps(txtPjBps.getText());
+				pj.setBse(txtPjBse.getText());
+				pj.setEsProv(chkPjProv.isSelected());
+				//datos persona
+				pj.setDireccion(txtPfDir.getText());
+				pj.setPuerta(txtPfPue.getText());
+				pj.setSolar(txtPfSol.getText());
+				pj.setManzana(txtPfMan.getText());
+				pj.setKm(ctrlNumDec(txtPfKm.getText()) ? new Float(txtPfKm.getText()) : null);
+				pj.setComplemento(txtPfComp.getText());
+				pj.setTelefono(txtPfTel.getText());
+				pj.setCelular(txtPfCel.getText());
+				pj.setEmail(txtPfEml.getText());
+				pj.setFechaReg(new Fecha(Fecha.AMD));
+				pj.setTipoPers(TipoPersona.J);
+				Localidad loc = (Localidad) cbxPersLoc.getSelectedItem();
+				pj.setLocalidad(loc);
+				pj.setOrigen(Origen.D);
+				mgrPers.guardarPersJuridica(pj);
+				clearPanel(frmPers.getContentPane());
+				List<PersonaJuridica> lst = new ArrayList<>();
+				lst.add(pj);
+				cargarJtPersJuridica(lst);
+			} else {
+				enviarWarning(CnstPresGeneric.PERS, CnstPresGeneric.DATOS_OBLIG);
+			}
+		} catch (PresentacionException e) {
+			enviarError(CnstPresExceptions.DB, e.getMessage());
 		}
 	}
 	
 	public void modificarPersJuridica(JTextField txtPjRut, JTextField txtPjNom, JTextField txtPjRs, JTextField txtPjBps, JTextField txtPjBse, 
 			JCheckBox chkPjProv, JTextField txtPfDir, JTextField txtPfPue, JTextField txtPfSol, JTextField txtPfMan, JTextField txtPfKm, 
 			JTextField txtPfComp, JTextField txtPfTel, JTextField txtPfCel, JTextField txtPfEml, JComboBox<Localidad> cbxPersLoc) {
-		GenCompType genComp = new GenCompType();
-		genComp.setComp(txtPjRut);
-		genComp.setComp(txtPjNom);
-		genComp.setComp(txtPfDir);
-		genComp.setComp(cbxPersLoc);
-		if(controlDatosObl(genComp)) {
-			PersonaJuridica pj = new PersonaJuridica();
-			//datos pj
-			pj.setRut(ctrlNumLong(txtPjRut.getText()) ? new Long(txtPjRut.getText()): null);
-			pj.setNombre(txtPjNom.getText());
-			pj.setRazonSocial(txtPjRs.getText());
-			pj.setBps(txtPjBps.getText());
-			pj.setBse(txtPjBse.getText());
-			pj.setEsProv(chkPjProv.isSelected());
-			//datos persona
-			pj.setDireccion(txtPfDir.getText());
-			pj.setPuerta(txtPfPue.getText());
-			pj.setSolar(txtPfSol.getText());
-			pj.setManzana(txtPfMan.getText());
-			pj.setKm(ctrlNumDec(txtPfKm.getText()) ? new Float(txtPfKm.getText()) : null);
-			pj.setComplemento(txtPfComp.getText());
-			pj.setTelefono(txtPfTel.getText());
-			pj.setCelular(txtPfCel.getText());
-			pj.setEmail(txtPfEml.getText());
-			pj.setFechaReg(new Fecha(Fecha.AMD));
-			pj.setTipoPers(TipoPersona.J);
-			Localidad loc = (Localidad) cbxPersLoc.getSelectedItem();
-			pj.setLocalidad(loc);
-			pj.setOrigen(Origen.D);
-			mgrPers.modificarPersJuridica(pj);
-			clearPanel(frmPers.getContentPane());
-			List<PersonaJuridica> lst = new ArrayList<>();
-			lst.add(pj);
-			cargarJtPersJuridica(lst);
-		} else {
-			enviarWarning(CnstPresGeneric.PERS, CnstPresGeneric.DATOS_OBLIG);
+		try {
+			GenCompType genComp = new GenCompType();
+			genComp.setComp(txtPjRut);
+			genComp.setComp(txtPjNom);
+			genComp.setComp(txtPfDir);
+			genComp.setComp(cbxPersLoc);
+			if(controlDatosObl(genComp)) {
+				PersonaJuridica pj = new PersonaJuridica();
+				//datos pj
+				pj.setRut(ctrlNumLong(txtPjRut.getText()) ? new Long(txtPjRut.getText()): null);
+				pj.setNombre(txtPjNom.getText());
+				pj.setRazonSocial(txtPjRs.getText());
+				pj.setBps(txtPjBps.getText());
+				pj.setBse(txtPjBse.getText());
+				pj.setEsProv(chkPjProv.isSelected());
+				//datos persona
+				pj.setDireccion(txtPfDir.getText());
+				pj.setPuerta(txtPfPue.getText());
+				pj.setSolar(txtPfSol.getText());
+				pj.setManzana(txtPfMan.getText());
+				pj.setKm(ctrlNumDec(txtPfKm.getText()) ? new Float(txtPfKm.getText()) : null);
+				pj.setComplemento(txtPfComp.getText());
+				pj.setTelefono(txtPfTel.getText());
+				pj.setCelular(txtPfCel.getText());
+				pj.setEmail(txtPfEml.getText());
+				pj.setFechaReg(new Fecha(Fecha.AMD));
+				pj.setTipoPers(TipoPersona.J);
+				Localidad loc = (Localidad) cbxPersLoc.getSelectedItem();
+				pj.setLocalidad(loc);
+				pj.setOrigen(Origen.D);
+				mgrPers.modificarPersJuridica(pj);
+				clearPanel(frmPers.getContentPane());
+				List<PersonaJuridica> lst = new ArrayList<>();
+				lst.add(pj);
+				cargarJtPersJuridica(lst);
+			} else {
+				enviarWarning(CnstPresGeneric.PERS, CnstPresGeneric.DATOS_OBLIG);
+			}
+		} catch (PresentacionException e) {
+			enviarError(CnstPresExceptions.DB, e.getMessage());
 		}
 	}
 	
 	public void eliminarPersJuridica(JTextField txtPjRut) {
-		GenCompType genComp = new GenCompType();
-		genComp.setComp(txtPjRut);
-		if(controlDatosObl(genComp)) {
-			PersonaJuridica pj = mgrPers.obtenerPersJuridicaPorId(ctrlNumLong(txtPjRut.getText()) ? new Long(txtPjRut.getText()): null);
-			mgrPers.eliminarPersJuridica(pj);
-			clearPanel(frmPers.getContentPane());
-		} else {
-			enviarWarning(CnstPresGeneric.PERS, CnstPresGeneric.DATOS_OBLIG);
+		try {
+			GenCompType genComp = new GenCompType();
+			genComp.setComp(txtPjRut);
+			if(controlDatosObl(genComp)) {
+				PersonaJuridica pj = mgrPers.obtenerPersJuridicaPorId(ctrlNumLong(txtPjRut.getText()) ? new Long(txtPjRut.getText()): null);
+				mgrPers.eliminarPersJuridica(pj);
+				clearPanel(frmPers.getContentPane());
+			} else {
+				enviarWarning(CnstPresGeneric.PERS, CnstPresGeneric.DATOS_OBLIG);
+			}
+		} catch (PresentacionException e) {
+			enviarError(CnstPresExceptions.DB, e.getMessage());
 		}
-		
 	}
 	
 	

@@ -103,7 +103,7 @@ public class PersistenciaTipoDoc extends Conector implements IPersTipoDoc, CnstQ
 		} catch (ConectorException | SQLException e) {
 			Conector.rollbackConn();
 			logger.log(Level.FATAL, "Excepcion al obtenerListaTipoDoc: " + e.getMessage(), e);
-			throw new PersistenciaException(e.getMessage());
+			throw new PersistenciaException(e);
 		}
 		return listaTipoDoc;
 	}

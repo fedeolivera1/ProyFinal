@@ -21,10 +21,12 @@ import gpd.dominio.transaccion.EstadoTran;
 import gpd.dominio.transaccion.TipoTran;
 import gpd.dominio.transaccion.TranLinea;
 import gpd.dominio.transaccion.Transaccion;
+import gpd.exceptions.PresentacionException;
 import gpd.manager.persona.ManagerPersona;
 import gpd.manager.producto.ManagerProducto;
 import gpd.manager.transaccion.ManagerTransaccion;
 import gpd.presentacion.formulario.FrmMovimiento;
+import gpd.presentacion.generic.CnstPresExceptions;
 import gpd.presentacion.generic.CnstPresGeneric;
 import gpd.presentacion.generic.GenCompType;
 import gpd.types.Fecha;
@@ -50,46 +52,63 @@ public class CtrlFrmMovimiento extends CtrlGenerico {
 	/*****************************************************************************************************************************************************/
 	
 	public void cargarCbxProveedor(JComboBox<PersonaJuridica> cbxCompraProv) {
-		cbxCompraProv.removeAllItems();
-		List<PersonaJuridica> listaPj = (ArrayList<PersonaJuridica>) mgrPers.obtenerListaProveedor();
-		if(listaPj != null && !listaPj.isEmpty()) {
-			for(PersonaJuridica pj : listaPj) {
-				cbxCompraProv.addItem(pj);
+		try {
+			cbxCompraProv.removeAllItems();
+			List<PersonaJuridica> listaPj;
+			listaPj = (ArrayList<PersonaJuridica>) mgrPers.obtenerListaProveedor();
+			if(listaPj != null && !listaPj.isEmpty()) {
+				for(PersonaJuridica pj : listaPj) {
+					cbxCompraProv.addItem(pj);
+				}
+				cbxCompraProv.setSelectedIndex(-1);
 			}
-			cbxCompraProv.setSelectedIndex(-1);
+		} catch (PresentacionException  e) {
+			enviarError(CnstPresExceptions.DB, e.getMessage());
 		}
 	}
 	
 	public void cargarCbxUtil(JComboBox<Utilidad> cbxUtil) {
-		cbxUtil.removeAllItems();
-		List<Utilidad> listaUtil = (ArrayList<Utilidad>) mgrProd.obtenerListaUtilidad();
-		if(listaUtil != null && !listaUtil.isEmpty()) {
-			for(Utilidad util : listaUtil) {
-				cbxUtil.addItem(util);
+		try {
+			cbxUtil.removeAllItems();
+			List<Utilidad> listaUtil = (ArrayList<Utilidad>) mgrProd.obtenerListaUtilidad();
+			if(listaUtil != null && !listaUtil.isEmpty()) {
+				for(Utilidad util : listaUtil) {
+					cbxUtil.addItem(util);
+				}
+				cbxUtil.setSelectedIndex(-1);
 			}
-			cbxUtil.setSelectedIndex(-1);
+		} catch (PresentacionException e) {
+			enviarError(CnstPresExceptions.DB, e.getMessage());
 		}
 	}
 	
 	public void cargarCbxTipoProd(JComboBox<TipoProd> cbxTipoProd) {
-		ArrayList<TipoProd> listaTipoProd = (ArrayList<TipoProd>) mgrProd.obtenerListaTipoProd();
-		if(listaTipoProd != null && !listaTipoProd.isEmpty()) {
-			for(TipoProd tipoProd : listaTipoProd) {
-				cbxTipoProd.addItem(tipoProd);
+		try {
+			ArrayList<TipoProd> listaTipoProd = (ArrayList<TipoProd>) mgrProd.obtenerListaTipoProd();
+			if(listaTipoProd != null && !listaTipoProd.isEmpty()) {
+				for(TipoProd tipoProd : listaTipoProd) {
+					cbxTipoProd.addItem(tipoProd);
+				}
+				cbxTipoProd.setSelectedIndex(-1);
 			}
-			cbxTipoProd.setSelectedIndex(-1);
+		} catch (PresentacionException e) {
+			enviarError(CnstPresExceptions.DB, e.getMessage());
 		}
 	}
 	
 	public void cargarCbxProd(JComboBox<TipoProd> cbxTipoProd, JComboBox<Producto> cbxProd) {
-		cbxProd.removeAllItems();
-		if(controlDatosObl(cbxTipoProd)) {
-			TipoProd tipoProd = (TipoProd) cbxTipoProd.getSelectedItem();
-			ArrayList<Producto> listaProd = (ArrayList<Producto>) mgrProd.obtenerListaProductoPorTipoProd(tipoProd);
-			for(Producto prod : listaProd) {
-				cbxProd.addItem(prod);
+		try {
+			cbxProd.removeAllItems();
+			if(controlDatosObl(cbxTipoProd)) {
+				TipoProd tipoProd = (TipoProd) cbxTipoProd.getSelectedItem();
+				ArrayList<Producto> listaProd = (ArrayList<Producto>) mgrProd.obtenerListaProductoPorTipoProd(tipoProd);
+				for(Producto prod : listaProd) {
+					cbxProd.addItem(prod);
+				}
+				cbxProd.setSelectedIndex(-1);
 			}
-			cbxProd.setSelectedIndex(-1);
+		} catch (PresentacionException e) {
+			enviarError(CnstPresExceptions.DB, e.getMessage());
 		}
 	}
 	
@@ -152,43 +171,51 @@ public class CtrlFrmMovimiento extends CtrlGenerico {
 	}
 	
 	public void cargarJtComprasPend(JComboBox<PersonaJuridica> cbxCompraPj) {
-		JTable tabla = frmMov.getJtComprasPend();
-		clearTable(tabla);
-		deleteModelTable(tabla);
-		if(cbxCompraPj.getSelectedIndex() > -1) {
-			PersonaJuridica pj = (PersonaJuridica) cbxCompraPj.getSelectedItem();
-			List<Transaccion> listaTransac = mgrTran.obtenerListaTransaccionPorPersona(pj.getRut(), TipoTran.C, EstadoTran.P);
-			if(listaTransac != null && !listaTransac.isEmpty()) {
-				DefaultTableModel modeloJtComprasPend = new DefaultTableModel();
-				tabla.setModel(modeloJtComprasPend);
-				modeloJtComprasPend.addColumn("Id Transac");
-				modeloJtComprasPend.addColumn("Proveedor");
-				modeloJtComprasPend.addColumn("Fecha - Hora");
-				modeloJtComprasPend.addColumn("Items (prod|cant)");
-				for(Transaccion transac : listaTransac) {
-					Object [] fila = new Object[4];
-					fila[0] = transac.getNroTransac();
-					fila[1] = pj.getRut() + " " + pj.getNombre();
-					fila[2] = transac.getFechaHora().toString(Fecha.AMDHMS);
-					fila[3] = transac.toStringLineas(); 
-					modeloJtComprasPend.addRow(fila);
-				}
-				tabla.addMouseListener(new MouseAdapter() {
-					@Override
-					public void mouseClicked(MouseEvent e) {
-						int fila = tabla.rowAtPoint(e.getPoint());
-						int cols = tabla.getModel().getColumnCount();
-						if (fila > -1 && cols > 1) {
-							Long nroTransac = (Long) tabla.getModel().getValueAt(fila, 0);
-							cargarTransaccion(mgrTran.obtenerTransaccionPorId(nroTransac));
-							cargarJtCompraItems();
-						}
+		try {
+			JTable tabla = frmMov.getJtComprasPend();
+			clearTable(tabla);
+			deleteModelTable(tabla);
+			if(cbxCompraPj.getSelectedIndex() > -1) {
+				PersonaJuridica pj = (PersonaJuridica) cbxCompraPj.getSelectedItem();
+				List<Transaccion> listaTransac = mgrTran.obtenerListaTransaccionPorPersona(pj.getRut(), TipoTran.C, EstadoTran.P);
+				if(listaTransac != null && !listaTransac.isEmpty()) {
+					DefaultTableModel modeloJtComprasPend = new DefaultTableModel();
+					tabla.setModel(modeloJtComprasPend);
+					modeloJtComprasPend.addColumn("Id Transac");
+					modeloJtComprasPend.addColumn("Proveedor");
+					modeloJtComprasPend.addColumn("Fecha - Hora");
+					modeloJtComprasPend.addColumn("Items (prod|cant)");
+					for(Transaccion transac : listaTransac) {
+						Object [] fila = new Object[4];
+						fila[0] = transac.getNroTransac();
+						fila[1] = pj.getRut() + " " + pj.getNombre();
+						fila[2] = transac.getFechaHora().toString(Fecha.AMDHMS);
+						fila[3] = transac.toStringLineas(); 
+						modeloJtComprasPend.addRow(fila);
 					}
-				});
-//				packColumn(tabla, 4, 0);
-			} else {
-				cargarJTableVacia(tabla, CnstPresGeneric.JTABLE_SIN_COMPRAS);
+					tabla.addMouseListener(new MouseAdapter() {
+						@Override
+						public void mouseClicked(MouseEvent me) {
+							try {
+								int fila = tabla.rowAtPoint(me.getPoint());
+								int cols = tabla.getModel().getColumnCount();
+								if (fila > -1 && cols > 1) {
+									Long nroTransac = (Long) tabla.getModel().getValueAt(fila, 0);
+									cargarTransaccion(mgrTran.obtenerTransaccionPorId(nroTransac));
+									cargarJtCompraItems();
+								}
+							} catch (PresentacionException  e) {
+								enviarError(CnstPresExceptions.DB, e.getMessage());
+							}
+						}
+					});
+//					packColumn(tabla, 4, 0); //FIXME ver este metodo para reorganizacion de cols
+				} else {
+					cargarJTableVacia(tabla, CnstPresGeneric.JTABLE_SIN_COMPRAS);
+				}
 			}
+		} catch (PresentacionException  e) {
+			enviarError(CnstPresExceptions.DB, e.getMessage());
 		}
 	}
 	
@@ -271,31 +298,39 @@ public class CtrlFrmMovimiento extends CtrlGenerico {
 	}
 	
 	public void generarCompra() {
-		if(getTransac() != null) {
-			if(mapLineasTran != null && !mapLineasTran.isEmpty()) {
-				getTransac().getListaTranLinea().addAll(mapLineasTran.values());
-				mgrTran.generarTransaccion(getTransac());
-				limpiarCompra(getFrm(), false);
-				enviarInfo(CnstPresGeneric.MOV, CnstPresGeneric.COMPRA_CONFIRMADA);
+		try {
+			if(getTransac() != null) {
+				if(mapLineasTran != null && !mapLineasTran.isEmpty()) {
+					getTransac().getListaTranLinea().addAll(mapLineasTran.values());
+					mgrTran.generarTransaccion(getTransac());
+					limpiarCompra(getFrm(), false);
+					enviarInfo(CnstPresGeneric.MOV, CnstPresGeneric.COMPRA_CONFIRMADA);
+				} else {
+					enviarWarning(CnstPresGeneric.MOV, CnstPresGeneric.COMPRA_SIN_LINEAS);
+				}
 			} else {
-				enviarWarning(CnstPresGeneric.MOV, CnstPresGeneric.COMPRA_SIN_LINEAS);
+				enviarWarning(CnstPresGeneric.MOV, CnstPresGeneric.DATOS_OBLIG);
 			}
-		} else {
-			enviarWarning(CnstPresGeneric.MOV, CnstPresGeneric.DATOS_OBLIG);
+		} catch (PresentacionException  e) {
+			enviarError(CnstPresExceptions.DB, e.getMessage());
 		}
 	}
 	
 	public void anularCompra() {
-		GenCompType gct = new GenCompType();
-		gct.setComp(frmMov.getJtComprasPend());
-		if(controlDatosObl(gct) && getTransac() != null) {
-			mgrTran.anularTransaccion(getTransac());
-			cargarJtComprasPend(getFrm().getCbxCompraProv());
-			clearPanel(getFrm().getPnlCompraDatos());
-			clearPanel(getFrm().getPnlCompraItems());
-			enviarInfo(CnstPresGeneric.MOV, CnstPresGeneric.COMPRA_ANULADA);
-		} else {
-			enviarWarning(CnstPresGeneric.MOV, CnstPresGeneric.DATOS_OBLIG);
+		try {
+			GenCompType gct = new GenCompType();
+			gct.setComp(frmMov.getJtComprasPend());
+			if(controlDatosObl(gct) && getTransac() != null) {
+				mgrTran.anularTransaccion(getTransac());
+				cargarJtComprasPend(getFrm().getCbxCompraProv());
+				clearPanel(getFrm().getPnlCompraDatos());
+				clearPanel(getFrm().getPnlCompraItems());
+				enviarInfo(CnstPresGeneric.MOV, CnstPresGeneric.COMPRA_ANULADA);
+			} else {
+				enviarWarning(CnstPresGeneric.MOV, CnstPresGeneric.DATOS_OBLIG);
+			}
+		} catch (PresentacionException  e) {
+			enviarError(CnstPresExceptions.DB, e.getMessage());
 		}
 	}
 	

@@ -7,6 +7,8 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -655,6 +657,16 @@ public class FrmPersona extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				ctrlPers.buscarPersJuridica(txtPjRut, txtPjNom, txtPjRs, txtPjBps, txtPjBse, chkPjProv,
 						txtPjDir, txtPjTel, txtPjCel, txtPjEml, cbxPjLoc);
+			}
+		});
+		
+		/***************************************************/
+		/* EVENTO CIERRE DEL FORM */
+		/***************************************************/
+		this.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosed(WindowEvent arg0) {
+				instance = null;
 			}
 		});
 	}

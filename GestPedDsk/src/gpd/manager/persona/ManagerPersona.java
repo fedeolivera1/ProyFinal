@@ -13,6 +13,7 @@ import gpd.dominio.persona.Sexo;
 import gpd.dominio.persona.TipoDoc;
 import gpd.dominio.util.Sinc;
 import gpd.exceptions.PersistenciaException;
+import gpd.exceptions.PresentacionException;
 import gpd.interfaces.persona.IPersDepLoc;
 import gpd.interfaces.persona.IPersPersona;
 import gpd.interfaces.persona.IPersTipoDoc;
@@ -54,7 +55,7 @@ public class ManagerPersona {
 	/** TIPO DOC */
 	/*****************************************************************************************************************************************************/
 	
-	public List<TipoDoc> obtenerListaTipoDoc() {
+	public List<TipoDoc> obtenerListaTipoDoc() throws PresentacionException {
 		logger.info("Se ingresa a obtenerListaTipoDoc");
 		List<TipoDoc> listaTipoDoc = null;
 		try {
@@ -62,7 +63,8 @@ public class ManagerPersona {
 			listaTipoDoc = getInterfaceTipoDoc().obtenerListaTipoDoc();
 			Conector.closeConn("obtenerListaTipoDoc", null);
 		} catch (PersistenciaException e) {
-			e.printStackTrace();
+			logger.fatal("Excepcion en ManagerPersona > obtenerListaTipoDoc: " + e.getMessage(), e);
+			throw new PresentacionException(e);
 		}
 		return listaTipoDoc;
 	}
@@ -71,7 +73,7 @@ public class ManagerPersona {
 	/** PERSONA FISICA */
 	/*****************************************************************************************************************************************************/
 	
-	public PersonaFisica obtenerPersFisicaPorId(Long id) {
+	public PersonaFisica obtenerPersFisicaPorId(Long id) throws PresentacionException {
 		logger.info("Se ingresa a obtenerPersFisicaPorId");
 		PersonaFisica persFisica = null;
 		try {
@@ -79,13 +81,14 @@ public class ManagerPersona {
 			persFisica = getInterfacePersona().obtenerPersFisicaPorId(id);
 			Conector.closeConn("obtenerPersFisicaPorId", null);
 		} catch (PersistenciaException e) {
-			e.printStackTrace();//FIXME ver como manejar esta excep
+			logger.fatal("Excepcion en ManagerPersona > obtenerPersFisicaPorId: " + e.getMessage(), e);
+			throw new PresentacionException(e);
 		}
 		return persFisica;
 	}
 	
 	public List<PersonaFisica> obtenerBusquedaPersFisica(Long documento, String ape1, String ape2, String nom1, String nom2, 
-			Sexo sexo, String direccion, String telefono, String celular, String email, Localidad loc) {
+			Sexo sexo, String direccion, String telefono, String celular, String email, Localidad loc) throws PresentacionException {
 		logger.info("Ingresa obtenerBusquedaPersFisica");
 		List<PersonaFisica> listaPf = null;
 		try {
@@ -95,12 +98,13 @@ public class ManagerPersona {
 			listaPf = getInterfacePersona().obtenerBusquedaPersFisica(documento, ape1, ape2, nom1, nom2, sexoAsChar, direccion, telefono, celular, email, idLoc);
 			Conector.closeConn("obtenerBusquedaPersFisica", null);
 		} catch (PersistenciaException e) {
-			e.printStackTrace();//FIXME ver como manejar esta excep
+			logger.fatal("Excepcion en ManagerPersona > obtenerBusquedaPersFisica: " + e.getMessage(), e);
+			throw new PresentacionException(e);
 		}
 		return listaPf;
 	}
 	
-	public Integer guardarPersFisica(PersonaFisica persFisica) {
+	public Integer guardarPersFisica(PersonaFisica persFisica) throws PresentacionException {
 		logger.info("Ingresa guardarPersFisica");
 		Integer resultado = null;
 		if(persFisica != null) {
@@ -111,13 +115,14 @@ public class ManagerPersona {
 				resultado = getInterfacePersona().guardarPersFisica(persFisica);
 				Conector.closeConn("guardarPersFisica", null);
 			} catch (PersistenciaException e) {
-				e.printStackTrace();//FIXME ver como manejar esta excep
+				logger.fatal("Excepcion en ManagerPersona > guardarPersFisica: " + e.getMessage(), e);
+				throw new PresentacionException(e);
 			}
 		}
 		return resultado;
 	}
 	
-	public Integer modificarPersFisica(PersonaFisica persFisica) {
+	public Integer modificarPersFisica(PersonaFisica persFisica) throws PresentacionException {
 		logger.info("Se ingresa a modificarPersFisica");
 		Integer resultado = null;
 		if(persFisica != null) {
@@ -128,14 +133,14 @@ public class ManagerPersona {
 				resultado = getInterfacePersona().modificarPersFisica(persFisica);
 				Conector.closeConn("modificarPersFisica", null);
 			} catch (PersistenciaException e) {
-				//FIXME ver como manejar esta excep
-				e.printStackTrace();
+				logger.fatal("Excepcion en ManagerPersona > modificarPersFisica: " + e.getMessage(), e);
+				throw new PresentacionException(e);
 			}
 		}
 		return resultado;
 	}
 	
-	public Integer eliminarPersFisica(PersonaFisica persFisica) {
+	public Integer eliminarPersFisica(PersonaFisica persFisica) throws PresentacionException {
 		logger.info("Se ingresa a eliminarPersFisica");
 		Integer resultado = null;
 		if(persFisica != null) {
@@ -144,8 +149,8 @@ public class ManagerPersona {
 				resultado = getInterfacePersona().eliminarPersFisica(persFisica);
 				Conector.closeConn("eliminarPersFisica", null);
 			} catch (PersistenciaException e) {
-				//FIXME ver como manejar esta excep
-				e.printStackTrace();
+				logger.fatal("Excepcion en ManagerPersona > eliminarPersFisica: " + e.getMessage(), e);
+				throw new PresentacionException(e);
 			}
 		}
 		return resultado;
@@ -156,7 +161,7 @@ public class ManagerPersona {
 	/*****************************************************************************************************************************************************/
 	
 	public List<PersonaJuridica> obtenerBusquedaPersJuridica(Long rut, String nombre, String razonSoc, String bps, String bse, 
-			Boolean esProv, String direccion, String telefono, String celular, String email, Localidad loc) {
+			Boolean esProv, String direccion, String telefono, String celular, String email, Localidad loc) throws PresentacionException {
 		logger.info("Ingresa obtenerBusquedaPersJuridica");
 		List<PersonaJuridica> listaPj = null;
 		try {
@@ -165,12 +170,13 @@ public class ManagerPersona {
 			listaPj = getInterfacePersona().obtenerBusquedaPersJuridica(rut, nombre, razonSoc, bps, bse, esProv, direccion, telefono, celular, email, idLoc);
 			Conector.closeConn("obtenerBusquedaPersJuridica", null);
 		} catch (PersistenciaException e) {
-			e.printStackTrace();//FIXME ver como manejar esta excep
+			logger.fatal("Excepcion en ManagerPersona > obtenerBusquedaPersJuridica: " + e.getMessage(), e);
+			throw new PresentacionException(e);
 		}
 		return listaPj;
 	}
 	
-	public List<PersonaJuridica> obtenerListaProveedor() {
+	public List<PersonaJuridica> obtenerListaProveedor() throws PresentacionException {
 		logger.info("Ingresa obtenerListaProveedor");
 		List<PersonaJuridica> listaPj = null;
 		try {
@@ -178,12 +184,13 @@ public class ManagerPersona {
 			listaPj = getInterfacePersona().obtenerListaEmpresasPorTipo(true);
 			Conector.closeConn("obtenerListaProveedor", null);
 		} catch (PersistenciaException e) {
-			e.printStackTrace();//FIXME ver como manejar esta excep
+			logger.fatal("Excepcion en ManagerPersona > obtenerListaProveedor: " + e.getMessage(), e);
+			throw new PresentacionException(e);
 		}
 		return listaPj;
 	}
 	
-	public List<PersonaJuridica> obtenerListaEmpresas() {
+	public List<PersonaJuridica> obtenerListaEmpresas() throws PresentacionException {
 		logger.info("Ingresa obtenerListaProveedor");
 		List<PersonaJuridica> listaPj = null;
 		try {
@@ -191,12 +198,13 @@ public class ManagerPersona {
 			listaPj = getInterfacePersona().obtenerListaEmpresasPorTipo(null);
 			Conector.closeConn("obtenerListaProveedor", null);
 		} catch (PersistenciaException e) {
-			e.printStackTrace();//FIXME ver como manejar esta excep
+			logger.fatal("Excepcion en ManagerPersona > obtenerListaEmpresas: " + e.getMessage(), e);
+			throw new PresentacionException(e);
 		}
 		return listaPj;
 	}
 	
-	public PersonaJuridica obtenerPersJuridicaPorId(Long id) {
+	public PersonaJuridica obtenerPersJuridicaPorId(Long id) throws PresentacionException {
 		logger.info("Se ingresa a obtenerPersJuridicaPorId");
 		PersonaJuridica persJuridica = null;
 		try {
@@ -204,12 +212,13 @@ public class ManagerPersona {
 			persJuridica = getInterfacePersona().obtenerPersJuridicaPorId(id);
 			Conector.closeConn("obtenerPersJuridicaPorId", null);
 		} catch (PersistenciaException e) {
-			e.printStackTrace();//FIXME ver como manejar esta excep
+			logger.fatal("Excepcion en ManagerPersona > obtenerPersJuridicaPorId: " + e.getMessage(), e);
+			throw new PresentacionException(e);
 		}
 		return persJuridica;
 	}
 	
-	public Integer guardarPersJuridica(PersonaJuridica persJuridica) {
+	public Integer guardarPersJuridica(PersonaJuridica persJuridica) throws PresentacionException {
 		logger.info("Ingresa guardarPersJuridica");
 		Integer resultado = null;
 		if(persJuridica != null) {
@@ -220,13 +229,14 @@ public class ManagerPersona {
 				resultado = getInterfacePersona().guardarPersJuridica(persJuridica);
 				Conector.closeConn("guardarPersJuridica", null);
 			} catch (PersistenciaException e) {
-				e.printStackTrace();//FIXME ver como manejar esta excep
+				logger.fatal("Excepcion en ManagerPersona > guardarPersJuridica: " + e.getMessage(), e);
+				throw new PresentacionException(e);
 			}
 		}
 		return resultado;
 	}
 	
-	public Integer modificarPersJuridica(PersonaJuridica persJuridica) {
+	public Integer modificarPersJuridica(PersonaJuridica persJuridica) throws PresentacionException {
 		logger.info("Se ingresa a modificarPersJuridica");
 		Integer resultado = null;
 		if(persJuridica != null) {
@@ -237,14 +247,14 @@ public class ManagerPersona {
 				resultado = getInterfacePersona().modificarPersJuridica(persJuridica);
 				Conector.closeConn("modificarPersJuridica", null);
 			} catch (PersistenciaException e) {
-				//FIXME ver como manejar esta excep
-				e.printStackTrace();
+				logger.fatal("Excepcion en ManagerPersona > modificarPersJuridica: " + e.getMessage(), e);
+				throw new PresentacionException(e);
 			}
 		}
 		return resultado;
 	}
 	
-	public Integer eliminarPersJuridica(PersonaJuridica persJuridica) {
+	public Integer eliminarPersJuridica(PersonaJuridica persJuridica) throws PresentacionException {
 		logger.info("Se ingresa a eliminarPersFisica");
 		Integer resultado = null;
 		if(persJuridica != null) {
@@ -253,8 +263,8 @@ public class ManagerPersona {
 				resultado = getInterfacePersona().eliminarPersJuridica(persJuridica);
 				Conector.closeConn("eliminarPersFisica", null);
 			} catch (PersistenciaException e) {
-				//FIXME ver como manejar esta excep
-				e.printStackTrace();
+				logger.fatal("Excepcion en ManagerPersona > eliminarPersJuridica: " + e.getMessage(), e);
+				throw new PresentacionException(e);
 			}
 		}
 		return resultado;
@@ -264,7 +274,7 @@ public class ManagerPersona {
 	/** DEP - LOC */
 	/*****************************************************************************************************************************************************/
 	
-	public List<Departamento> obtenerListaDepartamento() {
+	public List<Departamento> obtenerListaDepartamento() throws PresentacionException {
 		logger.info("Se ingresa a obtenerListaDepartamento");
 		List<Departamento> listaDep = null;
 		try {
@@ -272,12 +282,13 @@ public class ManagerPersona {
 			listaDep = getInterfaceDepLoc().obtenerListaDepartamentos();
 			Conector.closeConn("obtenerListaDepartamento", null);
 		} catch (PersistenciaException e) {
-			e.printStackTrace();//FIXME ver como manejar esta excep
+			logger.fatal("Excepcion en ManagerPersona > obtenerListaDepartamento: " + e.getMessage(), e);
+			throw new PresentacionException(e);
 		}
 		return listaDep;
 	}
 	
-	public List<Localidad> obtenerListaLocalidadPorDep(Integer idDep) {
+	public List<Localidad> obtenerListaLocalidadPorDep(Integer idDep) throws PresentacionException {
 		logger.info("Se ingresa a obtenerListaLocalidadPorDep");
 		List<Localidad> listaLoc = null;
 		try {
@@ -285,7 +296,8 @@ public class ManagerPersona {
 			listaLoc = getInterfaceDepLoc().obtenerListaLocPorDep(idDep);
 			Conector.closeConn("obtenerListaLocalidadPorDep", null);
 		} catch (PersistenciaException e) {
-			e.printStackTrace();//FIXME ver como manejar esta excep
+			logger.fatal("Excepcion en ManagerPersona > obtenerListaLocalidadPorDep: " + e.getMessage(), e);
+			throw new PresentacionException(e);
 		}
 		return listaLoc;
 	}

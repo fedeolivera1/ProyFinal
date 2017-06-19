@@ -14,6 +14,7 @@ import gpd.dominio.transaccion.Transaccion;
 import gpd.dominio.util.Converters;
 import gpd.exceptions.ConectorException;
 import gpd.exceptions.PersistenciaException;
+import gpd.exceptions.PresentacionException;
 import gpd.interfaces.producto.IPersLote;
 import gpd.interfaces.transaccion.IPersTranLinea;
 import gpd.interfaces.transaccion.IPersTransaccion;
@@ -55,7 +56,7 @@ public class ManagerTransaccion {
 	/** TRANSACCION */
 	/*****************************************************************************************************************************************************/
 	
-	public Integer generarTransaccion(Transaccion transaccion) {
+	public Integer generarTransaccion(Transaccion transaccion) throws PresentacionException {
 		logger.info("Ingresa guardarTransaccion");
 		Integer resultado = null;
 		if(transaccion != null) {
@@ -107,15 +108,14 @@ public class ManagerTransaccion {
 				getInterfaceLote().guardarListaLote(listaLote);
 				Conector.closeConn("guardarTransaccion", null);
 			} catch (ConectorException | PersistenciaException e) {
-				e.printStackTrace();//FIXME ver como manejar esta excep
-			} catch (Exception e) {
-				e.printStackTrace();
+				logger.fatal("Excepcion en ManagerTransaccion > generarTransaccion: " + e.getMessage(), e);
+				throw new PresentacionException(e);
 			}
 		}
 		return resultado;
 	}
 	
-	public Transaccion obtenerTransaccionPorId(Long idTransac) {
+	public Transaccion obtenerTransaccionPorId(Long idTransac) throws PresentacionException {
 		Transaccion transac = null;
 		try {
 			Conector.getConn();
@@ -128,14 +128,14 @@ public class ManagerTransaccion {
 			}
 			Conector.closeConn("obtenerTransaccionPorId", null);
 		} catch (PersistenciaException e) {
-			e.printStackTrace();//FIXME ver como manejar esta excep
-		} catch (Exception e) {
-			e.printStackTrace();//FIXME ver como manejar esta excep
+			logger.fatal("Excepcion en ManagerTransaccion > obtenerTransaccionPorId: " + e.getMessage(), e);
+			throw new PresentacionException(e);
 		}
 		return transac;
 	}
 	
-	public List<Transaccion> obtenerListaTransaccionPorPersona(Long idPersona, TipoTran tipoTran, EstadoTran estadoTran) {
+	public List<Transaccion> obtenerListaTransaccionPorPersona(Long idPersona, TipoTran tipoTran, EstadoTran estadoTran) 
+			throws PresentacionException {
 		List<Transaccion> listaTransac = null;
 		try {
 			Conector.getConn();
@@ -150,14 +150,14 @@ public class ManagerTransaccion {
 			}
 			Conector.closeConn("obtenerListaTransaccionPorPersona", null);
 		} catch (PersistenciaException e) {
-			e.printStackTrace();//FIXME ver como manejar esta excep
-		} catch (Exception e) {
-			e.printStackTrace();//FIXME ver como manejar esta excep
+			logger.fatal("Excepcion en ManagerTransaccion > obtenerListaTransaccionPorPersona: " + e.getMessage(), e);
+			throw new PresentacionException(e);
 		}
 		return listaTransac;
 	}
 	
-	public List<Transaccion> obtenerListaTransaccionPorPeriodo(TipoTran tipoTran, EstadoTran estadoTran, Fecha fechaIni, Fecha fechaFin) {
+	public List<Transaccion> obtenerListaTransaccionPorPeriodo(TipoTran tipoTran, EstadoTran estadoTran, Fecha fechaIni, Fecha fechaFin) 
+			 throws PresentacionException {
 		List<Transaccion> listaTransac = null;
 		try {
 			Conector.getConn();
@@ -170,20 +170,38 @@ public class ManagerTransaccion {
 					}
 				}
 			}
-			Conector.closeConn("obtenerListaTransaccionPorPersona", null);
+			Conector.closeConn("obtenerListaTransaccionPorPeriodo", null);
 		} catch (PersistenciaException e) {
-			e.printStackTrace();//FIXME ver como manejar esta excep
-		} catch (Exception e) {
-			e.printStackTrace();//FIXME ver como manejar esta excep
+			logger.fatal("Excepcion en ManagerTransaccion > obtenerListaTransaccionPorPeriodo: " + e.getMessage(), e);
+			throw new PresentacionException(e);
 		}
 		return listaTransac;
 	}
 	
-	public Integer modificarTransaccion(Transaccion transaccion) {
+	public Integer modificarTransaccionCompra(Transaccion transaccion, List<Lote> listaLote) throws PresentacionException {
+		if(transaccion != null) {
+			//transaccion de tipo "compra"
+			if(transaccion.getTipoTran().equals(TipoTran.C)) {
+				try {
+					Conector.getConn();
+					//seteo estado a "confirmado"
+					transaccion.setEstadoTran(EstadoTran.C);
+					getInterfaceTransaccion().guardarTranEstado(transaccion);
+					getInterfaceTransaccion().modificarEstadoTransaccion(transaccion);
+					for(Lote lote : listaLote) {
+						getInterfaceLote().actualizarLote(lote);
+					}
+					Conector.closeConn("modificarTransaccionCompra", null);
+				} catch (PersistenciaException e) {
+					logger.fatal("Excepcion en ManagerTransaccion > modificarTransaccionCompra: " + e.getMessage(), e);
+					throw new PresentacionException(e);
+				}
+			}
+		}
 		return null;
 	}
 	
-	public Integer anularTransaccion(Transaccion transaccion) {
+	public Integer anularTransaccion(Transaccion transaccion) throws PresentacionException {
 		try {
 			Conector.getConn();
 			if(transaccion != null) {
@@ -194,9 +212,8 @@ public class ManagerTransaccion {
 			}
 			Conector.closeConn("anularTransaccion", null);
 		} catch (PersistenciaException e) {
-			e.printStackTrace();//FIXME ver como manejar esta excep
-		} catch (Exception e) {
-			e.printStackTrace();
+			logger.fatal("Excepcion en ManagerTransaccion > anularTransaccion: " + e.getMessage(), e);
+			throw new PresentacionException(e);
 		}
 			return null;
 	}

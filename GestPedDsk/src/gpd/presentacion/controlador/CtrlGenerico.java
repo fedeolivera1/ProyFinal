@@ -444,7 +444,7 @@ public abstract class CtrlGenerico {
 			((javax.swing.JFormattedTextField) comp).setText("");
 		} else if (nombreClase.equals("com.toedter.calendar.JDateChooser")) {
 			//JDateChooser pruebo metodo cleanup
-			((com.toedter.calendar.JDateChooser) comp).cleanup();
+			((com.toedter.calendar.JDateChooser) comp).setCalendar(null);
 		}
 		//se reinician los bordes para advertencias.
 		getCompVal().removeBorder(comp);
@@ -474,7 +474,7 @@ public abstract class CtrlGenerico {
 			((javax.swing.JCheckBox) comp).setSelected(false);
 		} else if (nombreClase.equals("com.toedter.calendar.JDateChooser")) {
 			//JDateChooser pruebo metodo cleanup
-			((com.toedter.calendar.JDateChooser) comp).cleanup();
+			((com.toedter.calendar.JDateChooser) comp).setCalendar(null);
 		} 
 		//se reinician los bordes para advertencias.
 		getCompVal().removeBorder(comp);

@@ -29,6 +29,8 @@ import gpd.dominio.usuario.UsuarioDsk;
 import gpd.presentacion.controlador.CtrlFrmMovimiento;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class FrmMovimiento extends JFrame {
 
@@ -241,6 +243,7 @@ public class FrmMovimiento extends JFrame {
 				if(cbxCompraProv.getSelectedIndex() > -1) {
 					ctrlMov.setContainerEnabled(pnlCompraDatos, true);
 					ctrlMov.setContainerEnabled(pnlCompraProv, false);
+					ctrlMov.clearScrollPane(scrollPaneCompraItems);
 					ctrlMov.cargarJtComprasPend(cbxCompraProv);
 				}
 			}
@@ -276,6 +279,15 @@ public class FrmMovimiento extends JFrame {
 			}
 		});
 
+		/***************************************************/
+		/* EVENTO CIERRE DEL FORM */
+		/***************************************************/
+		this.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosed(WindowEvent arg0) {
+				instance = null;
+			}
+		});
 	}
 
 

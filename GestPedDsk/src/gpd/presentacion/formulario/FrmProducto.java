@@ -4,8 +4,12 @@ import java.awt.Color;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
@@ -36,15 +40,13 @@ import gpd.dominio.transaccion.EstadoTran;
 import gpd.dominio.transaccion.Transaccion;
 import gpd.dominio.usuario.UsuarioDsk;
 import gpd.presentacion.controlador.CtrlFrmProducto;
-import java.awt.event.ItemListener;
-import java.awt.event.ItemEvent;
 
 public class FrmProducto extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(FrmProducto.class);
 
-	private static FrmProducto instance; 
+	private static FrmProducto instance;
 	private CtrlFrmProducto ctrlProd;
 	private JPanel contentPane;
 	private JTextField txtProId;
@@ -73,6 +75,7 @@ public class FrmProducto extends JFrame {
 	private JComboBox<Transaccion> cbxLoteCompras;
 	private JDateChooser dchLoteIni;
 	private JDateChooser dchLoteFin;
+	private JPanel pnlLoteDatos;
 
 
 	public static FrmProducto getFrmProducto(UsuarioDsk usr) {
@@ -86,7 +89,7 @@ public class FrmProducto extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	private FrmProducto(UsuarioDsk usr) {
+	public FrmProducto(UsuarioDsk usr) {
 		
 		setLocationRelativeTo(null);
 		setTitle("Producto");
@@ -241,50 +244,50 @@ public class FrmProducto extends JFrame {
 		lblLotesDisponibles.setBounds(16, 11, 56, 14);
 		tpLote.add(lblLotesDisponibles);
 		
-		JPanel panelLoteDatos = new JPanel();
-		panelLoteDatos.setBorder(new LineBorder(new Color(0, 0, 0)));
-		panelLoteDatos.setBounds(10, 264, 322, 195);
-		tpLote.add(panelLoteDatos);
-		panelLoteDatos.setLayout(null);
+		pnlLoteDatos = new JPanel();
+		pnlLoteDatos.setBorder(new LineBorder(new Color(0, 0, 0)));
+		pnlLoteDatos.setBounds(10, 264, 322, 195);
+		tpLote.add(pnlLoteDatos);
+		pnlLoteDatos.setLayout(null);
 		
 		JButton btnDepAgregar = new JButton("...");
 		btnDepAgregar.setBounds(227, 11, 32, 23);
-		panelLoteDatos.add(btnDepAgregar);
+		pnlLoteDatos.add(btnDepAgregar);
 		
 		cbxLoteDep = new JComboBox<>();
 		cbxLoteDep.setBounds(66, 12, 151, 20);
-		panelLoteDatos.add(cbxLoteDep);
+		pnlLoteDatos.add(cbxLoteDep);
 		
 		
 		JLabel lblDeposito = new JLabel("Deposito");
 		lblDeposito.setBounds(10, 15, 46, 14);
-		panelLoteDatos.add(lblDeposito);
+		pnlLoteDatos.add(lblDeposito);
 		lblDeposito.setHorizontalAlignment(SwingConstants.RIGHT);
 		
 		JLabel label_6 = new JLabel("Utilidad");
 		label_6.setBounds(4, 46, 52, 14);
-		panelLoteDatos.add(label_6);
+		pnlLoteDatos.add(label_6);
 		label_6.setHorizontalAlignment(SwingConstants.RIGHT);
 		
 		cbxLoteUtil = new JComboBox<>();
 		cbxLoteUtil.setBounds(66, 43, 151, 20);
-		panelLoteDatos.add(cbxLoteUtil);
+		pnlLoteDatos.add(cbxLoteUtil);
 		
 		dchLoteVenc = new JDateChooser();
 		dchLoteVenc.setBounds(130, 74, 87, 20);
-		panelLoteDatos.add(dchLoteVenc);
+		pnlLoteDatos.add(dchLoteVenc);
 		
 		JButton btnLoteAct = new JButton("Actualizar");
 		btnLoteAct.setBounds(128, 105, 89, 23);
-		panelLoteDatos.add(btnLoteAct);
+		pnlLoteDatos.add(btnLoteAct);
 		
-		JButton btnLimpiar = new JButton("Limpiar");
-		btnLimpiar.setBounds(128, 139, 89, 23);
-		panelLoteDatos.add(btnLimpiar);
+		JButton btnLoteLimpiar = new JButton("Limpiar");
+		btnLoteLimpiar.setBounds(128, 139, 89, 23);
+		pnlLoteDatos.add(btnLoteLimpiar);
 		
 		btnUtilAgregar = new JButton("...");
 		btnUtilAgregar.setBounds(227, 42, 32, 23);
-		panelLoteDatos.add(btnUtilAgregar);
+		pnlLoteDatos.add(btnUtilAgregar);
 		
 		JSeparator separator = new JSeparator();
 		separator.setForeground(SystemColor.info);
@@ -312,12 +315,12 @@ public class FrmProducto extends JFrame {
 		tpLote.add(cbxFiltroLote);
 		
 		cbxLoteCompras = new JComboBox<>();
-		cbxLoteCompras.setBounds(82, 49, 381, 20);
+		cbxLoteCompras.setBounds(82, 48, 381, 20);
 		tpLote.add(cbxLoteCompras);
 		
 		JLabel lblCompras = new JLabel("Compras");
 		lblCompras.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblCompras.setBounds(16, 52, 56, 14);
+		lblCompras.setBounds(16, 51, 56, 14);
 		tpLote.add(lblCompras);
 		
 		dchLoteIni = new JDateChooser();
@@ -355,6 +358,10 @@ public class FrmProducto extends JFrame {
 		ctrlProd.cargarCbxDep(cbxLoteDep);
 		ctrlProd.cargarCbxUtil(cbxLoteUtil);
 		ctrlProd.cargarCbxFiltroLote(cbxFiltroLote);
+		
+		JButton btnCompraAct = new JButton("Actualizar Compra");
+		btnCompraAct.setBounds(647, 470, 122, 23);
+		tpLote.add(btnCompraAct);
 		
 		btnUtilAgregar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -423,7 +430,27 @@ public class FrmProducto extends JFrame {
 		
 		cbxLoteCompras.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent arg0) {
-				ctrlProd.cargarJtLote(cbxLoteCompras);
+				ctrlProd.cargarLotesPorTransac(cbxLoteCompras);
+			}
+		});
+		btnLoteLimpiar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ctrlProd.clearPanel(getPnlLoteDatos());
+			}
+		});
+		btnCompraAct.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ctrlProd.actualizarCompra(cbxLoteCompras);
+			}
+		});
+	
+		/***************************************************/
+		/* EVENTO CIERRE DEL FORM */
+		/***************************************************/
+		this.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosed(WindowEvent arg0) {
+				instance = null;
 			}
 		});
 	}
@@ -571,5 +598,19 @@ public class FrmProducto extends JFrame {
 	}
 	public void setDchLoteFin(JDateChooser dchLoteFin) {
 		this.dchLoteFin = dchLoteFin;
+	}
+	
+	public JScrollPane getScrollPaneLote() {
+		return scrollPaneLote;
+	}
+	public void setScrollPaneLote(JScrollPane scrollPaneLote) {
+		this.scrollPaneLote = scrollPaneLote;
+	}
+
+	public JPanel getPnlLoteDatos() {
+		return pnlLoteDatos;
+	}
+	public void setPnlLoteDatos(JPanel pnlLoteDatos) {
+		this.pnlLoteDatos = pnlLoteDatos;
 	}
 }

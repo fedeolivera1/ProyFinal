@@ -4,15 +4,16 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 import gpd.dominio.usuario.UsuarioDsk;
+import gpd.exceptions.PresentacionException;
 import gpd.manager.usuario.ManagerUsuario;
 import gpd.presentacion.formulario.FrmLogin;
 import gpd.presentacion.formulario.FrmPrincipal;
+import gpd.presentacion.generic.CnstPresExceptions;
 import gpd.presentacion.generic.CnstPresGeneric;
 import gpd.presentacion.generic.GenCompType;
 
 public class CtrlFrmLogin extends CtrlGenerico {
 
-	
 	ManagerUsuario mgrUsr = new ManagerUsuario();
 	private FrmLogin frmLogin;
 	
@@ -24,30 +25,35 @@ public class CtrlFrmLogin extends CtrlGenerico {
 
 	public UsuarioDsk obtenerUsuario(JTextField txtNombre, JPasswordField txtPass) {
 		UsuarioDsk usr = null;
-		GenCompType genComp = new GenCompType();
-		genComp.setComp(txtNombre);
-		genComp.setComp(txtPass);
-		if(controlDatosObl(genComp)) {
-			char[] passwsdChar = txtPass.getPassword(); 
-			String passwd = String.valueOf(passwsdChar);
-			String hashPass = getMD5(passwd);
-			usr = mgrUsr.obtenerUsuario(txtNombre.getText(), hashPass);
-			if(usr != null) {
-				FrmPrincipal frmPpl = new FrmPrincipal(usr);
-				frmPpl.setLocationRelativeTo(null);
-				frmPpl.setDefaultCloseOperation(FrmPrincipal.EXIT_ON_CLOSE);
-				frmPpl.setVisible(true);
-				frmLogin.setVisible(false);
+		try{
+			GenCompType genComp = new GenCompType();
+			genComp.setComp(txtNombre);
+			genComp.setComp(txtPass);
+			if(controlDatosObl(genComp)) {
+				char[] passwsdChar = txtPass.getPassword(); 
+				String passwd = String.valueOf(passwsdChar);
+				String hashPass = getMD5(passwd);
+				usr = mgrUsr.obtenerUsuario(txtNombre.getText(), hashPass);
+				if(usr != null) {
+					FrmPrincipal frmPpl = new FrmPrincipal(usr);
+					frmPpl.setLocationRelativeTo(null);
+					frmPpl.setDefaultCloseOperation(FrmPrincipal.EXIT_ON_CLOSE);
+					frmPpl.setVisible(true);
+					frmLogin.setVisible(false);
+				} else {
+					enviarError(CnstPresGeneric.USR, CnstPresGeneric.USR_NO_AUTENTICADO);
+				}
 			} else {
-				enviarError(CnstPresGeneric.USR, CnstPresGeneric.USR_NO_AUTENTICADO);
 			}
-		} else {
-//			try{} catch(UsuarioNoExisteException e) {}
-			enviarWarning(CnstPresGeneric.USR, CnstPresGeneric.USR_DATOS);
+		} catch(PresentacionException e) {
+			enviarWarning(CnstPresExceptions.DB, e.getMessage());
 		}
 		return usr;
 	}
 	
+	/*****************************************************************************************************************************************************/
+	/* GET Y SET */
+	/*****************************************************************************************************************************************************/
 	
 	public FrmLogin getFrmLogin() {
 		return frmLogin;

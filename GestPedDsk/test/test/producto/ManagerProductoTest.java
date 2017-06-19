@@ -7,6 +7,7 @@ import java.util.List;
 import org.junit.Test;
 
 import gpd.dominio.producto.TipoProd;
+import gpd.exceptions.PresentacionException;
 import gpd.manager.producto.ManagerProducto;
 
 public class ManagerProductoTest {
@@ -41,13 +42,25 @@ public class ManagerProductoTest {
 
 	@Test
 	public void testObtenerTipoProdPorId() {
-		TipoProd tp = mgr.obtenerTipoProdPorId(1);
+		TipoProd tp = null;
+		try {
+			tp = mgr.obtenerTipoProdPorId(1);
+		} catch (PresentacionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		assertTrue(tp != null);
 	}
 
 	@Test
 	public void testObtenerListaTipoProd() {
-		List<TipoProd> lista = mgr.obtenerListaTipoProd();
+		List<TipoProd> lista = null;
+		try {
+			lista = mgr.obtenerListaTipoProd();
+		} catch (PresentacionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		assertTrue(lista != null && !lista.isEmpty());
 	}
 
@@ -55,15 +68,26 @@ public class ManagerProductoTest {
 	public void testGuardarTipoProd() {
 		TipoProd tp = new TipoProd();
 		tp.setDescripcion("desc3");
-		assertTrue(mgr.guardarTipoProd(tp)>0);
+		try {
+			assertTrue(mgr.guardarTipoProd(tp)>0);
+		} catch (PresentacionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Test
 	public void testModificarTipoProd() {
-		TipoProd tp = mgr.obtenerTipoProdPorId(1);
-		tp.setDescripcion("desc3 modif");
-		mgr.modificarTipoProd(tp);
-		assertTrue(tp.getDescripcion().equals("desc3 modif"));
+		TipoProd tp;
+		try {
+			tp = mgr.obtenerTipoProdPorId(1);
+			tp.setDescripcion("desc3 modif");
+			mgr.modificarTipoProd(tp);
+			assertTrue(tp.getDescripcion().equals("desc3 modif"));
+		} catch (PresentacionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Test

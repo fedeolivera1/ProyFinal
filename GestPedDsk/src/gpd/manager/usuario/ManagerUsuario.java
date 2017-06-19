@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 
 import gpd.dominio.usuario.UsuarioDsk;
 import gpd.exceptions.PersistenciaException;
+import gpd.exceptions.PresentacionException;
 import gpd.interfaces.usuario.IPersUsuario;
 import gpd.persistencia.conector.Conector;
 import gpd.persistencia.usuario.PersistenciaUsuario;
@@ -25,7 +26,7 @@ public class ManagerUsuario {
 	/** USUARIO */
 	/*****************************************************************************************************************************************************/
 	
-	public UsuarioDsk obtenerUsuario(String nombreUsuario, String passwd) {
+	public UsuarioDsk obtenerUsuario(String nombreUsuario, String passwd) throws PresentacionException {
 		logger.info("Se ingresa a obtenerUsuario para " + nombreUsuario);
 		UsuarioDsk usuario = null;
 		try {
@@ -33,12 +34,13 @@ public class ManagerUsuario {
 			usuario = getInterfaceUsuario().obtenerUsuario(nombreUsuario, passwd);
 			Conector.closeConn("obtenerUsuario", null);
 		} catch (PersistenciaException e) {
-			e.printStackTrace();//FIXME controlar
+			logger.fatal("Excepcion en ManagerUsuario > obtenerUsuario: " + e.getMessage(), e);
+			throw new PresentacionException(e);
 		}
 		return usuario;
 	}
 
-	public Integer guardarUsuario(UsuarioDsk usuario) {
+	public Integer guardarUsuario(UsuarioDsk usuario) throws PresentacionException {
 		logger.info("Ingresa guardarUsuario");
 		if(usuario != null) {
 			try {
@@ -46,13 +48,14 @@ public class ManagerUsuario {
 				resultado = getInterfaceUsuario().guardarUsuario(usuario);
 				Conector.closeConn("guardarUsuario", null);
 			} catch (PersistenciaException e) {
-				e.printStackTrace();//FIXME controlar
+				logger.fatal("Excepcion en ManagerUsuario > guardarUsuario: " + e.getMessage(), e);
+				throw new PresentacionException(e);
 			}
 		}
 		return resultado;
 	}
 
-	public Integer modificarUsuario(UsuarioDsk usuario) {
+	public Integer modificarUsuario(UsuarioDsk usuario) throws PresentacionException {
 		logger.info("Ingresa modificarUsuario");
 		if(usuario != null) {
 			try {
@@ -60,13 +63,14 @@ public class ManagerUsuario {
 				resultado = getInterfaceUsuario().modificarUsuario(usuario);
 				Conector.closeConn("modificarUsuario", null);
 			} catch (PersistenciaException e) {
-				e.printStackTrace();//FIXME controlar
+				logger.fatal("Excepcion en ManagerUsuario > modificarUsuario: " + e.getMessage(), e);
+				throw new PresentacionException(e);
 			}
 		}
 		return resultado;
 	}
 
-	public Integer eliminarUsuario(UsuarioDsk usuario) {
+	public Integer eliminarUsuario(UsuarioDsk usuario) throws PresentacionException {
 		logger.info("Ingresa eliminarUsuario");
 		if(usuario != null) {
 			try {
@@ -74,7 +78,8 @@ public class ManagerUsuario {
 				resultado = getInterfaceUsuario().eliminarUsuario(usuario);
 				Conector.closeConn("eliminarUsuario", null);
 			} catch (PersistenciaException e) {
-				e.printStackTrace();//FIXME controlar
+				logger.fatal("Excepcion en ManagerUsuario > eliminarUsuario: " + e.getMessage(), e);
+				throw new PresentacionException(e);
 			}
 		}
 		return resultado;

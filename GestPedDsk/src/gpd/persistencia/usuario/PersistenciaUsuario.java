@@ -46,7 +46,7 @@ public class PersistenciaUsuario extends Conector implements IPersUsuario, CnstQ
 		} catch (SQLException | IOException e) {
 			Conector.rollbackConn();
 			logger.fatal("Excepcion al obtenerUsuario: " + e.getMessage(), e);
-			throw new PersistenciaException(e.getMessage()); 
+			throw new PersistenciaException(e);
 		}
 		return usuario;
 	}
