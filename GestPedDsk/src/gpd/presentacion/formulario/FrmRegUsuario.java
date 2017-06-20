@@ -2,6 +2,7 @@ package gpd.presentacion.formulario;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Frame;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -66,6 +67,9 @@ public class FrmRegUsuario extends JFrame {
 		//Hago que el controlador funcione
 		ctrl=new CtrlFrmRegUsuario();
 		
+		//Hago que si el usuario cierra la ventana, no se cierre todo.
+		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		
 		setTitle("Registrar nuevo usuario");
 		setIconImage(Toolkit.getDefaultToolkit().getImage(FrmRegUsuario.class.getResource("/gpd/recursos/Icono.png")));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -127,7 +131,14 @@ public class FrmRegUsuario extends JFrame {
 		btnRegistrarUsuario.addActionListener(new ActionListener() {
 			
 			public void actionPerformed(ActionEvent arg0) {
-				ctrl.registrarUsuario(txtNombre, txtCont, txtCont2, cbxTipo);
+				int opcion=JOptionPane.showConfirmDialog(null, "¿Está seguro que desea crear el usuario "+txtNombre.getText()+"?" , "Confirmación.", JOptionPane.OK_CANCEL_OPTION);
+				
+				if(opcion==JOptionPane.OK_OPTION){
+					ctrl.registrarUsuario(txtNombre, txtCont, txtCont2, cbxTipo);
+					FrmRegUsuario.this.setVisible(false);
+					dispose();
+				}
+				
 //				String mensaje="ATENCIÓN /n /n";
 //				boolean error=false;
 //				

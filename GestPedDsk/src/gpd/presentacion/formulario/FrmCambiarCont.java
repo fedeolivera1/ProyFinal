@@ -21,8 +21,8 @@ import java.awt.Color;
 public class FrmCambiarCont extends JFrame {
 
 	private JPanel contentPane;
-	private JPasswordField passwordField;
-	private JPasswordField passwordField_1;
+	private JPasswordField passUno;
+	private JPasswordField passDos;
 	private UsuarioDsk usu;
 	private CtrlUsuario ctrlusu;
 
@@ -46,6 +46,8 @@ public class FrmCambiarCont extends JFrame {
 	 * Create the frame.
 	 */
 	public FrmCambiarCont() {
+		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		
 		setTitle("Cambiar contrase\u00F1a");
 		setIconImage(Toolkit.getDefaultToolkit().getImage(FrmCambiarCont.class.getResource("/gpd/recursos/Icono.png")));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -74,17 +76,18 @@ public class FrmCambiarCont extends JFrame {
 		lblRepitaLaContrasea.setBounds(52, 154, 146, 14);
 		contentPane.add(lblRepitaLaContrasea);
 		
-		JComboBox comboBox = new JComboBox();
-		comboBox.setBounds(200, 37, 212, 20);
-		contentPane.add(comboBox);
+		JComboBox cbUsuario = new JComboBox();
+		cbUsuario.setBounds(200, 37, 212, 20);
+		contentPane.add(cbUsuario);
+		//Método para cargar 
 		
-		passwordField = new JPasswordField();
-		passwordField.setBounds(200, 91, 212, 20);
-		contentPane.add(passwordField);
+		passUno = new JPasswordField();
+		passUno.setBounds(200, 91, 212, 20);
+		contentPane.add(passUno);
 		
-		passwordField_1 = new JPasswordField();
-		passwordField_1.setBounds(200, 148, 212, 20);
-		contentPane.add(passwordField_1);
+		passDos = new JPasswordField();
+		passDos.setBounds(200, 148, 212, 20);
+		contentPane.add(passDos);
 		
 		JButton btnCambiarContrasea = new JButton("Modificar contrase\u00F1a");
 		btnCambiarContrasea.setBounds(266, 209, 146, 23);
@@ -92,7 +95,7 @@ public class FrmCambiarCont extends JFrame {
 	}
 
 	public FrmCambiarCont(UsuarioDsk usr) {
-		
+		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		usu=usr;
 		setTitle("Cambiar contrase\u00F1a");
 		setIconImage(Toolkit.getDefaultToolkit().getImage(FrmCambiarCont.class.getResource("/gpd/recursos/Icono.png")));
@@ -126,16 +129,20 @@ public class FrmCambiarCont extends JFrame {
 		comboBox.setBounds(200, 37, 212, 20);
 		contentPane.add(comboBox);
 		
-		passwordField = new JPasswordField();
-		passwordField.setBounds(200, 91, 212, 20);
-		contentPane.add(passwordField);
+		passUno = new JPasswordField();
+		passUno.setBounds(200, 91, 212, 20);
+		contentPane.add(passUno);
 		
-		passwordField_1 = new JPasswordField();
-		passwordField_1.setBounds(200, 148, 212, 20);
-		contentPane.add(passwordField_1);
+		passDos = new JPasswordField();
+		passDos.setBounds(200, 148, 212, 20);
+		contentPane.add(passDos);
 		
 		JButton btnCambiarContrasea = new JButton("Modificar contrase\u00F1a");
 		btnCambiarContrasea.setBounds(266, 209, 146, 23);
 		contentPane.add(btnCambiarContrasea);
+	}
+	
+	public void cargarCbx(){
+	
 	}
 }

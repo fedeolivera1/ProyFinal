@@ -141,16 +141,6 @@ public class FrmPrincipal extends JFrame {
 		
 		JMenu mnTrabajadores = new JMenu("Usuarios");
 		mnEdicin.add(mnTrabajadores);
-		
-		JMenu mnCambiarContraseaDe = new JMenu("Cambiar contrase\u00F1a de un usuario");
-		mnCambiarContraseaDe.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				FrmCambiarCont frmCambUs = new FrmCambiarCont(usr);
-				frmCambUs.setLocationRelativeTo(null);
-				frmCambUs.setVisible(true);
-			}
-		});
-		mnTrabajadores.add(mnCambiarContraseaDe);
 		/**Abre frame para agregar un usuario*/
 //		mnAgregarUsuario.addMouseListener(new MouseListener() {
 //			
@@ -191,6 +181,16 @@ public class FrmPrincipal extends JFrame {
 				frmRu.setVisible(true);
 			}
 		});
+		
+		JMenuItem mntmCambiarContraseaDe = new JMenuItem("Cambiar contrase\u00F1a de un usuario");
+		mntmCambiarContraseaDe.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				FrmCambiarCont frmCC = new FrmCambiarCont();
+				frmCC.setLocationRelativeTo(null);
+				frmCC.setVisible(true);
+			}
+		});
+		mnTrabajadores.add(mntmCambiarContraseaDe);
 		mnTrabajadores.add(mntmAgregarUsuario);
 		
 		JMenuItem mntmEliminarUnUsuario = new JMenuItem("Eliminar un usuario");
