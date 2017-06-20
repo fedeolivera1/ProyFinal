@@ -27,6 +27,7 @@ import gpd.types.Fecha;
 public class PersistenciaTransaccion extends Conector implements IPersTransaccion, CnstQryTransaccion {
 
 	private static final Logger logger = Logger.getLogger(PersistenciaTransaccion.class);
+	private ResultSet rs;
 	
 	
 	@Override
@@ -105,7 +106,7 @@ public class PersistenciaTransaccion extends Conector implements IPersTransaccio
 		try {
 			GenSqlSelectType genType = new GenSqlSelectType(QRY_SELECT_TRAN_XID);
 			genType.setParam(idTransac);
-			ResultSet rs = (ResultSet) runGeneric(genType);
+			rs = (ResultSet) runGeneric(genType);
 			if(rs.next()) {
 				transac = new Transaccion(null);
 				transac.setNroTransac(rs.getLong("nro_transac"));
@@ -127,6 +128,8 @@ public class PersistenciaTransaccion extends Conector implements IPersTransaccio
 			Conector.rollbackConn();
 			logger.log(Level.FATAL, "Excepcion al obtenerListaTransaccionPorPersona: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
+		} finally {
+			closeRs(rs);
 		}
 		return transac;
 	}
@@ -142,7 +145,7 @@ public class PersistenciaTransaccion extends Conector implements IPersTransaccio
 			genType.setParamCharIfNull(tipoTran.getAsChar());
 			genType.setParamCharIfNull(estadoTran.getAsChar());
 			genType.setParamCharIfNull(estadoTran.getAsChar());
-			ResultSet rs = (ResultSet) runGeneric(genType);
+			rs = (ResultSet) runGeneric(genType);
 			while(rs.next()) {
 				Transaccion transac = new Transaccion(null);
 				transac.setNroTransac(rs.getLong("nro_transac"));
@@ -165,6 +168,8 @@ public class PersistenciaTransaccion extends Conector implements IPersTransaccio
 			Conector.rollbackConn();
 			logger.log(Level.FATAL, "Excepcion al obtenerListaTransaccionPorPersona: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
+		} finally {
+			closeRs(rs);
 		}
 		return listaTransac;
 	}
@@ -181,7 +186,7 @@ public class PersistenciaTransaccion extends Conector implements IPersTransaccio
 			genType.setParamCharIfNull(estadoTran.getAsChar());
 			genType.setParam(fechaIni);
 			genType.setParam(fechaFin);
-			ResultSet rs = (ResultSet) runGeneric(genType);
+			rs = (ResultSet) runGeneric(genType);
 			while(rs.next()) {
 				Transaccion transac = new Transaccion(null);
 				transac.setNroTransac(rs.getLong("nro_transac"));
@@ -204,6 +209,8 @@ public class PersistenciaTransaccion extends Conector implements IPersTransaccio
 			Conector.rollbackConn();
 			logger.log(Level.FATAL, "Excepcion al obtenerListaTransaccionPorPersona: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
+		} finally {
+			closeRs(rs);
 		}
 		return listaTransac;
 	}
@@ -233,7 +240,7 @@ public class PersistenciaTransaccion extends Conector implements IPersTransaccio
 		try {
 			GenSqlSelectType genType = new GenSqlSelectType(QRY_SELECT_ULT_TRANESTADO_XID);
 			genType.setParam(idTransac);
-			ResultSet rs = (ResultSet) runGeneric(genType);
+			rs = (ResultSet) runGeneric(genType);
 			if(rs.next()) {
 				char[] estadoChar = new char[1];
 				rs.getCharacterStream("estado").read(estadoChar);
@@ -243,6 +250,8 @@ public class PersistenciaTransaccion extends Conector implements IPersTransaccio
 			Conector.rollbackConn();
 			logger.log(Level.FATAL, "Excepcion al obtenerUltTranEstadoPorId: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
+		} finally {
+			closeRs(rs);
 		}
 		return estadoTran;
 	}

@@ -20,14 +20,14 @@ import gpd.persistencia.conector.Conector;
 public class PersistenciaDepLoc extends Conector implements IPersDepLoc, CnstQryDepLoc {
 
 	private static final Logger logger = Logger.getLogger(PersistenciaDepLoc.class);
-	
+	private ResultSet rs;
 	
 	@Override
 	public List<Departamento> obtenerListaDepartamentos() throws PersistenciaException {
 		List<Departamento> listaDep = new ArrayList<>();
 		try {
 			GenSqlSelectType genType = new GenSqlSelectType(QRY_SELECT_DEP);
-			ResultSet rs = (ResultSet) runGeneric(genType);
+			rs = (ResultSet) runGeneric(genType);
 			while(rs.next()) {
 				Departamento departamento = new Departamento();
 				departamento.setIdDepartamento(rs.getInt("id_dep"));

@@ -5,7 +5,7 @@ public interface CnstPresGeneric {
 	//usuario
 	public static final String USR = "Usuario";
 	public final static String USR_DATOS = "Debe proporcionar nombre de usuario y password.";
-	public final static String USR_NO_AUTENTICADO = "EL usuario no se ha podido autenticar.";
+	public final static String USR_NO_AUTENTICADO = "El usuario no se ha podido autenticar.";
 	
 	//prod
 	public static final String PROD = "Producto";

@@ -24,7 +24,7 @@ import gpd.types.Fecha;
 public class PersistenciaProducto extends Conector implements IPersProducto, CnstQryProducto {
 	
 	private static final Logger logger = Logger.getLogger(PersistenciaProducto.class);
-
+	private ResultSet rs;
 	
 	@Override
 	public List<Producto> obtenerBusquedaProducto(Integer idTipoProd, String codigo, String nombre, String descripcion) throws PersistenciaException {
@@ -40,7 +40,7 @@ public class PersistenciaProducto extends Conector implements IPersProducto, Cns
 			genSel.setParam(nombre);
 			genSel.setParamLikeRight(descripcion);
 			genSel.setParam(descripcion);
-			ResultSet rs = (ResultSet) runGeneric(genSel);
+			rs = (ResultSet) runGeneric(genSel);
 			while(rs.next()) {
 				Producto producto = new Producto();
 				producto.setIdProducto(rs.getInt("id_producto"));
@@ -61,6 +61,8 @@ public class PersistenciaProducto extends Conector implements IPersProducto, Cns
 			Conector.rollbackConn();
 			logger.log(Level.FATAL, "Excepcion al obtenerBusquedaProducto: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
+		} finally {
+			closeRs(rs);
 		}
 		return listaProd;
 	}
@@ -72,7 +74,7 @@ public class PersistenciaProducto extends Conector implements IPersProducto, Cns
 		try {
 			GenSqlSelectType genSel = new GenSqlSelectType(QRY_SELECT_PROD_XID);
 			genSel.setParam(id);
-			ResultSet rs = (ResultSet) runGeneric(genSel);
+			rs = (ResultSet) runGeneric(genSel);
 			if(rs.next()) {
 				producto = new Producto();
 				producto.setIdProducto(rs.getInt("id_producto"));
@@ -103,7 +105,7 @@ public class PersistenciaProducto extends Conector implements IPersProducto, Cns
 		try {
 			GenSqlSelectType genSel = new GenSqlSelectType(QRY_SELECT_PROD_X_TIPOPROD);
 			genSel.setParam(tipoProd.getIdTipoProd());
-			ResultSet rs = (ResultSet) runGeneric(genSel);
+			rs = (ResultSet) runGeneric(genSel);
 			while(rs.next()) {
 				Producto producto = new Producto();
 				producto.setIdProducto(rs.getInt("id_producto"));

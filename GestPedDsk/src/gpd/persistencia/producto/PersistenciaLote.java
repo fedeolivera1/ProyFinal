@@ -22,7 +22,7 @@ import gpd.types.Fecha;
 public class PersistenciaLote extends Conector implements IPersLote, CnstQryLote {
 
 	private static final Logger logger = Logger.getLogger(PersistenciaLote.class);
-	
+	private ResultSet rs;
 	
 	@Override
 	public List<Lote> obtenerListaLotePorTransac(Long nroTransac) throws PersistenciaException {
@@ -33,7 +33,7 @@ public class PersistenciaLote extends Conector implements IPersLote, CnstQryLote
 		try {
 			GenSqlSelectType genType = new GenSqlSelectType(QRY_SELECT_LOTES_XTRANSAC);
 			genType.setParamCharIfNull(nroTransac);
-			ResultSet rs = (ResultSet) runGeneric(genType);
+			rs = (ResultSet) runGeneric(genType);
 			while(rs.next()) {
 				Lote lote = new Lote();
 				lote.setIdLote(rs.getInt("id_lote"));
@@ -60,6 +60,8 @@ public class PersistenciaLote extends Conector implements IPersLote, CnstQryLote
 			Conector.rollbackConn();
 			logger.log(Level.FATAL, "Excepcion al obtenerListaTransaccionPorPersona: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
+		} finally {
+			closeRs(rs);
 		}
 		return listaLote;
 	}

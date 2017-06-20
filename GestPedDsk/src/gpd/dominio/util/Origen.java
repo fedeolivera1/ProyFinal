@@ -28,4 +28,9 @@ public enum Origen {
     	}
         return null;
     }
+	
+	@Override
+	 public String toString() {
+		 return origen;
+	 }
 }

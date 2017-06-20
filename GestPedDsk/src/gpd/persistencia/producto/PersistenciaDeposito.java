@@ -20,7 +20,7 @@ import gpd.persistencia.conector.Conector;
 public class PersistenciaDeposito extends Conector implements IPersDeposito, CnstQryDeposito {
 
 	private static final Logger logger = Logger.getLogger(PersistenciaDeposito.class);
-	
+	private ResultSet rs;
 	
 	@Override
 	public Deposito obtenerDepositoPorId(Integer id) throws PersistenciaException {
@@ -28,7 +28,7 @@ public class PersistenciaDeposito extends Conector implements IPersDeposito, Cns
 		try {
 			GenSqlSelectType genType = new GenSqlSelectType(QRY_SELECT_DEPOSITO_X_ID);
 			genType.setParam(id);
-			ResultSet rs = (ResultSet) runGeneric(genType);
+			rs = (ResultSet) runGeneric(genType);
 			if(rs.next()) {
 				deposito = new Deposito();
 				deposito.setNroDep(rs.getInt("nro_dep"));
@@ -38,6 +38,8 @@ public class PersistenciaDeposito extends Conector implements IPersDeposito, Cns
 			Conector.rollbackConn();
 			logger.log(Level.FATAL, "Excepcion al obtenerDepositoPorId: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
+		} finally {
+			closeRs(rs);
 		}
 		return deposito;
 	}
@@ -47,7 +49,7 @@ public class PersistenciaDeposito extends Conector implements IPersDeposito, Cns
 		List<Deposito> listaDeposito = new ArrayList<>();
 		try {
 			GenSqlSelectType genType = new GenSqlSelectType(QRY_SELECT_DEPOSITO);
-			ResultSet rs = (ResultSet) runGeneric(genType);
+			rs = (ResultSet) runGeneric(genType);
 			while(rs.next()) {
 				Deposito deposito = new Deposito();
 				deposito.setNroDep(rs.getInt("nro_dep"));
@@ -58,6 +60,8 @@ public class PersistenciaDeposito extends Conector implements IPersDeposito, Cns
 			Conector.rollbackConn();
 			logger.log(Level.FATAL, "Excepcion al obtenerListaDeposito: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
+		} finally {
+			closeRs(rs);
 		}
 		return listaDeposito;
 	}

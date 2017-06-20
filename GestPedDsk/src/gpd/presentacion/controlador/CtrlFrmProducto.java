@@ -51,7 +51,6 @@ public class CtrlFrmProducto extends CtrlGenerico {
 	private IfrmDeposito iFrmDep;
 	private IfrmUtilidad iFrmUtil;
 	private JDesktopPane deskPane;
-//	private TipoProd tpSel;
 	private HashMap<Integer, Lote> hashLotes;
 	
 	
@@ -84,8 +83,8 @@ public class CtrlFrmProducto extends CtrlGenerico {
 				}
 				cbxTipoProd.setSelectedIndex(-1);
 			}
-		} catch (PresentacionException e) {
-			enviarError(CnstPresExceptions.DB, e.getMessage());
+		} catch(Exception e) {
+			manejarExcepcion(e);
 		}
 	}
 	
@@ -101,68 +100,80 @@ public class CtrlFrmProducto extends CtrlGenerico {
 				jlTipoProd.setModel(dlm);
 				jlTipoProd.setSelectedIndex(-1);
 			}
-		} catch (PresentacionException e) {
-			enviarError(CnstPresExceptions.DB, e.getMessage());
+		} catch(Exception e) {
+			manejarExcepcion(e);
 		}
 	}
 	
 	public void cargarControlesTipoProd(JTextField txtTpDesc, JList<TipoProd> jlTipoProd) {
-		if(controlDatosObl(jlTipoProd)) {
-			TipoProd tp = (TipoProd) jlTipoProd.getSelectedValue();
-			txtTpDesc.setText(tp.getDescripcion());
+		try {
+			if(controlDatosObl(jlTipoProd)) {
+				TipoProd tp = (TipoProd) jlTipoProd.getSelectedValue();
+				txtTpDesc.setText(tp.getDescripcion());
+			}
+		} catch(Exception e) {
+			manejarExcepcion(e);
 		}
 	}
 	
 	//prod
 	public void cargarJtProd(List<Producto> listaProd) {
-		JTable tabla = frmProd.getJtProd();
-		clearTable(tabla);
-		if(listaProd != null && !listaProd.isEmpty()) {
-			DefaultTableModel modeloJtProd = new DefaultTableModel();
-			tabla.setModel(modeloJtProd);
-			modeloJtProd.addColumn("Id");
-			modeloJtProd.addColumn("Codigo");
-			modeloJtProd.addColumn("Nombre");
-			modeloJtProd.addColumn("Desc");
-			modeloJtProd.addColumn("Stock Min");
-			modeloJtProd.addColumn("Tipo");
-			for(Producto prod : listaProd) {
-				Object [] fila = new Object[6];
-				fila[0] = prod.getIdProducto();
-				fila[1] = prod.getCodigo();
-				fila[2] = prod.getNombre();
-				fila[3] = prod.getDescripcion();
-				fila[4] = prod.getStockMin();
-				fila[5] = prod.getTipoProd().toString();
-				modeloJtProd.addRow(fila);
-			}
-			tabla.addMouseListener(new MouseAdapter() {
-				@Override
-				public void mouseClicked(MouseEvent me) {
-					try {
-						int fila = tabla.rowAtPoint(me.getPoint());
-						if (fila > -1) {
-							Integer idProd = (Integer) tabla.getModel().getValueAt(fila, 0);
-							Producto prod = mgrProd.obtenerProductoPorId(idProd);
-							Container containerJTable = tabla.getParent().getParent().getParent();
-							cargarControlesProducto(prod, containerJTable);
-						}
-					} catch (PresentacionException e) {
-						enviarError(CnstPresExceptions.DB, e.getMessage());
-					}
+		try {
+			JTable tabla = frmProd.getJtProd();
+			clearTable(tabla);
+			if(listaProd != null && !listaProd.isEmpty()) {
+				DefaultTableModel modeloJtProd = new DefaultTableModel();
+				tabla.setModel(modeloJtProd);
+				modeloJtProd.addColumn("Id");
+				modeloJtProd.addColumn("Codigo");
+				modeloJtProd.addColumn("Nombre");
+				modeloJtProd.addColumn("Desc");
+				modeloJtProd.addColumn("Stock Min");
+				modeloJtProd.addColumn("Tipo");
+				for(Producto prod : listaProd) {
+					Object [] fila = new Object[6];
+					fila[0] = prod.getIdProducto();
+					fila[1] = prod.getCodigo();
+					fila[2] = prod.getNombre();
+					fila[3] = prod.getDescripcion();
+					fila[4] = prod.getStockMin();
+					fila[5] = prod.getTipoProd().toString();
+					modeloJtProd.addRow(fila);
 				}
-			});
-		} else {
-			cargarJTableVacia(tabla, null);
+				tabla.addMouseListener(new MouseAdapter() {
+					@Override
+					public void mouseClicked(MouseEvent me) {
+						try {
+							int fila = tabla.rowAtPoint(me.getPoint());
+							if (fila > -1) {
+								Integer idProd = (Integer) tabla.getModel().getValueAt(fila, 0);
+								Producto prod = mgrProd.obtenerProductoPorId(idProd);
+								Container containerJTable = tabla.getParent().getParent().getParent();
+								cargarControlesProducto(prod, containerJTable);
+							}
+						} catch (PresentacionException e) {
+							enviarError(CnstPresExceptions.DB, e.getMessage());
+						}
+					}
+				});
+			} else {
+				cargarJTableVacia(tabla, null);
+			}
+		} catch(Exception e) {
+			manejarExcepcion(e);
 		}
 	}
 	
 	public void cargarCbxFiltroLote(JComboBox<EstadoTran> cbxFiltroLote) {
-		cbxFiltroLote.removeAllItems();
-		for(EstadoTran estado : EstadoTran.values()) {
-			cbxFiltroLote.addItem(estado);
+		try {
+			cbxFiltroLote.removeAllItems();
+			for(EstadoTran estado : EstadoTran.values()) {
+				cbxFiltroLote.addItem(estado);
+			}
+			cbxFiltroLote.setSelectedIndex(-1);
+		} catch(Exception e) {
+			manejarExcepcion(e);
 		}
-		cbxFiltroLote.setSelectedIndex(-1);
 	}
 	
 	public void cargarLotesPorTransac(JComboBox<Transaccion> cbxLoteTransac) {
@@ -177,88 +188,103 @@ public class CtrlFrmProducto extends CtrlGenerico {
 					}
 				}
 				cargarJtLote();
+				setContainerEnabled(frmProd.getPnlLoteDatos(), transac.getEstadoTran().equals(EstadoTran.P));
 			} else {
 				hashLotes = null;
 				cargarJtLote();
+				setContainerEnabled(frmProd.getPnlLoteDatos(), false);
 			}
-		} catch (PresentacionException e) {
-			enviarError(CnstPresExceptions.DB, e.getMessage());
+		} catch(Exception e) {
+			manejarExcepcion(e);
 		}
 	}
 	
 	public void cargarJtLote() {
-		JTable tabla = frmProd.getJtLote();
-		clearTable(tabla);
-		deleteModelTable(tabla);
-		if(hashLotes != null && !hashLotes.isEmpty()) {
-			DefaultTableModel modeloJtLote = new DefaultTableModel();
-			tabla.setModel(modeloJtLote);
-			modeloJtLote.addColumn("Lote");
-			modeloJtLote.addColumn("Producto");
-			modeloJtLote.addColumn("Transaccion");
-			modeloJtLote.addColumn("Stock");
-			modeloJtLote.addColumn("Venc");
-			modeloJtLote.addColumn("Dep");
-			modeloJtLote.addColumn("Util");
-			for(Lote lote : hashLotes.values()) {
-				Object [] fila = new Object[7];
-				fila[0] = lote.getIdLote();
-				fila[1] = lote.getTranLinea().getProducto();
-				fila[2] = lote.getTranLinea().getTransaccion().getNroTransac();
-				fila[3] = lote.getStock();
-				fila[4] = lote.getVenc() != null ? lote.getVenc().toString(Fecha.DMA) : CnstPresGeneric.N_A;
-				fila[5] = lote.getDeposito() != null ? lote.getDeposito() : CnstPresGeneric.N_A;
-				fila[6] = lote.getUtilidad() != null ? lote.getUtilidad() : CnstPresGeneric.N_A;
-				modeloJtLote.addRow(fila);
-			}
-			tabla.addMouseListener(new MouseAdapter() {
-				@Override
-				public void mouseClicked(MouseEvent e) {
-					int fila = tabla.rowAtPoint(e.getPoint());
-					if (fila > -1 && tabla.getColumnCount() > 1) {
-						Integer idLote = (Integer) tabla.getModel().getValueAt(fila, 0);
-						cargarControlesLote(hashLotes.get(idLote), getFrm().getPnlLoteDatos());
-					}
+		try {
+			JTable tabla = frmProd.getJtLote();
+			clearTable(tabla);
+			deleteModelTable(tabla);
+			if(hashLotes != null && !hashLotes.isEmpty()) {
+				DefaultTableModel modeloJtLote = new DefaultTableModel();
+				tabla.setModel(modeloJtLote);
+				modeloJtLote.addColumn("Lote");
+				modeloJtLote.addColumn("Producto");
+				modeloJtLote.addColumn("Transaccion");
+				modeloJtLote.addColumn("Stock");
+				modeloJtLote.addColumn("Deposito");
+				modeloJtLote.addColumn("Utilidad");
+				modeloJtLote.addColumn("Venc");
+				for(Lote lote : hashLotes.values()) {
+					Object [] fila = new Object[7];
+					fila[0] = lote.getIdLote();
+					fila[1] = lote.getTranLinea().getProducto();
+					fila[2] = lote.getTranLinea().getTransaccion().getNroTransac();
+					fila[3] = lote.getStock();
+					fila[4] = lote.getDeposito() != null ? lote.getDeposito() : CnstPresGeneric.N_A;
+					fila[5] = lote.getUtilidad() != null ? lote.getUtilidad() : CnstPresGeneric.N_A;
+					fila[6] = lote.getVenc() != null ? lote.getVenc().toString(Fecha.DMA) : CnstPresGeneric.N_A;
+					modeloJtLote.addRow(fila);
 				}
-			});
-		} else {
-			cargarJTableVacia(tabla, CnstPresGeneric.JTABLE_SIN_LOTES);
-			clearPanel(frmProd.getPnlLoteDatos());
+				tabla.addMouseListener(new MouseAdapter() {
+					@Override
+					public void mouseClicked(MouseEvent e) {
+						int fila = tabla.rowAtPoint(e.getPoint());
+						if (fila > -1 && tabla.getColumnCount() > 1) {
+							Integer idLote = (Integer) tabla.getModel().getValueAt(fila, 0);
+							cargarControlesLote(hashLotes.get(idLote), getFrm().getPnlLoteDatos());
+						}
+					}
+				});
+			} else {
+				cargarJTableVacia(tabla, CnstPresGeneric.JTABLE_SIN_LOTES);
+				clearPanel(frmProd.getPnlLoteDatos());
+			}
+		} catch(Exception e) {
+			manejarExcepcion(e);
 		}
 	}
 	
 	private void cargarControlesLote(Lote lote, Container panel) {
-		if(lote.getDeposito() != null && lote.getUtilidad() != null &&
-				lote.getVenc() != null) {
-			
-			ComboBoxModel<Deposito> cbModelDep = frmProd.getCbxLoteDep().getModel();
-			cbModelDep.setSelectedItem(lote.getDeposito());
-			frmProd.getCbxLoteDep().setSelectedItem(cbModelDep.getSelectedItem());
-
-			ComboBoxModel<Utilidad> cbModelUtil = frmProd.getCbxLoteUtil().getModel();
-			cbModelUtil.setSelectedItem(lote.getUtilidad());
-			frmProd.getCbxLoteUtil().setSelectedItem(cbModelUtil.getSelectedItem());
-			
-			GregorianCalendar gc = new GregorianCalendar();
-			gc.setTimeInMillis(lote.getVenc().getTimeInMillis());
-			getFrm().getDchLoteVenc().setCalendar(gc);
-		} else {
-			clearControlsInJPanel(panel);
+		try {
+//			Transaccion transac = (Transaccion) frmProd.getCbxLoteCompras().getSelectedItem();
+			if(lote.getDeposito() != null && lote.getUtilidad() != null &&
+					lote.getVenc() != null) {
+				
+				ComboBoxModel<Deposito> cbModelDep = frmProd.getCbxLoteDep().getModel();
+				cbModelDep.setSelectedItem(lote.getDeposito());
+				frmProd.getCbxLoteDep().setSelectedItem(cbModelDep.getSelectedItem());
+	
+				ComboBoxModel<Utilidad> cbModelUtil = frmProd.getCbxLoteUtil().getModel();
+				cbModelUtil.setSelectedItem(lote.getUtilidad());
+				frmProd.getCbxLoteUtil().setSelectedItem(cbModelUtil.getSelectedItem());
+				
+				GregorianCalendar gc = new GregorianCalendar();
+				gc.setTimeInMillis(lote.getVenc().getTimeInMillis());
+				getFrm().getDchLoteVenc().setCalendar(gc);
+			} else {
+				clearControlsInJPanel(panel);
+			}
+		} catch(Exception e) {
+			manejarExcepcion(e);
 		}
 	}
 	
 	
 	public void cargarControlesProducto(Producto prod, Container panel) {
-		clearControlsInJPanel(panel);
-		ComboBoxModel<TipoProd> cbModelTp = frmProd.getCbxTipoProd().getModel();
-		cbModelTp.setSelectedItem(prod.getTipoProd());
-		frmProd.getCbxTipoProd().setSelectedItem(cbModelTp.getSelectedItem());
-		frmProd.getTxtProId().setText(String.valueOf(prod.getIdProducto()));
-		frmProd.getTxtProCod().setText(prod.getCodigo());
-		frmProd.getTxtProNom().setText(prod.getNombre());
-		frmProd.getTxtProDesc().setText(prod.getDescripcion());
-		frmProd.getFtxtProStockMin().setText(String.valueOf(prod.getStockMin()));
-		frmProd.getFtxtProPrecio().setText(String.valueOf(prod.getPrecio()));
+		try {
+			clearControlsInJPanel(panel);
+			ComboBoxModel<TipoProd> cbModelTp = frmProd.getCbxTipoProd().getModel();
+			cbModelTp.setSelectedItem(prod.getTipoProd());
+			frmProd.getCbxTipoProd().setSelectedItem(cbModelTp.getSelectedItem());
+			frmProd.getTxtProId().setText(String.valueOf(prod.getIdProducto()));
+			frmProd.getTxtProCod().setText(prod.getCodigo());
+			frmProd.getTxtProNom().setText(prod.getNombre());
+			frmProd.getTxtProDesc().setText(prod.getDescripcion());
+			frmProd.getFtxtProStockMin().setText(String.valueOf(prod.getStockMin()));
+			frmProd.getFtxtProPrecio().setText(String.valueOf(prod.getPrecio()));
+		} catch(Exception e) {
+			manejarExcepcion(e);
+		}
 	}
 	
 	//dep
@@ -272,8 +298,8 @@ public class CtrlFrmProducto extends CtrlGenerico {
 				}
 				cbxDep.setSelectedIndex(-1);
 			}
-		} catch (PresentacionException e) {
-			enviarError(CnstPresExceptions.DB, e.getMessage());
+		} catch(Exception e) {
+			manejarExcepcion(e);
 		}
 	}
 	
@@ -289,15 +315,19 @@ public class CtrlFrmProducto extends CtrlGenerico {
 				jlDep.setModel(dlm);
 				jlDep.setSelectedIndex(-1);
 			}
-		} catch (PresentacionException e) {
-			enviarError(CnstPresExceptions.DB, e.getMessage());
+		} catch(Exception e) {
+			manejarExcepcion(e);
 		}
 	}
 	
 	public void cargarControlesDep(JTextField txtDepNom, JList<Deposito> jlDep) {
-		if(controlDatosObl(jlDep)) {
-			Deposito dep = (Deposito) jlDep.getSelectedValue();
-			txtDepNom.setText(dep.getNombre());
+		try {
+			if(controlDatosObl(jlDep)) {
+				Deposito dep = (Deposito) jlDep.getSelectedValue();
+				txtDepNom.setText(dep.getNombre());
+			}
+		} catch(Exception e) {
+			manejarExcepcion(e);
 		}
 	}
 
@@ -313,8 +343,8 @@ public class CtrlFrmProducto extends CtrlGenerico {
 				}
 				cbxUtil.setSelectedIndex(-1);
 			}
-		} catch (PresentacionException e) {
-			enviarError(CnstPresExceptions.DB, e.getMessage());
+		} catch(Exception e) {
+			manejarExcepcion(e);
 		}
 	}
 	
@@ -330,16 +360,20 @@ public class CtrlFrmProducto extends CtrlGenerico {
 				jlUtil.setModel(dlm);
 				jlUtil.setSelectedIndex(-1);
 			}
-		} catch (PresentacionException e) {
-			enviarError(CnstPresExceptions.DB, e.getMessage());
+		} catch(Exception e) {
+			manejarExcepcion(e);
 		}
 	}
 	
 	public void cargarControlesUtil(JTextField txtUtilDesc, JFormattedTextField txtUtilPorc, JList<Utilidad> jlUtil) {
-		if(controlDatosObl(jlUtil)) {
-			Utilidad util = (Utilidad) jlUtil.getSelectedValue();
-			txtUtilDesc.setText(util.getDescripcion());
-			txtUtilPorc.setText(String.valueOf(util.getPorc()));
+		try {
+			if(controlDatosObl(jlUtil)) {
+				Utilidad util = (Utilidad) jlUtil.getSelectedValue();
+				txtUtilDesc.setText(util.getDescripcion());
+				txtUtilPorc.setText(String.valueOf(util.getPorc()));
+			}
+		} catch(Exception e) {
+			manejarExcepcion(e);
 		}
 	}
 	
@@ -354,8 +388,8 @@ public class CtrlFrmProducto extends CtrlGenerico {
 			//FIXME chequear que no haya que poner campos obligatorios
 			List<Producto> listaProd = (ArrayList<Producto>) mgrProd.obtenerBusquedaProducto((TipoProd) cbxTp.getSelectedItem(), txtProCod.getText(), txtProNom.getText(), txtProDesc.getText());
 			cargarJtProd(listaProd);
-		} catch (PresentacionException  e) {
-			enviarError(CnstPresExceptions.DB, e.getMessage());
+		} catch(Exception e) {
+			manejarExcepcion(e);
 		}
 	}
 	
@@ -384,8 +418,8 @@ public class CtrlFrmProducto extends CtrlGenerico {
 			} else {
 				enviarWarning(CnstPresGeneric.PROD, CnstPresGeneric.DATOS_OBLIG);
 			}
-		} catch (PresentacionException e) {
-			enviarError(CnstPresExceptions.DB, e.getMessage());
+		} catch(Exception e) {
+			manejarExcepcion(e);
 		}
 		return null;
 	}
@@ -417,8 +451,8 @@ public class CtrlFrmProducto extends CtrlGenerico {
 			} else {
 				enviarWarning(CnstPresGeneric.PROD, CnstPresGeneric.DATOS_OBLIG);
 			}
-		} catch (PresentacionException e) {
-			enviarError(CnstPresExceptions.DB, e.getMessage());
+		} catch(Exception e) {
+			manejarExcepcion(e);
 		}
 		return null;
 	}
@@ -434,8 +468,8 @@ public class CtrlFrmProducto extends CtrlGenerico {
 			} else {
 				enviarWarning(CnstPresGeneric.PROD, CnstPresGeneric.DATOS_OBLIG);
 			}
-		} catch (PresentacionException e) {
-			enviarError(CnstPresExceptions.DB, e.getMessage());
+		} catch(Exception e) {
+			manejarExcepcion(e);
 		}
 		return null;
 	}
@@ -454,8 +488,8 @@ public class CtrlFrmProducto extends CtrlGenerico {
 			} else {
 				enviarWarning(CnstPresGeneric.TP, CnstPresGeneric.DATOS_OBLIG);
 			}
-		} catch (PresentacionException e) {
-			enviarError(CnstPresExceptions.DB, e.getMessage());
+		} catch(Exception e) {
+			manejarExcepcion(e);
 		}
 		return null;
 	}
@@ -472,8 +506,8 @@ public class CtrlFrmProducto extends CtrlGenerico {
 			} else {
 				enviarWarning(CnstPresGeneric.TP, CnstPresGeneric.DATOS_OBLIG);
 			}
-		} catch (PresentacionException e) {
-			enviarError(CnstPresExceptions.DB, e.getMessage());
+		} catch(Exception e) {
+			manejarExcepcion(e);
 		}
 		return null;
 	}
@@ -489,28 +523,36 @@ public class CtrlFrmProducto extends CtrlGenerico {
 			} else {
 				enviarWarning(CnstPresGeneric.TP, CnstPresGeneric.DATOS_OBLIG);
 			}
-		} catch (PresentacionException e) {
-			enviarError(CnstPresExceptions.DB, e.getMessage());
+		} catch(Exception e) {
+			manejarExcepcion(e);
 		}
 		return null;
 	}
 
 
 	public void abrirIFrmTp() {
-		IfrmTipoProd ifrmTp = new IfrmTipoProd(this);
-		getDeskPane().setBounds(0, 0, 784, 565);
-		getDeskPane().add(ifrmTp);
-		//
-		Component comp = getFrm().getContentPane().getComponent(1);
-		comp.setVisible(false);//FIXME: ver si no existe solucion mejor
-		//
-		ifrmTp.show();
+		try {
+			IfrmTipoProd ifrmTp = new IfrmTipoProd(this);
+			getDeskPane().setBounds(0, 0, 784, 565);
+			getDeskPane().add(ifrmTp);
+			//
+			Component comp = getFrm().getContentPane().getComponent(1);
+			comp.setVisible(false);//FIXME: ver si no existe solucion mejor
+			//
+			ifrmTp.show();
+		} catch(Exception e) {
+			manejarExcepcion(e);
+		}
 	}
 	
 	public void cerrarIFrmTp() {
-		Component comp = getFrm().getContentPane().getComponent(1);
-		getDeskPane().setBounds(773, 11, 0, 0);
-		comp.setVisible(true);
+		try {
+			Component comp = getFrm().getContentPane().getComponent(1);
+			getDeskPane().setBounds(773, 11, 0, 0);
+			comp.setVisible(true);
+		} catch(Exception e) {
+			manejarExcepcion(e);
+		}
 	}
 	
 	//deposito
@@ -527,8 +569,8 @@ public class CtrlFrmProducto extends CtrlGenerico {
 			} else {
 				enviarWarning(CnstPresGeneric.TP, CnstPresGeneric.DATOS_OBLIG);
 			}
-		} catch (PresentacionException e) {
-			enviarError(CnstPresExceptions.DB, e.getMessage());
+		} catch(Exception e) {
+			manejarExcepcion(e);
 		}
 		return null;
 	}
@@ -545,8 +587,8 @@ public class CtrlFrmProducto extends CtrlGenerico {
 			} else {
 				enviarWarning(CnstPresGeneric.TP, CnstPresGeneric.DATOS_OBLIG);
 			}
-		} catch (PresentacionException e) {
-			enviarError(CnstPresExceptions.DB, e.getMessage());
+		} catch(Exception e) {
+			manejarExcepcion(e);
 		}
 		return null;
 	}
@@ -562,27 +604,35 @@ public class CtrlFrmProducto extends CtrlGenerico {
 			} else {
 				enviarWarning(CnstPresGeneric.TP, CnstPresGeneric.DATOS_OBLIG);
 			}
-		} catch (PresentacionException e) {
-			enviarError(CnstPresExceptions.DB, e.getMessage());
+		} catch(Exception e) {
+			manejarExcepcion(e);
 		}
 		return null;
 	}
 	
 	public void abrirIFrmDep() {
-		IfrmDeposito ifrmDep = new IfrmDeposito(this);
-		getDeskPane().setBounds(0, 0, 784, 565);
-		getDeskPane().add(ifrmDep);
-		//
-		Component comp = getFrm().getContentPane().getComponent(1);
-		comp.setVisible(false);//FIXME: ver si no existe solucion mejor
-		//
-		ifrmDep.show();
+		try {
+			IfrmDeposito ifrmDep = new IfrmDeposito(this);
+			getDeskPane().setBounds(0, 0, 784, 565);
+			getDeskPane().add(ifrmDep);
+			//
+			Component comp = getFrm().getContentPane().getComponent(1);
+			comp.setVisible(false);//FIXME: ver si no existe solucion mejor
+			//
+			ifrmDep.show();
+		} catch(Exception e) {
+			manejarExcepcion(e);
+		}
 	}
 	
 	public void cerrarIFrmDep() {
-		Component comp = getFrm().getContentPane().getComponent(1);
-		getDeskPane().setBounds(773, 11, 0, 0);
-		comp.setVisible(true);
+		try {
+			Component comp = getFrm().getContentPane().getComponent(1);
+			getDeskPane().setBounds(773, 11, 0, 0);
+			comp.setVisible(true);
+		} catch(Exception e) {
+			manejarExcepcion(e);
+		}
 	}
 	
 	//utilidad
@@ -600,8 +650,8 @@ public class CtrlFrmProducto extends CtrlGenerico {
 			} else {
 				enviarWarning(CnstPresGeneric.TP, CnstPresGeneric.DATOS_OBLIG);
 			}
-		} catch (PresentacionException e) {
-			enviarError(CnstPresExceptions.DB, e.getMessage());
+		} catch(Exception e) {
+			manejarExcepcion(e);
 		}
 		return null;
 	}
@@ -618,8 +668,8 @@ public class CtrlFrmProducto extends CtrlGenerico {
 			} else {
 				enviarWarning(CnstPresGeneric.TP, CnstPresGeneric.DATOS_OBLIG);
 			}
-		} catch (PresentacionException e) {
-			enviarError(CnstPresExceptions.DB, e.getMessage());
+		} catch(Exception e) {
+			manejarExcepcion(e);
 		}
 		return null;
 	}
@@ -634,27 +684,35 @@ public class CtrlFrmProducto extends CtrlGenerico {
 			} else {
 				enviarWarning(CnstPresGeneric.UTIL, CnstPresGeneric.DATOS_OBLIG);
 			}
-		} catch (PresentacionException e) {
-			enviarError(CnstPresExceptions.DB, e.getMessage());
+		} catch(Exception e) {
+			manejarExcepcion(e);
 		}
 		return null;
 	}
 	
 	public void abrirIFrmUtil() {
-		IfrmUtilidad ifrmUtil = new IfrmUtilidad(this);
-		getDeskPane().setBounds(0, 0, 784, 565);
-		getDeskPane().add(ifrmUtil);
-		//
-		Component comp = getFrm().getContentPane().getComponent(1);
-		comp.setVisible(false);//FIXME: ver si no existe solucion mejor
-		//
-		ifrmUtil.show();
+		try {
+			IfrmUtilidad ifrmUtil = new IfrmUtilidad(this);
+			getDeskPane().setBounds(0, 0, 784, 565);
+			getDeskPane().add(ifrmUtil);
+			//
+			Component comp = getFrm().getContentPane().getComponent(1);
+			comp.setVisible(false);//FIXME: ver si no existe solucion mejor
+			//
+			ifrmUtil.show();
+		} catch(Exception e) {
+			manejarExcepcion(e);
+		}
 	}
 	
 	public void cerrarIFrmUtil() {
-		Component comp = getFrm().getContentPane().getComponent(1);
-		getDeskPane().setBounds(773, 11, 0, 0);
-		comp.setVisible(true);
+		try {
+			Component comp = getFrm().getContentPane().getComponent(1);
+			getDeskPane().setBounds(773, 11, 0, 0);
+			comp.setVisible(true);
+		} catch(Exception e) {
+			manejarExcepcion(e);
+		}
 	}
 	
 	//lote
@@ -673,40 +731,48 @@ public class CtrlFrmProducto extends CtrlGenerico {
 					cargarCbxLoteTransac(getFrm().getCbxLoteCompras(), listaTransac);
 				}
 			}
-		} catch (PresentacionException e) {
-			enviarError(CnstPresExceptions.DB, e.getMessage());
+		} catch(Exception e) {
+			manejarExcepcion(e);
 		}
 	}
 	
 	private void cargarCbxLoteTransac(JComboBox<Transaccion> cbxLoteTransac, List<Transaccion> listaTransac) {
-		cbxLoteTransac.removeAllItems();
-		if(listaTransac != null && !listaTransac.isEmpty()) {
-			for(Transaccion transac : listaTransac) {
-				cbxLoteTransac.addItem(transac);
+		try {
+			cbxLoteTransac.removeAllItems();
+			if(listaTransac != null && !listaTransac.isEmpty()) {
+				for(Transaccion transac : listaTransac) {
+					cbxLoteTransac.addItem(transac);
+				}
+				cbxLoteTransac.setSelectedIndex(-1);
 			}
-			cbxLoteTransac.setSelectedIndex(-1);
+		} catch(Exception e) {
+			manejarExcepcion(e);
 		}
 	}
 	
 	public void actualizarLote(JTable jtLote, JComboBox<Deposito> cbxLoteDep, JComboBox<Utilidad> cbxLoteUtil, JDateChooser dchLoteVenc) {
-		GenCompType genComp = new GenCompType();
-		genComp.setComp(jtLote);
-		genComp.setComp(cbxLoteDep);
-		genComp.setComp(cbxLoteUtil);
-		genComp.setComp(dchLoteVenc);
-		if(controlDatosObl(genComp)) {
-			Integer idLote = (Integer) jtLote.getModel().getValueAt(jtLote.getSelectedRow(), 0);
-			if(hashLotes != null && !hashLotes.isEmpty() && 
-					hashLotes.containsKey(idLote)) {
-				Lote lote = hashLotes.get(idLote);
-				lote.setDeposito((Deposito) cbxLoteDep.getSelectedItem());
-				lote.setUtilidad((Utilidad) cbxLoteUtil.getSelectedItem());
-				lote.setVenc(new Fecha(dchLoteVenc.getDate().getTime()));
-				//ver de actualizar la tabla para cada uno de los datos
-				cargarJtLote();
+		try {
+			GenCompType genComp = new GenCompType();
+			genComp.setComp(jtLote);
+			genComp.setComp(cbxLoteDep);
+			genComp.setComp(cbxLoteUtil);
+			genComp.setComp(dchLoteVenc);
+			if(controlDatosObl(genComp)) {
+				Integer idLote = (Integer) jtLote.getModel().getValueAt(jtLote.getSelectedRow(), 0);
+				if(hashLotes != null && !hashLotes.isEmpty() && 
+						hashLotes.containsKey(idLote)) {
+					Lote lote = hashLotes.get(idLote);
+					lote.setDeposito((Deposito) cbxLoteDep.getSelectedItem());
+					lote.setUtilidad((Utilidad) cbxLoteUtil.getSelectedItem());
+					lote.setVenc(new Fecha(dchLoteVenc.getDate().getTime()));
+					//ver de actualizar la tabla para cada uno de los datos
+					cargarJtLote();
+				}
+			} else {
+				enviarWarning(CnstPresGeneric.LOTE, CnstPresGeneric.DATOS_OBLIG);
 			}
-		} else {
-			enviarWarning(CnstPresGeneric.LOTE, CnstPresGeneric.DATOS_OBLIG);
+		} catch(Exception e) {
+			manejarExcepcion(e);
 		}
 	}
 	
@@ -716,7 +782,8 @@ public class CtrlFrmProducto extends CtrlGenerico {
 			genComp.setComp(cbxLoteCompras);
 			if(controlDatosObl(genComp)) {
 				Transaccion transac = (Transaccion) cbxLoteCompras.getSelectedItem();
-				if(hashLotes != null && !hashLotes.isEmpty()) {
+				if(transac.getEstadoTran().equals(EstadoTran.P) && 
+						hashLotes != null && !hashLotes.isEmpty()) {
 					Boolean lotesValidos = true;
 					for(Lote lote : hashLotes.values()) {
 						if(lote.getDeposito() == null || lote.getUtilidad() == null ||
@@ -734,8 +801,8 @@ public class CtrlFrmProducto extends CtrlGenerico {
 			} else {
 				enviarWarning(CnstPresGeneric.LOTE, CnstPresGeneric.DATOS_OBLIG);
 			}
-		} catch (PresentacionException e) {
-			enviarError(CnstPresExceptions.DB, e.getMessage());
+		} catch(Exception e) {
+			manejarExcepcion(e);
 		}
 	}
 	
@@ -757,13 +824,6 @@ public class CtrlFrmProducto extends CtrlGenerico {
 	public void setDeskPane(JDesktopPane deskPane) {
 		this.deskPane = deskPane;
 	}
-
-//	public TipoProd getTpSel() {
-//		return tpSel;
-//	}
-//	public void setTpSel(TipoProd tpSel) {
-//		this.tpSel = tpSel;
-//	}
 
 	public IfrmTipoProd getiFrmTp() {
 		return iFrmTp;

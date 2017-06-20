@@ -19,6 +19,7 @@ import gpd.persistencia.conector.Conector;
 public class PersistenciaUtilidad extends Conector implements IPersUtilidad, CnstQryUtilidad {
 	
 	private static final Logger logger = Logger.getLogger(PersistenciaTipoProd.class);
+	private ResultSet rs;
 	
 
 	@Override
@@ -27,7 +28,7 @@ public class PersistenciaUtilidad extends Conector implements IPersUtilidad, Cns
 		try {
 			GenSqlSelectType genType = new GenSqlSelectType(QRY_SELECT_UTIL_X_ID);
 			genType.setParam(idUtil);
-			ResultSet rs = (ResultSet) runGeneric(genType);
+			rs = (ResultSet) runGeneric(genType);
 			if(rs.next()) {
 				utilidad = new Utilidad();
 				utilidad.setIdUtil(rs.getInt("id_util"));
@@ -38,6 +39,8 @@ public class PersistenciaUtilidad extends Conector implements IPersUtilidad, Cns
 			Conector.rollbackConn();
 			logger.fatal("Excepcion al obtenerUtilidadPorId: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
+		} finally {
+			closeRs(rs);
 		}
 		return utilidad;
 	}
@@ -47,7 +50,7 @@ public class PersistenciaUtilidad extends Conector implements IPersUtilidad, Cns
 		List<Utilidad> listaUtilidad = new ArrayList<>();
 		try {
 			GenSqlSelectType genType = new GenSqlSelectType(QRY_SELECT_UTIL);
-			ResultSet rs = (ResultSet) runGeneric(genType);
+			rs = (ResultSet) runGeneric(genType);
 			while(rs.next()) {
 				Utilidad utilidad = new Utilidad();
 				utilidad.setIdUtil(rs.getInt("id_util"));
@@ -59,6 +62,8 @@ public class PersistenciaUtilidad extends Conector implements IPersUtilidad, Cns
 			Conector.rollbackConn();
 			logger.fatal("Excepcion al obtenerListaUtilidad: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
+		} finally {
+			closeRs(rs);
 		}
 		return listaUtilidad;
 	}

@@ -20,6 +20,7 @@ import gpd.persistencia.conector.Conector;
 public class PersistenciaTipoProd extends Conector implements IPersTipoProd, CnstQryTipoProd {
 
 	private static final Logger logger = Logger.getLogger(PersistenciaTipoProd.class);
+	private ResultSet rs;
 	
 	
 	@Override
@@ -28,7 +29,7 @@ public class PersistenciaTipoProd extends Conector implements IPersTipoProd, Cns
 		try {
 			GenSqlSelectType genType = new GenSqlSelectType(QRY_SELECT_TIPOPROD_X_ID);
 			genType.setParam(id);
-			ResultSet rs = (ResultSet) runGeneric(genType);
+			rs = (ResultSet) runGeneric(genType);
 			if(rs.next()) {
 				tipoProd = new TipoProd();
 				tipoProd.setIdTipoProd(rs.getInt("id_tipo_prod"));
@@ -38,6 +39,8 @@ public class PersistenciaTipoProd extends Conector implements IPersTipoProd, Cns
 			Conector.rollbackConn();
 			logger.log(Level.FATAL, "Excepcion al obtenerTipoProdPorId: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
+		} finally {
+			closeRs(rs);
 		}
 		return tipoProd;
 	}
@@ -47,7 +50,7 @@ public class PersistenciaTipoProd extends Conector implements IPersTipoProd, Cns
 		List<TipoProd> listaTipoProd = new ArrayList<>();
 		try {
 			GenSqlSelectType genType = new GenSqlSelectType(QRY_SELECT_TIPOPROD);
-			ResultSet rs = (ResultSet) runGeneric(genType);
+			rs = (ResultSet) runGeneric(genType);
 			while(rs.next()) {
 				TipoProd tipoProd = new TipoProd();
 				tipoProd.setIdTipoProd(rs.getInt("id_tipo_prod"));
@@ -58,6 +61,8 @@ public class PersistenciaTipoProd extends Conector implements IPersTipoProd, Cns
 			Conector.rollbackConn();
 			logger.log(Level.FATAL, "Excepcion al obtenerListaTipoProd: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
+		} finally {
+			closeRs(rs);
 		}
 		return listaTipoProd;
 	}

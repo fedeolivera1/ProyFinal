@@ -28,6 +28,8 @@ import org.apache.log4j.Logger;
 
 import com.toedter.calendar.JDateChooser;
 
+import gpd.exceptions.PresentacionException;
+import gpd.presentacion.generic.CnstPresExceptions;
 import gpd.presentacion.generic.CnstPresGeneric;
 import gpd.presentacion.generic.CompValidador;
 import gpd.presentacion.generic.GenCompType;
@@ -40,6 +42,7 @@ public abstract class CtrlGenerico {
 	
 	public static int CONFIRM_OK = 0;
 	public static int CONFIRM_CANCEL = 2;
+	public static int LENGTH_DDMMAAAA = 10;
 	
 	
 	public static CompValidador getCompVal() {
@@ -50,6 +53,18 @@ public abstract class CtrlGenerico {
 		return instanceCv;
 	}
 	
+	/**
+	 * metodo para manejar y mostrar excepciones en presentacion, verifica
+	 * instancia de la ecxepcion para mostrar determinado msj.
+	 * @param Exception e
+	 */
+	protected void manejarExcepcion(Exception e) {
+		if(e instanceof PresentacionException) {
+			enviarError(CnstPresExceptions.DB, e.getMessage());
+		} else {
+			enviarError(CnstPresExceptions.GEN, CnstPresExceptions.ENC + e.getMessage());
+		}
+	}
 	/**
 	 * metodo que transforma una password sin cifrar a una cifrada con el metodo
 	 * MD5. 
@@ -87,7 +102,7 @@ public abstract class CtrlGenerico {
 	public void formatoFechaEnTxt(Component comp) {
 		JTextField fechaComp = (JTextField) comp;
 		String fechaStr = fechaComp.getText();
-		if(fechaStr != null && fechaStr.trim().length() == 10) {
+		if(fechaStr != null && fechaStr.trim().length() == LENGTH_DDMMAAAA) {
 			java.text.DateFormat df = java.text.DateFormat.getInstance(); 
 			try {
 				java.text.DateFormat formatter = java.text.DateFormat.getDateInstance(java.text.DateFormat.SHORT); 
@@ -110,7 +125,7 @@ public abstract class CtrlGenerico {
 	 */
 	protected Fecha convertirFechaDesdeTxt(String fecha) {
 		Fecha fechaRet = null;
-		if(fecha != null && fecha.trim().length() == 10) {
+		if(fecha != null && fecha.trim().length() == LENGTH_DDMMAAAA) {
 			String delims = "/";
 			String[] tokens = fecha.split(delims);
 			if(tokens.length == 3) {
@@ -199,7 +214,7 @@ public abstract class CtrlGenerico {
 		return c1 && c2 && c3 && c4 && c5;
 	}
 	
-	protected Boolean controlDatosObl(GenCompType genComp) {
+	protected Boolean controlDatosObl(GenCompType genComp) throws Exception {
 		if(genComp != null && genComp.getHsComp().size() > 0) {
 			Boolean[] resultados = new Boolean[genComp.getHsComp().size()];
 			for(Integer key : genComp.getHsComp().keySet()) {
@@ -214,7 +229,7 @@ public abstract class CtrlGenerico {
 			}
 			return true;
 		} else {
-			throw new NullPointerException();
+			throw new Exception("GenCompType ha sido mal implementado!");
 		}
 	}
 	
@@ -516,7 +531,7 @@ public abstract class CtrlGenerico {
 	protected void enviarError(String cab, String msg) {
 		JOptionPane.showMessageDialog(null, msg, cab, JOptionPane.ERROR_MESSAGE);
 	}
-
+	
 	/**
 	 * 
 	 * @param string cabezal

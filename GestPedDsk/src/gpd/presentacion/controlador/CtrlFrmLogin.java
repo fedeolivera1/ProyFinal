@@ -4,11 +4,9 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 import gpd.dominio.usuario.UsuarioDsk;
-import gpd.exceptions.PresentacionException;
 import gpd.manager.usuario.ManagerUsuario;
 import gpd.presentacion.formulario.FrmLogin;
 import gpd.presentacion.formulario.FrmPrincipal;
-import gpd.presentacion.generic.CnstPresExceptions;
 import gpd.presentacion.generic.CnstPresGeneric;
 import gpd.presentacion.generic.GenCompType;
 
@@ -44,9 +42,10 @@ public class CtrlFrmLogin extends CtrlGenerico {
 					enviarError(CnstPresGeneric.USR, CnstPresGeneric.USR_NO_AUTENTICADO);
 				}
 			} else {
+				enviarWarning(CnstPresGeneric.USR, CnstPresGeneric.DATOS_OBLIG);
 			}
-		} catch(PresentacionException e) {
-			enviarWarning(CnstPresExceptions.DB, e.getMessage());
+		} catch(Exception e) {
+			manejarExcepcion(e);
 		}
 		return usr;
 	}

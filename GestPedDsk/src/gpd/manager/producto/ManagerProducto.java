@@ -79,7 +79,7 @@ public class ManagerProducto {
 			Conector.getConn();
 			Integer idTipoProd = (tipoProd != null ? tipoProd.getIdTipoProd() : CnstQryGeneric.NUMBER_INVALID);
 			listaProd = getInterfaceProducto().obtenerBusquedaProducto(idTipoProd, codigo, nombre, descripcion);
-			Conector.closeConn("obtenerBusquedaProducto", null);
+			Conector.closeConn("obtenerBusquedaProducto");
 		} catch (PersistenciaException e) {
 			logger.fatal("Excepcion en ManagerProducto > obtenerBusquedaProducto: " + e.getMessage(), e);
 			throw new PresentacionException(e);
@@ -93,7 +93,7 @@ public class ManagerProducto {
 		try {
 			Conector.getConn();
 			producto = getInterfaceProducto().obtenerProductoPorId(id);
-			Conector.closeConn("obtenerUsuario", null);
+			Conector.closeConn("obtenerUsuario");
 		} catch (PersistenciaException e) {
 			logger.fatal("Excepcion en ManagerProducto > obtenerProductoPorId: " + e.getMessage(), e);
 			throw new PresentacionException(e);
@@ -107,7 +107,7 @@ public class ManagerProducto {
 		try {
 			Conector.getConn();
 			listaProducto = getInterfaceProducto().obtenerListaProductoPorTipo(tipoProd);
-			Conector.closeConn("obtenerListaProductoPorTipoProd", null);
+			Conector.closeConn("obtenerListaProductoPorTipoProd");
 		} catch (PersistenciaException e) {
 			logger.fatal("Excepcion en ManagerProducto > obtenerListaProductoPorTipoProd: " + e.getMessage(), e);
 			throw new PresentacionException(e);
@@ -123,7 +123,7 @@ public class ManagerProducto {
 				producto.setUltAct(new Fecha(Fecha.AMDHMS));
 				Conector.getConn();
 				resultado = getInterfaceProducto().guardarProducto(producto);
-				Conector.closeConn("guardarProducto", null);
+				Conector.closeConn("guardarProducto");
 			} catch (PersistenciaException e) {
 				logger.fatal("Excepcion en ManagerProducto > guardarProducto: " + e.getMessage(), e);
 				throw new PresentacionException(e);
@@ -140,7 +140,7 @@ public class ManagerProducto {
 				producto.setUltAct(new Fecha(Fecha.AMDHMS));
 				Conector.getConn();
 				resultado = getInterfaceProducto().modificarProducto(producto);
-				Conector.closeConn("modificarProducto", null);
+				Conector.closeConn("modificarProducto");
 			} catch (PersistenciaException e) {
 				logger.fatal("Excepcion en ManagerProducto > modificarProducto: " + e.getMessage(), e);
 				throw new PresentacionException(e);
@@ -155,7 +155,7 @@ public class ManagerProducto {
 			try {
 				Conector.getConn();
 				resultado = getInterfaceProducto().eliminarProducto(producto);
-				Conector.closeConn("eliminarProducto", null);
+				Conector.closeConn("eliminarProducto");
 			} catch (PersistenciaException e) {
 				logger.fatal("Excepcion en ManagerProducto > eliminarProducto: " + e.getMessage(), e);
 				throw new PresentacionException(e);
@@ -175,7 +175,7 @@ public class ManagerProducto {
 		try {
 			Conector.getConn();
 			tipoProd = getInterfaceTipoProd().obtenerTipoProdPorId(id);
-			Conector.closeConn("obtenerTipoProdPorId", null);
+			Conector.closeConn("obtenerTipoProdPorId");
 		} catch (PersistenciaException e) {
 			logger.fatal("Excepcion en ManagerProducto > obtenerTipoProdPorId: " + e.getMessage(), e);
 			throw new PresentacionException(e);
@@ -189,7 +189,7 @@ public class ManagerProducto {
 		try {
 			Conector.getConn();
 			listaTipoProd = getInterfaceTipoProd().obtenerListaTipoProd();
-			Conector.closeConn("obtenerListaTipoProd", null);
+			Conector.closeConn("obtenerListaTipoProd");
 		} catch (PersistenciaException e) {
 			logger.fatal("Excepcion en ManagerProducto > obtenerListaTipoProd: " + e.getMessage(), e);
 			throw new PresentacionException(e);
@@ -203,7 +203,7 @@ public class ManagerProducto {
 			try {
 				Conector.getConn();
 				resultado = getInterfaceTipoProd().guardarTipoProd(tipoProd);
-				Conector.closeConn("guardarTipoProd", null);
+				Conector.closeConn("guardarTipoProd");
 			} catch (PersistenciaException e) {
 				logger.fatal("Excepcion en ManagerProducto > guardarTipoProd: " + e.getMessage(), e);
 				throw new PresentacionException(e);
@@ -218,7 +218,7 @@ public class ManagerProducto {
 			try {
 				Conector.getConn();
 				resultado = getInterfaceTipoProd().modificarTipoProd(tipoProd);
-				Conector.closeConn("modificarTipoProd", null);
+				Conector.closeConn("modificarTipoProd");
 			} catch (PersistenciaException e) {
 				logger.fatal("Excepcion en ManagerProducto > modificarTipoProd: " + e.getMessage(), e);
 				throw new PresentacionException(e);
@@ -233,7 +233,7 @@ public class ManagerProducto {
 			try {
 				Conector.getConn();
 				resultado = getInterfaceTipoProd().eliminarTipoProd(tipoProd);
-				Conector.closeConn("eliminarTipoProd", null);
+				Conector.closeConn("eliminarTipoProd");
 			} catch (PersistenciaException e) {
 				logger.fatal("Excepcion en ManagerProducto > eliminarTipoProd: " + e.getMessage(), e);
 				throw new PresentacionException(e);
@@ -252,7 +252,7 @@ public class ManagerProducto {
 		try {
 			Conector.getConn();
 			deposito = getInterfaceDeposito().obtenerDepositoPorId(id);
-			Conector.closeConn("obtenerDepositoPorId", null);
+			Conector.closeConn("obtenerDepositoPorId");
 		} catch (PersistenciaException e) {
 			logger.fatal("Excepcion en ManagerProducto > obtenerDepositoPorId: " + e.getMessage(), e);
 			throw new PresentacionException(e);
@@ -266,7 +266,7 @@ public class ManagerProducto {
 		try {
 			Conector.getConn();
 			listaDeposito = getInterfaceDeposito().obtenerListaDeposito();
-			Conector.closeConn("obtenerListaDeposito", null);
+			Conector.closeConn("obtenerListaDeposito");
 		} catch (PersistenciaException e) {
 			logger.fatal("Excepcion en ManagerProducto > obtenerListaDeposito: " + e.getMessage(), e);
 			throw new PresentacionException(e);
@@ -280,7 +280,7 @@ public class ManagerProducto {
 			try {
 				Conector.getConn();
 				resultado = getInterfaceDeposito().guardarDeposito(deposito);
-				Conector.closeConn("guardarDeposito", null);
+				Conector.closeConn("guardarDeposito");
 			} catch (PersistenciaException e) {
 				logger.fatal("Excepcion en ManagerProducto > guardarDeposito: " + e.getMessage(), e);
 				throw new PresentacionException(e);
@@ -295,7 +295,7 @@ public class ManagerProducto {
 			try {
 				Conector.getConn();
 				resultado = getInterfaceDeposito().modificarDeposito(deposito);
-				Conector.closeConn("modificarDeposito", null);
+				Conector.closeConn("modificarDeposito");
 			} catch (PersistenciaException e) {
 				logger.fatal("Excepcion en ManagerProducto > modificarDeposito: " + e.getMessage(), e);
 				throw new PresentacionException(e);
@@ -310,7 +310,7 @@ public class ManagerProducto {
 			try {
 				Conector.getConn();
 				resultado = getInterfaceDeposito().eliminarDeposito(deposito);
-				Conector.closeConn("eliminarDeposito", null);
+				Conector.closeConn("eliminarDeposito");
 			} catch (PersistenciaException e) {
 				logger.fatal("Excepcion en ManagerProducto > eliminarDeposito: " + e.getMessage(), e);
 				throw new PresentacionException(e);
@@ -329,7 +329,7 @@ public class ManagerProducto {
 		try {
 			Conector.getConn();
 			utilidad = getInterfaceUtilidad().obtenerUtilidadPorId(id);
-			Conector.closeConn("obtenerUtilidadPorId", null);
+			Conector.closeConn("obtenerUtilidadPorId");
 		} catch (PersistenciaException e) {
 			logger.fatal("Excepcion en ManagerProducto > obtenerUtilidadPorId: " + e.getMessage(), e);
 			throw new PresentacionException(e);
@@ -343,7 +343,7 @@ public class ManagerProducto {
 		try {
 			Conector.getConn();
 			listaUtilidad = getInterfaceUtilidad().obtenerListaUtilidad();
-			Conector.closeConn("obtenerListaUtilidad", null);
+			Conector.closeConn("obtenerListaUtilidad");
 		} catch (PersistenciaException e) {
 			logger.fatal("Excepcion en ManagerProducto > obtenerListaUtilidad: " + e.getMessage(), e);
 			throw new PresentacionException(e);
@@ -357,7 +357,7 @@ public class ManagerProducto {
 			try {
 				Conector.getConn();
 				resultado = getInterfaceUtilidad().guardarUtilidad(utilidad);
-				Conector.closeConn("guardarUtilidad", null);
+				Conector.closeConn("guardarUtilidad");
 			} catch (PersistenciaException e) {
 				logger.fatal("Excepcion en ManagerProducto > guardarUtilidad: " + e.getMessage(), e);
 				throw new PresentacionException(e);
@@ -372,7 +372,7 @@ public class ManagerProducto {
 			try {
 				Conector.getConn();
 				resultado = getInterfaceUtilidad().modificarUtilidad(utilidad);
-				Conector.closeConn("modificarUtilidad", null);
+				Conector.closeConn("modificarUtilidad");
 			} catch (PersistenciaException e) {
 				logger.fatal("Excepcion en ManagerProducto > modificarUtilidad: " + e.getMessage(), e);
 				throw new PresentacionException(e);
@@ -387,7 +387,7 @@ public class ManagerProducto {
 			try {
 				Conector.getConn();
 				resultado = getInterfaceUtilidad().eliminarUtilidad(utilidad);
-				Conector.closeConn("eliminarTipoProd", null);
+				Conector.closeConn("eliminarTipoProd");
 			} catch (PersistenciaException e) {
 				logger.fatal("Excepcion en ManagerProducto > eliminarUtilidad: " + e.getMessage(), e);
 				throw new PresentacionException(e);
@@ -411,7 +411,7 @@ public class ManagerProducto {
 		try {
 			Conector.getConn();
 			listaLote = getInterfaceLote().obtenerListaLotePorTransac(nroTransac);
-			Conector.closeConn("obtenerListaLotePorTransac", null);
+			Conector.closeConn("obtenerListaLotePorTransac");
 		} catch (PersistenciaException e) {
 			logger.fatal("Excepcion en ManagerProducto > obtenerListaLotePorTransac: " + e.getMessage(), e);
 			throw new PresentacionException(e);
@@ -423,7 +423,7 @@ public class ManagerProducto {
 //		logger.info("Se ingresa a obtenerLotePorId");
 //		try {
 //			Conector.getConn();
-//			Conector.closeConn("obtenerLotePorId", null);
+//			Conector.closeConn("obtenerLotePorId");
 //		} catch (PersistenciaException e) {
 //			e.printStackTrace();
 //		}
@@ -435,7 +435,7 @@ public class ManagerProducto {
 //		try {
 //			Conector.getConn();
 //			resultado = getInterfaceLote().actualizarLote(lote);
-//			Conector.closeConn("actualizarLote", null);
+//			Conector.closeConn("actualizarLote");
 //		} catch (PersistenciaException e) {
 //			e.printStackTrace();
 //		}

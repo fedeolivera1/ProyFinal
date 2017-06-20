@@ -24,7 +24,7 @@ public abstract class Conector {
 	protected static final Character EMPTY_CHAR = ' ';
 	protected static final Character S_CHAR = 'S';
 	protected static final Character N_CHAR = 'N';
-	
+
 	/**
 	 * obtiene la conexion con info de la base de datos
 	 */
@@ -58,7 +58,9 @@ public abstract class Conector {
 	 */
 	protected static void commitConn() {
 		try {
-			conn.commit();
+			if(conn != null && !conn.isClosed()) {
+				conn.commit();
+			}
 		} catch (SQLException e) {
 			logger.error(e.getMessage(), e);
 		}
@@ -77,15 +79,10 @@ public abstract class Conector {
 	
 	/**
 	 * @param nameOp
-	 * @param ResultSet
 	 * cierra la conexion activa, y hace commit de la misma
-	 * el parametro ResultSet se pasa 'null' en casos de selects
 	 */
-	public static void closeConn(String nameOp, ResultSet rs) {
+	public static void closeConn(String nameOp) {
 		try {
-			if(rs != null) {
-				rs.close();
-			}
 			if(conn != null && !conn.isClosed()) {
 				commitConn();
 				conn.close();
@@ -93,6 +90,21 @@ public abstract class Conector {
 			logger.debug("Se cierra la conexion en el metodo - " + nameOp + ". Thread: " + Thread.currentThread().getId());
 		} catch (SQLException e) {
 			logger.fatal("ERROR - Conector al cerrar conexion en el metodo - " + nameOp + ". Error al cerrar las conexiones a BD." + e.getMessage(), e);
+		}
+	}
+	
+	/**
+	 * @param ResultSet
+	 * cierra el resultset de consulta
+	 */
+	public static void closeRs(ResultSet rs) {
+		try {
+			if(rs != null && !rs.isClosed()) {
+				rs.close();
+			}
+			logger.debug("Se cierra ResultSet. Thread: " + Thread.currentThread().getId());
+		} catch (SQLException e) {
+			logger.fatal("ERROR - Conector al cerrar resultset." + e.getMessage(), e);
 		}
 	}
 	
@@ -138,7 +150,6 @@ public abstract class Conector {
 		PreparedStatement ps = null;
 		try {
 			ps = conn.prepareStatement(genType.getStatement());
-			
  			for(Integer key : genType.getExecuteDatosCond().keySet()) {
 				Object value = (Object) genType.getExecuteDatosCond().get(key);
 				fillPreparedStatement(ps, key, value);
@@ -268,11 +279,11 @@ public abstract class Conector {
 				}
 			} else {
 				rollbackConn();
-				throw new ConectorException("executeGeneric ha sido mal implementado.");
+				throw new ConectorException("'runGeneric' ha sido mal implementado!");
 			}
 		} catch (ConectorException e) {
 			logger.error(e.getMessage(), e);
-			throw new ConectorException(e.getMessage(), e);
+			throw new ConectorException(e);
 		}
 		
 		return resultado;
@@ -290,8 +301,8 @@ public abstract class Conector {
 				resultado = rs.getLong("seq");
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
+			throw new ConectorException(e);
 		}
 		return resultado;
 	}

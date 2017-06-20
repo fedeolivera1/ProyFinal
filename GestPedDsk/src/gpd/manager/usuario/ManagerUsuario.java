@@ -32,7 +32,7 @@ public class ManagerUsuario {
 		try {
 			Conector.getConn();
 			usuario = getInterfaceUsuario().obtenerUsuario(nombreUsuario, passwd);
-			Conector.closeConn("obtenerUsuario", null);
+			Conector.closeConn("obtenerUsuario");
 		} catch (PersistenciaException e) {
 			logger.fatal("Excepcion en ManagerUsuario > obtenerUsuario: " + e.getMessage(), e);
 			throw new PresentacionException(e);
@@ -46,7 +46,7 @@ public class ManagerUsuario {
 			try {
 				Conector.getConn();
 				resultado = getInterfaceUsuario().guardarUsuario(usuario);
-				Conector.closeConn("guardarUsuario", null);
+				Conector.closeConn("guardarUsuario");
 			} catch (PersistenciaException e) {
 				logger.fatal("Excepcion en ManagerUsuario > guardarUsuario: " + e.getMessage(), e);
 				throw new PresentacionException(e);
@@ -61,7 +61,7 @@ public class ManagerUsuario {
 			try {
 				Conector.getConn();
 				resultado = getInterfaceUsuario().modificarUsuario(usuario);
-				Conector.closeConn("modificarUsuario", null);
+				Conector.closeConn("modificarUsuario");
 			} catch (PersistenciaException e) {
 				logger.fatal("Excepcion en ManagerUsuario > modificarUsuario: " + e.getMessage(), e);
 				throw new PresentacionException(e);
@@ -76,7 +76,7 @@ public class ManagerUsuario {
 			try {
 				Conector.getConn();
 				resultado = getInterfaceUsuario().eliminarUsuario(usuario);
-				Conector.closeConn("eliminarUsuario", null);
+				Conector.closeConn("eliminarUsuario");
 			} catch (PersistenciaException e) {
 				logger.fatal("Excepcion en ManagerUsuario > eliminarUsuario: " + e.getMessage(), e);
 				throw new PresentacionException(e);

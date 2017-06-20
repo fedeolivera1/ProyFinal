@@ -22,24 +22,24 @@ import gpd.persistencia.conector.Conector;
 public class PersistenciaUsuario extends Conector implements IPersUsuario, CnstQryUsuario {
 
 	private static final Logger logger = Logger.getLogger(PersistenciaUsuario.class);
+	private ResultSet rs;
 	
 	
 	@Override
 	public UsuarioDsk obtenerUsuario(String nombreUsuario, String passwd) throws PersistenciaException {
 		logger.info("Ejecucion de obtenerUsuario para: " + nombreUsuario);
 		UsuarioDsk usuario = null;
-		ResultSet resultado;
 		try {
 			PreparedStatement ps = conn.prepareStatement(QRY_LOGIN);
 			ps.setString(1, nombreUsuario);
 			ps.setString(2, passwd);
-			resultado = ps.executeQuery();
-			if(resultado.next()) {
+			rs = ps.executeQuery();
+			if(rs.next()) {
 				usuario = new UsuarioDsk();
 				usuario.setNomUsu(nombreUsuario);
 				usuario.setPass(passwd);
 				char[] tipoChar = new char[1];
-				resultado.getCharacterStream("tipo").read(tipoChar);
+				rs.getCharacterStream("tipo").read(tipoChar);
 				TipoUsr tipo = TipoUsr.getTipoUsrPorChar(tipoChar[0]);
 				usuario.setTipoUsr(tipo);
 			}
@@ -47,6 +47,8 @@ public class PersistenciaUsuario extends Conector implements IPersUsuario, CnstQ
 			Conector.rollbackConn();
 			logger.fatal("Excepcion al obtenerUsuario: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
+		} finally {
+			closeRs(rs);
 		}
 		return usuario;
 	}

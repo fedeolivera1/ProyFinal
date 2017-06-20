@@ -45,9 +45,9 @@ public class FrmProducto extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(FrmProducto.class);
-
 	private static FrmProducto instance;
 	private CtrlFrmProducto ctrlProd;
+	//
 	private JPanel contentPane;
 	private JTextField txtProId;
 	private JTextField txtProCod;

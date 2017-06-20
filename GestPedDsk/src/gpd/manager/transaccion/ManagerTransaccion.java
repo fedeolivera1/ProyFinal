@@ -106,7 +106,7 @@ public class ManagerTransaccion {
 				
 				//se periste el lote para cada producto de las lineas
 				getInterfaceLote().guardarListaLote(listaLote);
-				Conector.closeConn("guardarTransaccion", null);
+				Conector.closeConn("guardarTransaccion");
 			} catch (ConectorException | PersistenciaException e) {
 				logger.fatal("Excepcion en ManagerTransaccion > generarTransaccion: " + e.getMessage(), e);
 				throw new PresentacionException(e);
@@ -126,7 +126,7 @@ public class ManagerTransaccion {
 					transac.setListaTranLinea(listaTranLinea);
 				}
 			}
-			Conector.closeConn("obtenerTransaccionPorId", null);
+			Conector.closeConn("obtenerTransaccionPorId");
 		} catch (PersistenciaException e) {
 			logger.fatal("Excepcion en ManagerTransaccion > obtenerTransaccionPorId: " + e.getMessage(), e);
 			throw new PresentacionException(e);
@@ -148,7 +148,7 @@ public class ManagerTransaccion {
 					}
 				}
 			}
-			Conector.closeConn("obtenerListaTransaccionPorPersona", null);
+			Conector.closeConn("obtenerListaTransaccionPorPersona");
 		} catch (PersistenciaException e) {
 			logger.fatal("Excepcion en ManagerTransaccion > obtenerListaTransaccionPorPersona: " + e.getMessage(), e);
 			throw new PresentacionException(e);
@@ -170,7 +170,7 @@ public class ManagerTransaccion {
 					}
 				}
 			}
-			Conector.closeConn("obtenerListaTransaccionPorPeriodo", null);
+			Conector.closeConn("obtenerListaTransaccionPorPeriodo");
 		} catch (PersistenciaException e) {
 			logger.fatal("Excepcion en ManagerTransaccion > obtenerListaTransaccionPorPeriodo: " + e.getMessage(), e);
 			throw new PresentacionException(e);
@@ -191,7 +191,7 @@ public class ManagerTransaccion {
 					for(Lote lote : listaLote) {
 						getInterfaceLote().actualizarLote(lote);
 					}
-					Conector.closeConn("modificarTransaccionCompra", null);
+					Conector.closeConn("modificarTransaccionCompra");
 				} catch (PersistenciaException e) {
 					logger.fatal("Excepcion en ManagerTransaccion > modificarTransaccionCompra: " + e.getMessage(), e);
 					throw new PresentacionException(e);
@@ -210,7 +210,7 @@ public class ManagerTransaccion {
 				getInterfaceTransaccion().guardarTranEstado(transaccion);
 				getInterfaceTransaccion().modificarEstadoTransaccion(transaccion);
 			}
-			Conector.closeConn("anularTransaccion", null);
+			Conector.closeConn("anularTransaccion");
 		} catch (PersistenciaException e) {
 			logger.fatal("Excepcion en ManagerTransaccion > anularTransaccion: " + e.getMessage(), e);
 			throw new PresentacionException(e);

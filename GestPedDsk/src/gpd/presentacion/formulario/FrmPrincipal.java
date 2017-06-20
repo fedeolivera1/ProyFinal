@@ -157,6 +157,9 @@ public class FrmPrincipal extends JFrame {
 		JMenuItem mntmPedido = new JMenuItem("Pedido");
 		mntmPedido.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				FrmPedido frmPed = FrmPedido.getFrmPedido(usr);
+				frmPed.setLocationRelativeTo(null);
+				frmPed.setVisible(true);
 			}
 		});
 		mnPedido.add(mntmPedido);

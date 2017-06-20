@@ -20,7 +20,7 @@ import gpd.persistencia.conector.Conector;
 public class PersistenciaTipoDoc extends Conector implements IPersTipoDoc, CnstQryTipoDoc {
 
 	private static final Logger logger = Logger.getLogger(PersistenciaTipoDoc.class);
-	
+	private ResultSet rs;
 	
 	@Override
 	public TipoDoc obtenerTipoDocPorId(Integer id) throws PersistenciaException {
@@ -28,7 +28,7 @@ public class PersistenciaTipoDoc extends Conector implements IPersTipoDoc, CnstQ
 		try {
 			GenSqlSelectType genSel = new GenSqlSelectType(QRY_SELECT_TIPODOC_XID);
 			genSel.setParam(id);
-			ResultSet rs = (ResultSet) runGeneric(genSel);
+			rs = (ResultSet) runGeneric(genSel);
 			if(rs.next()) {
 				tipoDoc = new TipoDoc();
 				tipoDoc.setIdTipoDoc(rs.getInt("id_tipo_doc"));
@@ -38,6 +38,8 @@ public class PersistenciaTipoDoc extends Conector implements IPersTipoDoc, CnstQ
 			Conector.rollbackConn();
 			logger.log(Level.FATAL, "Excepcion al obtenerListaTipoDoc: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
+		} finally {
+			closeRs(rs);
 		}
 		return tipoDoc;
 	}
@@ -93,7 +95,7 @@ public class PersistenciaTipoDoc extends Conector implements IPersTipoDoc, CnstQ
 		List<TipoDoc> listaTipoDoc = new ArrayList<>();
 		try {
 			GenSqlSelectType genType = new GenSqlSelectType(QRY_SELECT_TIPODOC);
-			ResultSet rs = (ResultSet) runGeneric(genType);
+			rs = (ResultSet) runGeneric(genType);
 			while(rs.next()) {
 				TipoDoc tipoDoc = new TipoDoc();
 				tipoDoc.setIdTipoDoc(rs.getInt("id_tipo_doc"));
@@ -104,6 +106,8 @@ public class PersistenciaTipoDoc extends Conector implements IPersTipoDoc, CnstQ
 			Conector.rollbackConn();
 			logger.log(Level.FATAL, "Excepcion al obtenerListaTipoDoc: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
+		} finally {
+			closeRs(rs);
 		}
 		return listaTipoDoc;
 	}

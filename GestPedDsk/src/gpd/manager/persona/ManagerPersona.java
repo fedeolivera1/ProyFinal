@@ -61,7 +61,7 @@ public class ManagerPersona {
 		try {
 			Conector.getConn();
 			listaTipoDoc = getInterfaceTipoDoc().obtenerListaTipoDoc();
-			Conector.closeConn("obtenerListaTipoDoc", null);
+			Conector.closeConn("obtenerListaTipoDoc");
 		} catch (PersistenciaException e) {
 			logger.fatal("Excepcion en ManagerPersona > obtenerListaTipoDoc: " + e.getMessage(), e);
 			throw new PresentacionException(e);
@@ -79,7 +79,7 @@ public class ManagerPersona {
 		try {
 			Conector.getConn();
 			persFisica = getInterfacePersona().obtenerPersFisicaPorId(id);
-			Conector.closeConn("obtenerPersFisicaPorId", null);
+			Conector.closeConn("obtenerPersFisicaPorId");
 		} catch (PersistenciaException e) {
 			logger.fatal("Excepcion en ManagerPersona > obtenerPersFisicaPorId: " + e.getMessage(), e);
 			throw new PresentacionException(e);
@@ -96,7 +96,7 @@ public class ManagerPersona {
 			Character sexoAsChar = (sexo != null ? sexo.getAsChar() : CnstQryGeneric.CHAR_EMPTY);
 			Integer idLoc = (loc != null ? loc.getIdLocalidad() : CnstQryGeneric.NUMBER_INVALID);
 			listaPf = getInterfacePersona().obtenerBusquedaPersFisica(documento, ape1, ape2, nom1, nom2, sexoAsChar, direccion, telefono, celular, email, idLoc);
-			Conector.closeConn("obtenerBusquedaPersFisica", null);
+			Conector.closeConn("obtenerBusquedaPersFisica");
 		} catch (PersistenciaException e) {
 			logger.fatal("Excepcion en ManagerPersona > obtenerBusquedaPersFisica: " + e.getMessage(), e);
 			throw new PresentacionException(e);
@@ -113,7 +113,7 @@ public class ManagerPersona {
 				persFisica.setUltAct(new Fecha(Fecha.AMDHMS));
 				Conector.getConn();
 				resultado = getInterfacePersona().guardarPersFisica(persFisica);
-				Conector.closeConn("guardarPersFisica", null);
+				Conector.closeConn("guardarPersFisica");
 			} catch (PersistenciaException e) {
 				logger.fatal("Excepcion en ManagerPersona > guardarPersFisica: " + e.getMessage(), e);
 				throw new PresentacionException(e);
@@ -131,7 +131,7 @@ public class ManagerPersona {
 				persFisica.setUltAct(new Fecha(Fecha.AMDHMS));
 				Conector.getConn();
 				resultado = getInterfacePersona().modificarPersFisica(persFisica);
-				Conector.closeConn("modificarPersFisica", null);
+				Conector.closeConn("modificarPersFisica");
 			} catch (PersistenciaException e) {
 				logger.fatal("Excepcion en ManagerPersona > modificarPersFisica: " + e.getMessage(), e);
 				throw new PresentacionException(e);
@@ -147,7 +147,7 @@ public class ManagerPersona {
 			try {
 				Conector.getConn();
 				resultado = getInterfacePersona().eliminarPersFisica(persFisica);
-				Conector.closeConn("eliminarPersFisica", null);
+				Conector.closeConn("eliminarPersFisica");
 			} catch (PersistenciaException e) {
 				logger.fatal("Excepcion en ManagerPersona > eliminarPersFisica: " + e.getMessage(), e);
 				throw new PresentacionException(e);
@@ -168,7 +168,7 @@ public class ManagerPersona {
 			Conector.getConn();
 			Integer idLoc = (loc != null ? loc.getIdLocalidad() : CnstQryGeneric.NUMBER_INVALID);
 			listaPj = getInterfacePersona().obtenerBusquedaPersJuridica(rut, nombre, razonSoc, bps, bse, esProv, direccion, telefono, celular, email, idLoc);
-			Conector.closeConn("obtenerBusquedaPersJuridica", null);
+			Conector.closeConn("obtenerBusquedaPersJuridica");
 		} catch (PersistenciaException e) {
 			logger.fatal("Excepcion en ManagerPersona > obtenerBusquedaPersJuridica: " + e.getMessage(), e);
 			throw new PresentacionException(e);
@@ -182,7 +182,7 @@ public class ManagerPersona {
 		try {
 			Conector.getConn();
 			listaPj = getInterfacePersona().obtenerListaEmpresasPorTipo(true);
-			Conector.closeConn("obtenerListaProveedor", null);
+			Conector.closeConn("obtenerListaProveedor");
 		} catch (PersistenciaException e) {
 			logger.fatal("Excepcion en ManagerPersona > obtenerListaProveedor: " + e.getMessage(), e);
 			throw new PresentacionException(e);
@@ -196,7 +196,7 @@ public class ManagerPersona {
 		try {
 			Conector.getConn();
 			listaPj = getInterfacePersona().obtenerListaEmpresasPorTipo(null);
-			Conector.closeConn("obtenerListaProveedor", null);
+			Conector.closeConn("obtenerListaProveedor");
 		} catch (PersistenciaException e) {
 			logger.fatal("Excepcion en ManagerPersona > obtenerListaEmpresas: " + e.getMessage(), e);
 			throw new PresentacionException(e);
@@ -210,7 +210,7 @@ public class ManagerPersona {
 		try {
 			Conector.getConn();
 			persJuridica = getInterfacePersona().obtenerPersJuridicaPorId(id);
-			Conector.closeConn("obtenerPersJuridicaPorId", null);
+			Conector.closeConn("obtenerPersJuridicaPorId");
 		} catch (PersistenciaException e) {
 			logger.fatal("Excepcion en ManagerPersona > obtenerPersJuridicaPorId: " + e.getMessage(), e);
 			throw new PresentacionException(e);
@@ -227,7 +227,7 @@ public class ManagerPersona {
 				persJuridica.setUltAct(new Fecha(Fecha.AMDHMS));
 				Conector.getConn();
 				resultado = getInterfacePersona().guardarPersJuridica(persJuridica);
-				Conector.closeConn("guardarPersJuridica", null);
+				Conector.closeConn("guardarPersJuridica");
 			} catch (PersistenciaException e) {
 				logger.fatal("Excepcion en ManagerPersona > guardarPersJuridica: " + e.getMessage(), e);
 				throw new PresentacionException(e);
@@ -245,7 +245,7 @@ public class ManagerPersona {
 				persJuridica.setUltAct(new Fecha(Fecha.AMDHMS));
 				Conector.getConn();
 				resultado = getInterfacePersona().modificarPersJuridica(persJuridica);
-				Conector.closeConn("modificarPersJuridica", null);
+				Conector.closeConn("modificarPersJuridica");
 			} catch (PersistenciaException e) {
 				logger.fatal("Excepcion en ManagerPersona > modificarPersJuridica: " + e.getMessage(), e);
 				throw new PresentacionException(e);
@@ -261,7 +261,7 @@ public class ManagerPersona {
 			try {
 				Conector.getConn();
 				resultado = getInterfacePersona().eliminarPersJuridica(persJuridica);
-				Conector.closeConn("eliminarPersFisica", null);
+				Conector.closeConn("eliminarPersFisica");
 			} catch (PersistenciaException e) {
 				logger.fatal("Excepcion en ManagerPersona > eliminarPersJuridica: " + e.getMessage(), e);
 				throw new PresentacionException(e);
@@ -280,7 +280,7 @@ public class ManagerPersona {
 		try {
 			Conector.getConn();
 			listaDep = getInterfaceDepLoc().obtenerListaDepartamentos();
-			Conector.closeConn("obtenerListaDepartamento", null);
+			Conector.closeConn("obtenerListaDepartamento");
 		} catch (PersistenciaException e) {
 			logger.fatal("Excepcion en ManagerPersona > obtenerListaDepartamento: " + e.getMessage(), e);
 			throw new PresentacionException(e);
@@ -294,7 +294,7 @@ public class ManagerPersona {
 		try {
 			Conector.getConn();
 			listaLoc = getInterfaceDepLoc().obtenerListaLocPorDep(idDep);
-			Conector.closeConn("obtenerListaLocalidadPorDep", null);
+			Conector.closeConn("obtenerListaLocalidadPorDep");
 		} catch (PersistenciaException e) {
 			logger.fatal("Excepcion en ManagerPersona > obtenerListaLocalidadPorDep: " + e.getMessage(), e);
 			throw new PresentacionException(e);

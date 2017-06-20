@@ -29,7 +29,7 @@ public class PersistenciaPersona extends Conector implements IPersPersona, CnstQ
 	
 	private static final Logger logger = Logger.getLogger(PersistenciaPersona.class);
 	private Integer resultado;
-	
+	private ResultSet rs;
 	
 	@Override
 	public PersonaFisica obtenerPersFisicaPorId(Long id) throws PersistenciaException {
@@ -39,7 +39,7 @@ public class PersistenciaPersona extends Conector implements IPersPersona, CnstQ
 		try {
 			GenSqlSelectType genSel = new GenSqlSelectType(QRY_SELECT_PF_XID);
 			genSel.setParam(id);
-			ResultSet rs = (ResultSet) runGeneric(genSel);
+			rs = (ResultSet) runGeneric(genSel);
 			if(rs.next()) {
 				pf = new PersonaFisica();
 				pf.setDocumento(rs.getLong("documento"));
@@ -82,6 +82,8 @@ public class PersistenciaPersona extends Conector implements IPersPersona, CnstQ
 			Conector.rollbackConn();
 			logger.log(Level.FATAL, "Excepcion al obtenerProductoPorId: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
+		} finally {
+			closeRs(rs);
 		}
 		return pf;
 	}
@@ -93,7 +95,7 @@ public class PersistenciaPersona extends Conector implements IPersPersona, CnstQ
 		try {
 			GenSqlSelectType genSel = new GenSqlSelectType(QRY_SELECT_PJ_XID);
 			genSel.setParam(id);
-			ResultSet rs = (ResultSet) runGeneric(genSel);
+			rs = (ResultSet) runGeneric(genSel);
 			if(rs.next()) {
 				pj = new PersonaJuridica();
 				pj.setRut(rs.getLong("rut"));
@@ -133,6 +135,8 @@ public class PersistenciaPersona extends Conector implements IPersPersona, CnstQ
 			Conector.rollbackConn();
 			logger.log(Level.FATAL, "Excepcion al obtenerProductoPorId: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
+		} finally {
+			closeRs(rs);
 		}
 		return pj;
 	}
@@ -188,7 +192,6 @@ public class PersistenciaPersona extends Conector implements IPersPersona, CnstQ
 			genExec.setParam(pf.getSexo().getAsChar());
 			genExec.setParam(docAnt != null ? docAnt : documento);
 			resultado = (Integer) runGeneric(genExec);
-			
 		} catch (ConectorException e) {
 			Conector.rollbackConn();
 			logger.log(Level.FATAL, "Excepcion al guardarPersFisica: " + e.getMessage(), e);
@@ -389,7 +392,7 @@ public class PersistenciaPersona extends Conector implements IPersPersona, CnstQ
 			genType.setParam(email);
 			genType.setParamEmptyAsNumber(idLoc);
 			genType.setParamEmptyAsNumber(idLoc);
-			ResultSet rs = (ResultSet) runGeneric(genType);
+			rs = (ResultSet) runGeneric(genType);
 			while(rs.next()) {
 				PersonaFisica pf = new PersonaFisica();
 				pf.setDocumento(rs.getLong("documento"));
@@ -434,6 +437,8 @@ public class PersistenciaPersona extends Conector implements IPersPersona, CnstQ
 			Conector.rollbackConn();
 			logger.log(Level.FATAL, "Excepcion al obtenerListaTipoDoc: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
+		} finally {
+			closeRs(rs);
 		}
 		return listaPf;
 	}
@@ -467,7 +472,7 @@ public class PersistenciaPersona extends Conector implements IPersPersona, CnstQ
 			genType.setParam(email);
 			genType.setParamEmptyAsNumber(idLoc);
 			genType.setParamEmptyAsNumber(idLoc);
-			ResultSet rs = (ResultSet) runGeneric(genType);
+			rs = (ResultSet) runGeneric(genType);
 			while(rs.next()) {
 				PersonaJuridica pj = new PersonaJuridica();
 				pj.setRut(rs.getLong("rut"));
@@ -509,6 +514,8 @@ public class PersistenciaPersona extends Conector implements IPersPersona, CnstQ
 			Conector.rollbackConn();
 			logger.log(Level.FATAL, "Excepcion al obtenerListaTipoDoc: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
+		} finally {
+			closeRs(rs);
 		}
 		return listaPj;
 	}
@@ -521,7 +528,7 @@ public class PersistenciaPersona extends Conector implements IPersPersona, CnstQ
 			GenSqlSelectType genType = new GenSqlSelectType(QRY_SELECT_PJ);
 			genType.setParam(esProv != null && esProv ? S_CHAR : EMPTY_CHAR);
 			genType.setParam(esProv != null && esProv ? S_CHAR : EMPTY_CHAR);
-			ResultSet rs = (ResultSet) runGeneric(genType);
+			rs = (ResultSet) runGeneric(genType);
 			while(rs.next()) {
 				PersonaJuridica pj = new PersonaJuridica();
 				pj.setRut(rs.getLong("rut"));
@@ -563,6 +570,8 @@ public class PersistenciaPersona extends Conector implements IPersPersona, CnstQ
 			Conector.rollbackConn();
 			logger.log(Level.FATAL, "Excepcion al obtenerListaTipoDoc: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
+		} finally {
+			closeRs(rs);
 		}
 		return listaPj;
 	}
@@ -573,7 +582,7 @@ public class PersistenciaPersona extends Conector implements IPersPersona, CnstQ
 		try {
 			GenSqlSelectType genType = new GenSqlSelectType(QRY_SELECT_PERS_GENERIC);
 			genType.setParam(idPersona);
-			ResultSet rs = (ResultSet) runGeneric(genType);
+			rs = (ResultSet) runGeneric(genType);
 			if(rs.next()) {
 				char[] tipoChar = new char[1];
 				rs.getCharacterStream("tipo").read(tipoChar);
@@ -590,6 +599,8 @@ public class PersistenciaPersona extends Conector implements IPersPersona, CnstQ
 			Conector.rollbackConn();
 			logger.log(Level.FATAL, "Excepcion al obtenerProductoPorId: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
+		} finally {
+			closeRs(rs);
 		}
 		return persona;
 	}

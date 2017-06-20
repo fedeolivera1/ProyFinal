@@ -53,11 +53,15 @@ public class CtrlFrmPersona extends CtrlGenerico {
 	/*****************************************************************************************************************************************************/
 	
 	public void cargarCbxSexo(JComboBox<Sexo> cbxPfSexo) {
-		List<Sexo> listaSexo = new ArrayList<Sexo>(EnumSet.allOf(Sexo.class));
-		for(Sexo sexo : listaSexo) {
-			cbxPfSexo.addItem(sexo);
+		try {
+			List<Sexo> listaSexo = new ArrayList<Sexo>(EnumSet.allOf(Sexo.class));
+			for(Sexo sexo : listaSexo) {
+				cbxPfSexo.addItem(sexo);
+			}
+			cbxPfSexo.setSelectedIndex(-1);
+		} catch(Exception e) {
+			manejarExcepcion(e);
 		}
-		cbxPfSexo.setSelectedIndex(-1);
 	}
 
 	public void cargarCbxTipoDoc(JComboBox<TipoDoc> cbxPfTipoDoc) {
@@ -68,8 +72,8 @@ public class CtrlFrmPersona extends CtrlGenerico {
 				cbxPfTipoDoc.addItem(tipoDoc);
 			}
 			cbxPfTipoDoc.setSelectedIndex(-1);
-		} catch (PresentacionException e) {
-			enviarError(CnstPresExceptions.DB, e.getMessage());
+		} catch(Exception e) {
+			manejarExcepcion(e);
 		}
 	}
 	
@@ -81,8 +85,8 @@ public class CtrlFrmPersona extends CtrlGenerico {
 				cbxDep.addItem(dep);
 			}
 			cbxDep.setSelectedIndex(-1);
-		} catch (PresentacionException e) {
-			enviarError(CnstPresExceptions.DB, e.getMessage());
+		} catch(Exception e) {
+			manejarExcepcion(e);
 		}
 	}
 	
@@ -96,12 +100,13 @@ public class CtrlFrmPersona extends CtrlGenerico {
 					cbxLoc.addItem(loc);
 				}
 			}
-		} catch (PresentacionException e) {
-			enviarError(CnstPresExceptions.DB, e.getMessage());
+		} catch(Exception e) {
+			manejarExcepcion(e);
 		}
 	}
 	
 	public void cargarJtPersFisica(List<PersonaFisica> listaPf) {
+		try {	
 			JTable tabla = frmPers.getJtPersFisica();
 			clearTable(tabla);
 			if(listaPf != null && !listaPf.isEmpty()) {
@@ -143,109 +148,123 @@ public class CtrlFrmPersona extends CtrlGenerico {
 			} else {
 				cargarJTableVacia(tabla, null);
 			}
+		} catch(Exception e) {
+			manejarExcepcion(e);
+		}
 	}
 	
 	public void cargarJtPersJuridica(List<PersonaJuridica> listaPj) {
-		JTable tabla = frmPers.getJtPersJuridica();
-		clearTable(tabla);
-		if(listaPj != null && !listaPj.isEmpty()) {
-			DefaultTableModel modeloJtPj = new DefaultTableModel();
-			tabla.setModel(modeloJtPj);
-			modeloJtPj.addColumn("Rut");
-			modeloJtPj.addColumn("Nombre");
-			modeloJtPj.addColumn("Direccion");
-			modeloJtPj.addColumn("Telefono");
-			modeloJtPj.addColumn("Celular");
-			modeloJtPj.addColumn("Email");
-			for(PersonaJuridica pj : listaPj) {
-				Object [] fila = new Object[6];
-				fila[0] = pj.getRut();
-				fila[1] = pj.getNombre();
-				fila[2] = pj.getDireccion() + " " + pj.getPuerta();
-				fila[3] = pj.getTelefono();
-				fila[4] = pj.getCelular();
-				fila[5] = pj.getEmail();
-				modeloJtPj.addRow(fila);
-			}
-			tabla.addMouseListener(new MouseAdapter() {
-				@Override
-				public void mouseClicked(MouseEvent me) {
-					try {
-						int fila = tabla.rowAtPoint(me.getPoint());
-						if (fila > -1) {
-							Long rut = (Long) tabla.getModel().getValueAt(fila, 0);
-							PersonaJuridica pj = mgrPers.obtenerPersJuridicaPorId(rut);
-							//obtengo jpanel contenedor de la tabla (2 niveles up)
-							Container containerJTable = tabla.getParent().getParent().getParent();
-							cargarControlesPersJuridica(pj, containerJTable);
-						}
-					} catch (PresentacionException e) {
-						enviarError(CnstPresExceptions.DB, e.getMessage());
-					}
+		try {
+			JTable tabla = frmPers.getJtPersJuridica();
+			clearTable(tabla);
+			if(listaPj != null && !listaPj.isEmpty()) {
+				DefaultTableModel modeloJtPj = new DefaultTableModel();
+				tabla.setModel(modeloJtPj);
+				modeloJtPj.addColumn("Rut");
+				modeloJtPj.addColumn("Nombre");
+				modeloJtPj.addColumn("Direccion");
+				modeloJtPj.addColumn("Telefono");
+				modeloJtPj.addColumn("Celular");
+				modeloJtPj.addColumn("Email");
+				for(PersonaJuridica pj : listaPj) {
+					Object [] fila = new Object[6];
+					fila[0] = pj.getRut();
+					fila[1] = pj.getNombre();
+					fila[2] = pj.getDireccion() + " " + pj.getPuerta();
+					fila[3] = pj.getTelefono();
+					fila[4] = pj.getCelular();
+					fila[5] = pj.getEmail();
+					modeloJtPj.addRow(fila);
 				}
-			});
-		} else {
-			cargarJTableVacia(tabla, null);
+				tabla.addMouseListener(new MouseAdapter() {
+					@Override
+					public void mouseClicked(MouseEvent me) {
+						try {
+							int fila = tabla.rowAtPoint(me.getPoint());
+							if (fila > -1) {
+								Long rut = (Long) tabla.getModel().getValueAt(fila, 0);
+								PersonaJuridica pj = mgrPers.obtenerPersJuridicaPorId(rut);
+								//obtengo jpanel contenedor de la tabla (2 niveles up)
+								Container containerJTable = tabla.getParent().getParent().getParent();
+								cargarControlesPersJuridica(pj, containerJTable);
+							}
+						} catch (PresentacionException e) {
+							enviarError(CnstPresExceptions.DB, e.getMessage());
+						}
+					}
+				});
+			} else {
+				cargarJTableVacia(tabla, null);
+			}
+		} catch(Exception e) {
+			manejarExcepcion(e);
 		}
 	}
 	
 	public void cargarControlesPersFisica(PersonaFisica pf, Container panel) {
-		clearControlsInJPanel(panel);
-		//datos pf
-		ComboBoxModel<TipoDoc> cbModelTd = frmPers.getCbxPfTipoDoc().getModel();
-		cbModelTd.setSelectedItem(pf.getTipoDoc());
-		frmPers.getCbxPfTipoDoc().setSelectedItem(cbModelTd.getSelectedItem());
-		frmPers.getTxtPfDoc().setText(String.valueOf(pf.getDocumento()).trim());
-		frmPers.getTxtPfApe1().setText(pf.getApellido1());
-		frmPers.getTxtPfApe2().setText(pf.getApellido2());
-		frmPers.getTxtPfNom1().setText(pf.getNombre1());
-		frmPers.getTxtPfNom2().setText(pf.getNombre2());
-		frmPers.getTxtPfFnac().setText(pf.getFechaNac().toString(Fecha.DMA));
-		frmPers.getCbxPfSexo().setSelectedItem(pf.getSexo());
-		//datos persona
-		frmPers.getTxtPfDir().setText(pf.getDireccion());
-		frmPers.getTxtPfPue().setText(pf.getPuerta());
-		frmPers.getTxtPfSol().setText(pf.getSolar());
-		frmPers.getTxtPfMan().setText(pf.getManzana());
-		frmPers.getTxtPfKm().setText(String.valueOf(pf.getKm()));
-		frmPers.getTxtPfComp().setText(pf.getComplemento());
-		frmPers.getTxtPfTel().setText(pf.getTelefono());
-		frmPers.getTxtPfCel().setText(pf.getCelular());
-		frmPers.getTxtPfEml().setText(pf.getEmail());
-		ComboBoxModel<Departamento> cbModelDep = frmPers.getCbxPfDep().getModel();
-		cbModelDep.setSelectedItem(pf.getLocalidad().getDepartamento());
-		frmPers.getCbxPfDep().setSelectedItem(cbModelDep.getSelectedItem());
-		ComboBoxModel<Localidad> cbModelLoc = frmPers.getCbxPfLoc().getModel();
-		cbModelLoc.setSelectedItem(pf.getLocalidad());
-		frmPers.getCbxPfLoc().setSelectedItem(cbModelLoc.getSelectedItem());
+		try {
+			clearControlsInJPanel(panel);
+			//datos pf
+			ComboBoxModel<TipoDoc> cbModelTd = frmPers.getCbxPfTipoDoc().getModel();
+			cbModelTd.setSelectedItem(pf.getTipoDoc());
+			frmPers.getCbxPfTipoDoc().setSelectedItem(cbModelTd.getSelectedItem());
+			frmPers.getTxtPfDoc().setText(String.valueOf(pf.getDocumento()).trim());
+			frmPers.getTxtPfApe1().setText(pf.getApellido1());
+			frmPers.getTxtPfApe2().setText(pf.getApellido2());
+			frmPers.getTxtPfNom1().setText(pf.getNombre1());
+			frmPers.getTxtPfNom2().setText(pf.getNombre2());
+			frmPers.getTxtPfFnac().setText(pf.getFechaNac().toString(Fecha.DMA));
+			frmPers.getCbxPfSexo().setSelectedItem(pf.getSexo());
+			//datos persona
+			frmPers.getTxtPfDir().setText(pf.getDireccion());
+			frmPers.getTxtPfPue().setText(pf.getPuerta());
+			frmPers.getTxtPfSol().setText(pf.getSolar());
+			frmPers.getTxtPfMan().setText(pf.getManzana());
+			frmPers.getTxtPfKm().setText(String.valueOf(pf.getKm()));
+			frmPers.getTxtPfComp().setText(pf.getComplemento());
+			frmPers.getTxtPfTel().setText(pf.getTelefono());
+			frmPers.getTxtPfCel().setText(pf.getCelular());
+			frmPers.getTxtPfEml().setText(pf.getEmail());
+			ComboBoxModel<Departamento> cbModelDep = frmPers.getCbxPfDep().getModel();
+			cbModelDep.setSelectedItem(pf.getLocalidad().getDepartamento());
+			frmPers.getCbxPfDep().setSelectedItem(cbModelDep.getSelectedItem());
+			ComboBoxModel<Localidad> cbModelLoc = frmPers.getCbxPfLoc().getModel();
+			cbModelLoc.setSelectedItem(pf.getLocalidad());
+			frmPers.getCbxPfLoc().setSelectedItem(cbModelLoc.getSelectedItem());
+		} catch(Exception e) {
+			manejarExcepcion(e);
+		}
 	}
 	
 	public void cargarControlesPersJuridica(PersonaJuridica pj, Container panel) {
-		clearControlsInJPanel(panel);
-		//datos pj
-		frmPers.getTxtPjRut().setText(String.valueOf(pj.getRut()));
-		frmPers.getTxtPjNom().setText(pj.getNombre());
-		frmPers.getTxtPjRs().setText(pj.getRazonSocial());
-		frmPers.getTxtPjBps().setText(pj.getBps());
-		frmPers.getTxtPjBse().setText(pj.getBse());
-		frmPers.getChkPjProv().setSelected(pj.getEsProv());
-		//datos persona
-		frmPers.getTxtPjDir().setText(pj.getDireccion());
-		frmPers.getTxtPjPue().setText(pj.getPuerta());
-		frmPers.getTxtPjSol().setText(pj.getSolar());
-		frmPers.getTxtPjMan().setText(pj.getManzana());
-		frmPers.getTxtPjKm().setText(String.valueOf(pj.getKm()));
-		frmPers.getTxtPjComp().setText(pj.getComplemento());
-		frmPers.getTxtPjTel().setText(pj.getTelefono());
-		frmPers.getTxtPjCel().setText(pj.getCelular());
-		frmPers.getTxtPjEml().setText(pj.getEmail());
-		ComboBoxModel<Departamento> cbModelDep = frmPers.getCbxPjDep().getModel();
-		cbModelDep.setSelectedItem(pj.getLocalidad().getDepartamento());
-		frmPers.getCbxPjDep().setSelectedItem(cbModelDep.getSelectedItem());
-		ComboBoxModel<Localidad> cbModelLoc = frmPers.getCbxPjLoc().getModel();
-		cbModelLoc.setSelectedItem(pj.getLocalidad());
-		frmPers.getCbxPjLoc().setSelectedItem(cbModelLoc.getSelectedItem());
-		
+		try {
+			clearControlsInJPanel(panel);
+			//datos pj
+			frmPers.getTxtPjRut().setText(String.valueOf(pj.getRut()));
+			frmPers.getTxtPjNom().setText(pj.getNombre());
+			frmPers.getTxtPjRs().setText(pj.getRazonSocial());
+			frmPers.getTxtPjBps().setText(pj.getBps());
+			frmPers.getTxtPjBse().setText(pj.getBse());
+			frmPers.getChkPjProv().setSelected(pj.getEsProv());
+			//datos persona
+			frmPers.getTxtPjDir().setText(pj.getDireccion());
+			frmPers.getTxtPjPue().setText(pj.getPuerta());
+			frmPers.getTxtPjSol().setText(pj.getSolar());
+			frmPers.getTxtPjMan().setText(pj.getManzana());
+			frmPers.getTxtPjKm().setText(String.valueOf(pj.getKm()));
+			frmPers.getTxtPjComp().setText(pj.getComplemento());
+			frmPers.getTxtPjTel().setText(pj.getTelefono());
+			frmPers.getTxtPjCel().setText(pj.getCelular());
+			frmPers.getTxtPjEml().setText(pj.getEmail());
+			ComboBoxModel<Departamento> cbModelDep = frmPers.getCbxPjDep().getModel();
+			cbModelDep.setSelectedItem(pj.getLocalidad().getDepartamento());
+			frmPers.getCbxPjDep().setSelectedItem(cbModelDep.getSelectedItem());
+			ComboBoxModel<Localidad> cbModelLoc = frmPers.getCbxPjLoc().getModel();
+			cbModelLoc.setSelectedItem(pj.getLocalidad());
+			frmPers.getCbxPjLoc().setSelectedItem(cbModelLoc.getSelectedItem());
+		} catch(Exception e) {
+			manejarExcepcion(e);
+		}
 	}
 	
 	
@@ -262,16 +281,15 @@ public class CtrlFrmPersona extends CtrlGenerico {
 					txtPfNom1.getText(), txtPfNom2.getText(), (Sexo) cbxPfSexo.getSelectedItem(), txtPfDir.getText(), txtPfTel.getText(), txtPfCel.getText(), 
 					txtPfEml.getText(), (Localidad) cbxPfLoc.getSelectedItem());
 			cargarJtPersFisica(listaPf);
-		} catch (PresentacionException e) {
-			enviarError(CnstPresExceptions.DB, e.getMessage());
-		}	
+		} catch(Exception e) {
+			manejarExcepcion(e);
+		}
 	}
 	
 	public void agregarPersFisica(JComboBox<TipoDoc> cbxPfTipoDoc, JTextField txtPfDoc, JTextField txtPfApe1, JTextField txtPfApe2, JTextField txtPfNom1,
 			JTextField txtPfNom2, JTextField txtPfFnac, JComboBox<Sexo> cbxPfSexo, JTextField txtPfDir,
 			JTextField txtPfPue, JTextField txtPfSol, JTextField txtPfMan, JTextField txtPfKm, JTextField txtPfComp,
 			JTextField txtPfTel, JTextField txtPfCel, JTextField txtPfEml, JComboBox<Localidad> cbxPersLoc) {
-
 		try {
 			GenCompType genComp = new GenCompType();
 			genComp.setComp(cbxPfTipoDoc);
@@ -317,8 +335,8 @@ public class CtrlFrmPersona extends CtrlGenerico {
 			} else {
 				enviarWarning(CnstPresGeneric.PERS, CnstPresGeneric.DATOS_OBLIG);
 			}
-		} catch (PresentacionException e) {
-			enviarError(CnstPresExceptions.DB, e.getMessage());
+		} catch(Exception e) {
+			manejarExcepcion(e);
 		}
 	}
 	
@@ -371,8 +389,8 @@ public class CtrlFrmPersona extends CtrlGenerico {
 			} else {
 				enviarWarning(CnstPresGeneric.PERS, CnstPresGeneric.DATOS_OBLIG);
 			}
-		} catch (PresentacionException e) {
-			enviarError(CnstPresExceptions.DB, e.getMessage());
+		} catch(Exception e) {
+			manejarExcepcion(e);
 		}
 	}
 	
@@ -387,8 +405,8 @@ public class CtrlFrmPersona extends CtrlGenerico {
 			} else {
 				enviarWarning(CnstPresGeneric.PERS, CnstPresGeneric.DATOS_OBLIG);
 			}
-		} catch (PresentacionException e) {
-			enviarError(CnstPresExceptions.DB, e.getMessage());
+		} catch(Exception e) {
+			manejarExcepcion(e);
 		}
 	}
 	
@@ -401,8 +419,8 @@ public class CtrlFrmPersona extends CtrlGenerico {
 					txtPjBps.getText(), txtPjBse.getText(), Boolean.valueOf(chkPjProv.isSelected()), txtPjDir.getText(), txtPjTel.getText(), txtPjCel.getText(), 
 					txtPjEml.getText(), (Localidad) cbxPjLoc.getSelectedItem());
 			cargarJtPersJuridica(listaPj);
-		} catch (PresentacionException e) {
-			enviarError(CnstPresExceptions.DB, e.getMessage());
+		} catch(Exception e) {
+			manejarExcepcion(e);
 		}
 	}
 	
@@ -447,8 +465,8 @@ public class CtrlFrmPersona extends CtrlGenerico {
 			} else {
 				enviarWarning(CnstPresGeneric.PERS, CnstPresGeneric.DATOS_OBLIG);
 			}
-		} catch (PresentacionException e) {
-			enviarError(CnstPresExceptions.DB, e.getMessage());
+		} catch(Exception e) {
+			manejarExcepcion(e);
 		}
 	}
 	
@@ -493,8 +511,8 @@ public class CtrlFrmPersona extends CtrlGenerico {
 			} else {
 				enviarWarning(CnstPresGeneric.PERS, CnstPresGeneric.DATOS_OBLIG);
 			}
-		} catch (PresentacionException e) {
-			enviarError(CnstPresExceptions.DB, e.getMessage());
+		} catch(Exception e) {
+			manejarExcepcion(e);
 		}
 	}
 	
@@ -509,8 +527,8 @@ public class CtrlFrmPersona extends CtrlGenerico {
 			} else {
 				enviarWarning(CnstPresGeneric.PERS, CnstPresGeneric.DATOS_OBLIG);
 			}
-		} catch (PresentacionException e) {
-			enviarError(CnstPresExceptions.DB, e.getMessage());
+		} catch(Exception e) {
+			manejarExcepcion(e);
 		}
 	}
 	
