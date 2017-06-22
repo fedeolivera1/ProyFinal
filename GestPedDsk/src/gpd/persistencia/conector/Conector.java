@@ -213,13 +213,13 @@ public abstract class Conector {
 					Fecha fecha = (Fecha) data;
 					if(fecha.esTimeStamp()) {
 						ps.setObject(key, fecha.getTimestampSql(), java.sql.Types.TIMESTAMP);
-						logger.debug("seteo param en posi " + key + " del tipo java.sql.Types.TIMESTAMP: " + data);
+						logger.debug("seteo param en posi " + key + " del tipo java.sql.Types.TIMESTAMP: " + fecha.toString(Fecha.AMDHMS));
 					} else if(fecha.esHM()) {
 						ps.setObject(key, fecha.getTimeSql(), java.sql.Types.TIME);
-						logger.debug("seteo param en posi " + key + " del tipo java.sql.Types.TIME: " + data);
+						logger.debug("seteo param en posi " + key + " del tipo java.sql.Types.TIME: " + fecha.toString(Fecha.HM));
 					} else {
 						ps.setObject(key, fecha.getDateSql(), java.sql.Types.DATE);
-						logger.debug("seteo param en posi " + key + " del tipo java.sql.Types.DATE: " + data);
+						logger.debug("seteo param en posi " + key + " del tipo java.sql.Types.DATE: " + fecha.toString(Fecha.AMD));
 					}
 				} else if ((data instanceof java.util.Date) || (data instanceof java.util.GregorianCalendar)) {
 					ps.setObject(key, data, java.sql.Types.DATE);

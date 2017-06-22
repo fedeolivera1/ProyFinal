@@ -20,6 +20,7 @@ public class PersonaFisica extends Persona {
 	}
 	public void setDocumento(Long documento) {
 		this.documento = documento;
+		super.setIdPersona(this.documento);
 	}
 	
 	public TipoDoc getTipoDoc() {
@@ -76,6 +77,13 @@ public class PersonaFisica extends Persona {
 	}
 	public void setDocumentoAnt(Long documentoAnt) {
 		this.documentoAnt = documentoAnt;
+	}
+	
+	
+	@Override
+	public String toString() {
+		return tipoDoc + "-" + documento + " | " + nombre1 + " " + apellido1 + " | " + fechaNac.toString(Fecha.DMA) + " | " 
+				+ String.valueOf(sexo.getAsChar()) + " | " + getCelular();
 	}
 	
 	

@@ -57,6 +57,9 @@ public interface CnstPresGeneric {
 	public static final String JTABLE_SIN_LOTES = "No hay lotes para mostrar...";
 	public static final String LOTES_NO_COMPLETADOS = "Hay lotes sin actualizar, complete la informacion.";
 	
+	//pedido
+	public static final String PED = "Pedido";
+	
 	//controles genericos
 	public static final String DATOS_OBLIG = "Los datos marcados son obligatorios.";
 	public static final String JTABLE_EMPTY = "No se encontraron resultados...";

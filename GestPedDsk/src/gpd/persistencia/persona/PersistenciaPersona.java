@@ -352,7 +352,7 @@ public class PersistenciaPersona extends Conector implements IPersPersona, CnstQ
 	private Integer eliminarPersona(Long idPersona) throws ConectorException {
 		try {
 			GenSqlExecType genExec = new GenSqlExecType(QRY_DELETE_PERS);
-			genExec.getExecuteDatosCond().put(1, idPersona);
+			genExec.setParam(idPersona);
 			resultado = (Integer) runGeneric(genExec);
 		} catch (ConectorException e) {
 			Conector.rollbackConn();
@@ -366,8 +366,6 @@ public class PersistenciaPersona extends Conector implements IPersPersona, CnstQ
 	public List<PersonaFisica> obtenerBusquedaPersFisica(Long documento, String ape1, String ape2, String nom1, String nom2, 
 			Character sexo, String direccion, String telefono, String celular, String email, Integer idLoc) throws PersistenciaException {
 		List<PersonaFisica> listaPf = new ArrayList<>();
-		PersistenciaTipoDoc ptd = new PersistenciaTipoDoc();
-		PersistenciaDepLoc pdl = new PersistenciaDepLoc();
 		try {
 			GenSqlSelectType genType = new GenSqlSelectType(QRY_SEARCH_PF);
 			genType.setParamEmptyAsNumber(documento);
@@ -392,50 +390,42 @@ public class PersistenciaPersona extends Conector implements IPersPersona, CnstQ
 			genType.setParam(email);
 			genType.setParamEmptyAsNumber(idLoc);
 			genType.setParamEmptyAsNumber(idLoc);
+			
 			rs = (ResultSet) runGeneric(genType);
-			while(rs.next()) {
-				PersonaFisica pf = new PersonaFisica();
-				pf.setDocumento(rs.getLong("documento"));
-				pf.setTipoDoc(ptd.obtenerTipoDocPorId(rs.getInt("id_tipo_doc")));
-				pf.setApellido1(rs.getString("apellido1"));
-				pf.setApellido2(rs.getString("apellido2"));
-				pf.setNombre1(rs.getString("nombre1"));
-				pf.setNombre2(rs.getString("nombre2"));
-				pf.setFechaNac(rs.getDate("fecha_nac") != null ? new Fecha(rs.getDate("fecha_nac")) : null);
-				char[] sexoChar = new char[1];
-				rs.getCharacterStream("sexo").read(sexoChar);
-				Sexo sexoE = Sexo.getSexoPorChar(sexoChar[0]);
-				pf.setSexo(sexoE);
-				//persona
-				pf.setDireccion(rs.getString("direccion"));
-				pf.setPuerta(rs.getString("puerta"));
-				pf.setSolar(rs.getString("solar"));
-				pf.setManzana(rs.getString("manzana"));
-				pf.setKm(rs.getFloat("km"));
-				pf.setComplemento(rs.getString("complemento"));
-				pf.setTelefono(rs.getString("telefono"));
-				pf.setCelular(rs.getString("celular"));
-				pf.setEmail(rs.getString("email"));
-				pf.setFechaReg(new Fecha(rs.getDate("fecha_reg")));
-				char[] tipoChar = new char[1];
-				rs.getCharacterStream("tipo").read(tipoChar);
-				pf.setTipoPers(TipoPersona.getTipoPersonaPorChar(tipoChar[0]));
-				pf.setLocalidad(pdl.obtenerLocalidadPorId(rs.getInt("id_loc")));
-				char[] origenChar = new char[1];
-				rs.getCharacterStream("origen").read(origenChar);
-				Origen origen = Origen.getOrigenPorChar(origenChar[0]);
-				pf.setOrigen(origen);
-				char[] sincChar = new char[1];
-				rs.getCharacterStream("sinc").read(sincChar);
-				Sinc sinc = Sinc.getSincPorChar(sincChar[0]);
-				pf.setSinc(sinc);
-				pf.setUltAct(new Fecha(rs.getTimestamp("ult_act")));
-				
-				listaPf.add(pf);
-			}
-		} catch (ConectorException | SQLException | IOException e) {
+			listaPf.addAll(cargarPfDesdeRs(rs));
+		} catch (ConectorException e) {
 			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al obtenerListaTipoDoc: " + e.getMessage(), e);
+			logger.log(Level.FATAL, "Excepcion al obtenerListaTipoDoc: " + e.getMessage());
+			throw new PersistenciaException(e);
+		} finally {
+			closeRs(rs);
+		}
+		return listaPf;
+	}
+	
+	@Override
+	public List<PersonaFisica> obtenerBusquedaPersFisicaGenerico(String filtroBusq, Integer idLoc)
+			throws PersistenciaException {
+		List<PersonaFisica> listaPf = new ArrayList<>();
+		try {
+			GenSqlSelectType genType = new GenSqlSelectType(QRY_SEARCH_PF_GEN);
+			genType.setParamLongIfString(filtroBusq);
+			genType.setParamLikeBoth(filtroBusq);
+			genType.setParamLikeBoth(filtroBusq);
+			genType.setParamLikeBoth(filtroBusq);
+			genType.setParamLikeBoth(filtroBusq);
+			genType.setParamLikeBoth(filtroBusq);
+			genType.setParamLikeBoth(filtroBusq);
+			genType.setParamLikeBoth(filtroBusq);
+			genType.setParamLikeBoth(filtroBusq);
+			genType.setParamEmptyAsNumber(idLoc);
+			genType.setParamEmptyAsNumber(idLoc);
+			
+			rs = (ResultSet) runGeneric(genType);
+			listaPf.addAll(cargarPfDesdeRs(rs));
+		} catch (ConectorException e) {
+			Conector.rollbackConn();
+			logger.log(Level.FATAL, "Excepcion al obtenerListaTipoDoc: " + e.getMessage());
 			throw new PersistenciaException(e);
 		} finally {
 			closeRs(rs);
@@ -447,7 +437,6 @@ public class PersistenciaPersona extends Conector implements IPersPersona, CnstQ
 	public List<PersonaJuridica> obtenerBusquedaPersJuridica(Long rut, String nombre, String razonSoc, String bps, String bse, 
 			Boolean esProv, String direccion, String telefono, String celular, String email, Integer idLoc) throws PersistenciaException {
 		List<PersonaJuridica> listaPj = new ArrayList<>();
-		PersistenciaDepLoc pdl = new PersistenciaDepLoc();
 		try {
 			GenSqlSelectType genType = new GenSqlSelectType(QRY_SEARCH_PJ);
 			genType.setParamEmptyAsNumber(rut);
@@ -472,47 +461,41 @@ public class PersistenciaPersona extends Conector implements IPersPersona, CnstQ
 			genType.setParam(email);
 			genType.setParamEmptyAsNumber(idLoc);
 			genType.setParamEmptyAsNumber(idLoc);
+			
 			rs = (ResultSet) runGeneric(genType);
-			while(rs.next()) {
-				PersonaJuridica pj = new PersonaJuridica();
-				pj.setRut(rs.getLong("rut"));
-				pj.setNombre(rs.getString("nombre"));
-				pj.setRazonSocial(rs.getString("razon_social"));
-				pj.setBps(rs.getString("bps"));
-				pj.setBse(rs.getString("bse"));
-				char[] esProvChar = new char[1];
-				rs.getCharacterStream("es_prov").read(esProvChar);
-				pj.setEsProv((esProvChar[0] == S_CHAR) ? true : false);
-				//persona
-				pj.setDireccion(rs.getString("direccion"));
-				pj.setPuerta(rs.getString("puerta"));
-				pj.setSolar(rs.getString("solar"));
-				pj.setManzana(rs.getString("manzana"));
-				pj.setKm(rs.getFloat("km"));
-				pj.setComplemento(rs.getString("complemento"));
-				pj.setTelefono(rs.getString("telefono"));
-				pj.setCelular(rs.getString("celular"));
-				pj.setEmail(rs.getString("email"));
-				pj.setFechaReg(new Fecha(rs.getDate("fecha_reg")));
-				char[] tipoChar = new char[1];
-				rs.getCharacterStream("tipo").read(tipoChar);
-				pj.setTipoPers(TipoPersona.getTipoPersonaPorChar(tipoChar[0]));
-				pj.setLocalidad(pdl.obtenerLocalidadPorId(rs.getInt("id_loc")));
-				char[] origenChar = new char[1];
-				rs.getCharacterStream("origen").read(origenChar);
-				Origen origen = Origen.getOrigenPorChar(origenChar[0]);
-				pj.setOrigen(origen);
-				char[] sincChar = new char[1];
-				rs.getCharacterStream("sinc").read(sincChar);
-				Sinc sinc = Sinc.getSincPorChar(sincChar[0]);
-				pj.setSinc(sinc);
-				pj.setUltAct(new Fecha(rs.getTimestamp("ult_act")));
-				
-				listaPj.add(pj);
-			}
-		} catch (ConectorException | SQLException | IOException e) {
+			listaPj.addAll(cargarPjDesdeRs(rs));
+		} catch (ConectorException e) {
 			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al obtenerListaTipoDoc: " + e.getMessage(), e);
+			logger.log(Level.FATAL, "Excepcion al obtenerListaTipoDoc: " + e.getMessage());
+			throw new PersistenciaException(e);
+		} finally {
+			closeRs(rs);
+		}
+		return listaPj;
+	}
+	
+	@Override
+	public List<PersonaJuridica> obtenerBusquedaPersJuridicaGenerico(String filtroBusq, Integer idLoc)
+			throws PersistenciaException {
+		List<PersonaJuridica> listaPj = new ArrayList<>();
+		try {
+			GenSqlSelectType genType = new GenSqlSelectType(QRY_SEARCH_PJ_GEN);
+			genType.setParamLongIfString(filtroBusq);
+			genType.setParamLikeBoth(filtroBusq);
+			genType.setParamLikeBoth(filtroBusq);
+			genType.setParamLikeBoth(filtroBusq);
+			genType.setParamLikeBoth(filtroBusq);
+			genType.setParamLikeBoth(filtroBusq);
+			genType.setParamLikeBoth(filtroBusq);
+			genType.setParamLikeBoth(filtroBusq);
+			genType.setParamLikeBoth(filtroBusq);
+			genType.setParamEmptyAsNumber(idLoc);
+			genType.setParamEmptyAsNumber(idLoc);
+			rs = (ResultSet) runGeneric(genType);
+			listaPj.addAll(cargarPjDesdeRs(rs));
+		} catch (ConectorException e) {
+			Conector.rollbackConn();
+			logger.log(Level.FATAL, "Excepcion al obtenerListaTipoDoc: " + e.getMessage());
 			throw new PersistenciaException(e);
 		} finally {
 			closeRs(rs);
@@ -605,5 +588,119 @@ public class PersistenciaPersona extends Conector implements IPersPersona, CnstQ
 		return persona;
 	}
 
+	//metodos genericos de carga persona desde resultset
 
+	/**
+	 * metodo que recibe el resultset de la consulta, y carga la lista de personas fisica
+	 * @param ResultSet rs
+	 * @return lista persona fisica
+	 * @throws PersistenciaException
+	 */
+	private List<PersonaFisica> cargarPfDesdeRs(ResultSet rs) throws PersistenciaException {
+		List<PersonaFisica> listaPf = new ArrayList<>();
+		PersistenciaTipoDoc ptd = new PersistenciaTipoDoc();
+		PersistenciaDepLoc pdl = new PersistenciaDepLoc();
+		try {
+			while(rs.next()) {
+				PersonaFisica pf = new PersonaFisica();
+				pf.setDocumento(rs.getLong("documento"));
+				pf.setTipoDoc(ptd.obtenerTipoDocPorId(rs.getInt("id_tipo_doc")));
+				pf.setApellido1(rs.getString("apellido1"));
+				pf.setApellido2(rs.getString("apellido2"));
+				pf.setNombre1(rs.getString("nombre1"));
+				pf.setNombre2(rs.getString("nombre2"));
+				pf.setFechaNac(rs.getDate("fecha_nac") != null ? new Fecha(rs.getDate("fecha_nac")) : null);
+				char[] sexoChar = new char[1];
+				rs.getCharacterStream("sexo").read(sexoChar);
+				Sexo sexoE = Sexo.getSexoPorChar(sexoChar[0]);
+				pf.setSexo(sexoE);
+				//persona
+				pf.setDireccion(rs.getString("direccion"));
+				pf.setPuerta(rs.getString("puerta"));
+				pf.setSolar(rs.getString("solar"));
+				pf.setManzana(rs.getString("manzana"));
+				pf.setKm(rs.getFloat("km"));
+				pf.setComplemento(rs.getString("complemento"));
+				pf.setTelefono(rs.getString("telefono"));
+				pf.setCelular(rs.getString("celular"));
+				pf.setEmail(rs.getString("email"));
+				pf.setFechaReg(new Fecha(rs.getDate("fecha_reg")));
+				char[] tipoChar = new char[1];
+				rs.getCharacterStream("tipo").read(tipoChar);
+				pf.setTipoPers(TipoPersona.getTipoPersonaPorChar(tipoChar[0]));
+				pf.setLocalidad(pdl.obtenerLocalidadPorId(rs.getInt("id_loc")));
+				char[] origenChar = new char[1];
+				rs.getCharacterStream("origen").read(origenChar);
+				Origen origen = Origen.getOrigenPorChar(origenChar[0]);
+				pf.setOrigen(origen);
+				char[] sincChar = new char[1];
+				rs.getCharacterStream("sinc").read(sincChar);
+				Sinc sinc = Sinc.getSincPorChar(sincChar[0]);
+				pf.setSinc(sinc);
+				pf.setUltAct(new Fecha(rs.getTimestamp("ult_act")));
+				
+				listaPf.add(pf);
+			}
+		} catch (SQLException | PersistenciaException | IOException e) {
+			Conector.rollbackConn();
+			logger.log(Level.FATAL, "Excepcion al cargarRsConPf: " + e.getMessage(), e);
+			throw new PersistenciaException(e);
+		}
+		return listaPf;
+	}
+	
+	/**
+	 * metodo que recibe el resultset de la consulta, y carga la lista de persona juridica
+	 * @param ResultSet rs
+	 * @return lista persona juridica
+	 * @throws PersistenciaException
+	 */
+	private List<PersonaJuridica> cargarPjDesdeRs(ResultSet rs) throws PersistenciaException {
+		List<PersonaJuridica> listaPj = new ArrayList<>();
+		PersistenciaDepLoc pdl = new PersistenciaDepLoc();
+		try {
+			while(rs.next()) {
+				PersonaJuridica pj = new PersonaJuridica();
+				pj.setRut(rs.getLong("rut"));
+				pj.setNombre(rs.getString("nombre"));
+				pj.setRazonSocial(rs.getString("razon_social"));
+				pj.setBps(rs.getString("bps"));
+				pj.setBse(rs.getString("bse"));
+				char[] esProvChar = new char[1];
+				rs.getCharacterStream("es_prov").read(esProvChar);
+				pj.setEsProv((esProvChar[0] == S_CHAR) ? true : false);
+				//persona
+				pj.setDireccion(rs.getString("direccion"));
+				pj.setPuerta(rs.getString("puerta"));
+				pj.setSolar(rs.getString("solar"));
+				pj.setManzana(rs.getString("manzana"));
+				pj.setKm(rs.getFloat("km"));
+				pj.setComplemento(rs.getString("complemento"));
+				pj.setTelefono(rs.getString("telefono"));
+				pj.setCelular(rs.getString("celular"));
+				pj.setEmail(rs.getString("email"));
+				pj.setFechaReg(new Fecha(rs.getDate("fecha_reg")));
+				char[] tipoChar = new char[1];
+				rs.getCharacterStream("tipo").read(tipoChar);
+				pj.setTipoPers(TipoPersona.getTipoPersonaPorChar(tipoChar[0]));
+				pj.setLocalidad(pdl.obtenerLocalidadPorId(rs.getInt("id_loc")));
+				char[] origenChar = new char[1];
+				rs.getCharacterStream("origen").read(origenChar);
+				Origen origen = Origen.getOrigenPorChar(origenChar[0]);
+				pj.setOrigen(origen);
+				char[] sincChar = new char[1];
+				rs.getCharacterStream("sinc").read(sincChar);
+				Sinc sinc = Sinc.getSincPorChar(sincChar[0]);
+				pj.setSinc(sinc);
+				pj.setUltAct(new Fecha(rs.getTimestamp("ult_act")));
+				
+				listaPj.add(pj);
+			}
+		} catch (SQLException | PersistenciaException | IOException e) {
+			Conector.rollbackConn();
+			logger.log(Level.FATAL, "Excepcion al cargarRsConPf: " + e.getMessage(), e);
+			throw new PersistenciaException(e);
+		}
+		return listaPj;
+	}
 }

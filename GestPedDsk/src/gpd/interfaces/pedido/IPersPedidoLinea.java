@@ -1,0 +1,13 @@
+package gpd.interfaces.pedido;
+
+import java.util.List;
+
+import gpd.dominio.pedido.Pedido;
+import gpd.dominio.pedido.PedidoLinea;
+import gpd.exceptions.PersistenciaException;
+
+public interface IPersPedidoLinea {
+
+	public List<PedidoLinea> obtenerListaPedidoLinea(Pedido pedido) throws PersistenciaException;
+	
+}

@@ -548,7 +548,7 @@ public class CtrlFrmProducto extends CtrlGenerico {
 	public void cerrarIFrmTp() {
 		try {
 			Component comp = getFrm().getContentPane().getComponent(1);
-			getDeskPane().setBounds(773, 11, 0, 0);
+			getDeskPane().setBounds(0, 0, 0, 0);
 			comp.setVisible(true);
 		} catch(Exception e) {
 			manejarExcepcion(e);
@@ -628,7 +628,7 @@ public class CtrlFrmProducto extends CtrlGenerico {
 	public void cerrarIFrmDep() {
 		try {
 			Component comp = getFrm().getContentPane().getComponent(1);
-			getDeskPane().setBounds(773, 11, 0, 0);
+			getDeskPane().setBounds(0, 0, 0, 0);
 			comp.setVisible(true);
 		} catch(Exception e) {
 			manejarExcepcion(e);
@@ -708,7 +708,7 @@ public class CtrlFrmProducto extends CtrlGenerico {
 	public void cerrarIFrmUtil() {
 		try {
 			Component comp = getFrm().getContentPane().getComponent(1);
-			getDeskPane().setBounds(773, 11, 0, 0);
+			getDeskPane().setBounds(0, 0, 0, 0);
 			comp.setVisible(true);
 		} catch(Exception e) {
 			manejarExcepcion(e);

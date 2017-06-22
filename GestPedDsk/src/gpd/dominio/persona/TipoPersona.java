@@ -1,18 +1,24 @@
 package gpd.dominio.persona;
 
 public enum TipoPersona {
-	F("Persona Fisica", 'F'), 
-	J("Persona Juridica", 'J');
+	F("Persona Fisica", "Cliente", 'F'), 
+	J("Persona Juridica", "Empresa", 'J');
 	
 	private final String tipoPers;
+	private final String tipoPersAux;
 	private final char asChar;
 	
-	TipoPersona(String tipoPers, char asChar) {
+	TipoPersona(String tipoPers, String tipoPersAux, char asChar) {
 		this.tipoPers = tipoPers;
+		this.tipoPersAux = tipoPersAux;
 		this.asChar = asChar;
 	}
 
 	public String getTipoPers() {
+		return tipoPers;
+	}
+	
+	public String getTipoPersAux() {
 		return tipoPers;
 	}
 	
@@ -27,4 +33,9 @@ public enum TipoPersona {
     	}
         return null;
     }
+	
+	@Override
+	 public String toString() {
+		 return tipoPersAux;
+	 }
 }

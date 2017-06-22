@@ -2,6 +2,10 @@ package gpd.presentacion.formulario;
 
 import java.awt.Color;
 import java.awt.SystemColor;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Calendar;
@@ -9,6 +13,7 @@ import java.util.GregorianCalendar;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JDesktopPane;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -16,6 +21,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
@@ -29,8 +35,6 @@ import gpd.dominio.producto.Producto;
 import gpd.dominio.producto.TipoProd;
 import gpd.dominio.usuario.UsuarioDsk;
 import gpd.presentacion.controlador.CtrlFrmPedido;
-import java.awt.event.ItemListener;
-import java.awt.event.ItemEvent;
 
 public class FrmPedido extends JFrame {
 
@@ -48,6 +52,9 @@ public class FrmPedido extends JFrame {
 	private JFormattedTextField txtPedidoCant;
 	private JDateChooser dchPedidoIni;
 	private JDateChooser dchPedidoFin;
+	private JTextField txtPersDesc;
+	private JDesktopPane desktopPane;
+	private JTable jtPedidoLin;
 
 	public static FrmPedido getFrmPedido(UsuarioDsk usr) {
 		if(instance == null) {
@@ -71,14 +78,30 @@ public class FrmPedido extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
+		desktopPane = new JDesktopPane();
+		desktopPane.setBackground(SystemColor.control);
+		desktopPane.setBounds(0, 0, 0, 0);
+		desktopPane.setLayout(null);
+		contentPane.add(desktopPane);
+		//agrego desktopPane a controlador
+		ctrlPed.setDeskPane(desktopPane);
+		GregorianCalendar gc = new GregorianCalendar();
+		gc.add(Calendar.DAY_OF_YEAR, -10);
+		
+	
+		JPanel pnlPedido = new JPanel();
+		pnlPedido.setBounds(0, 0, 784, 561);
+		contentPane.add(pnlPedido);
+		pnlPedido.setLayout(null);
+		
 		pnlDatosPedido = new JPanel();
+		pnlDatosPedido.setBounds(10, 373, 374, 139);
+		pnlPedido.add(pnlDatosPedido);
 		pnlDatosPedido.setLayout(null);
 		pnlDatosPedido.setBorder(new LineBorder(Color.DARK_GRAY));
-		pnlDatosPedido.setBounds(10, 308, 380, 139);
-		contentPane.add(pnlDatosPedido);
 		
 		cbxPedidoTp = new JComboBox<TipoProd>();
-		cbxPedidoTp.setBounds(72, 11, 298, 20);
+		cbxPedidoTp.setBounds(72, 11, 292, 20);
 		pnlDatosPedido.add(cbxPedidoTp);
 		
 		JLabel label = new JLabel("Tipo Prod");
@@ -92,7 +115,7 @@ public class FrmPedido extends JFrame {
 		pnlDatosPedido.add(label_1);
 		
 		cbxPedidoProd = new JComboBox<Producto>();
-		cbxPedidoProd.setBounds(72, 42, 298, 20);
+		cbxPedidoProd.setBounds(72, 42, 292, 20);
 		pnlDatosPedido.add(cbxPedidoProd);
 		
 		JLabel label_2 = new JLabel("Cantidad");
@@ -115,56 +138,128 @@ public class FrmPedido extends JFrame {
 		pnlDatosPedido.add(formattedTextField_1);
 		
 		JButton button = new JButton("Agregar Item");
-		button.setBounds(246, 73, 124, 23);
+		button.setBounds(240, 72, 124, 23);
 		pnlDatosPedido.add(button);
 		
 		JButton button_1 = new JButton("Modificar Item");
-		button_1.setBounds(246, 103, 124, 23);
+		button_1.setBounds(240, 103, 124, 23);
 		pnlDatosPedido.add(button_1);
+		ctrlPed.cargarCbxTipoProd(cbxPedidoTp);
 		
 		JScrollPane scrollPanePedido = new JScrollPane();
-		scrollPanePedido.setBounds(10, 53, 764, 244);
-		contentPane.add(scrollPanePedido);
+		scrollPanePedido.setBounds(10, 136, 764, 194);
+		pnlPedido.add(scrollPanePedido);
 		
 		jtPedido = new JTable();
 		scrollPanePedido.setColumnHeaderView(jtPedido);
+		scrollPanePedido.setViewportView(jtPedido);
 		
-		JLabel label_3 = new JLabel("Estado");
-		label_3.setHorizontalAlignment(SwingConstants.RIGHT);
-		label_3.setBounds(10, 15, 56, 14);
-		contentPane.add(label_3);
+		JLabel lblEstado = new JLabel("Estado*");
+		lblEstado.setBounds(10, 19, 56, 14);
+		pnlPedido.add(lblEstado);
+		lblEstado.setHorizontalAlignment(SwingConstants.RIGHT);
 		
 		cbxPedidoEstado = new JComboBox<>();
-		cbxPedidoEstado.setBounds(76, 12, 122, 20);
-		contentPane.add(cbxPedidoEstado);
+		cbxPedidoEstado.setBounds(76, 16, 122, 20);
+		pnlPedido.add(cbxPedidoEstado);
 		
-		JLabel label_4 = new JLabel("Periodo");
-		label_4.setHorizontalAlignment(SwingConstants.RIGHT);
-		label_4.setBounds(208, 15, 56, 14);
-		contentPane.add(label_4);
+		ctrlPed.cargarCbxPedidoEstado(cbxPedidoEstado);
+		
+		JLabel lblPeriodo = new JLabel("Periodo*");
+		lblPeriodo.setBounds(208, 19, 56, 14);
+		pnlPedido.add(lblPeriodo);
+		lblPeriodo.setHorizontalAlignment(SwingConstants.RIGHT);
 		
 		dchPedidoIni = new JDateChooser();
-		dchPedidoIni.setBounds(272, 12, 87, 20);
-		GregorianCalendar gc = new GregorianCalendar();
-		gc.add(Calendar.DAY_OF_YEAR, -10);
+		dchPedidoIni.setBounds(274, 19, 87, 20);
+		pnlPedido.add(dchPedidoIni);
 		dchPedidoIni.setCalendar(gc);
-		contentPane.add(dchPedidoIni);
 		
 		dchPedidoFin = new JDateChooser();
-		dchPedidoFin.setBounds(370, 12, 87, 20);
+		dchPedidoFin.setBounds(371, 19, 87, 20);
+		pnlPedido.add(dchPedidoFin);
 		dchPedidoFin.setCalendar(new GregorianCalendar());
-		contentPane.add(dchPedidoFin);
 		
-		JButton button_2 = new JButton("Obtener");
-		button_2.setBounds(467, 11, 89, 23);
-		contentPane.add(button_2);
+		JButton btxPedObtener = new JButton("Obtener");
+		btxPedObtener.setBounds(369, 89, 89, 23);
+		pnlPedido.add(btxPedObtener);
+		
+		JSeparator separator_1 = new JSeparator();
+		separator_1.setBounds(10, 123, 764, 2);
+		pnlPedido.add(separator_1);
+		separator_1.setForeground(SystemColor.info);
+		separator_1.setBackground(SystemColor.info);
+		
+		txtPersDesc = new JTextField();
+		txtPersDesc.setBounds(76, 58, 382, 20);
+		pnlPedido.add(txtPersDesc);
+		txtPersDesc.setEnabled(false);
+		txtPersDesc.setColumns(10);
+		
+		JLabel lblPersona = new JLabel("Persona");
+		lblPersona.setBounds(10, 61, 56, 14);
+		pnlPedido.add(lblPersona);
+		lblPersona.setHorizontalAlignment(SwingConstants.RIGHT);
+		
+		JButton btnPedBp = new JButton("...");
+		btnPedBp.setBounds(468, 57, 32, 23);
+		pnlPedido.add(btnPedBp);
 		
 		JSeparator separator = new JSeparator();
 		separator.setForeground(SystemColor.info);
 		separator.setBackground(SystemColor.info);
-		separator.setBounds(10, 40, 764, 2);
-		contentPane.add(separator);
+		separator.setBounds(10, 341, 764, 2);
+		pnlPedido.add(separator);
 		
+		JScrollPane scrollPanePedidoLin = new JScrollPane();
+		scrollPanePedidoLin.setBounds(400, 373, 374, 139);
+		pnlPedido.add(scrollPanePedidoLin);
+		
+		jtPedidoLin = new JTable();
+		scrollPanePedidoLin.setColumnHeaderView(jtPedidoLin);
+		scrollPanePedidoLin.setViewportView(jtPedidoLin);
+		
+		JButton btnGenerarVenta = new JButton("Generar Venta");
+		btnGenerarVenta.setBounds(650, 89, 124, 23);
+		pnlPedido.add(btnGenerarVenta);
+		
+		JButton button_2 = new JButton("Generar Venta");
+		button_2.setBounds(650, 89, 124, 23);
+		pnlPedido.add(button_2);
+		
+		JButton btnGenerarPedido = new JButton("Generar Pedido");
+		btnGenerarPedido.setBounds(650, 523, 124, 23);
+		pnlPedido.add(btnGenerarPedido);
+		
+		JLabel lblItemsParaEl = new JLabel("Items para el pedido");
+		lblItemsParaEl.setHorizontalAlignment(SwingConstants.LEFT);
+		lblItemsParaEl.setBounds(10, 348, 124, 14);
+		pnlPedido.add(lblItemsParaEl);
+		
+		JLabel lblItemsActualesEn = new JLabel("Items actuales en el pedido");
+		lblItemsActualesEn.setHorizontalAlignment(SwingConstants.LEFT);
+		lblItemsActualesEn.setBounds(400, 348, 145, 14);
+		pnlPedido.add(lblItemsActualesEn);
+		
+		/*****************************************************************************************************************************************************/
+		/* ACCIONES CONTROLES */
+		/*****************************************************************************************************************************************************/
+		
+		btnPedBp.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				ctrlPed.abrirBuscadorPers(usr);
+			}
+		});
+		cbxPedidoTp.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent arg0) {
+				ctrlPed.cargarCbxProd(cbxPedidoTp, cbxPedidoProd);
+			}
+		});
+		btxPedObtener.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				ctrlPed.obtenerPedidos(cbxPedidoEstado, txtPersDesc, dchPedidoIni, dchPedidoFin);
+			}
+		});
 		
 		/***************************************************/
 		/* EVENTO CIERRE DEL FORM */
@@ -175,22 +270,16 @@ public class FrmPedido extends JFrame {
 				instance = null;
 			}
 		});
-	
-		/*****************************************************************************************************************************************************/
-		/* ACCIONES CONTROLES */
-		/*****************************************************************************************************************************************************/
-	
-		ctrlPed.cargarCbxPedidoEstado(cbxPedidoEstado);
-		ctrlPed.cargarCbxTipoProd(cbxPedidoTp);
-		
-		
-		cbxPedidoTp.addItemListener(new ItemListener() {
-			public void itemStateChanged(ItemEvent arg0) {
-				ctrlPed.cargarCbxProd(cbxPedidoTp, cbxPedidoProd);
-			}
-		});
 	}
 	
+	public JTextField getTxtPersDesc() {
+		return txtPersDesc;
+	}
+
+	public void setTxtPersDesc(JTextField txtPersDesc) {
+		this.txtPersDesc = txtPersDesc;
+	}
+
 	/*****************************************************************************************************************************************************/
 	/* GET Y SET */
 	/*****************************************************************************************************************************************************/
@@ -205,7 +294,6 @@ public class FrmPedido extends JFrame {
 	public JTable getJtPedido() {
 		return jtPedido;
 	}
-
 	public void setJtPedido(JTable jtPedido) {
 		this.jtPedido = jtPedido;
 	}
@@ -213,7 +301,6 @@ public class FrmPedido extends JFrame {
 	public JPanel getPnlDatosPedido() {
 		return pnlDatosPedido;
 	}
-
 	public void setPnlDatosPedido(JPanel pnlDatosPedido) {
 		this.pnlDatosPedido = pnlDatosPedido;
 	}
@@ -221,7 +308,6 @@ public class FrmPedido extends JFrame {
 	public JComboBox<TipoProd> getCbxPedidoTp() {
 		return cbxPedidoTp;
 	}
-
 	public void setCbxPedidoTp(JComboBox<TipoProd> cbxPedidoTp) {
 		this.cbxPedidoTp = cbxPedidoTp;
 	}
@@ -229,7 +315,6 @@ public class FrmPedido extends JFrame {
 	public JComboBox<Producto> getCbxPedidoProd() {
 		return cbxPedidoProd;
 	}
-
 	public void setCbxPedidoProd(JComboBox<Producto> cbxPedidoProd) {
 		this.cbxPedidoProd = cbxPedidoProd;
 	}
@@ -237,7 +322,6 @@ public class FrmPedido extends JFrame {
 	public JFormattedTextField getTxtPedidoCant() {
 		return txtPedidoCant;
 	}
-
 	public void setTxtPedidoCant(JFormattedTextField txtPedidoCant) {
 		this.txtPedidoCant = txtPedidoCant;
 	}
@@ -245,7 +329,6 @@ public class FrmPedido extends JFrame {
 	public JDateChooser getDchPedidoIni() {
 		return dchPedidoIni;
 	}
-
 	public void setDchPedidoIni(JDateChooser dchPedidoIni) {
 		this.dchPedidoIni = dchPedidoIni;
 	}
@@ -253,9 +336,7 @@ public class FrmPedido extends JFrame {
 	public JDateChooser getDchPedidoFin() {
 		return dchPedidoFin;
 	}
-
 	public void setDchPedidoFin(JDateChooser dchPedidoFin) {
 		this.dchPedidoFin = dchPedidoFin;
 	}
-
 }

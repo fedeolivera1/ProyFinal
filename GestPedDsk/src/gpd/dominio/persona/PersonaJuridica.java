@@ -16,6 +16,7 @@ public class PersonaJuridica extends Persona {
 	}
 	public void setRut(Long rut) {
 		this.rut = rut;
+		super.setIdPersona(this.rut);
 	}
 	
 	public String getNombre() {

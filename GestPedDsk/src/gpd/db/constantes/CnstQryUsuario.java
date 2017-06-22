@@ -2,7 +2,9 @@ package gpd.db.constantes;
 
 public interface CnstQryUsuario {
 
-	public static final String QRY_LOGIN = "SELECT * FROM usr_dsk u WHERE u.nom_usu = ? AND u.passwd = ?";
+	public static final String QRY_LOGIN = "SELECT u.nom_usu, u.passwd, u.tipo FROM usr_dsk u WHERE u.nom_usu = ? AND u.passwd = ?";
+	
+	public static final String QRY_SELECT_USR = "SELECT u.nom_usu, u.tipo FROM usr_dsk u WHERE u.nom_usu = ?";
 	
 	public static final String QRY_INSERT_USR = "INSERT INTO usr_dsk (nom_usu, passwd, tipo) VALUES (?, ?, ?)";
 	

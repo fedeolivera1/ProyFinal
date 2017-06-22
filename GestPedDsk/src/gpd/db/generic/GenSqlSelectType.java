@@ -52,6 +52,22 @@ public class GenSqlSelectType {
 		this.getSelectDatosCond().put(cnt, obj);
 	}
 	
+	public void setParamIntegerIfString(Object obj) {
+		cnt++;
+		obj = (obj != null && obj instanceof String) ? Integer.valueOf((String) obj) : obj;
+		this.getSelectDatosCond().put(cnt, obj);
+	}
+	
+	public void setParamLongIfString(Object obj) {
+		try {
+			cnt++;
+			obj = (obj != null && obj instanceof String) ? Long.valueOf((String) obj) : obj;
+		} catch (NumberFormatException e) {
+			obj = (new Long(-1));
+		}
+		this.getSelectDatosCond().put(cnt, obj);
+	}
+	
 	public void setParamCharIfNull(Object obj) {
 		cnt++;
 		obj = (obj == null) ? EMPTY_CHAR : obj;
@@ -61,7 +77,7 @@ public class GenSqlSelectType {
 	public void setParamEmptyAsNumber(Object obj) {
 		cnt++;
 		if(obj == null || obj instanceof String) {
-			obj = (obj == null || String.valueOf(obj).equals("")) ? -1 : obj;
+			obj = (obj == null || String.valueOf(obj).equals(EMPTY_STR)) ? -1 : obj;
 		}
 		this.getSelectDatosCond().put(cnt, obj);
 	}

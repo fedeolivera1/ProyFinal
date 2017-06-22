@@ -35,6 +35,22 @@ public interface CnstQryPersona {
 														+ "AND (p.email LIKE ? OR '' = ?) "
 														+ "AND (p.id_loc = ? OR -1 = ?) ";
 	
+	public static final String QRY_SEARCH_PF_GEN = "SELECT pf.documento, pf.id_tipo_doc, pf.apellido1, pf.apellido2, pf.nombre1, pf.nombre2, pf.fecha_nac, pf.sexo, "
+															+ "p.direccion, p.puerta, p.solar, p.manzana, p.km, p.complemento, p.telefono, p.celular, "
+															+ "p.email, p.fecha_reg, p.tipo, p.id_loc, p.origen, p.sinc, p.ult_act "
+														+ "FROM pers_fisica pf INNER JOIN persona p "
+														+ "ON pf.documento = p.id_persona "
+														+ "WHERE (pf.documento = ?) "
+														+ "OR ( (pf.apellido1 LIKE ?) "
+															+ "OR (pf.apellido2 LIKE ?) "
+															+ "OR (pf.nombre1 LIKE ?) "
+															+ "OR (pf.nombre2 LIKE ?) "
+															+ "OR (p.direccion LIKE ?) "
+															+ "OR (p.telefono LIKE ?) "
+															+ "OR (p.celular LIKE ?) "
+															+ "OR (p.email LIKE ?) ) "
+														+ "AND (p.id_loc = ? OR -1 = ?) ";
+	
 	public static final String QRY_SEARCH_PJ = "SELECT pj.rut, pj.nombre, pj.razon_social, pj.bps, pj.bse, pj.es_prov, p.direccion, p.puerta, p.solar, "
 															+ "p.manzana, p.km, p.complemento, p.telefono, p.celular, p.email, p.fecha_reg, p.tipo, "
 															+ "p.id_loc, p.origen, p.sinc, p.ult_act "
@@ -51,6 +67,24 @@ public interface CnstQryPersona {
 														+ "AND (p.celular LIKE ? OR '' = ?) "
 														+ "AND (p.email LIKE ? OR '' = ?) "
 														+ "AND (p.id_loc = ? OR -1 = ?) ";
+	
+	public static final String QRY_SEARCH_PJ_GEN = "SELECT pj.rut, pj.nombre, pj.razon_social, pj.bps, pj.bse, pj.es_prov, p.direccion, p.puerta, p.solar, "
+														+ "p.manzana, p.km, p.complemento, p.telefono, p.celular, p.email, p.fecha_reg, p.tipo, "
+														+ "p.id_loc, p.origen, p.sinc, p.ult_act "
+														+ "FROM pers_juridica pj INNER JOIN persona p "
+														+ "ON pj.rut = p.id_persona "
+														+ "WHERE (pj.rut = ?) "
+														+ "OR ( (pj.nombre LIKE ?) "
+															+ "OR (pj.razon_social LIKE ?) "
+															+ "OR (pj.bps LIKE ?) "
+															+ "OR (pj.bse LIKE ?) "
+															+ "OR (p.direccion LIKE ?) "
+															+ "OR (p.telefono LIKE ?) "
+															+ "OR (p.celular LIKE ?) "
+															+ "OR (p.email LIKE ?) ) "
+														+ "AND (p.id_loc = ? OR -1 = ?) ";
+	
+//	public static final String QRY_SEARCH_PERS_GENERIC = "";
 	
 	public static final String QRY_SELECT_PJ = "SELECT pj.rut, pj.nombre, pj.razon_social, pj.bps, pj.bse, pj.es_prov, p.direccion, p.puerta, p.solar, "
 															+ "p.manzana, p.km, p.complemento, p.telefono, p.celular, p.email, p.fecha_reg, p.tipo, "

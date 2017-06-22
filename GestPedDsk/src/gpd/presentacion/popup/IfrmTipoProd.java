@@ -10,19 +10,19 @@ import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
-import javax.swing.event.InternalFrameListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import gpd.dominio.producto.TipoProd;
 import gpd.presentacion.controlador.CtrlFrmProducto;
-import javax.swing.JScrollPane;
 
-public class IfrmTipoProd extends JInternalFrame implements InternalFrameListener {
+public class IfrmTipoProd extends JInternalFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
@@ -37,10 +37,7 @@ public class IfrmTipoProd extends JInternalFrame implements InternalFrameListene
 	 */
 	public IfrmTipoProd(CtrlFrmProducto ctrl) {
 		ctrlInterno = ctrl;
-        addInternalFrameListener(this);
         ctrl.setiFrmTp(this);
-        
-		setIconifiable(true);
 		setClosable(true);
 		setBounds(100, 100, 450, 300);
 		setTitle("Tipo Prod");
@@ -107,38 +104,16 @@ public class IfrmTipoProd extends JInternalFrame implements InternalFrameListene
 				ctrl.cargarControlesTipoProd(txtTpDesc, jlTipoProd);
 			}
 		});
+		/***************************************************/
+		/* EVENTO CIERRE DEL IFRM */
+		/***************************************************/
+		addInternalFrameListener(new InternalFrameAdapter() {
+			@Override
+			public void internalFrameClosing(InternalFrameEvent arg0) {
+				ctrlInterno.cerrarIFrmTp();
+				ctrlInterno.cargarCbxTipoProd(ctrlInterno.getFrm().getCbxTipoProd());
+			}
+		});
 	}
 
-	@Override
-    public void internalFrameClosed(InternalFrameEvent e) {
-    }
-
-	@Override
-	public void internalFrameActivated(InternalFrameEvent e) {
-	}
-
-	@Override
-	public void internalFrameClosing(InternalFrameEvent e) {
-		if(InternalFrameEvent.INTERNAL_FRAME_CLOSING == e.getID()) {
-			ctrlInterno.cerrarIFrmTp();
-			ctrlInterno.cargarCbxTipoProd(ctrlInterno.getFrm().getCbxTipoProd());
-		}
-	}
-
-	@Override
-	public void internalFrameDeactivated(InternalFrameEvent e) {
-	}
-
-	@Override
-	public void internalFrameDeiconified(InternalFrameEvent e) {
-	}
-
-	@Override
-	public void internalFrameIconified(InternalFrameEvent e) {
-	}
-
-	@Override
-	public void internalFrameOpened(InternalFrameEvent e) {
-	}
-	
 }

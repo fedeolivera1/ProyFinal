@@ -14,7 +14,6 @@ import gpd.types.Fecha;
 public class Pedido implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	private Long idPedido;
 	private Persona persona;
 	private Fecha fechaHora;
 	private EstadoPedido estado;
@@ -28,13 +27,6 @@ public class Pedido implements Serializable {
 	private Fecha ultAct;
 	private List<PedidoLinea> listaPedidoLinea;
 	
-	
-	public Long getIdPedido() {
-		return idPedido;
-	}
-	public void setIdPedido(Long idPedido) {
-		this.idPedido = idPedido;
-	}
 	
 	public Persona getPersona() {
 		return persona;

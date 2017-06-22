@@ -213,7 +213,7 @@ public class CtrlFrmPersona extends CtrlGenerico {
 			frmPers.getTxtPfApe2().setText(pf.getApellido2());
 			frmPers.getTxtPfNom1().setText(pf.getNombre1());
 			frmPers.getTxtPfNom2().setText(pf.getNombre2());
-			frmPers.getTxtPfFnac().setText(pf.getFechaNac().toString(Fecha.DMA));
+			frmPers.getTxtPfFnac().setText(pf.getFechaNac() != null ? pf.getFechaNac().toString(Fecha.DMA) : STR_VACIO);
 			frmPers.getCbxPfSexo().setSelectedItem(pf.getSexo());
 			//datos persona
 			frmPers.getTxtPfDir().setText(pf.getDireccion());
@@ -359,7 +359,7 @@ public class CtrlFrmPersona extends CtrlGenerico {
 				TipoDoc tipoDoc = (TipoDoc) cbxPfTipoDpc.getSelectedItem();
 				pf.setTipoDoc(tipoDoc);
 				//datos pf
-				pf.setDocumento(ctrlNumLong(txtPfDoc.getText()) ? new Long(txtPfDoc.getText()): null);
+				pf.setDocumento(new Long(txtPfDoc.getText()));
 				pf.setApellido1(txtPfApe1.getText());
 				pf.setApellido2(txtPfApe2.getText());
 				pf.setNombre1(txtPfNom1.getText());
@@ -436,7 +436,7 @@ public class CtrlFrmPersona extends CtrlGenerico {
 			if(controlDatosObl(genComp)) {
 				PersonaJuridica pj = new PersonaJuridica();
 				//datos pj
-				pj.setRut(ctrlNumLong(txtPjRut.getText()) ? new Long(txtPjRut.getText()): null);
+				pj.setRut(new Long(txtPjRut.getText()));
 				pj.setNombre(txtPjNom.getText());
 				pj.setRazonSocial(txtPjRs.getText());
 				pj.setBps(txtPjBps.getText());
@@ -482,7 +482,7 @@ public class CtrlFrmPersona extends CtrlGenerico {
 			if(controlDatosObl(genComp)) {
 				PersonaJuridica pj = new PersonaJuridica();
 				//datos pj
-				pj.setRut(ctrlNumLong(txtPjRut.getText()) ? new Long(txtPjRut.getText()): null);
+				pj.setRut(new Long(txtPjRut.getText()));
 				pj.setNombre(txtPjNom.getText());
 				pj.setRazonSocial(txtPjRs.getText());
 				pj.setBps(txtPjBps.getText());
@@ -521,7 +521,7 @@ public class CtrlFrmPersona extends CtrlGenerico {
 			GenCompType genComp = new GenCompType();
 			genComp.setComp(txtPjRut);
 			if(controlDatosObl(genComp)) {
-				PersonaJuridica pj = mgrPers.obtenerPersJuridicaPorId(ctrlNumLong(txtPjRut.getText()) ? new Long(txtPjRut.getText()): null);
+				PersonaJuridica pj = mgrPers.obtenerPersJuridicaPorId(new Long(txtPjRut.getText()));
 				mgrPers.eliminarPersJuridica(pj);
 				clearPanel(frmPers.getContentPane());
 			} else {

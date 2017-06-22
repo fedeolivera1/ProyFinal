@@ -13,20 +13,20 @@ import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
-import javax.swing.event.InternalFrameListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import gpd.dominio.producto.Utilidad;
 import gpd.presentacion.controlador.CtrlFrmProducto;
-import javax.swing.JScrollPane;
 
-public class IfrmUtilidad extends JInternalFrame implements InternalFrameListener {
+public class IfrmUtilidad extends JInternalFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
@@ -42,7 +42,6 @@ public class IfrmUtilidad extends JInternalFrame implements InternalFrameListene
 	 */
 	public IfrmUtilidad(CtrlFrmProducto ctrl) {
 		ctrlInterno = ctrl;
-        addInternalFrameListener(this);
         ctrl.setiFrmUtil(this);
         
 		setIconifiable(true);
@@ -129,38 +128,16 @@ public class IfrmUtilidad extends JInternalFrame implements InternalFrameListene
 				ctrl.controlInputNum(e);
 			}
 		});
-		
+		/***************************************************/
+		/* EVENTO CIERRE DEL IFRM */
+		/***************************************************/
+		addInternalFrameListener(new InternalFrameAdapter() {
+			@Override
+			public void internalFrameClosing(InternalFrameEvent arg0) {
+				ctrlInterno.cerrarIFrmTp();
+				ctrlInterno.cargarCbxUtil(ctrlInterno.getFrm().getCbxUtil());
+			}
+		});
 	}
 
-	@Override
-    public void internalFrameClosed(InternalFrameEvent e) {
-    }
-
-	@Override
-	public void internalFrameActivated(InternalFrameEvent e) {
-	}
-
-	@Override
-	public void internalFrameClosing(InternalFrameEvent e) {
-		if(InternalFrameEvent.INTERNAL_FRAME_CLOSING == e.getID()) {
-			ctrlInterno.cerrarIFrmTp();
-			ctrlInterno.cargarCbxUtil(ctrlInterno.getFrm().getCbxUtil());
-		}
-	}
-
-	@Override
-	public void internalFrameDeactivated(InternalFrameEvent e) {
-	}
-
-	@Override
-	public void internalFrameDeiconified(InternalFrameEvent e) {
-	}
-
-	@Override
-	public void internalFrameIconified(InternalFrameEvent e) {
-	}
-
-	@Override
-	public void internalFrameOpened(InternalFrameEvent e) {
-	}
 }

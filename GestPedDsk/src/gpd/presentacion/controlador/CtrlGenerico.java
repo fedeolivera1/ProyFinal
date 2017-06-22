@@ -8,6 +8,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JList;
@@ -40,6 +41,7 @@ public abstract class CtrlGenerico {
 	private static final Logger logger = Logger.getLogger(CtrlGenerico.class);
 	private static CompValidador instanceCv;
 	
+	public static String STR_VACIO = "";
 	public static int CONFIRM_OK = 0;
 	public static int CONFIRM_CANCEL = 2;
 	public static int LENGTH_DDMMAAAA = 10;
@@ -60,8 +62,10 @@ public abstract class CtrlGenerico {
 	 */
 	protected void manejarExcepcion(Exception e) {
 		if(e instanceof PresentacionException) {
+			logger.error("Excepcion lanzada desde Controladores: " + e.getMessage(), e);
 			enviarError(CnstPresExceptions.DB, e.getMessage());
 		} else {
+			logger.error("Excepcion generica lanzada desde Controladores: " + e.getMessage(), e);
 			enviarError(CnstPresExceptions.GEN, CnstPresExceptions.ENC + e.getMessage());
 		}
 	}
@@ -419,6 +423,15 @@ public abstract class CtrlGenerico {
 	}
 	
 	/**
+	 * limpia las filas de la lista
+	 * @param tabla
+	 */
+	public void clearList(JList<?> lista) {
+		DefaultListModel<?> modelo = (DefaultListModel<?>) lista.getModel();
+		modelo.removeAllElements();
+	}
+	
+	/**
 	 * @param Component
 	 * limpieza de componentes recursivo
 	 * recibe componente, consulta de que clase es y realiza accion
@@ -453,10 +466,13 @@ public abstract class CtrlGenerico {
 			clearTabbedPane((javax.swing.JTabbedPane) comp);
 		} else if (nombreClase.equals("javax.swing.JTable")) {
 			// Es un JTable asi que llamamos a deleteModelTable
-			deleteModelTable((javax.swing.JTable) comp);
+			clearTable((javax.swing.JTable) comp);
 		} else if (nombreClase.equals("javax.swing.JFormattedTextField")) {
 			// Es un JFormattedTextField asi que lo ponemos en blanco
 			((javax.swing.JFormattedTextField) comp).setText("");
+		} else if (nombreClase.equals("javax.swing.JList")) {
+			// Es un JFormattedTextField asi que lo ponemos en blanco
+			clearList(((javax.swing.JList<?>) comp));
 		} else if (nombreClase.equals("com.toedter.calendar.JDateChooser")) {
 			//JDateChooser pruebo metodo cleanup
 			((com.toedter.calendar.JDateChooser) comp).setCalendar(null);

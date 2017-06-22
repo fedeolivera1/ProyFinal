@@ -8,8 +8,10 @@ import java.sql.SQLException;
 import org.apache.log4j.Logger;
 
 import gpd.db.constantes.CnstQryUsuario;
+import gpd.db.generic.GenSqlSelectType;
 import gpd.dominio.usuario.TipoUsr;
 import gpd.dominio.usuario.UsuarioDsk;
+import gpd.exceptions.ConectorException;
 import gpd.exceptions.PersistenciaException;
 import gpd.interfaces.usuario.IPersUsuario;
 import gpd.persistencia.conector.Conector;
@@ -44,6 +46,32 @@ public class PersistenciaUsuario extends Conector implements IPersUsuario, CnstQ
 				usuario.setTipoUsr(tipo);
 			}
 		} catch (SQLException | IOException e) {
+			Conector.rollbackConn();
+			logger.fatal("Excepcion al obtenerUsuario: " + e.getMessage(), e);
+			throw new PersistenciaException(e);
+		} finally {
+			closeRs(rs);
+		}
+		return usuario;
+	}
+	
+	@Override
+	public UsuarioDsk obtenerUsuarioPorId(String nombreUsuario) throws PersistenciaException {
+		logger.info("Ejecucion de obtenerUsuario para: " + nombreUsuario);
+		UsuarioDsk usuario = null;
+		try {
+			GenSqlSelectType genType = new GenSqlSelectType(QRY_SELECT_USR);
+			genType.setParam(nombreUsuario);
+			rs = (ResultSet) runGeneric(genType);
+			if(rs.next()) {
+				usuario = new UsuarioDsk();
+				usuario.setNomUsu(nombreUsuario);
+				char[] tipoChar = new char[1];
+				rs.getCharacterStream("tipo").read(tipoChar);
+				TipoUsr tipo = TipoUsr.getTipoUsrPorChar(tipoChar[0]);
+				usuario.setTipoUsr(tipo);
+			}
+		} catch (SQLException | IOException | ConectorException e) {
 			Conector.rollbackConn();
 			logger.fatal("Excepcion al obtenerUsuario: " + e.getMessage(), e);
 			throw new PersistenciaException(e);

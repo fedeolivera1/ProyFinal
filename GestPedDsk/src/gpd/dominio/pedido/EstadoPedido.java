@@ -14,7 +14,7 @@ public enum EstadoPedido {
 		this.asChar = asChar;
 	}
 
-	public String getEstadoTran() {
+	public String getEstadoPedido() {
 		return estadoPedido;
 	}
 	

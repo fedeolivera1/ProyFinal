@@ -16,6 +16,12 @@ public class PedidoLinea implements Serializable {
 	private Fecha ultAct;
 	
 	
+	public PedidoLinea(Pedido pedido) {
+		super();
+		this.pedido = pedido;
+	}
+	
+	
 	public Pedido getPedido() {
 		return pedido;
 	}

@@ -6,6 +6,7 @@ import gpd.types.Fecha;
 
 public abstract class Persona {
 
+	private Long idPersona;
 	private String direccion;
 	private String puerta;
 	private String solar;
@@ -22,6 +23,13 @@ public abstract class Persona {
 	private Sinc sinc;
 	private Fecha ultAct;
 	
+	
+	public Long getIdPersona() {
+		return idPersona;
+	}
+	public void setIdPersona(Long idPersona) {
+		this.idPersona = idPersona;
+	}
 	
 	public String getDireccion() {
 		return direccion;

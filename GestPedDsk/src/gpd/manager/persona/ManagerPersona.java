@@ -1,5 +1,6 @@
 package gpd.manager.persona;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -7,10 +8,12 @@ import org.apache.log4j.Logger;
 import gpd.db.constantes.CnstQryGeneric;
 import gpd.dominio.persona.Departamento;
 import gpd.dominio.persona.Localidad;
+import gpd.dominio.persona.Persona;
 import gpd.dominio.persona.PersonaFisica;
 import gpd.dominio.persona.PersonaJuridica;
 import gpd.dominio.persona.Sexo;
 import gpd.dominio.persona.TipoDoc;
+import gpd.dominio.persona.TipoPersona;
 import gpd.dominio.util.Sinc;
 import gpd.exceptions.PersistenciaException;
 import gpd.exceptions.PresentacionException;
@@ -73,20 +76,6 @@ public class ManagerPersona {
 	/** PERSONA FISICA */
 	/*****************************************************************************************************************************************************/
 	
-	public PersonaFisica obtenerPersFisicaPorId(Long id) throws PresentacionException {
-		logger.info("Se ingresa a obtenerPersFisicaPorId");
-		PersonaFisica persFisica = null;
-		try {
-			Conector.getConn();
-			persFisica = getInterfacePersona().obtenerPersFisicaPorId(id);
-			Conector.closeConn("obtenerPersFisicaPorId");
-		} catch (PersistenciaException e) {
-			logger.fatal("Excepcion en ManagerPersona > obtenerPersFisicaPorId: " + e.getMessage(), e);
-			throw new PresentacionException(e);
-		}
-		return persFisica;
-	}
-	
 	public List<PersonaFisica> obtenerBusquedaPersFisica(Long documento, String ape1, String ape2, String nom1, String nom2, 
 			Sexo sexo, String direccion, String telefono, String celular, String email, Localidad loc) throws PresentacionException {
 		logger.info("Ingresa obtenerBusquedaPersFisica");
@@ -102,6 +91,20 @@ public class ManagerPersona {
 			throw new PresentacionException(e);
 		}
 		return listaPf;
+	}
+	
+	public PersonaFisica obtenerPersFisicaPorId(Long id) throws PresentacionException {
+		logger.info("Se ingresa a obtenerPersFisicaPorId");
+		PersonaFisica persFisica = null;
+		try {
+			Conector.getConn();
+			persFisica = getInterfacePersona().obtenerPersFisicaPorId(id);
+			Conector.closeConn("obtenerPersFisicaPorId");
+		} catch (PersistenciaException e) {
+			logger.fatal("Excepcion en ManagerPersona > obtenerPersFisicaPorId: " + e.getMessage(), e);
+			throw new PresentacionException(e);
+		}
+		return persFisica;
 	}
 	
 	public Integer guardarPersFisica(PersonaFisica persFisica) throws PresentacionException {
@@ -271,6 +274,50 @@ public class ManagerPersona {
 	}
 	
 	/*****************************************************************************************************************************************************/
+	/** PERSONA GENERICO */
+	/*****************************************************************************************************************************************************/
+	
+	@SuppressWarnings("unchecked")
+	public List<Persona> obtenerBusquedaPersona(TipoPersona tp, String filtroBusq, Localidad loc) throws PresentacionException {
+		List<Persona> listaPersona = new ArrayList<>();
+		Integer idLoc = loc != null ? loc.getIdLocalidad() : new Integer(-1);
+		try {
+			Conector.getConn();
+			if(tp.equals(TipoPersona.F)) {
+				List<PersonaFisica> listaPf = getInterfacePersona().obtenerBusquedaPersFisicaGenerico(filtroBusq, idLoc);
+				listaPersona = (List<Persona>) (List<? extends Persona>) listaPf;
+			} else if(tp.equals(TipoPersona.J)) {
+				List<PersonaJuridica> listaPj = getInterfacePersona().obtenerBusquedaPersJuridicaGenerico(filtroBusq, idLoc);
+				listaPersona = (List<Persona>) (List<? extends Persona>) listaPj;
+			} else {
+				Conector.rollbackConn();
+				throw new PresentacionException("obtenerBusquedaPersona ha sido mal implementado!");
+			}
+			Conector.closeConn("obtenerBusquedaPersona");
+		} catch (PersistenciaException e) {
+			logger.fatal("Excepcion en ManagerPersona > obtenerBusquedaPersona: " + e.getMessage(), e);
+			throw new PresentacionException(e);
+		}
+		return listaPersona;
+	}
+	
+	public Long obtenerIdPersonaGenerico(Persona persona) throws PresentacionException {
+		Long idPersona = null;
+		if(persona != null) {
+			if(persona instanceof PersonaFisica) {
+				PersonaFisica pf = (PersonaFisica) persona;
+				idPersona = pf.getDocumento();
+			} else if(persona instanceof PersonaJuridica) {
+				PersonaJuridica pj = (PersonaJuridica) persona;
+				idPersona = pj.getRut();
+			} else {
+				throw new PresentacionException("obtenerIdPersonaGenerico ha sido mal implementado!");
+			}
+		}
+		return idPersona;
+	}
+	
+	/*****************************************************************************************************************************************************/
 	/** DEP - LOC */
 	/*****************************************************************************************************************************************************/
 	
@@ -301,6 +348,7 @@ public class ManagerPersona {
 		}
 		return listaLoc;
 	}
+
 
 
 

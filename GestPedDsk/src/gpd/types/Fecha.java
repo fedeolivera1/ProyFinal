@@ -15,6 +15,7 @@ public class Fecha extends GregorianCalendar {
 	public static final int AMDHMS = 4;
 	public static final int HM = 5;
 	public static final int HMS = 6;
+	public static final int DMAHMS = 7;
 
 	private static final String BARRA = "/";
 	private static final String DP = ":";
@@ -189,6 +190,37 @@ public class Fecha extends GregorianCalendar {
 	    return tsSql;
 	}
 	
+	/**
+	 * 
+	 * @param formato
+	 * @return numerico con fecha en formato establecido
+	 * permite generar un numero de la fecha ej (19960523)
+	 */
+	public long getAsNumber(int formato) {
+	    long salida = 0;
+	    try {
+	    	if (formato == AMD) {
+	    		salida = getAnio();
+	    		salida = salida * 100 + getMes();
+	    		salida = salida * 100 + getDia();
+	    	} else if(formato == AMDHMS) {
+	    		salida = getAnio();
+	    		salida = salida * 100 + getMes();
+	    		salida = salida * 100 + getDia();
+	    		salida = salida * 100 + getHora();
+	    		salida = salida * 100 + getMinuto();
+	    		salida = salida * 100 + getSegundo();
+	    	} else {
+	    		salida = getDia();
+	    		salida = salida * 100 + getMes();
+	    		salida = salida * 10000 + getAnio();
+	    	}
+	    } catch (Exception e) {
+	    	return -1;
+	    }
+	    return salida;
+	}
+	
 	public int getAnio() {
 	    return get(1);
 	}
@@ -224,6 +256,10 @@ public class Fecha extends GregorianCalendar {
 	public Boolean esHM() {
 		return getFormato().equals(new Integer(HM));
 	}
+	
+	public Boolean esHMS() {
+		return getFormato().equals(new Integer(HMS));
+	}
 
 	/**
 	 * 
@@ -248,6 +284,9 @@ public class Fecha extends GregorianCalendar {
 			strFec.append(cc(getHora())).append(DP).append(cc(getMinuto()));
 		} else if(HMS == formato) {
 			strFec.append(cc(getHora())).append(DP).append(cc(getMinuto())).append(DP).append(cc(getSegundo()));
+		} else if(DMAHMS == formato) {
+			strFec.append(getDia()).append(BARRA).append(cc(getMes())).append(BARRA).append(cc(getAnio())).append(SPC).append(
+					cc(getHora())).append(DP).append(cc(getMinuto())).append(DP).append(cc(getSegundo()));
 		}
 		return strFec.toString();
 	}
@@ -277,6 +316,11 @@ public class Fecha extends GregorianCalendar {
 	 */
 	public void setFormato(Integer formato) {
 		this.formato = formato;
+	}
+
+	@Override
+	public String toString() {
+		return toString(Fecha.DMAHMS);
 	}
 	
 
