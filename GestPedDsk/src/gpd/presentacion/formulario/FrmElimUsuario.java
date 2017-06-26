@@ -8,6 +8,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import gpd.dominio.usuario.UsuarioDsk;
+import gpd.presentacion.controlador.CtrlUsuario;
 
 import java.awt.Toolkit;
 import javax.swing.JLabel;
@@ -16,12 +17,14 @@ import javax.swing.JButton;
 import java.awt.Font;
 import java.awt.Color;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.awt.event.ActionEvent;
 
 public class FrmElimUsuario extends JFrame {
 
 	private JPanel contentPane;
 	private UsuarioDsk usu;
+	private CtrlUsuario ctrlusu;
 
 	/**
 	 * Launch the application.
@@ -44,6 +47,7 @@ public class FrmElimUsuario extends JFrame {
 	 */
 	public FrmElimUsuario(UsuarioDsk usr) {
 		usu=usr;
+		ctrlusu=new CtrlUsuario();
 		setTitle("Eliminar usuario");
 		setIconImage(Toolkit.getDefaultToolkit().getImage(FrmElimUsuario.class.getResource("/gpd/recursos/Icono.png")));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -54,9 +58,10 @@ public class FrmElimUsuario extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		JComboBox comboBox = new JComboBox();
+		JComboBox<UsuarioDsk> comboBox = new JComboBox<UsuarioDsk>();
 		comboBox.setBounds(175, 33, 219, 20);
 		contentPane.add(comboBox);
+		cargarCbx(comboBox);
 		
 		JLabel lblElijaElUsuario = new JLabel("Elija el usuario a eliminar:");
 		lblElijaElUsuario.setForeground(Color.WHITE);
@@ -70,6 +75,7 @@ public class FrmElimUsuario extends JFrame {
 	}
 
 	public FrmElimUsuario() {
+		ctrlusu=new CtrlUsuario();
 		setTitle("Eliminar usuario");
 		setIconImage(Toolkit.getDefaultToolkit().getImage(FrmElimUsuario.class.getResource("/gpd/recursos/Icono.png")));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -80,10 +86,10 @@ public class FrmElimUsuario extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		JComboBox cbxUsuario = new JComboBox();
+		JComboBox<UsuarioDsk> cbxUsuario = new JComboBox<UsuarioDsk>();
 		cbxUsuario.setBounds(175, 33, 219, 20);
 		contentPane.add(cbxUsuario);
-		
+		cargarCbx(cbxUsuario);
 		
 		JLabel lblElijaElUsuario = new JLabel("Elija el usuario a eliminar:");
 		lblElijaElUsuario.setForeground(Color.WHITE);
@@ -98,5 +104,14 @@ public class FrmElimUsuario extends JFrame {
 		});
 		btnEliminar.setBounds(305, 114, 89, 23);
 		contentPane.add(btnEliminar);
+		
+		
+	}
+	
+	public void cargarCbx(JComboBox<UsuarioDsk> usuariosDsk){
+		ArrayList<UsuarioDsk> usuarios=ctrlusu.traerTodo();
+		for(UsuarioDsk usu : usuarios) {
+			usuariosDsk.addItem(usu);
+			}
 	}
 }

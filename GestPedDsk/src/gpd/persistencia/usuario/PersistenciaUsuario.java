@@ -3,6 +3,7 @@ package gpd.persistencia.usuario;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -90,6 +91,32 @@ public class PersistenciaUsuario extends Conector implements IPersUsuario {
 			logger.log(Level.FATAL, "Excepcion al eliminarUsuario: " + e.getMessage(), e);
 		}
 		return resultado;
+	}
+
+	@Override
+	public ArrayList<UsuarioDsk> obtenerTodo() {
+		ArrayList<UsuarioDsk> usuarios = null;
+		ResultSet resultado;
+		GenSqlSelectType genSel = new GenSqlSelectType(CnstQryUsuario.QRY_TODO);
+		
+		try {
+			resultado = (ResultSet) Conector.runGeneric(genSel);
+			usuarios=new ArrayList<UsuarioDsk>();
+			while(resultado.next()) {
+				UsuarioDsk usuario= new UsuarioDsk();
+				usuario.setNomUsu(resultado.getString(1));
+				// no es necesario usuario.setPass(resultado.getString(1));
+				char[] tipoChar = new char[1];
+				resultado.getCharacterStream("tipo").read(tipoChar);
+				TipoUsr tipo = TipoUsr.getTipoUsrPorChar(tipoChar[0]);
+				usuario.setTipoUsr(tipo);
+				usuarios.add(usuario);
+			}
+		} catch (ConectorException | SQLException | IOException e) {
+			Conector.rollbackConn();
+			logger.log(Level.FATAL, "Excepcion al obtenerTodo: " + e.getMessage(), e);
+		}
+		return usuarios;
 	}
 
 }

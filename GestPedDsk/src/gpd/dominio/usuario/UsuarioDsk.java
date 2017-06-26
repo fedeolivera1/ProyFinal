@@ -42,5 +42,11 @@ public class UsuarioDsk implements Serializable {
 	public void setTipoUsr(TipoUsr tipoUsr) {
 		this.tipoUsr = tipoUsr;
 	}
+	
+	//Override para que muestre el nombreUsuario en combobox y otros
+	@Override
+	public String toString() {
+	    return nomUsu;
+	}
 
 }

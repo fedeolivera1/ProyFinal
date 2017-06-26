@@ -1,5 +1,7 @@
 package gpd.manager.usuario;
 
+import java.util.ArrayList;
+
 import org.apache.log4j.Logger;
 
 import gpd.dominio.usuario.UsuarioDsk;
@@ -39,15 +41,43 @@ public class ManagerUsuario {
 		}
 		Conector.closeConn("chequearSiSeGuardo", null);
 	}
-
-	public UsuarioDsk modificarUsuario(UsuarioDsk usuario) {
-		// TODO Auto-generated method stub
-		return null;
+	
+	//Para cargar Combobox
+	public ArrayList<UsuarioDsk> obtenerTodosLosUsuarios(){
+		ArrayList<UsuarioDsk> todo=new ArrayList<UsuarioDsk>();
+		
+		Conector.getConn();
+		IPersUsuario interfaceUsuario = new PersistenciaUsuario();
+		try {
+			
+			todo=interfaceUsuario.obtenerTodo();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		Conector.closeConn("viendoSiTrajoTodo", null);
+		
+		return todo;
+	}
+	
+	public void modificarUsuario(UsuarioDsk usuario) {
+		Conector.getConn();
+		IPersUsuario interfaceUsuario = new PersistenciaUsuario();
+		try {
+			
+			interfaceUsuario.modificarUsuario(usuario);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		Conector.closeConn("chequearSiSeModificó", null);
 	}
 
 	public UsuarioDsk eliminarUsuario(UsuarioDsk usuario) {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+
 	
 }
