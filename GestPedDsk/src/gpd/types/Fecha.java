@@ -199,11 +199,7 @@ public class Fecha extends GregorianCalendar {
 	public long getAsNumber(int formato) {
 	    long salida = 0;
 	    try {
-	    	if (formato == AMD) {
-	    		salida = getAnio();
-	    		salida = salida * 100 + getMes();
-	    		salida = salida * 100 + getDia();
-	    	} else if(formato == AMDHMS) {
+	    	if(formato == AMDHMS) {
 	    		salida = getAnio();
 	    		salida = salida * 100 + getMes();
 	    		salida = salida * 100 + getDia();
@@ -211,9 +207,9 @@ public class Fecha extends GregorianCalendar {
 	    		salida = salida * 100 + getMinuto();
 	    		salida = salida * 100 + getSegundo();
 	    	} else {
-	    		salida = getDia();
+	    		salida = getAnio();
 	    		salida = salida * 100 + getMes();
-	    		salida = salida * 10000 + getAnio();
+	    		salida = salida * 100 + getDia();
 	    	}
 	    } catch (Exception e) {
 	    	return -1;

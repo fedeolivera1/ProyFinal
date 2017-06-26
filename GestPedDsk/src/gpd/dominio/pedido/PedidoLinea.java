@@ -12,6 +12,7 @@ public class PedidoLinea implements Serializable {
 	private Pedido pedido;
 	private Producto producto;
 	private Integer cantidad;
+	private Double precioUnit;
 	private Sinc sinc;
 	private Fecha ultAct;
 	
@@ -41,6 +42,13 @@ public class PedidoLinea implements Serializable {
 	}
 	public void setCantidad(Integer cantidad) {
 		this.cantidad = cantidad;
+	}
+	
+	public Double getPrecioUnit() {
+		return precioUnit;
+	}
+	public void setPrecioUnit(Double precioUnit) {
+		this.precioUnit = precioUnit;
 	}
 	
 	public Sinc getSinc() {

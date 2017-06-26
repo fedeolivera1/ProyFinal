@@ -114,5 +114,9 @@ public class Pedido implements Serializable {
 	public void setListaPedidoLinea(List<PedidoLinea> listaPedidoLinea) {
 		this.listaPedidoLinea = listaPedidoLinea;
 	}
+	@Override
+	public String toString() {
+		return persona + " | estado: " + estado.name() + " | orig: " + origen;
+	}
 
 }

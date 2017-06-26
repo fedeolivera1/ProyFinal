@@ -31,6 +31,8 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import javax.swing.JSeparator;
+import java.awt.SystemColor;
 
 public class FrmMovimiento extends JFrame {
 
@@ -50,6 +52,7 @@ public class FrmMovimiento extends JFrame {
 	private JPanel pnlCompraDatos;
 	private JPanel pnlCompraItems;
 	private JTable jtComprasPend;
+	private JPanel pnlGenerarCompra;
 
 
 	public static FrmMovimiento getFrmMovimiento(UsuarioDsk usr) {
@@ -164,12 +167,8 @@ public class FrmMovimiento extends JFrame {
 		tpVenta.setLayout(null);
 		
 		JButton btnLimpiar = new JButton("Limpiar");
-		btnLimpiar.setBounds(645, 367, 124, 23);
+		btnLimpiar.setBounds(645, 499, 124, 23);
 		tpCompra.add(btnLimpiar);
-		
-		JButton btnCompraGenerar = new JButton("Generar Compra");
-		btnCompraGenerar.setBounds(645, 299, 124, 23);
-		tpCompra.add(btnCompraGenerar);
 		
 		JScrollPane scrollPaneComprasPend = new JScrollPane();
 		scrollPaneComprasPend.setBounds(10, 299, 625, 223);
@@ -185,7 +184,7 @@ public class FrmMovimiento extends JFrame {
 		tpCompra.add(lblComprasPendientes);
 		
 		JButton btnCompraAnular = new JButton("Anular Compra");
-		btnCompraAnular.setBounds(645, 333, 124, 23);
+		btnCompraAnular.setBounds(645, 465, 124, 23);
 		tpCompra.add(btnCompraAnular);
 		
 		pnlCompraItems = new JPanel();
@@ -206,6 +205,28 @@ public class FrmMovimiento extends JFrame {
 		btnCompraEliItem.setBounds(235, 158, 124, 23);
 		pnlCompraItems.add(btnCompraEliItem);
 		
+		JButton btnCompraAgrItem = new JButton("Agregar Item");
+		btnCompraAgrItem.setBounds(246, 73, 124, 23);
+		pnlCompraDatos.add(btnCompraAgrItem);
+		
+		JButton btnCompraModItem = new JButton("Modificar Item");
+		btnCompraModItem.setBounds(246, 103, 124, 23);
+		pnlCompraDatos.add(btnCompraModItem);
+		
+		pnlGenerarCompra = new JPanel();
+		pnlGenerarCompra.setBounds(524, 0, 245, 45);
+		tpCompra.add(pnlGenerarCompra);
+		pnlGenerarCompra.setLayout(null);
+		
+		JButton btnCompraGenerar = new JButton("Generar Compra");
+		btnCompraGenerar.setBounds(124, 11, 111, 23);
+		pnlGenerarCompra.add(btnCompraGenerar);
+		
+		JSeparator separator = new JSeparator();
+		separator.setForeground(SystemColor.info);
+		separator.setBackground(SystemColor.info);
+		separator.setBounds(10, 269, 764, 2);
+		tpCompra.add(separator);
 		
 		/*****************************************************************************************************************************************************/
 		/* ACCIONES CONTROLES */
@@ -216,13 +237,7 @@ public class FrmMovimiento extends JFrame {
 		ctrlMov.cargarCbxProveedor(cbxCompraProv);
 		ctrlMov.cargarCbxTipoProd(cbxCompraTp);
 		
-		JButton btnCompraAgrItem = new JButton("Agregar Item");
-		btnCompraAgrItem.setBounds(246, 73, 124, 23);
-		pnlCompraDatos.add(btnCompraAgrItem);
 		
-		JButton btnCompraModItem = new JButton("Modificar Item");
-		btnCompraModItem.setBounds(246, 103, 124, 23);
-		pnlCompraDatos.add(btnCompraModItem);
 		btnCompraModItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				ctrlMov.modificarItemCompra(cbxCompraProv, cbxCompraProd, ftxtCompraCant, ftxtCompraPu);
@@ -263,14 +278,14 @@ public class FrmMovimiento extends JFrame {
 				ctrlMov.iniciarCompra(getFrmMovimiento(usr));
 			}
 		});
-		btnLimpiar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				ctrlMov.limpiarCompra(getFrmMovimiento(usr), true);
-			}
-		});
 		btnCompraGenerar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				ctrlMov.generarCompra();
+			}
+		});
+		btnLimpiar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ctrlMov.limpiarCompra(getFrmMovimiento(usr), true);
 			}
 		});
 		btnCompraAnular.addActionListener(new ActionListener() {
@@ -370,5 +385,12 @@ public class FrmMovimiento extends JFrame {
 	}
 	public void setPnlCompraItems(JPanel pnlCompraItems) {
 		this.pnlCompraItems = pnlCompraItems;
+	}
+	
+	public JPanel getPnlGenerarCompra() {
+		return pnlGenerarCompra;
+	}
+	public void setPnlGenerarCompra(JPanel pnlGenerarCompra) {
+		this.pnlGenerarCompra = pnlGenerarCompra;
 	}
 }

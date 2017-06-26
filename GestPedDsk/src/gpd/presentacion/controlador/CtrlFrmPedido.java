@@ -8,6 +8,7 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.swing.ComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JComboBox;
 import javax.swing.JDesktopPane;
@@ -18,6 +19,7 @@ import javax.swing.table.DefaultTableModel;
 
 import com.toedter.calendar.JDateChooser;
 
+import gpd.dominio.helper.HlpProducto;
 import gpd.dominio.pedido.EstadoPedido;
 import gpd.dominio.pedido.Pedido;
 import gpd.dominio.pedido.PedidoLinea;
@@ -29,7 +31,6 @@ import gpd.dominio.persona.PersonaJuridica;
 import gpd.dominio.persona.TipoPersona;
 import gpd.dominio.producto.Producto;
 import gpd.dominio.producto.TipoProd;
-import gpd.dominio.usuario.UsuarioDsk;
 import gpd.exceptions.PresentacionException;
 import gpd.manager.pedido.ManagerPedido;
 import gpd.manager.persona.ManagerPersona;
@@ -41,7 +42,7 @@ import gpd.presentacion.popup.IfrmPersBuscador;
 import gpd.types.Fecha;
 import gpd.util.KeyMapLp;
 
-public class CtrlFrmPedido extends CtrlGenerico {
+public class CtrlFrmPedido extends CtrlGenerico implements CnstPresGeneric {
 
 	private FrmPedido frm; 
 	private JDesktopPane deskPane;
@@ -49,6 +50,7 @@ public class CtrlFrmPedido extends CtrlGenerico {
 	private ManagerPersona mgrPers = new ManagerPersona();
 	private ManagerPedido mgrPed = new ManagerPedido();
 	private Persona persSel;
+	private Pedido nuevoPedido;
 	private IfrmPersBuscador ifrmPb;
 	private HashMap<KeyMapLp, PedidoLinea> mapLineasPedido;
 	
@@ -111,7 +113,13 @@ public class CtrlFrmPedido extends CtrlGenerico {
 			clearTable(tabla);
 			deleteModelTable(tabla);
 			if(listaPedido != null && !listaPedido.isEmpty()) {
-				DefaultTableModel modeloJtPed = new DefaultTableModel();
+				DefaultTableModel modeloJtPed = new DefaultTableModel() {
+					private static final long serialVersionUID = 1L;
+					@Override
+				    public boolean isCellEditable (int fila, int columna) {
+				        return false;
+				    }
+				};
 				tabla.setModel(modeloJtPed);
 				modeloJtPed.addColumn("Persona");
 				modeloJtPed.addColumn("Fecha - Hora");
@@ -138,7 +146,8 @@ public class CtrlFrmPedido extends CtrlGenerico {
 							try {
 								Pedido pedido = mgrPed.obtenerPedidoPorId(pers.getIdPersona(), fechaHora);
 								cargarMapDesdePedido(pedido);
-								//ver de cargar tabla con lineas de pedido
+								cargarJtPedidoLin();
+								setearInfoPedido(pedido);
 							} catch (PresentacionException e) {
 								manejarExcepcion(e);
 							}
@@ -146,18 +155,71 @@ public class CtrlFrmPedido extends CtrlGenerico {
 					}
 				});
 			} else {
-				cargarJTableVacia(tabla, CnstPresGeneric.JTABLE_SIN_COMPRAS);
+				cargarJTableVacia(tabla, JTABLE_SIN_PEDIDOS);
 			}
 		} catch(Exception e) {
 			manejarExcepcion(e);
 		}
 	}
 	
-	public void cargarJtLineaPedido() {
+	public void cargarJtPedidoLin() {
 		try {
-			//hacer
+			JTable tabla = frm.getJtPedidoLin();
+			clearTable(tabla);
+			deleteModelTable(tabla);
+			if(mapLineasPedido != null && !mapLineasPedido.isEmpty()) {
+				DefaultTableModel modeloJtPed = new DefaultTableModel() {
+					private static final long serialVersionUID = 1L;
+					@Override
+				    public boolean isCellEditable (int fila, int columna) {
+				        return false;
+				    }
+				};
+				tabla.setModel(modeloJtPed);
+				modeloJtPed.addColumn("Producto");
+				modeloJtPed.addColumn("Fecha-Hora Pedido");
+				modeloJtPed.addColumn("Precio Unit");
+				modeloJtPed.addColumn("Cantidad");
+				modeloJtPed.addColumn("SubTotal");
+				for(PedidoLinea pl : mapLineasPedido.values()) {
+					Object [] fila = new Object[5];
+					fila[0] = pl.getProducto();
+					fila[1] = pl.getPedido().getFechaHora();
+					fila[2] = pl.getPrecioUnit();
+					fila[3] = pl.getCantidad();
+					fila[4] = pl.getPrecioUnit()*pl.getCantidad();//fixme revisar decimales
+					modeloJtPed.addRow(fila);
+				}
+				
+				tabla.addMouseListener(new MouseAdapter() {
+					@Override
+					public void mouseClicked(MouseEvent me) {
+						int fila = tabla.rowAtPoint(me.getPoint());
+						int cols = tabla.getModel().getColumnCount();
+						if (fila > -1 && cols > 1) {
+							Producto prod = (Producto) tabla.getModel().getValueAt(fila, 0);
+//							Fecha fechaHora = (Fecha) tabla.getModel().getValueAt(fila, 1);
+							Integer cant = (Integer) tabla.getModel().getValueAt(fila, 3);
+							cargarDatosPedidoLin(prod, cant);
+						}
+					}
+				});
+			} else {
+				cargarJTableVacia(tabla, JTABLE_SIN_LINEASPED);
+			}
 		} catch(Exception e) {
 			manejarExcepcion(e);
+		}
+	}
+	
+	private void setearInfoPedido(Pedido ped) {
+		StringBuilder sb = new StringBuilder();
+		clearComponent(getFrm().getTxtPedInfo());
+		if(ped != null) {
+			sb.append("Pedido existente");
+		} else if(getNuevoPedido() != null) {
+			sb.append("Pedido nuevo");
+			getFrm().getTxtPedInfo().setText(sb.toString());
 		}
 	}
 	
@@ -165,6 +227,24 @@ public class CtrlFrmPedido extends CtrlGenerico {
 	/* ACCIONES */
 	/*****************************************************************************************************************************************************/
 	
+	public void nuevoPedido() {
+		if(enviarConfirm(PED, NUEVO_PEDIDO_CONF) == CONFIRM_OK) {
+			abrirBuscadorPers();
+			if(getPersSel() != null) {
+				clearForm(getFrm().getContentPane());
+				mapLineasPedido = new HashMap<>();
+				Pedido pedido = new Pedido();
+				pedido.setFechaHora(new Fecha(Fecha.AMDHMS));
+				pedido.setPersona(getPersSel());
+				pedido.setEstado(EstadoPedido.P);
+				setNuevoPedido(pedido);
+				setearInfoPedido(getNuevoPedido());
+			} else {
+				enviarWarning(PED, PEDIDO_SIN_PERS);
+			}
+		}
+	}
+
 	public void obtenerPedidos(JComboBox<EstadoPedido> cbxPedidoEstado, JTextField txtPedidoPers, JDateChooser dchPedFecIni, JDateChooser dchPedFecFin) {
 		try {
 			GenCompType genComp = new GenCompType();
@@ -181,7 +261,7 @@ public class CtrlFrmPedido extends CtrlGenerico {
 					cargarJtPedido(listaPedido);
 				}
 			} else {
-				enviarWarning(CnstPresGeneric.PED, CnstPresGeneric.DATOS_OBLIG);
+				enviarWarning(PED, DATOS_OBLIG);
 			}
 		} catch(Exception e) {
 			manejarExcepcion(e);
@@ -189,22 +269,60 @@ public class CtrlFrmPedido extends CtrlGenerico {
 	}
 	
 	public void cargarMapDesdePedido(Pedido pedido) {
-		if(pedido != null && pedido.getListaPedidoLinea() != null && !pedido.getListaPedidoLinea().isEmpty()) {
-			mapLineasPedido = new HashMap<>();
-			for(PedidoLinea pl : pedido.getListaPedidoLinea()) {
-				KeyMapLp key = new KeyMapLp(pedido.getPersona().getIdPersona(), 
-								pedido.getFechaHora().getAsNumber(Fecha.AMDHMS), 
-								pl.getProducto().getIdProducto());
-				mapLineasPedido.put(key, pl);
+		try {
+			if(pedido != null && pedido.getListaPedidoLinea() != null && !pedido.getListaPedidoLinea().isEmpty()) {
+				mapLineasPedido = new HashMap<>();
+				for(PedidoLinea pl : pedido.getListaPedidoLinea()) {
+					KeyMapLp key = new KeyMapLp(pedido.getPersona().getIdPersona(), 
+									pedido.getFechaHora().getAsNumber(Fecha.AMDHMS), 
+									pl.getProducto().getIdProducto());
+					mapLineasPedido.put(key, pl);
+				}
 			}
+		} catch(Exception e) {
+			manejarExcepcion(e);
 		}
+	}
+	
+	public void obtenerDatosLotePorProducto(JComboBox<Producto> cbxPedidoProd) {
+		try {
+			if(controlDatosObl(cbxPedidoProd)) {
+				Producto prod = (Producto) cbxPedidoProd.getSelectedItem();
+				HlpProducto hlpProd = mgrProd.obtenerStockPrecioLotePorProducto(prod.getIdProducto());
+				cargarDatosProd(hlpProd);
+			}
+		} catch(Exception e) {
+			manejarExcepcion(e);
+		}
+	}
+	
+	public void cargarDatosProd(HlpProducto hlpProd) {
+		if(hlpProd != null) {
+			getFrm().getFtxtPedLoteStock().setText(String.valueOf(hlpProd.getStock()));
+			getFrm().getFtxtPedLotePrecio().setText(String.valueOf(hlpProd.getPrecioVta()));
+		} else {
+			getFrm().getFtxtPedLoteStock().setText(CtrlGenerico.CERO);
+			getFrm().getFtxtPedLotePrecio().setText(CtrlGenerico.CERO);
+		}
+	}
+	
+	private void cargarDatosPedidoLin(Producto prod, Integer cant) {
+		ComboBoxModel<TipoProd> cbModelTp = getFrm().getCbxPedidoTp().getModel();
+		cbModelTp.setSelectedItem(prod.getTipoProd());
+		getFrm().getCbxPedidoTp().setSelectedItem(cbModelTp.getSelectedItem());
+		
+		ComboBoxModel<Producto> cbModelProd = getFrm().getCbxPedidoProd().getModel();
+		cbModelProd.setSelectedItem(prod);
+		getFrm().getCbxPedidoProd().setSelectedItem(cbModelProd.getSelectedItem());
+		
+		getFrm().getTxtPedidoCant().setText(String.valueOf(cant));
 	}
 	
 	/*****************************************************************************************************************************************************/
 	/* BUSCADOR PERS */
 	/*****************************************************************************************************************************************************/
 	
-	public void abrirBuscadorPers(UsuarioDsk usr) {
+	public void abrirBuscadorPers() {
 		try {
 			IfrmPersBuscador ifrmPb = new IfrmPersBuscador(this, getPersSel());
 			getDeskPane().setBounds(0, 0, 784, 565);
@@ -308,7 +426,7 @@ public class CtrlFrmPedido extends CtrlGenerico {
 				List<Persona> listaPersona = mgrPers.obtenerBusquedaPersona(tp, txtPbFiltro.getText(), loc);
 				cargarJlPersona(listaPersona);
 			} else {
-				enviarWarning(CnstPresGeneric.PERS, CnstPresGeneric.DATOS_OBLIG);
+				enviarWarning(PERS, DATOS_OBLIG);
 			}
 		} catch (Exception e) {
 			manejarExcepcion(e);
@@ -348,6 +466,13 @@ public class CtrlFrmPedido extends CtrlGenerico {
 	public void setPersSel(Persona persSel) {
 		this.persSel = persSel;
 	}
+	
+	public Pedido getNuevoPedido() {
+		return nuevoPedido;
+	}
+	public void setNuevoPedido(Pedido nuevoPedido) {
+		this.nuevoPedido = nuevoPedido;
+	}
 
 	public JDesktopPane getDeskPane() {
 		return deskPane;
@@ -362,8 +487,5 @@ public class CtrlFrmPedido extends CtrlGenerico {
 	public void setIfrmPb(IfrmPersBuscador ifrmPb) {
 		this.ifrmPb = ifrmPb;
 	}
-
-
-
 	
 }

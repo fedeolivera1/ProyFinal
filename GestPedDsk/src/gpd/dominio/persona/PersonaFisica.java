@@ -82,8 +82,7 @@ public class PersonaFisica extends Persona {
 	
 	@Override
 	public String toString() {
-		return tipoDoc + "-" + documento + " | " + nombre1 + " " + apellido1 + " | " + fechaNac.toString(Fecha.DMA) + " | " 
-				+ String.valueOf(sexo.getAsChar()) + " | " + getCelular();
+		return tipoDoc + "-" + documento + " | " + nombre1 + " " + apellido1 + " | " + String.valueOf(sexo.getSexo());
 	}
 	
 	

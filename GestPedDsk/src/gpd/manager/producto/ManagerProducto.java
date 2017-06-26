@@ -1,15 +1,19 @@
 package gpd.manager.producto;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 
 import gpd.db.constantes.CnstQryGeneric;
+import gpd.dominio.helper.HlpProducto;
 import gpd.dominio.producto.Deposito;
 import gpd.dominio.producto.Lote;
 import gpd.dominio.producto.Producto;
 import gpd.dominio.producto.TipoProd;
 import gpd.dominio.producto.Utilidad;
+import gpd.dominio.util.Converters;
 import gpd.dominio.util.Sinc;
 import gpd.exceptions.PersistenciaException;
 import gpd.exceptions.PresentacionException;
@@ -25,6 +29,7 @@ import gpd.persistencia.producto.PersistenciaProducto;
 import gpd.persistencia.producto.PersistenciaTipoProd;
 import gpd.persistencia.producto.PersistenciaUtilidad;
 import gpd.types.Fecha;
+import gpd.util.ConfigDriver;
 
 public class ManagerProducto {
 
@@ -399,11 +404,6 @@ public class ManagerProducto {
 	/*****************************************************************************************************************************************************/
 	/** LOTE */
 	/*****************************************************************************************************************************************************/
-	//se deberá obtener los lotes por producto, ordenarlos por fecha venc y restar stocks de ventas a partir de los lotes con vencimiento mas proximo
-	//se utilizará un hashmap con claves de fechas, y objetos lotes con un stock sumados
-	
-	//para los lotes recien ingresados, se deberán actualizar (esto se realizaría cuando se recibiera fisicamente el producto) los lotes con las fechas de venc
-	//y la utilidad a ganar a cada lote.
 	
 	public List<Lote> obtenerListaLotePorTransac(Long nroTransac) throws PresentacionException {
 		logger.info("Se ingresa a obtenerListaLotePorTransac");
@@ -418,7 +418,82 @@ public class ManagerProducto {
 		}
 		return listaLote;
 	}
+	
+	/**
+	 * metodo que recibe un producto (el cual será seleccionado en presentacion), y va a obtener los lotes
+	 * que tengan stock y que cumplan con la condicion de el vencimiento (defierencia de dias seteado
+	 * en config.properties). Para cada uno, se calculará el stock total y se obtendrá el precio de compra 
+	 * mas alto (para casos remotos de diferencia de precios entre compras).
+	 * @param idProducto
+	 * @return HlpProducto
+	 * @throws PresentacionException
+	 */
+	public HlpProducto obtenerStockPrecioLotePorProducto(Integer idProducto) throws PresentacionException {
+		logger.info("Se ingresa a obtenerStockPrecioLotePorProducto");
+		HlpProducto hlpProd = null;
+		try {
+			ConfigDriver cfgDrv = ConfigDriver.getConfigDriver();
+			Integer diasParaVenc = Integer.valueOf(cfgDrv.getDiasParaVenc());
+			Conector.getConn();
+			List<Lote> listaLote = getInterfaceLote().obtenerListaLotePorProd(idProducto, diasParaVenc);
+			Double precioFinal = new Double(0);
+			Long stock = new Long(0);
+			if(listaLote != null && !listaLote.isEmpty()) {
+				for(Lote lote : listaLote) {
+					Double precioAct = new Double(0);
+					stock += lote.getStock();
+					precioAct = lote.getTranLinea().getPrecioUnit() * Converters.convertirPorcAdicion(lote.getUtilidad().getPorc());
+					Converters.redondearDosDec(precioAct);
+					if(precioAct > precioFinal) {
+						precioFinal = precioAct;
+					}
+				}
+				hlpProd = new HlpProducto();
+				hlpProd.setIdProducto(idProducto);
+				hlpProd.setStock(stock);
+				hlpProd.setPrecioVta(precioFinal);
+			}
+			Conector.closeConn("obtenerStockPrecioLotePorProducto");
+		} catch (PersistenciaException e) {
+			logger.fatal("Excepcion en ManagerProducto > obtenerStockPrecioLotePorProducto: " + e.getMessage(), e);
+			throw new PresentacionException(e);
+		} catch (Exception e) {
+			logger.fatal("Excepcion no controlada en ManagerProducto > obtenerStockPrecioLotePorProducto: " + e.getMessage(), e);
+			throw new PresentacionException(e);
+		}
+		return hlpProd;
+	}
 
+	public List<Lote> manejarStockLotePorProducto(Integer idProducto, Integer cantidad) throws PresentacionException {
+		logger.info("Se ingresa a obtenerListaLotePorProducto");
+		List<Lote> listaLote = null;
+		try {
+			ConfigDriver cfgDrv = ConfigDriver.getConfigDriver();
+			Integer diasParaVenc = Integer.valueOf(cfgDrv.getDiasParaVenc());
+			Conector.getConn();
+			listaLote = getInterfaceLote().obtenerListaLotePorProd(idProducto, diasParaVenc);
+			Conector.closeConn("obtenerListaLotePorProducto");
+			HashMap<Long, List<Lote>> mapLotes = new HashMap<>();
+			for(Lote lote : listaLote) {
+				Long venc = lote.getVenc().getAsNumber(Fecha.AMD);
+				if(mapLotes.containsKey(venc)) {
+					mapLotes.get(venc).add(lote);
+				} else {
+					ArrayList<Lote> listaPorVenc = new ArrayList<>();
+					listaPorVenc.add(lote);
+					mapLotes.put(venc, listaPorVenc);
+				}
+			}
+		} catch (PersistenciaException e) {
+			logger.fatal("Excepcion en ManagerProducto > obtenerListaLotePorProducto: " + e.getMessage(), e);
+			throw new PresentacionException(e);
+		} catch (Exception e) {
+			logger.fatal("Excepcion no controlada en ManagerProducto > obtenerListaLotePorProducto: " + e.getMessage(), e);
+			throw new PresentacionException(e);
+		}
+		return listaLote;
+	}
+	
 //	public Lote obtenerLotePorId(Integer idLote) {
 //		logger.info("Se ingresa a obtenerLotePorId");
 //		try {

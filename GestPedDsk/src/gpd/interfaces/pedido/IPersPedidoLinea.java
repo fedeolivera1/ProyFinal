@@ -9,5 +9,6 @@ import gpd.exceptions.PersistenciaException;
 public interface IPersPedidoLinea {
 
 	public List<PedidoLinea> obtenerListaPedidoLinea(Pedido pedido) throws PersistenciaException;
+	public Integer guardarListaPedidoLinea(List<PedidoLinea> listaPedidoLinea) throws PersistenciaException;
 	
 }

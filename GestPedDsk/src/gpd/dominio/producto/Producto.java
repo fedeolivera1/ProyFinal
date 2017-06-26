@@ -84,7 +84,7 @@ public class Producto implements Serializable {
 	
 	@Override
 	public String toString() {
-		return idProducto + " | " + codigo + " | " + nombre;
+		return codigo + " | " + nombre;
 	}
 	
 	

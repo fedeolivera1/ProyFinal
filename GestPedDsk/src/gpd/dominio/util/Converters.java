@@ -11,14 +11,24 @@ public abstract class Converters {
 	private static final int MULT_1 = 1;
 
 	
-	public static Float convertirIva(Float iva) {
-		Float ivaRet = null;
+	public static Float convertirPorcAdicion(Float porc) {
+		Float nroConv = null;
 		try {
-			ivaRet = MULT_1 + (iva / 100);
+			nroConv = MULT_1 + (porc / 100);
 		} catch (NumberFormatException ne) {
 			logger.fatal("Error al operar con numeros en método convertirIva: " + ne.getMessage(), ne);
 		}
-		return ivaRet;
+		return nroConv;
+	}
+	
+	public static Float convertirPorcSustraccion(Float porc) {
+		Float nroConv = null;
+		try {
+			nroConv = ((100 - porc) / 100);
+		} catch (NumberFormatException ne) {
+			logger.fatal("Error al operar con numeros en método convertirIva: " + ne.getMessage(), ne);
+		}
+		return nroConv;
 	}
 	
 	public static Double redondearDosDec(Double numero) {

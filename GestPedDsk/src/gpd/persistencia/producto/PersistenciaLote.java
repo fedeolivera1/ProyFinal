@@ -26,37 +26,53 @@ public class PersistenciaLote extends Conector implements IPersLote, CnstQryLote
 	
 	@Override
 	public List<Lote> obtenerListaLotePorTransac(Long nroTransac) throws PersistenciaException {
-		List<Lote> listaLote = new ArrayList<>();
-		PersistenciaTranLinea ptl = new PersistenciaTranLinea();
-		PersistenciaUtilidad pu = new PersistenciaUtilidad();
-		PersistenciaDeposito pd = new PersistenciaDeposito();
+		List<Lote> listaLote = null;
 		try {
 			GenSqlSelectType genType = new GenSqlSelectType(QRY_SELECT_LOTES_XTRANSAC);
 			genType.setParamCharIfNull(nroTransac);
 			rs = (ResultSet) runGeneric(genType);
-			while(rs.next()) {
-				Lote lote = new Lote();
-				lote.setIdLote(rs.getInt("id_lote"));
-				Long nroTransaccion = rs.getLong("nro_transac");
-				Integer idProducto = rs.getInt("id_producto");
-				lote.setTranLinea(ptl.obtenerTranLineaPorId(nroTransaccion, idProducto));
-				Fecha venc = new Fecha(rs.getDate("venc"));
-				if(!rs.wasNull()) {
-					lote.setVenc(venc);
-				}
-				Integer idUtil = rs.getInt("id_util");
-				if(!rs.wasNull()) {
-					lote.setUtilidad(pu.obtenerUtilidadPorId(idUtil));
-				}
-				Integer nroDep = rs.getInt("nro_dep");
-				if(!rs.wasNull()) {
-					lote.setDeposito(pd.obtenerDepositoPorId(nroDep));
-				}
-				lote.setStock(rs.getInt("stock"));
-				listaLote.add(lote);
-			}
-		
-		} catch (ConectorException | SQLException e) {
+			listaLote = cargarLoteDesdeRs(rs);
+		} catch (ConectorException e) {
+			Conector.rollbackConn();
+			logger.log(Level.FATAL, "Excepcion al obtenerListaTransaccionPorPersona: " + e.getMessage(), e);
+			throw new PersistenciaException(e);
+		} finally {
+			closeRs(rs);
+		}
+		return listaLote;
+	}
+	
+//	@Override
+//	public Long obtenerStockLotePorProd(Integer idProducto, Integer diasParaVenc) throws PersistenciaException {
+//		Long totalStock = new Long(0);
+//		try {
+//			GenSqlSelectType genType = new GenSqlSelectType(QRY_SELECT_STOCK);
+//			genType.setParam(idProducto);
+//			genType.setParam(diasParaVenc);
+//			rs = (ResultSet) runGeneric(genType);
+//			if(rs.next()) {
+//				totalStock = rs.getLong("stock");
+//			}
+//		} catch (ConectorException | SQLException e) {
+//			Conector.rollbackConn();
+//			logger.log(Level.FATAL, "Excepcion al obtenerStockLotePorProd: " + e.getMessage(), e);
+//			throw new PersistenciaException(e);
+//		} finally {
+//			closeRs(rs);
+//		}
+//		return totalStock;
+//	}
+	
+	@Override
+	public List<Lote> obtenerListaLotePorProd(Integer idProd, Integer diasParaVenc) throws PersistenciaException {
+		List<Lote> listaLote = null;
+		try {
+			GenSqlSelectType genType = new GenSqlSelectType(QRY_SELECT_LOTES_XPROD);
+			genType.setParam(idProd);
+			genType.setParam(diasParaVenc);
+			rs = (ResultSet) runGeneric(genType);
+			listaLote = cargarLoteDesdeRs(rs);
+		} catch (ConectorException e) {
 			Conector.rollbackConn();
 			logger.log(Level.FATAL, "Excepcion al obtenerListaTransaccionPorPersona: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
@@ -119,4 +135,48 @@ public class PersistenciaLote extends Conector implements IPersLote, CnstQryLote
 	}
 
 	
+	/***************************************************/
+	/* METODOS GENERICOS */
+	/***************************************************/
+	
+	/**
+	 * metodo que recibe el resultset de la consulta, y carga la lista de lotes
+	 * @param rs
+	 * @throws PersistenciaException 
+	 */
+	private List<Lote> cargarLoteDesdeRs(ResultSet rs) throws PersistenciaException {
+		List<Lote> listaLote = new ArrayList<>();
+		PersistenciaTranLinea ptl = new PersistenciaTranLinea();
+		PersistenciaUtilidad pu = new PersistenciaUtilidad();
+		PersistenciaDeposito pd = new PersistenciaDeposito();
+		try {
+			while(rs.next()) {
+				Lote lote = new Lote();
+				lote.setIdLote(rs.getInt("id_lote"));
+				Long nroTransaccion = rs.getLong("nro_transac");
+				Integer idProducto = rs.getInt("id_producto");
+				lote.setTranLinea(ptl.obtenerTranLineaPorId(nroTransaccion, idProducto));
+				Fecha venc = new Fecha(rs.getDate("venc"));
+				if(!rs.wasNull()) {
+					lote.setVenc(venc);
+				}
+				Integer idUtil = rs.getInt("id_util");
+				if(!rs.wasNull()) {
+					lote.setUtilidad(pu.obtenerUtilidadPorId(idUtil));
+				}
+				Integer nroDep = rs.getInt("nro_dep");
+				if(!rs.wasNull()) {
+					lote.setDeposito(pd.obtenerDepositoPorId(nroDep));
+				}
+				lote.setStock(rs.getInt("stock"));
+				listaLote.add(lote);
+			}
+		} catch (SQLException | PersistenciaException e) {
+			Conector.rollbackConn();
+			logger.log(Level.FATAL, "Excepcion al cargarRsConPf: " + e.getMessage(), e);
+			throw new PersistenciaException(e);
+		}
+		return listaLote;
+	}
+
 }

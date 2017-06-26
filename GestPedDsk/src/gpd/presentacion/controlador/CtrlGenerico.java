@@ -7,6 +7,7 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
+import java.util.GregorianCalendar;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JComboBox;
@@ -41,6 +42,7 @@ public abstract class CtrlGenerico {
 	private static final Logger logger = Logger.getLogger(CtrlGenerico.class);
 	private static CompValidador instanceCv;
 	
+	public static final String CERO = "0";
 	public static String STR_VACIO = "";
 	public static int CONFIRM_OK = 0;
 	public static int CONFIRM_CANCEL = 2;
@@ -475,7 +477,7 @@ public abstract class CtrlGenerico {
 			clearList(((javax.swing.JList<?>) comp));
 		} else if (nombreClase.equals("com.toedter.calendar.JDateChooser")) {
 			//JDateChooser pruebo metodo cleanup
-			((com.toedter.calendar.JDateChooser) comp).setCalendar(null);
+			((com.toedter.calendar.JDateChooser) comp).setCalendar(new GregorianCalendar());
 		}
 		//se reinician los bordes para advertencias.
 		getCompVal().removeBorder(comp);

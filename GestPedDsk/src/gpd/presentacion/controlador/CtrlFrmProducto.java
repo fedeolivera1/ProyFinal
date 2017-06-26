@@ -122,7 +122,13 @@ public class CtrlFrmProducto extends CtrlGenerico {
 			JTable tabla = frmProd.getJtProd();
 			clearTable(tabla);
 			if(listaProd != null && !listaProd.isEmpty()) {
-				DefaultTableModel modeloJtProd = new DefaultTableModel();
+				DefaultTableModel modeloJtProd = new DefaultTableModel() {
+					private static final long serialVersionUID = 1L;
+					@Override
+				    public boolean isCellEditable (int fila, int columna) {
+				        return false;
+				    }
+				};
 				tabla.setModel(modeloJtProd);
 				modeloJtProd.addColumn("Id");
 				modeloJtProd.addColumn("Codigo");
@@ -205,7 +211,13 @@ public class CtrlFrmProducto extends CtrlGenerico {
 			clearTable(tabla);
 			deleteModelTable(tabla);
 			if(hashLotes != null && !hashLotes.isEmpty()) {
-				DefaultTableModel modeloJtLote = new DefaultTableModel();
+				DefaultTableModel modeloJtLote = new DefaultTableModel() {
+					private static final long serialVersionUID = 1L;
+					@Override
+				    public boolean isCellEditable (int fila, int columna) {
+				        return false;
+				    }
+				};
 				tabla.setModel(modeloJtLote);
 				modeloJtLote.addColumn("Lote");
 				modeloJtLote.addColumn("Producto");

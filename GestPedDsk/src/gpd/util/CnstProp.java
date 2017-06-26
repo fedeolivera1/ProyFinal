@@ -16,5 +16,6 @@ public interface CnstProp {
 
 	//datos properties config
 	public static final String CFG_IVA = "iva";
+	public static final String CFG_DPV = "dias_para_venc";
 	
 }

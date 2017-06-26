@@ -110,7 +110,13 @@ public class CtrlFrmPersona extends CtrlGenerico {
 			JTable tabla = frmPers.getJtPersFisica();
 			clearTable(tabla);
 			if(listaPf != null && !listaPf.isEmpty()) {
-				DefaultTableModel modeloJtPf = new DefaultTableModel();
+				DefaultTableModel modeloJtPf = new DefaultTableModel() {
+					private static final long serialVersionUID = 1L;
+					@Override
+				    public boolean isCellEditable (int fila, int columna) {
+				        return false;
+				    }
+				};
 				tabla.setModel(modeloJtPf);
 				modeloJtPf.addColumn("Doc");
 				modeloJtPf.addColumn("Nombre");
@@ -158,7 +164,13 @@ public class CtrlFrmPersona extends CtrlGenerico {
 			JTable tabla = frmPers.getJtPersJuridica();
 			clearTable(tabla);
 			if(listaPj != null && !listaPj.isEmpty()) {
-				DefaultTableModel modeloJtPj = new DefaultTableModel();
+				DefaultTableModel modeloJtPj = new DefaultTableModel() {
+					private static final long serialVersionUID = 1L;
+					@Override
+				    public boolean isCellEditable (int fila, int columna) {
+				        return false;
+				    }
+				};
 				tabla.setModel(modeloJtPj);
 				modeloJtPj.addColumn("Rut");
 				modeloJtPj.addColumn("Nombre");

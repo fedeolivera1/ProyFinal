@@ -588,7 +588,9 @@ public class PersistenciaPersona extends Conector implements IPersPersona, CnstQ
 		return persona;
 	}
 
-	//metodos genericos de carga persona desde resultset
+	/***************************************************/
+	/* METODOS GENERICOS */
+	/***************************************************/
 
 	/**
 	 * metodo que recibe el resultset de la consulta, y carga la lista de personas fisica

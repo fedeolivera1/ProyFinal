@@ -10,9 +10,11 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import gpd.db.constantes.CnstQryPedidoLinea;
+import gpd.db.generic.GenSqlExecType;
 import gpd.db.generic.GenSqlSelectType;
 import gpd.dominio.pedido.Pedido;
 import gpd.dominio.pedido.PedidoLinea;
+import gpd.dominio.transaccion.TranLinea;
 import gpd.dominio.util.Sinc;
 import gpd.exceptions.ConectorException;
 import gpd.exceptions.PersistenciaException;
@@ -32,7 +34,7 @@ public class PersistenciaPedidoLinea extends Conector implements IPersPedidoLine
 		List<PedidoLinea> listaPedidoLinea = new ArrayList<>();	
 		PersistenciaProducto pp = new PersistenciaProducto();
 		try {
-			GenSqlSelectType genType = new GenSqlSelectType(QRY_PEDIDO_LIN);
+			GenSqlSelectType genType = new GenSqlSelectType(QRY_SELECT_PL);
 			genType.setParam(pedido.getPersona().getIdPersona());
 			genType.setParam(pedido.getFechaHora());
 			rs = (ResultSet) runGeneric(genType);
@@ -40,6 +42,7 @@ public class PersistenciaPedidoLinea extends Conector implements IPersPedidoLine
 				PedidoLinea pedidoLinea = new PedidoLinea(pedido);
 				pedidoLinea.setProducto(pp.obtenerProductoPorId(rs.getInt("id_producto")));
 				pedidoLinea.setCantidad(rs.getInt("cantidad"));
+				pedidoLinea.setPrecioUnit(rs.getDouble("precio_unit"));
 				char[] sincChar = new char[1];
 				rs.getCharacterStream("sinc").read(sincChar);
 				Sinc sinc = Sinc.getSincPorChar(sincChar[0]);
@@ -55,6 +58,33 @@ public class PersistenciaPedidoLinea extends Conector implements IPersPedidoLine
 			closeRs(rs);
 		}
 		return listaPedidoLinea;
+	}
+
+
+	@Override
+	public Integer guardarListaPedidoLinea(List<PedidoLinea> listaPedidoLinea) throws PersistenciaException {
+		Integer resultado = null;
+		GenSqlExecType genExec = new GenSqlExecType(QRY_INSERT_PL);
+		ArrayList<Object> paramList = null;
+		for(PedidoLinea pl : listaPedidoLinea) {
+			paramList = new ArrayList<>();
+			paramList.add(pl.getPedido().getPersona().getIdPersona());
+			paramList.add(pl.getPedido().getFechaHora());
+			paramList.add(pl.getProducto().getIdProducto());
+			paramList.add(pl.getCantidad());
+			paramList.add(pl.getPrecioUnit());
+			paramList.add(pl.getSinc());
+			paramList.add(pl.getUltAct());
+			genExec.setParamList(paramList);
+		}
+		try {
+			resultado = (Integer) runGeneric(genExec);
+		} catch (ConectorException e) {
+			Conector.rollbackConn();
+			logger.error("Excepcion al guardarTranLinea: " + e.getMessage(), e);
+			throw new PersistenciaException(e);
+		}
+		return resultado;
 	}
 
 }

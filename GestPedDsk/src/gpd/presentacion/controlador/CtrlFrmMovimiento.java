@@ -137,10 +137,10 @@ public class CtrlFrmMovimiento extends CtrlGenerico {
 				DefaultTableModel modeloJtCompra = new DefaultTableModel() {
 					private static final long serialVersionUID = 1L;
 					@Override
-		            public Class<?> getColumnClass(int column) {
-		                return column == 0 ? Boolean.class : Object.class;
-		            }
-		        };
+				    public boolean isCellEditable (int fila, int columna) {
+				        return false;
+				    }
+				};
 				tabla.setModel(modeloJtCompra);
 				modeloJtCompra.addColumn("");
 				modeloJtCompra.addColumn("Producto");
@@ -187,7 +187,13 @@ public class CtrlFrmMovimiento extends CtrlGenerico {
 				PersonaJuridica pj = (PersonaJuridica) cbxCompraPj.getSelectedItem();
 				List<Transaccion> listaTransac = mgrTran.obtenerListaTransaccionPorPersona(pj.getRut(), TipoTran.C, EstadoTran.P);
 				if(listaTransac != null && !listaTransac.isEmpty()) {
-					DefaultTableModel modeloJtComprasPend = new DefaultTableModel();
+					DefaultTableModel modeloJtComprasPend = new DefaultTableModel() {
+						private static final long serialVersionUID = 1L;
+						@Override
+					    public boolean isCellEditable (int fila, int columna) {
+					        return false;
+					    }
+					};
 					tabla.setModel(modeloJtComprasPend);
 					modeloJtComprasPend.addColumn("Id Transac");
 					modeloJtComprasPend.addColumn("Proveedor");
@@ -247,6 +253,7 @@ public class CtrlFrmMovimiento extends CtrlGenerico {
 	/*****************************************************************************************************************************************************/
 	
 	public void iniciarCompra(FrmMovimiento frm) {
+		clearForm(frm.getContentPane());
 		nuevaTransaccion();
 		setContainerEnabled(frm.getPnlCompraProv(), true);
 		setContainerEnabled(frm.getPnlCompraDatos(), false);
@@ -302,12 +309,15 @@ public class CtrlFrmMovimiento extends CtrlGenerico {
 	private void nuevaTransaccion() {
 		setTransac(new Transaccion(TipoTran.C));
 		mapLineasTran = new HashMap<>();
+		//se HABILITA genrar compra ya que selecciona una existente
+		setContainerEnabled(getFrm().getPnlGenerarCompra(), true);
 	}
 	
 	private void cargarTransaccion(Transaccion transac) {
 		try {
 			if(transac != null) {
-				nuevaTransaccion();
+				//se deshabilita genrar compra ya que selecciona una existente
+				setContainerEnabled(getFrm().getPnlGenerarCompra(), false);
 				setTransac(transac);
 				if(transac.getListaTranLinea() != null && !transac.getListaTranLinea().isEmpty()) {
 					mapLineasTran = new HashMap<>();
@@ -326,14 +336,14 @@ public class CtrlFrmMovimiento extends CtrlGenerico {
 			if(getTransac() != null) {
 				if(mapLineasTran != null && !mapLineasTran.isEmpty()) {
 					getTransac().getListaTranLinea().addAll(mapLineasTran.values());
-					mgrTran.generarTransaccion(getTransac());
+					mgrTran.generarTransaccionCompra(getTransac());
 					limpiarCompra(getFrm(), false);
 					enviarInfo(CnstPresGeneric.MOV, CnstPresGeneric.COMPRA_CONFIRMADA);
 				} else {
 					enviarWarning(CnstPresGeneric.MOV, CnstPresGeneric.COMPRA_SIN_LINEAS);
 				}
 			} else {
-				enviarWarning(CnstPresGeneric.MOV, CnstPresGeneric.DATOS_OBLIG);
+				enviarWarning(CnstPresGeneric.MOV, CnstPresGeneric.COMPRA_SIN_TRANSAC);
 			}
 		} catch(Exception e) {
 			manejarExcepcion(e);
