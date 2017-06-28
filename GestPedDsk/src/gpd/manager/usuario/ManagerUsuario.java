@@ -73,9 +73,18 @@ public class ManagerUsuario {
 		Conector.closeConn("chequearSiSeModificó", null);
 	}
 
-	public UsuarioDsk eliminarUsuario(UsuarioDsk usuario) {
-		// TODO Auto-generated method stub
-		return null;
+	public void eliminarUsuario(UsuarioDsk usuario) {
+		Conector.getConn();
+		IPersUsuario interfaceUsuario = new PersistenciaUsuario();
+		try {
+			
+			interfaceUsuario.eliminarUsuario(usuario);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		Conector.closeConn("chequearSiEliminó", null);
+		
 	}
 
 

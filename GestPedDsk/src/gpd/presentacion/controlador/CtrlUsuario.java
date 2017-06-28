@@ -18,25 +18,29 @@ public class CtrlUsuario extends CtrlGenerico {
 	public void cambiarCont(UsuarioDsk usu, char[] cont1, char[] cont2) throws NuevaContraseniaException{
 		String contUno=String.valueOf(cont1);
 		String contDos=String.valueOf(cont2);
-		System.out.println("Cont1: "+String.valueOf(contUno));
-		System.out.println("Cont2: "+String.valueOf(contDos));
 		
-		if(contUno==null || contUno==""){
+		if(contUno.equals(null)){
 			throw new NuevaContraseniaException(CnstPresGeneric.USR_PASS_NO_INGRESADO);
 		}else{
-			if(contUno==contDos){
-				throw new NuevaContraseniaException(CnstPresGeneric.USR_PASS_REP);
+			if(contUno.equals("")){
+				throw new NuevaContraseniaException(CnstPresGeneric.USR_PASS_NO_INGRESADO);
 			}else{
-				String hashPass = getMD5(String.valueOf(cont1));				
-				ManagerUsuario mgrUsr = new ManagerUsuario();
-				usu.setPass(hashPass);
-				mgrUsr.modificarUsuario(usu);
+				if(!contUno.equals(contDos)){
+					throw new NuevaContraseniaException(CnstPresGeneric.USR_PASS_REP);
+				}else{
+					String hashPass = getMD5(String.valueOf(cont1));				
+					ManagerUsuario mgrUsr = new ManagerUsuario();
+					usu.setPass(hashPass);
+					mgrUsr.modificarUsuario(usu);
+				}
 			}
+			
 		}
 	}
 	
-	public void eliminarUsuario(String usu){
-	
+	public void eliminarUsuario(UsuarioDsk usu){
+		ManagerUsuario mgrUsr = new ManagerUsuario();
+		mgrUsr.eliminarUsuario(usu);
 		
 	}
 	

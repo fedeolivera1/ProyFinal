@@ -8,10 +8,12 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import gpd.dominio.usuario.UsuarioDsk;
+import gpd.exceptions.NuevaContraseniaException;
 import gpd.presentacion.controlador.CtrlUsuario;
 
 import java.awt.Toolkit;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JComboBox;
 import javax.swing.JButton;
 import java.awt.Font;
@@ -75,6 +77,8 @@ public class FrmElimUsuario extends JFrame {
 	}
 
 	public FrmElimUsuario() {
+		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		
 		ctrlusu=new CtrlUsuario();
 		setTitle("Eliminar usuario");
 		setIconImage(Toolkit.getDefaultToolkit().getImage(FrmElimUsuario.class.getResource("/gpd/recursos/Icono.png")));
@@ -100,6 +104,29 @@ public class FrmElimUsuario extends JFrame {
 		JButton btnEliminar = new JButton("Eliminar");
 		btnEliminar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+
+				// Pregunto dos veces si quiere eliminar el usuario por las
+				// dudas
+				int opcion = JOptionPane.showConfirmDialog(null,
+						"¿Está seguro que desea eliminar a "
+								+ (cbxUsuario.getItemAt(cbxUsuario.getSelectedIndex())).getNomUsu() + "?",
+						"Confirmación.", JOptionPane.OK_CANCEL_OPTION);
+
+				if (opcion == JOptionPane.OK_OPTION) {
+					opcion = JOptionPane.showConfirmDialog(null,
+							"¿Realmente desea eliminar a "
+									+ (cbxUsuario.getItemAt(cbxUsuario.getSelectedIndex())).getNomUsu() + "?",
+							"Confirmación.", JOptionPane.YES_NO_OPTION);
+					if (opcion == JOptionPane.YES_OPTION) {
+
+						// Elimina el usuario y se cierra la ventana
+						UsuarioDsk usuario = cbxUsuario.getItemAt(cbxUsuario.getSelectedIndex());
+						ctrlusu.eliminarUsuario(usuario);
+						FrmElimUsuario.this.setVisible(false);
+						dispose();
+					}
+				}
+
 			}
 		});
 		btnEliminar.setBounds(305, 114, 89, 23);

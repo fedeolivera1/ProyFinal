@@ -20,6 +20,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 
+import gpd.dominio.usuario.TipoUsr;
 import gpd.dominio.usuario.UsuarioDsk;
 import java.awt.event.ActionListener;
 import javax.swing.JMenuItem;
@@ -141,39 +142,14 @@ public class FrmPrincipal extends JFrame {
 		
 		JMenu mnTrabajadores = new JMenu("Usuarios");
 		mnEdicin.add(mnTrabajadores);
-		/**Abre frame para agregar un usuario*/
-//		mnAgregarUsuario.addMouseListener(new MouseListener() {
-//			
-//		    @Override
-//	        public void mouseClicked(MouseEvent e) {
-//	        	FrmRegUsuario frmRu = new FrmRegUsuario(usr);
-//				frmRu.setLocationRelativeTo(null);
-//				frmRu.setDefaultCloseOperation(FrmPrincipal.EXIT_ON_CLOSE);
-//				frmRu.setVisible(true);
-//	        }
-//			@Override
-//			public void mouseEntered(MouseEvent arg0) {
-//				// TODO Auto-generated method stub
-//				
-//			}
-//			@Override
-//			public void mouseExited(MouseEvent arg0) {
-//				// TODO Auto-generated method stub
-//				
-//			}
-//			@Override
-//			public void mousePressed(MouseEvent arg0) {
-//				// TODO Auto-generated method stub
-//				
-//			}
-//			@Override
-//			public void mouseReleased(MouseEvent arg0) {
-//				// TODO Auto-generated method stub
-//				
-//			}
-//    });
 		
-		JMenuItem mntmAgregarUsuario = new JMenuItem("Agregar usuario");
+		JMenuItem mntmCambiarMiContrasea = new JMenuItem("Cambiar mi contrase\u00F1a");
+		mnTrabajadores.add(mntmCambiarMiContrasea);
+
+		//Si no es administrador, no verá éstos menues
+		
+		if(usu.getTipoUsr()==TipoUsr.A){
+			JMenuItem mntmAgregarUsuario = new JMenuItem("Agregar usuario");
 		mntmAgregarUsuario.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				FrmRegUsuario frmRu = new FrmRegUsuario(usr);
@@ -202,6 +178,14 @@ public class FrmPrincipal extends JFrame {
 			}
 		});
 		mnTrabajadores.add(mntmEliminarUnUsuario);
+		
+		
+		}
+		
+		
+		
+		
+		
 		
 		
 		JMenu mnModificarDatos = new JMenu("Modificar datos");
