@@ -70,8 +70,8 @@ public class ConfigDriver extends PropManager {
 		return super.getPropertyValue(CnstProp.PROP_DB, CnstProp.DB_PASS_VAL);
 	}
 	
-	public String getIva() throws Exception {
-		return super.getPropertyValue(CnstProp.PROP_CONFIG, CnstProp.CFG_IVA);
+	public String getIva(String iva) throws Exception {
+		return super.getPropertyValue(CnstProp.PROP_CONFIG, iva);
 	}
 	
 	public String getDiasParaVenc() throws Exception {

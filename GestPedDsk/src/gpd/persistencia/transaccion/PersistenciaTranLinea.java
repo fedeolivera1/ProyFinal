@@ -40,6 +40,7 @@ public class PersistenciaTranLinea extends Conector implements IPersTranLinea, C
 				tranLinea = new TranLinea(transac);
 				tranLinea.setProducto(pp.obtenerProductoPorId(rs.getInt("id_producto")));
 				tranLinea.setCantidad(rs.getInt("cantidad"));
+				tranLinea.setIva(rs.getDouble("iva"));
 				tranLinea.setPrecioUnit(rs.getDouble("precio_unit"));
 			}
 		} catch (ConectorException | SQLException e) {
@@ -64,6 +65,7 @@ public class PersistenciaTranLinea extends Conector implements IPersTranLinea, C
 				TranLinea tranLinea = new TranLinea(transac);
 				tranLinea.setProducto(pp.obtenerProductoPorId(rs.getInt("id_producto")));
 				tranLinea.setCantidad(rs.getInt("cantidad"));
+				tranLinea.setIva(rs.getDouble("iva"));
 				tranLinea.setPrecioUnit(rs.getDouble("precio_unit"));
 				listaTranLinea.add(tranLinea);
 			}
@@ -87,6 +89,7 @@ public class PersistenciaTranLinea extends Conector implements IPersTranLinea, C
 			paramList.add(tl.getTransaccion().getNroTransac());
 			paramList.add(tl.getProducto().getIdProducto());
 			paramList.add(tl.getCantidad());
+			paramList.add(tl.getIva());
 			paramList.add(tl.getPrecioUnit());
 			genExec.setParamList(paramList);
 		}

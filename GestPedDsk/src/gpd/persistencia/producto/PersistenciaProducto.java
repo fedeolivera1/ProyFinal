@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
 import gpd.db.constantes.CnstQryProducto;
 import gpd.db.generic.GenSqlExecType;
 import gpd.db.generic.GenSqlSelectType;
+import gpd.dominio.producto.AplicaIva;
 import gpd.dominio.producto.Producto;
 import gpd.dominio.producto.TipoProd;
 import gpd.dominio.util.Sinc;
@@ -30,6 +31,7 @@ public class PersistenciaProducto extends Conector implements IPersProducto, Cns
 	public List<Producto> obtenerBusquedaProducto(Integer idTipoProd, String codigo, String nombre, String descripcion) throws PersistenciaException {
 		List<Producto> listaProd = new ArrayList<>();
 		PersistenciaTipoProd ptp = new PersistenciaTipoProd();
+		PersistenciaUnidad pu = new PersistenciaUnidad();
 		try {
 			GenSqlSelectType genSel = new GenSqlSelectType(QRY_SEARCH_PROD);
 			genSel.setParamEmptyAsNumber(idTipoProd);
@@ -49,6 +51,12 @@ public class PersistenciaProducto extends Conector implements IPersProducto, Cns
 				producto.setNombre(rs.getString("nombre"));
 				producto.setDescripcion(rs.getString("descripcion"));
 				producto.setStockMin(rs.getFloat("stock_min"));
+				char[] aplIvaChar = new char[1];
+				rs.getCharacterStream("apl_iva").read(aplIvaChar);
+				AplicaIva aplIva = AplicaIva.getAplicaIvaPorChar(aplIvaChar[0]);
+				producto.setAplIva(aplIva);
+				producto.setUnidad(pu.obtenerUnidadPorId(rs.getInt("id_unidad")));
+				producto.setCantUnidad(rs.getInt("cant_unidad"));
 				producto.setPrecio(rs.getDouble("precio"));
 				char[] tipoChar = new char[1];
 				rs.getCharacterStream("sinc").read(tipoChar);
@@ -71,6 +79,7 @@ public class PersistenciaProducto extends Conector implements IPersProducto, Cns
 	public Producto obtenerProductoPorId(Integer id) throws PersistenciaException {
 		Producto producto = null;
 		PersistenciaTipoProd ptp = new PersistenciaTipoProd();
+		PersistenciaUnidad pu = new PersistenciaUnidad();
 		try {
 			GenSqlSelectType genSel = new GenSqlSelectType(QRY_SELECT_PROD_XID);
 			genSel.setParam(id);
@@ -83,6 +92,12 @@ public class PersistenciaProducto extends Conector implements IPersProducto, Cns
 				producto.setNombre(rs.getString("nombre"));
 				producto.setDescripcion(rs.getString("descripcion"));
 				producto.setStockMin(rs.getFloat("stock_min"));
+				char[] aplIvaChar = new char[1];
+				rs.getCharacterStream("apl_iva").read(aplIvaChar);
+				AplicaIva aplIva = AplicaIva.getAplicaIvaPorChar(aplIvaChar[0]);
+				producto.setAplIva(aplIva);
+				producto.setUnidad(pu.obtenerUnidadPorId(rs.getInt("id_unidad")));
+				producto.setCantUnidad(rs.getInt("cant_unidad"));
 				producto.setPrecio(rs.getDouble("precio"));
 				char[] tipoChar = new char[1];
 				rs.getCharacterStream("sinc").read(tipoChar);
@@ -102,6 +117,7 @@ public class PersistenciaProducto extends Conector implements IPersProducto, Cns
 	public List<Producto> obtenerListaProductoPorTipo(TipoProd tipoProd) throws PersistenciaException {
 		List<Producto> listaProducto = new ArrayList<>();
 		PersistenciaTipoProd ptp = new PersistenciaTipoProd();
+		PersistenciaUnidad pu = new PersistenciaUnidad();
 		try {
 			GenSqlSelectType genSel = new GenSqlSelectType(QRY_SELECT_PROD_X_TIPOPROD);
 			genSel.setParam(tipoProd.getIdTipoProd());
@@ -114,6 +130,12 @@ public class PersistenciaProducto extends Conector implements IPersProducto, Cns
 				producto.setNombre(rs.getString("nombre"));
 				producto.setDescripcion(rs.getString("descripcion"));
 				producto.setStockMin(rs.getFloat("stock_min"));
+				char[] aplIvaChar = new char[1];
+				rs.getCharacterStream("apl_iva").read(aplIvaChar);
+				AplicaIva aplIva = AplicaIva.getAplicaIvaPorChar(aplIvaChar[0]);
+				producto.setAplIva(aplIva);
+				producto.setUnidad(pu.obtenerUnidadPorId(rs.getInt("id_unidad")));
+				producto.setCantUnidad(rs.getInt("cant_unidad"));
 				producto.setPrecio(rs.getDouble("precio"));
 				char[] tipoChar = new char[1];
 				rs.getCharacterStream("sinc").read(tipoChar);
@@ -141,6 +163,9 @@ public class PersistenciaProducto extends Conector implements IPersProducto, Cns
 		genExec.setParam(producto.getNombre());
 		genExec.setParam(producto.getDescripcion());
 		genExec.setParam(producto.getStockMin());
+		genExec.setParam(producto.getAplIva().getAsChar());
+		genExec.setParam(producto.getUnidad().getIdUnidad());
+		genExec.setParam(producto.getCantUnidad());
 		genExec.setParam(producto.getPrecio());
 		genExec.setParam(producto.getSinc().getAsChar());
 		genExec.setParam(producto.getUltAct());
@@ -163,6 +188,9 @@ public class PersistenciaProducto extends Conector implements IPersProducto, Cns
 		genExec.setParam(producto.getNombre());
 		genExec.setParam(producto.getDescripcion());
 		genExec.setParam(producto.getStockMin());
+		genExec.setParam(producto.getAplIva().getAsChar());
+		genExec.setParam(producto.getUnidad().getIdUnidad());
+		genExec.setParam(producto.getCantUnidad());
 		genExec.setParam(producto.getPrecio());
 		genExec.setParam(producto.getSinc().getAsChar());
 		genExec.setParam(producto.getUltAct());

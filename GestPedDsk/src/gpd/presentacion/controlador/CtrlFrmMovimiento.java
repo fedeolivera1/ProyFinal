@@ -122,7 +122,7 @@ public class CtrlFrmMovimiento extends CtrlGenerico {
 			cbModelProd.setSelectedItem(tl.getProducto());
 			frmMov.getCbxCompraTp().setSelectedItem(cbModelTp.getSelectedItem());
 			frmMov.getFtxtCompraCant().setText(String.valueOf(tl.getCantidad()));
-			frmMov.getFtxtCompraPu().setText(String.valueOf(tl.getCantidad()));
+			frmMov.getFtxtCompraPu().setText(String.valueOf(tl.getPrecioUnit()));
 		} catch(Exception e) {
 			manejarExcepcion(e);
 		}
@@ -138,18 +138,22 @@ public class CtrlFrmMovimiento extends CtrlGenerico {
 					private static final long serialVersionUID = 1L;
 					@Override
 				    public boolean isCellEditable (int fila, int columna) {
-				        return false;
+						return columna == 0 ? true : false;
 				    }
+					@Override
+					public Class<?> getColumnClass(int column) {
+						return column == 0 ? Boolean.class : Object.class;
+					}
 				};
-				tabla.setModel(modeloJtCompra);
 				modeloJtCompra.addColumn("");
 				modeloJtCompra.addColumn("Producto");
 				modeloJtCompra.addColumn("Proveedor");
 				modeloJtCompra.addColumn("Cantidad");
 				modeloJtCompra.addColumn("Precio Unit");
+				tabla.setModel(modeloJtCompra);
 				for(TranLinea tl : mapLineasTran.values()) {
 					Object [] fila = new Object[5];
-					fila[0] = false;
+					fila[0] = new Boolean(false);
 					fila[1] = tl.getProducto();
 					fila[2] = (PersonaJuridica) tl.getTransaccion().getPersona();
 					fila[3] = tl.getCantidad();

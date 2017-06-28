@@ -20,6 +20,8 @@ public class Pedido implements Serializable {
 	private Fecha fechaProg;
 	private Fecha horaProg;
 	private Origen origen;
+	private Double subTotal;
+	private Double iva;
 	private Double total;
 	private UsuarioDsk usuario;
 	private Transaccion transaccion;
@@ -68,6 +70,20 @@ public class Pedido implements Serializable {
 	}
 	public void setOrigen(Origen origen) {
 		this.origen = origen;
+	}
+	
+	public Double getSubTotal() {
+		return subTotal;
+	}
+	public void setSubTotal(Double subTotal) {
+		this.subTotal = subTotal;
+	}
+	
+	public Double getIva() {
+		return iva;
+	}
+	public void setIva(Double iva) {
+		this.iva = iva;
 	}
 	
 	public Double getTotal() {

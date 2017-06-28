@@ -12,6 +12,7 @@ import gpd.dominio.producto.Deposito;
 import gpd.dominio.producto.Lote;
 import gpd.dominio.producto.Producto;
 import gpd.dominio.producto.TipoProd;
+import gpd.dominio.producto.Unidad;
 import gpd.dominio.producto.Utilidad;
 import gpd.dominio.util.Converters;
 import gpd.dominio.util.Sinc;
@@ -21,12 +22,14 @@ import gpd.interfaces.producto.IPersDeposito;
 import gpd.interfaces.producto.IPersLote;
 import gpd.interfaces.producto.IPersProducto;
 import gpd.interfaces.producto.IPersTipoProd;
+import gpd.interfaces.producto.IPersUnidad;
 import gpd.interfaces.producto.IPersUtilidad;
 import gpd.persistencia.conector.Conector;
 import gpd.persistencia.producto.PersistenciaDeposito;
 import gpd.persistencia.producto.PersistenciaLote;
 import gpd.persistencia.producto.PersistenciaProducto;
 import gpd.persistencia.producto.PersistenciaTipoProd;
+import gpd.persistencia.producto.PersistenciaUnidad;
 import gpd.persistencia.producto.PersistenciaUtilidad;
 import gpd.types.Fecha;
 import gpd.util.ConfigDriver;
@@ -36,6 +39,7 @@ public class ManagerProducto {
 	private static final Logger logger = Logger.getLogger(ManagerProducto.class);
 	private static IPersProducto interfaceProducto;
 	private static IPersTipoProd interfaceTipoProd;
+	private static IPersUnidad interfaceUnidad;
 	private static IPersDeposito interfaceDeposito;
 	private static IPersUtilidad interfaceUtilidad;
 	private static IPersLote interfaceLote;
@@ -53,6 +57,12 @@ public class ManagerProducto {
 			interfaceTipoProd = new PersistenciaTipoProd();
 		}
 		return interfaceTipoProd;
+	}
+	private static IPersUnidad getInterfaceUnidad() {
+		if(interfaceUnidad == null) {
+			interfaceUnidad = new PersistenciaUnidad();
+		}
+		return interfaceUnidad;
 	}
 	private static IPersDeposito getInterfaceDeposito() {
 		if(interfaceDeposito == null) {
@@ -246,7 +256,84 @@ public class ManagerProducto {
 		}
 		return resultado;
 	}
+	
+	/*****************************************************************************************************************************************************/
+	/** UNIDAD */
+	/*****************************************************************************************************************************************************/
 
+	public Unidad obtenerUnidadPorId(Integer id) throws PresentacionException {
+		logger.info("Se ingresa a obtenerUnidadPorId");
+		Unidad unidad = null;
+		try {
+			Conector.getConn();
+			unidad = getInterfaceUnidad().obtenerUnidadPorId(id);
+			Conector.closeConn("obtenerUnidadPorId");
+		} catch (PersistenciaException e) {
+			logger.fatal("Excepcion en ManagerProducto > obtenerUnidadPorId: " + e.getMessage(), e);
+			throw new PresentacionException(e);
+		}
+		return unidad;
+	}
+	
+	public List<Unidad> obtenerListaUnidad() throws PresentacionException {
+		logger.info("Se ingresa a obtenerListaUnidad");
+		List<Unidad> listaUnidad = null;
+		try {
+			Conector.getConn();
+			listaUnidad = getInterfaceUnidad().obtenerListaUnidad();
+			Conector.closeConn("obtenerListaUnidad");
+		} catch (PersistenciaException e) {
+			logger.fatal("Excepcion en ManagerProducto > obtenerListaUnidad: " + e.getMessage(), e);
+			throw new PresentacionException(e);
+		}
+		return listaUnidad;
+	}
+	
+	public Integer guardarUnidad(Unidad unidad) throws PresentacionException {
+		logger.info("Se ingresa a guardarUnidad");
+		if(unidad != null) {
+			try {
+				Conector.getConn();
+				resultado = getInterfaceUnidad().guardarUnidad(unidad);
+				Conector.closeConn("guardarUnidad");
+			} catch (PersistenciaException e) {
+				logger.fatal("Excepcion en ManagerProducto > guardarUnidad: " + e.getMessage(), e);
+				throw new PresentacionException(e);
+			}
+		}
+		return resultado;
+	}
+	
+	public Integer modificarUnidad(Unidad unidad) throws PresentacionException {
+		logger.info("Ingresa modificarUnidad");
+		if(unidad != null) {
+			try {
+				Conector.getConn();
+				resultado = getInterfaceUnidad().modificarUnidad(unidad);
+				Conector.closeConn("modificarUnidad");
+			} catch (PersistenciaException e) {
+				logger.fatal("Excepcion en ManagerProducto > modificarUnidad: " + e.getMessage(), e);
+				throw new PresentacionException(e);
+			}
+		}
+		return resultado;
+	}
+	
+	public Integer eliminarUnidad(Unidad unidad) throws PresentacionException {
+		logger.info("Se ingresa a eliminarUnidad");
+		if(unidad != null) {
+			try {
+				Conector.getConn();
+				resultado = getInterfaceUnidad().eliminarUnidad(unidad);
+				Conector.closeConn("eliminarUnidad");
+			} catch (PersistenciaException e) {
+				logger.fatal("Excepcion en ManagerProducto > eliminarUnidad: " + e.getMessage(), e);
+				throw new PresentacionException(e);
+			}
+		}
+		return resultado;
+	}
+	
 	/*****************************************************************************************************************************************************/
 	/** DEPOSITO */
 	/*****************************************************************************************************************************************************/
@@ -387,7 +474,7 @@ public class ManagerProducto {
 	}
 
 	public Integer eliminarUtilidad(Utilidad utilidad) throws PresentacionException {
-		logger.info("Se ingresa a eliminarTipoProd");
+		logger.info("Se ingresa a eliminarUtilidad");
 		if(utilidad != null) {
 			try {
 				Conector.getConn();
@@ -440,10 +527,12 @@ public class ManagerProducto {
 			Long stock = new Long(0);
 			if(listaLote != null && !listaLote.isEmpty()) {
 				for(Lote lote : listaLote) {
-					Double precioAct = new Double(0);
-					stock += lote.getStock();
-					precioAct = lote.getTranLinea().getPrecioUnit() * Converters.convertirPorcAdicion(lote.getUtilidad().getPorc());
+					Producto prod = lote.getTranLinea().getProducto();
+					Double precioAct = lote.getTranLinea().getPrecioUnit() * Converters.convertirPorcAMult(lote.getUtilidad().getPorc());
+					Float coefIva = Float.valueOf(cfgDrv.getIva(prod.getAplIva().getAplIvaProp()));
+					precioAct = coefIva > 0 ? (precioAct * coefIva) : precioAct;
 					Converters.redondearDosDec(precioAct);
+					stock += lote.getStock();
 					if(precioAct > precioFinal) {
 						precioFinal = precioAct;
 					}

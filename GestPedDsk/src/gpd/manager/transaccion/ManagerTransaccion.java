@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 
 import gpd.db.constantes.CnstQryTransaccion;
 import gpd.dominio.producto.Lote;
+import gpd.dominio.producto.Producto;
 import gpd.dominio.transaccion.EstadoTran;
 import gpd.dominio.transaccion.TipoTran;
 import gpd.dominio.transaccion.TranLinea;
@@ -63,31 +64,40 @@ public class ManagerTransaccion {
 			if(transaccion != null && TipoTran.C.equals(transaccion.getTipoTran())) {
 				Conector.getConn();
 				ConfigDriver cfgDrv = ConfigDriver.getConfigDriver();
-				Float ivaAdicion = new Float(0);
-				ivaAdicion = Converters.convertirPorcAdicion(Float.valueOf(cfgDrv.getIva()));
 				Double subTotal = new Double(0);
-				Double ivaSt = new Double(0);
+//				Double ivaSt = new Double(0);
 				Double total = new Double(0);
 				List<Lote> listaLote = new ArrayList<>();
+				Double ivaTotal = new Double(0);
 				for(TranLinea tl : transaccion.getListaTranLinea()) {
+					Producto prod = tl.getProducto();
 					Lote lote = new Lote();
 					lote.setTranLinea(tl);
 					lote.setStock(tl.getCantidad());
 					listaLote.add(lote);
-					subTotal += (tl.getPrecioUnit() * tl.getCantidad());
+					//obtengo valor de iva para el producto
+					Float ivaAplicaProd = Float.valueOf(cfgDrv.getIva(prod.getAplIva().getAplIvaProp()));
+					//convierto numero divisor para el iva
+					Float ivaProdDivisor = Converters.convertirPorcAMult(ivaAplicaProd);
+					//calcula iva SUSTRAIDO del precio del producto
+					Double ivaProd = (ivaProdDivisor != 0 ? (prod.getPrecio() - (prod.getPrecio() / ivaProdDivisor)) : prod.getPrecio());
+					ivaProd = Converters.redondearDosDec(ivaProd);
+					//setea a la linea de transaccion el iva correspondiente al producto
+					tl.setIva(ivaProd);
+					Double precioProd = prod.getPrecio();
+					ivaTotal += (ivaProd * tl.getCantidad());
+					total += (precioProd * tl.getCantidad());
 				}
-				subTotal = Converters.redondearDosDec(subTotal);
-				//se adiciona el iva al total
-				total = subTotal * ivaAdicion;
+				ivaTotal =  Converters.redondearDosDec(ivaTotal);
+				//se sustrae el ivaTotal al total ya que se manejan directamente precios con iva en la compra
+				subTotal = Converters.redondearDosDec(total - ivaTotal);
 				total = Converters.redondearDosDec(total);
-				ivaSt = total - subTotal;
-				ivaSt = Converters.redondearDosDec(ivaSt);
 				Long nroTransac = Conector.obtenerSecuencia(CnstQryTransaccion.SEC_TRANSAC);
 				transaccion.setNroTransac(nroTransac);
 				transaccion.setEstadoTran(EstadoTran.P);
 				transaccion.setFechaHora(new Fecha(Fecha.AMDHMS));
 				transaccion.setSubTotal(subTotal);
-				transaccion.setIva(ivaSt);
+				transaccion.setIva(ivaTotal);
 				transaccion.setTotal(total);
 				//se persiste la transaccion de tipo C (compra)
 				resultado = getInterfaceTransaccion().guardarTransaccionCompra(transaccion);
@@ -95,7 +105,6 @@ public class ManagerTransaccion {
 				getInterfaceTransaccion().guardarTranEstado(transaccion);
 				//se persisten las lineas de la transaccion
 				getInterfaceTranLinea().guardarListaTranLinea(transaccion.getListaTranLinea());
-				
 				//se periste el lote para cada producto de las lineas
 				getInterfaceLote().guardarListaLote(listaLote);
 				Conector.closeConn("generarTransaccionCompra");
@@ -120,12 +129,12 @@ public class ManagerTransaccion {
 				Conector.getConn();
 				ConfigDriver cfgDrv = ConfigDriver.getConfigDriver();
 				Float ivaSustraccion = new Float(0);
-				ivaSustraccion = Converters.convertirPorcSustraccion(Float.valueOf(cfgDrv.getIva()));
+//				ivaSustraccion = Converters.convertirPorcSustraccion(Float.valueOf(cfgDrv.getIva()));
 				Double subTotal = new Double(0);
 				Double ivaSt = new Double(0);
 				Double total = new Double(0);
 				for(TranLinea tl : transaccion.getListaTranLinea()) {
-					total += (tl.getPrecioUnit()*tl.getCantidad());
+					total += (tl.getPrecioUnit() * tl.getCantidad());
 				}
 				total = Converters.redondearDosDec(total);
 				//se sustrae el iva del total
@@ -142,15 +151,15 @@ public class ManagerTransaccion {
 				getInterfaceTransaccion().guardarTranEstado(transaccion);
 				//se persisten las lineas de la transaccion
 				getInterfaceTranLinea().guardarListaTranLinea(transaccion.getListaTranLinea());
-				Conector.closeConn("generarTransaccionCompra");
+				Conector.closeConn("generarTransaccionVenta");
 			} else {
 				throw new PresentacionException("generarTransaccionVenta ha sido mal implementado!");
 			}
-		} catch (ConectorException | PersistenciaException e) {
-			logger.fatal("Excepcion en ManagerTransaccion > generarTransaccionCompra: " + e.getMessage(), e);
+		} catch (/*ConectorException |*/ PersistenciaException e) {
+			logger.fatal("Excepcion en ManagerTransaccion > generarTransaccionVenta: " + e.getMessage(), e);
 			throw new PresentacionException(e);
 		} catch (Exception e) {
-			logger.fatal("Excepcion no controlada en ManagerTransaccion > generarTransaccionCompra: " + e.getMessage(), e);
+			logger.fatal("Excepcion no controlada en ManagerTransaccion > generarTransaccionVenta: " + e.getMessage(), e);
 			throw new PresentacionException(e);
 		}
 		return resultado;

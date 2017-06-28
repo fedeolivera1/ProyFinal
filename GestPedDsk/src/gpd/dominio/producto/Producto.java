@@ -14,6 +14,9 @@ public class Producto implements Serializable {
 	private String nombre;
 	private String descripcion;
 	private Float stockMin;
+	private Unidad unidad;
+	private Integer cantUnidad;
+	private AplicaIva aplIva;
 	private Double precio;
 	private Sinc sinc;
 	private Fecha ultAct;
@@ -61,6 +64,27 @@ public class Producto implements Serializable {
 		this.stockMin = stockMin;
 	}
 	
+	public Unidad getUnidad() {
+		return unidad;
+	}
+	public void setUnidad(Unidad unidad) {
+		this.unidad = unidad;
+	}
+	
+	public Integer getCantUnidad() {
+		return cantUnidad;
+	}
+	public void setCantUnidad(Integer cantUnidad) {
+		this.cantUnidad = cantUnidad;
+	}
+	
+	public AplicaIva getAplIva() {
+		return aplIva;
+	}
+	public void setAplIva(AplicaIva aplIva) {
+		this.aplIva = aplIva;
+	}
+	
 	public Double getPrecio() {
 		return precio;
 	}
@@ -84,7 +108,7 @@ public class Producto implements Serializable {
 	
 	@Override
 	public String toString() {
-		return codigo + " | " + nombre;
+		return codigo + " | " + nombre + " | iva: " + aplIva.getAplIvaDesc();
 	}
 	
 	

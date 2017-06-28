@@ -10,6 +10,7 @@ public class TranLinea implements Serializable {
 	private Transaccion transaccion;
 	private Producto producto;
 	private Integer cantidad;
+	private Double iva;
 	private Double precioUnit;
 	
 	
@@ -38,6 +39,13 @@ public class TranLinea implements Serializable {
 	}
 	public void setCantidad(Integer cantidad) {
 		this.cantidad = cantidad;
+	}
+	
+	public Double getIva() {
+		return iva;
+	}
+	public void setIva(Double iva) {
+		this.iva = iva;
 	}
 	
 	public Double getPrecioUnit() {

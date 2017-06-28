@@ -33,8 +33,10 @@ import org.apache.log4j.Logger;
 
 import com.toedter.calendar.JDateChooser;
 
+import gpd.dominio.producto.AplicaIva;
 import gpd.dominio.producto.Deposito;
 import gpd.dominio.producto.TipoProd;
+import gpd.dominio.producto.Unidad;
 import gpd.dominio.producto.Utilidad;
 import gpd.dominio.transaccion.EstadoTran;
 import gpd.dominio.transaccion.Transaccion;
@@ -48,6 +50,7 @@ public class FrmProducto extends JFrame {
 	private static FrmProducto instance;
 	private CtrlFrmProducto ctrlProd;
 	//
+	private JDesktopPane desktopPane;
 	private JPanel contentPane;
 	private JTextField txtProId;
 	private JTextField txtProCod;
@@ -55,8 +58,10 @@ public class FrmProducto extends JFrame {
 	private JTextField txtProDesc;
 	private JFormattedTextField ftxtProStockMin;
 	private JFormattedTextField ftxtProPrecio;
+	private JFormattedTextField ftxtProPres;
 	private JComboBox<TipoProd> cbxTipoProd;
-	private JDesktopPane desktopPane;
+	private JComboBox<Unidad> cbxProUni;
+	private JComboBox<AplicaIva> cbxProAplIva;
 	private JButton btnTpAgregar;
 	private JButton btnProAgr;
 	private JButton btnProMod;
@@ -132,7 +137,7 @@ public class FrmProducto extends JFrame {
 		tpProd.add(label);
 		
 		cbxTipoProd = new JComboBox<>();
-		cbxTipoProd.setBounds(72, 42, 151, 20);
+		cbxTipoProd.setBounds(72, 42, 188, 20);
 		tpProd.add(cbxTipoProd);
 		
 		JLabel label_1 = new JLabel("Codigo");
@@ -142,7 +147,7 @@ public class FrmProducto extends JFrame {
 		
 		txtProCod = new JTextField();
 		txtProCod.setColumns(10);
-		txtProCod.setBounds(72, 70, 151, 20);
+		txtProCod.setBounds(72, 70, 188, 20);
 		tpProd.add(txtProCod);
 		
 		JLabel label_2 = new JLabel("Nombre");
@@ -152,7 +157,7 @@ public class FrmProducto extends JFrame {
 		
 		txtProNom = new JTextField();
 		txtProNom.setColumns(10);
-		txtProNom.setBounds(72, 101, 151, 20);
+		txtProNom.setBounds(72, 101, 188, 20);
 		tpProd.add(txtProNom);
 		
 		JLabel label_3 = new JLabel("Descripcion");
@@ -162,7 +167,7 @@ public class FrmProducto extends JFrame {
 		
 		txtProDesc = new JTextField();
 		txtProDesc.setColumns(10);
-		txtProDesc.setBounds(72, 129, 151, 20);
+		txtProDesc.setBounds(72, 129, 188, 20);
 		tpProd.add(txtProDesc);
 		
 		JLabel label_4 = new JLabel("Stock Min");
@@ -175,39 +180,67 @@ public class FrmProducto extends JFrame {
 		tpProd.add(ftxtProStockMin);
 		
 		ftxtProPrecio = new JFormattedTextField();
-		ftxtProPrecio.setBounds(72, 185, 65, 20);
+		ftxtProPrecio.setBounds(72, 242, 65, 20);
+		
+		cbxProUni = new JComboBox<>();
+		cbxProUni.setBounds(194, 185, 66, 20);
+		tpProd.add(cbxProUni);
+		
+		cbxProAplIva = new JComboBox<>();
+		cbxProAplIva.setBounds(72, 213, 66, 20);
+		tpProd.add(cbxProAplIva);
+		
+		JLabel lblUnidad = new JLabel("Unidad");
+		lblUnidad.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblUnidad.setBounds(138, 188, 46, 14);
+		tpProd.add(lblUnidad);
+		
+		JLabel lblIva = new JLabel("Iva");
+		lblIva.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblIva.setBounds(16, 216, 46, 14);
+		tpProd.add(lblIva);
+		
+		JLabel lblPresentacion = new JLabel("Presentacion");
+		lblPresentacion.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblPresentacion.setBounds(0, 188, 69, 14);
+		tpProd.add(lblPresentacion);
+		
+		ftxtProPres = new JFormattedTextField();
+		ftxtProPres.setBounds(72, 185, 65, 20);
+		tpProd.add(ftxtProPres);
+		
 		
 		JLabel label_5 = new JLabel("Precio");
 		label_5.setHorizontalAlignment(SwingConstants.RIGHT);
-		label_5.setBounds(23, 188, 46, 14);
+		label_5.setBounds(23, 245, 46, 14);
 		tpProd.add(label_5);
 		tpProd.add(ftxtProPrecio);
 		btnProAgr = new JButton("Agregar");
-		btnProAgr.setBounds(282, 11, 89, 23);
+		btnProAgr.setBounds(499, 12, 89, 23);
 		tpProd.add(btnProAgr);
 		
 		JSeparator sepProd1 = new JSeparator();
 		sepProd1.setOrientation(SwingConstants.VERTICAL);
 		sepProd1.setForeground(SystemColor.info);
 		sepProd1.setBackground(SystemColor.info);
-		sepProd1.setBounds(270, 11, 2, 268);
+		sepProd1.setBounds(487, 11, 2, 268);
 		tpProd.add(sepProd1);
 		btnProMod = new JButton("Modificar");
-		btnProMod.setBounds(282, 45, 89, 23);
+		btnProMod.setBounds(499, 46, 89, 23);
 		tpProd.add(btnProMod);
 		btnProEli = new JButton("Eliminar");
-		btnProEli.setBounds(282, 79, 89, 23);
+		btnProEli.setBounds(499, 80, 89, 23);
 		tpProd.add(btnProEli);
 		btnTpAgregar = new JButton("...");
-		btnTpAgregar.setBounds(228, 41, 32, 23);
+		btnTpAgregar.setBounds(279, 41, 32, 23);
 		tpProd.add(btnTpAgregar);
 		
 		btnProBuscar = new JButton("Buscar");
-		btnProBuscar.setBounds(282, 129, 89, 23);
+		btnProBuscar.setBounds(499, 130, 89, 23);
 		tpProd.add(btnProBuscar);
 		
 		btnProLimpiar = new JButton("Limpiar");
-		btnProLimpiar.setBounds(282, 160, 89, 23);
+		btnProLimpiar.setBounds(499, 161, 89, 23);
 		tpProd.add(btnProLimpiar);
 		
 		JScrollPane scrollPaneProd = new JScrollPane();
@@ -230,6 +263,9 @@ public class FrmProducto extends JFrame {
 		JPanel tpLote = new JPanel();
 		tabbedPane.addTab("Lote", null, tpLote, null);
 		tpLote.setLayout(null);
+		JButton btnCompraAct = new JButton("Actualizar Compra");
+		btnCompraAct.setBounds(647, 470, 122, 23);
+		tpLote.add(btnCompraAct);
 		
 		scrollPaneLote = new JScrollPane();
 		scrollPaneLote.setBounds(10, 80, 759, 160);
@@ -355,13 +391,12 @@ public class FrmProducto extends JFrame {
 		/*****************************************************************************************************************************************************/
 		
 		ctrlProd.cargarCbxTipoProd(cbxTipoProd);
+		ctrlProd.cargarCbxUnidad(cbxProUni);
+		ctrlProd.cargarCbxAplicaIva(cbxProAplIva);
 		ctrlProd.cargarCbxDep(cbxLoteDep);
 		ctrlProd.cargarCbxUtil(cbxLoteUtil);
 		ctrlProd.cargarCbxFiltroLote(cbxFiltroLote);
 		
-		JButton btnCompraAct = new JButton("Actualizar Compra");
-		btnCompraAct.setBounds(647, 470, 122, 23);
-		tpLote.add(btnCompraAct);
 		
 		btnUtilAgregar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -380,6 +415,12 @@ public class FrmProducto extends JFrame {
 				ctrlProd.controlInputNum(e);
 			}
 		});
+		ftxtProPres.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				ctrlProd.controlInputNum(e);
+			}
+		});
 		ftxtProPrecio.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyTyped(KeyEvent e) {
@@ -393,12 +434,14 @@ public class FrmProducto extends JFrame {
 		});
 		btnProAgr.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				ctrlProd.agregarProducto(cbxTipoProd, txtProCod, txtProNom, txtProDesc, ftxtProStockMin, ftxtProPrecio);
+				ctrlProd.agregarProducto(cbxTipoProd, txtProCod, txtProNom, txtProDesc, ftxtProStockMin, 
+						ftxtProPres, cbxProUni, cbxProAplIva, ftxtProPrecio);
 			}
 		});
 		btnProMod.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				ctrlProd.modificarProducto(cbxTipoProd, txtProId, txtProCod, txtProNom, txtProDesc, ftxtProStockMin, ftxtProPrecio);
+				ctrlProd.modificarProducto(cbxTipoProd, txtProId, txtProCod, txtProNom, txtProDesc, ftxtProStockMin, 
+						ftxtProPres, cbxProUni, cbxProAplIva, ftxtProPrecio);
 			}
 		});
 		btnProEli.addActionListener(new ActionListener() {
@@ -514,6 +557,27 @@ public class FrmProducto extends JFrame {
 	}
 	public void setFtxtProStockMin(JFormattedTextField ftxtProStockMin) {
 		this.ftxtProStockMin = ftxtProStockMin;
+	}
+	
+	public JFormattedTextField getFtxtProPres() {
+		return ftxtProPres;
+	}
+	public void setFtxtProPres(JFormattedTextField ftxtProPres) {
+		this.ftxtProPres = ftxtProPres;
+	}
+
+	public JComboBox<Unidad> getCbxProUni() {
+		return cbxProUni;
+	}
+	public void setCbxProUni(JComboBox<Unidad> cbxProUni) {
+		this.cbxProUni = cbxProUni;
+	}
+
+	public JComboBox<AplicaIva> getCbxProAplIva() {
+		return cbxProAplIva;
+	}
+	public void setCbxProAplIva(JComboBox<AplicaIva> cbxProAplIva) {
+		this.cbxProAplIva = cbxProAplIva;
 	}
 
 	public JFormattedTextField getFtxtProPrecio() {

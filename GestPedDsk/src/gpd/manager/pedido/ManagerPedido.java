@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 import gpd.dominio.pedido.EstadoPedido;
 import gpd.dominio.pedido.Pedido;
 import gpd.dominio.pedido.PedidoLinea;
+import gpd.dominio.producto.Producto;
 import gpd.dominio.transaccion.EstadoTran;
 import gpd.dominio.transaccion.TipoTran;
 import gpd.dominio.transaccion.TranLinea;
@@ -102,8 +103,8 @@ public class ManagerPedido {
 				transac.setEstadoTran(EstadoTran.P);
 				transac.setPersona(pedido.getPersona());
 				transac.setFechaHora(pedido.getFechaHora());
-				transac.setSubTotal(null);
-				transac.setIva(null);
+				transac.setSubTotal(pedido.getSubTotal());
+				transac.setIva(pedido.getIva());
 				transac.setTotal(pedido.getTotal());
 				pedido.setTransaccion(transac);
 				ManagerTransaccion mgrTransac = new ManagerTransaccion();
@@ -111,8 +112,10 @@ public class ManagerPedido {
 				List<TranLinea> listaTransacLinea = new ArrayList<>();
 				for(PedidoLinea pl : pedido.getListaPedidoLinea()) {
 					TranLinea tl = new TranLinea(transac);
-					tl.setProducto(pl.getProducto());
+					Producto prod = pl.getProducto();
+					tl.setProducto(prod);
 					tl.setCantidad(pl.getCantidad());
+					tl.setIva(pl.getIva());
 					tl.setPrecioUnit(pl.getPrecioUnit());
 					listaTransacLinea.add(tl);
 				}

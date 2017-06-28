@@ -22,10 +22,12 @@ import javax.swing.table.DefaultTableModel;
 
 import com.toedter.calendar.JDateChooser;
 
+import gpd.dominio.producto.AplicaIva;
 import gpd.dominio.producto.Deposito;
 import gpd.dominio.producto.Lote;
 import gpd.dominio.producto.Producto;
 import gpd.dominio.producto.TipoProd;
+import gpd.dominio.producto.Unidad;
 import gpd.dominio.producto.Utilidad;
 import gpd.dominio.transaccion.EstadoTran;
 import gpd.dominio.transaccion.TipoTran;
@@ -83,6 +85,33 @@ public class CtrlFrmProducto extends CtrlGenerico {
 				}
 				cbxTipoProd.setSelectedIndex(-1);
 			}
+		} catch(Exception e) {
+			manejarExcepcion(e);
+		}
+	}
+	
+	public void cargarCbxUnidad(JComboBox<Unidad> cbxProUni) {
+		try {
+			cbxProUni.removeAllItems();
+			ArrayList<Unidad> listaUnidad = (ArrayList<Unidad>) mgrProd.obtenerListaUnidad();
+			if(listaUnidad != null && !listaUnidad.isEmpty()) {
+				for(Unidad uni : listaUnidad) {
+					cbxProUni.addItem(uni);
+				}
+				cbxProUni.setSelectedIndex(-1);
+			}
+		} catch(Exception e) {
+			manejarExcepcion(e);
+		}
+	}
+
+	public void cargarCbxAplicaIva(JComboBox<AplicaIva> cbxProAplIva) {
+		try {
+			cbxProAplIva.removeAllItems();
+			for(AplicaIva aplIva : AplicaIva.values()) {
+				cbxProAplIva.addItem(aplIva);
+			}
+			cbxProAplIva.setSelectedIndex(-1);
 		} catch(Exception e) {
 			manejarExcepcion(e);
 		}
@@ -293,6 +322,13 @@ public class CtrlFrmProducto extends CtrlGenerico {
 			frmProd.getTxtProNom().setText(prod.getNombre());
 			frmProd.getTxtProDesc().setText(prod.getDescripcion());
 			frmProd.getFtxtProStockMin().setText(String.valueOf(prod.getStockMin()));
+			frmProd.getFtxtProPres().setText(String.valueOf(prod.getCantUnidad()));
+			ComboBoxModel<Unidad> cbModelUni = frmProd.getCbxProUni().getModel();
+			cbModelUni.setSelectedItem(prod.getUnidad());
+			frmProd.getCbxProUni().setSelectedItem(cbModelUni.getSelectedItem());
+			ComboBoxModel<AplicaIva> cbModelAi = frmProd.getCbxProAplIva().getModel();
+			cbModelAi.setSelectedItem(prod.getAplIva());
+			frmProd.getCbxProAplIva().setSelectedItem(cbModelAi.getSelectedItem());
 			frmProd.getFtxtProPrecio().setText(String.valueOf(prod.getPrecio()));
 		} catch(Exception e) {
 			manejarExcepcion(e);
@@ -406,13 +442,16 @@ public class CtrlFrmProducto extends CtrlGenerico {
 	}
 	
 	public Integer agregarProducto(JComboBox<TipoProd> cbxTp, JTextField codigo, JTextField nombre, JTextField descripcion, JFormattedTextField stockMin, 
-			JFormattedTextField precio) {
+			JFormattedTextField ftxtProPres, JComboBox<Unidad> cbxProUni, JComboBox<AplicaIva> cbxProAplIva, JFormattedTextField precio) {
 		try {
 			GenCompType genComp = new GenCompType();
 			genComp.setComp(cbxTp);
 			genComp.setComp(codigo);
 			genComp.setComp(nombre);
 			genComp.setComp(stockMin);
+			genComp.setComp(ftxtProPres);
+			genComp.setComp(cbxProUni);
+			genComp.setComp(cbxProAplIva);
 			genComp.setComp(precio);
 			if(controlDatosObl(genComp)) {
 				Producto prod = new Producto();
@@ -422,6 +461,9 @@ public class CtrlFrmProducto extends CtrlGenerico {
 				prod.setNombre(nombre.getText());
 				prod.setDescripcion(descripcion.getText());
 				prod.setStockMin(new Float(stockMin.getText()));
+				prod.setCantUnidad(new Integer(ftxtProPres.getText()));
+				prod.setUnidad((Unidad) cbxProUni.getSelectedItem()); 
+				prod.setAplIva((AplicaIva) cbxProAplIva.getSelectedItem()); 
 				prod.setPrecio(new Double(precio.getText()));
 				mgrProd.guardarProducto(prod);
 				clearForm(frmProd.getContentPane());
@@ -436,8 +478,8 @@ public class CtrlFrmProducto extends CtrlGenerico {
 		return null;
 	}
 	
-	public Integer modificarProducto(JComboBox<TipoProd> cbxTp, JTextField id, JTextField codigo, JTextField nombre, JTextField descripcion, 
-			JFormattedTextField stockMin, JFormattedTextField precio) {
+	public Integer modificarProducto(JComboBox<TipoProd> cbxTp, JTextField id, JTextField codigo, JTextField nombre, JTextField descripcion, JFormattedTextField stockMin, 
+			JFormattedTextField ftxtProPres, JComboBox<Unidad> cbxProUni, JComboBox<AplicaIva> cbxProAplIva, JFormattedTextField precio) {
 		try {
 			GenCompType genComp = new GenCompType();
 			genComp.setComp(cbxTp);
@@ -445,6 +487,9 @@ public class CtrlFrmProducto extends CtrlGenerico {
 			genComp.setComp(codigo);
 			genComp.setComp(nombre);
 			genComp.setComp(stockMin);
+			genComp.setComp(ftxtProPres);
+			genComp.setComp(cbxProUni);
+			genComp.setComp(cbxProAplIva);
 			genComp.setComp(precio);
 			if(controlDatosObl(genComp)) {
 				Integer idInt = ctrlNumLong(id.getText()) ? new Integer(id.getText()) : null;
@@ -455,6 +500,9 @@ public class CtrlFrmProducto extends CtrlGenerico {
 				prod.setNombre(nombre.getText());
 				prod.setDescripcion(descripcion.getText());
 				prod.setStockMin(new Float(stockMin.getText()));
+				prod.setCantUnidad(new Integer(ftxtProPres.getText()));
+				prod.setUnidad((Unidad) cbxProUni.getSelectedItem()); 
+				prod.setAplIva((AplicaIva) cbxProAplIva.getSelectedItem()); 
 				prod.setPrecio(new Double(precio.getText()));
 				mgrProd.modificarProducto(prod);
 				clearForm(frmProd.getContentPane());
@@ -857,6 +905,7 @@ public class CtrlFrmProducto extends CtrlGenerico {
 	public void setiFrmUtil(IfrmUtilidad iFrmUtil) {
 		this.iFrmUtil = iFrmUtil;
 	}
+
 
 	
 }
