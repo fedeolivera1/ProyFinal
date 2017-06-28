@@ -99,16 +99,8 @@ public class ManagerPedido {
 					!pedido.getListaPedidoLinea().isEmpty()) {
 				//se genera nueva transaccion de VENTA con estado P
 				Conector.getConn();
-				Transaccion transac = new Transaccion(TipoTran.V);
-				transac.setEstadoTran(EstadoTran.P);
-				transac.setPersona(pedido.getPersona());
-				transac.setFechaHora(pedido.getFechaHora());
-				transac.setSubTotal(pedido.getSubTotal());
-				transac.setIva(pedido.getIva());
-				transac.setTotal(pedido.getTotal());
-				pedido.setTransaccion(transac);
 				ManagerTransaccion mgrTransac = new ManagerTransaccion();
-				//persisto lineas de pedido en base
+				Transaccion transac = new Transaccion(TipoTran.V);
 				List<TranLinea> listaTransacLinea = new ArrayList<>();
 				for(PedidoLinea pl : pedido.getListaPedidoLinea()) {
 					TranLinea tl = new TranLinea(transac);
@@ -119,12 +111,19 @@ public class ManagerPedido {
 					tl.setPrecioUnit(pl.getPrecioUnit());
 					listaTransacLinea.add(tl);
 				}
+				transac.setEstadoTran(EstadoTran.P);
+				transac.setPersona(pedido.getPersona());
+				transac.setFechaHora(pedido.getFechaHora());
+				transac.setSubTotal(pedido.getSubTotal());
+				transac.setIva(pedido.getIva());
+				transac.setTotal(pedido.getTotal());
+				pedido.setTransaccion(transac);
 				transac.setListaTranLinea(listaTransacLinea);
-				//generar venta
+				//generar trnsaccion de venta
 				mgrTransac.generarTransaccionVenta(transac);
 				//persisto el pedido en base
 				getInterfacePedido().guardarPedido(pedido);
-				//persisto lineas de pedido
+				//persisto lineas de pedido en base
 				getInterfacePedidoLinea().guardarListaPedidoLinea(pedido.getListaPedidoLinea());
 			}
 			Conector.closeConn("generarNuevoPedido");
