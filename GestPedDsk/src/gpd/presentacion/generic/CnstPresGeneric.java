@@ -36,14 +36,12 @@ public interface CnstPresGeneric {
 	
 	//compra
 	public static final String MOV = "Movimiento";
-	public static final String COMPRA_CONF_LIMPIAR = "Confirma que desea limpiar el formulario ?";
 	public static final String COMPRA_PROD_YA_ING = "El producto ya ha sido ingresado, revise los datos.";
 	public static final String COMPRA_SIN_TRANSAC = "No existe compra abierta, revise los datos.";
 	public static final String COMPRA_SIN_LINEAS = "No existen items en la compra, revise los datos.";
 	public static final String COMPRA_CONFIRMADA = "La compra se ha confirmado.";
 	public static final String COMPRA_ANULADA = "La compra se ha anulado.";
 	public static final String COMPRA_NOMODIF_PROD = "El prodcuto que intenta modificar no es parte de la compra.";
-	public static final String JTABLE_SIN_ITEMS = "No hay items para mostrar...";
 	public static final String JTABLE_SIN_COMPRAS = "No hay compras para mostrar...";
 	
 	//utilidad
@@ -63,8 +61,12 @@ public interface CnstPresGeneric {
 	public static final String NUEVO_PEDIDO_CONF = "Si genera un nuevo pedido perdera los datos que no haya guardado, continuar?";
 	public static final String JTABLE_SIN_PEDIDOS = "No hay pedidos para mostrar...";
 	public static final String JTABLE_SIN_LINEASPED = "No hay lineas de pedido para mostrar...";
+	public static final String PEDIDO_LINEA_EXISTE = "La linea ya existe en el pedido.";
+	public static final String PEDIDO_NO_GENERADO = "El pedido no fue generado, o no tiene items.";
 	
 	//controles genericos
+	public static final String CONF_LIMPIAR = "Confirma que desea limpiar el formulario ?";
+	public static final String JTABLE_SIN_ITEMS = "No hay items para mostrar...";
 	public static final String DATOS_OBLIG = "Los datos marcados son obligatorios.";
 	public static final String JTABLE_EMPTY = "No se encontraron resultados...";
 	public static final String N_A = "N/A";

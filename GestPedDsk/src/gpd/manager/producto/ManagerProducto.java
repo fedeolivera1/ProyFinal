@@ -511,6 +511,8 @@ public class ManagerProducto {
 	 * que tengan stock y que cumplan con la condicion de el vencimiento (defierencia de dias seteado
 	 * en config.properties). Para cada uno, se calculará el stock total y se obtendrá el precio de compra 
 	 * mas alto (para casos remotos de diferencia de precios entre compras).
+	 * >> metodo de precio: se aplicará sobre el precio del producto, el porcentaje de utilidad de ganancia, y sobre este calculo, se
+	 * le adicionará el iva que corresponda.
 	 * @param idProducto
 	 * @return HlpProducto
 	 * @throws PresentacionException
@@ -528,13 +530,16 @@ public class ManagerProducto {
 			if(listaLote != null && !listaLote.isEmpty()) {
 				for(Lote lote : listaLote) {
 					Producto prod = lote.getTranLinea().getProducto();
-					Double precioAct = lote.getTranLinea().getPrecioUnit() * Converters.convertirPorcAMult(lote.getUtilidad().getPorc());
+					Double precioConUtil = lote.getTranLinea().getPrecioUnit() * Converters.convertirPorcAMult(lote.getUtilidad().getPorc());
+					precioConUtil = Converters.redondearDosDec(precioConUtil);
+					//obtengo coeficiente IVA a partir del producto para sumarle al precio con ganancia
 					Float coefIva = Float.valueOf(cfgDrv.getIva(prod.getAplIva().getAplIvaProp()));
-					precioAct = coefIva > 0 ? (precioAct * coefIva) : precioAct;
-					Converters.redondearDosDec(precioAct);
+					coefIva = Converters.convertirPorcAMult(coefIva);
+					precioConUtil = coefIva > 0 ? (precioConUtil * coefIva) : precioConUtil;
+					precioConUtil = Converters.redondearDosDec(precioConUtil);
 					stock += lote.getStock();
-					if(precioAct > precioFinal) {
-						precioFinal = precioAct;
+					if(precioConUtil > precioFinal) {
+						precioFinal = precioConUtil;
 					}
 				}
 				hlpProd = new HlpProducto();

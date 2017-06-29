@@ -127,23 +127,21 @@ public class ManagerTransaccion {
 		try {
 			if(transaccion != null && TipoTran.V.equals(transaccion.getTipoTran())) {
 				Conector.getConn();
-				ConfigDriver cfgDrv = ConfigDriver.getConfigDriver();
-				Float ivaSustraccion = new Float(0);
-//				ivaSustraccion = Converters.convertirPorcSustraccion(Float.valueOf(cfgDrv.getIva()));
+				Long nroTransac = Conector.obtenerSecuencia(CnstQryTransaccion.SEC_TRANSAC);
+				transaccion.setNroTransac(nroTransac);
 				Double subTotal = new Double(0);
-				Double ivaSt = new Double(0);
+				Double ivaTotal = new Double(0);
 				Double total = new Double(0);
 				for(TranLinea tl : transaccion.getListaTranLinea()) {
+					ivaTotal += tl.getIva();
 					total += (tl.getPrecioUnit() * tl.getCantidad());
 				}
 				total = Converters.redondearDosDec(total);
 				//se sustrae el iva del total
-				subTotal = total * ivaSustraccion;
+				subTotal = total - ivaTotal;
 				subTotal = Converters.redondearDosDec(subTotal);
-				ivaSt = total - subTotal;
-				Converters.redondearDosDec(ivaSt);
 				transaccion.setSubTotal(subTotal);
-				transaccion.setIva(ivaSt);
+				transaccion.setIva(ivaTotal);
 				transaccion.setTotal(total);
 				//se persiste la transaccion de tipo V (venta)
 				resultado = getInterfaceTransaccion().guardarTransaccionVenta(transaccion);
@@ -151,7 +149,7 @@ public class ManagerTransaccion {
 				getInterfaceTransaccion().guardarTranEstado(transaccion);
 				//se persisten las lineas de la transaccion
 				getInterfaceTranLinea().guardarListaTranLinea(transaccion.getListaTranLinea());
-				Conector.closeConn("generarTransaccionVenta");
+//				Conector.closeConn("generarTransaccionVenta");//FIXME ver esto, no lo llamo porque la conexion está contenida arriba
 			} else {
 				throw new PresentacionException("generarTransaccionVenta ha sido mal implementado!");
 			}

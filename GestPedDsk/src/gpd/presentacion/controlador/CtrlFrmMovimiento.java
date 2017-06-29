@@ -265,7 +265,7 @@ public class CtrlFrmMovimiento extends CtrlGenerico {
 	
 	public void limpiarCompra(FrmMovimiento frm, Boolean confirma) {
 		try {
-			if(confirma ? enviarConfirm(CnstPresGeneric.MOV, CnstPresGeneric.COMPRA_CONF_LIMPIAR) == CONFIRM_OK : true) {
+			if(confirma ? enviarConfirm(CnstPresGeneric.MOV, CnstPresGeneric.CONF_LIMPIAR) == CONFIRM_OK : true) {
 				setContainerEnabled(frm.getPnlCompraDatos(), false);
 				setContainerEnabled(frm.getPnlCompraProv(), false);
 				clearForm(frm.getContentPane());

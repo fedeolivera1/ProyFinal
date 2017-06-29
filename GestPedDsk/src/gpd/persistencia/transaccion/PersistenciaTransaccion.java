@@ -57,6 +57,7 @@ public class PersistenciaTransaccion extends Conector implements IPersTransaccio
 	public Integer guardarTransaccionVenta(Transaccion transaccion) throws PersistenciaException {
 		Integer resultado = null;
 		GenSqlExecType genExec = new GenSqlExecType(QRY_INSERT_TRANSACCION);
+		genExec.setParam(transaccion.getNroTransac());
 		Long idPersona = null;
 		if(transaccion.getPersona() instanceof PersonaFisica) {
 			PersonaFisica pf = (PersonaFisica) transaccion.getPersona();

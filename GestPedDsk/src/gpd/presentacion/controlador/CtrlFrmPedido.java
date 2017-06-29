@@ -12,6 +12,7 @@ import javax.swing.ComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JComboBox;
 import javax.swing.JDesktopPane;
+import javax.swing.JFormattedTextField;
 import javax.swing.JList;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -31,6 +32,7 @@ import gpd.dominio.persona.PersonaJuridica;
 import gpd.dominio.persona.TipoPersona;
 import gpd.dominio.producto.Producto;
 import gpd.dominio.producto.TipoProd;
+import gpd.dominio.util.Converters;
 import gpd.exceptions.PresentacionException;
 import gpd.manager.pedido.ManagerPedido;
 import gpd.manager.persona.ManagerPersona;
@@ -40,6 +42,7 @@ import gpd.presentacion.generic.CnstPresGeneric;
 import gpd.presentacion.generic.GenCompType;
 import gpd.presentacion.popup.IfrmPersBuscador;
 import gpd.types.Fecha;
+import gpd.util.ConfigDriver;
 import gpd.util.KeyMapLp;
 
 public class CtrlFrmPedido extends CtrlGenerico implements CnstPresGeneric {
@@ -219,8 +222,8 @@ public class CtrlFrmPedido extends CtrlGenerico implements CnstPresGeneric {
 			sb.append("Pedido existente");
 		} else if(getNuevoPedido() != null) {
 			sb.append("Pedido nuevo");
-			getFrm().getTxtPedInfo().setText(sb.toString());
 		}
+		getFrm().getTxtPedInfo().setText(sb.toString());
 	}
 	
 	/*****************************************************************************************************************************************************/
@@ -229,19 +232,52 @@ public class CtrlFrmPedido extends CtrlGenerico implements CnstPresGeneric {
 	
 	public void nuevoPedido() {
 		if(enviarConfirm(PED, NUEVO_PEDIDO_CONF) == CONFIRM_OK) {
-			abrirBuscadorPers();
 			if(getPersSel() != null) {
 				clearForm(getFrm().getContentPane());
+				cargarPersonaSeleccionada();
 				mapLineasPedido = new HashMap<>();
 				Pedido pedido = new Pedido();
 				pedido.setFechaHora(new Fecha(Fecha.AMDHMS));
 				pedido.setPersona(getPersSel());
 				pedido.setEstado(EstadoPedido.P);
 				setNuevoPedido(pedido);
-				setearInfoPedido(getNuevoPedido());
+				setearInfoPedido(null);
 			} else {
 				enviarWarning(PED, PEDIDO_SIN_PERS);
 			}
+		}
+	}
+	
+	public void agregarItemAPedido(JComboBox<Producto> cbxPedProd, JFormattedTextField ftxtPedCant) {
+		try {
+			GenCompType genComp = new GenCompType();
+			genComp.setComp(cbxPedProd);
+			genComp.setComp(ftxtPedCant);
+			if(controlDatosObl(genComp)) {
+				PedidoLinea pl = new PedidoLinea(getNuevoPedido());
+				pl.setProducto((Producto) cbxPedProd.getSelectedItem());
+				pl.setCantidad(Integer.valueOf(ftxtPedCant.getText()));
+				Double precioCalcProd = Double.valueOf(getFrm().getFtxtPedLotePrecio().getText());
+				
+				ConfigDriver cfg = new ConfigDriver();
+				Float ivaDeProd = Float.valueOf(cfg.getIva(pl.getProducto().getAplIva().getAplIvaProp()));
+				pl.setIva(Converters.obtenerIvaDePrecio(precioCalcProd, ivaDeProd));
+				pl.setPrecioUnit(Double.valueOf(getFrm().getFtxtPedLotePrecio().getText()));
+				Pedido pedidoAct = pl.getPedido();
+				KeyMapLp key = new KeyMapLp(pedidoAct.getPersona().getIdPersona(), 
+						pedidoAct.getFechaHora().getAsNumber(Fecha.AMDHMS), 
+						pl.getProducto().getIdProducto());
+				if(!mapLineasPedido.containsKey(key)) {
+					mapLineasPedido.put(key, pl);
+					cargarJtPedidoLin();
+				} else {
+					enviarWarning(PED, PEDIDO_LINEA_EXISTE);
+				}
+			} else {
+				enviarWarning(PED, DATOS_OBLIG);
+			}
+		} catch(Exception e) {
+			manejarExcepcion(e);
 		}
 	}
 
@@ -315,7 +351,34 @@ public class CtrlFrmPedido extends CtrlGenerico implements CnstPresGeneric {
 		cbModelProd.setSelectedItem(prod);
 		getFrm().getCbxPedidoProd().setSelectedItem(cbModelProd.getSelectedItem());
 		
-		getFrm().getTxtPedidoCant().setText(String.valueOf(cant));
+		getFrm().getTxtPedCant().setText(String.valueOf(cant));
+	}
+	
+	/**
+	 * funcion para generar el pedidio nuevo > ManagerPedido
+	 */
+	public void generarPedido(JDateChooser dchPedFec, JFormattedTextField ftxtPedHora) {
+		try {
+			GenCompType genComp = new GenCompType();
+			genComp.setComp(dchPedFec);
+			genComp.setComp(ftxtPedHora);
+			if(controlDatosObl(genComp)) {
+				if(getNuevoPedido() != null && mapLineasPedido != null &&
+						!mapLineasPedido.isEmpty()) {
+					Pedido pedido = getNuevoPedido();
+					ArrayList<PedidoLinea> listaPl = new ArrayList<>();
+					listaPl.addAll(mapLineasPedido.values());
+					pedido.setListaPedidoLinea(listaPl);
+					mgrPed.generarNuevoPedido(getNuevoPedido());
+				} else {
+					enviarWarning(PED, PEDIDO_NO_GENERADO);
+				}
+			} else {
+				enviarWarning(PED, DATOS_OBLIG);
+			}
+		} catch(Exception e) {
+			manejarExcepcion(e);
+		}
 	}
 	
 	/*****************************************************************************************************************************************************/
@@ -487,5 +550,6 @@ public class CtrlFrmPedido extends CtrlGenerico implements CnstPresGeneric {
 	public void setIfrmPb(IfrmPersBuscador ifrmPb) {
 		this.ifrmPb = ifrmPb;
 	}
+
 	
 }

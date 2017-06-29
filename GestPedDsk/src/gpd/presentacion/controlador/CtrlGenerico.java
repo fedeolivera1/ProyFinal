@@ -7,6 +7,8 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.GregorianCalendar;
 
 import javax.swing.DefaultListModel;
@@ -47,6 +49,8 @@ public abstract class CtrlGenerico {
 	public static int CONFIRM_OK = 0;
 	public static int CONFIRM_CANCEL = 2;
 	public static int LENGTH_DDMMAAAA = 10;
+	public static int LENGTH_HHMM = 5;
+	public static String SDF_HHMM = "HH:mm";
 	
 	
 	public static CompValidador getCompVal() {
@@ -104,28 +108,30 @@ public abstract class CtrlGenerico {
 		return mascara;
     }
 	
+	/**
+	 * recibe una fecha en formato texto, y parsea con dateformat
+	 * @param comp
+	 */
 	@SuppressWarnings("unused")
 	public void formatoFechaEnTxt(Component comp) {
 		JTextField fechaComp = (JTextField) comp;
-		String fechaStr = fechaComp.getText();
-		if(fechaStr != null && fechaStr.trim().length() == LENGTH_DDMMAAAA) {
-			java.text.DateFormat df = java.text.DateFormat.getInstance(); 
-			try {
+		String datoStr = fechaComp.getText();
+		try {
+			if(datoStr != null && datoStr.trim().length() == LENGTH_DDMMAAAA) {
+				java.text.DateFormat df = java.text.DateFormat.getInstance(); 
 				java.text.DateFormat formatter = java.text.DateFormat.getDateInstance(java.text.DateFormat.SHORT); 
 				formatter.setLenient(false); 
-				java.util.Date date = formatter.parse(fechaStr);
-			} catch (ParseException ex) { 
-				clearComponent(comp);
-				JOptionPane.showMessageDialog(null, "La fecha ingresada no es valida.", "Formato Fecha", JOptionPane.WARNING_MESSAGE); 
+				java.util.Date date = formatter.parse(datoStr);
 			}
-//		} else if(fechaStr.trim().length()) {
-//			ver para otros formatos, por ej con hora	
+		} catch (ParseException ex) { 
+			clearComponent(comp);
+			JOptionPane.showMessageDialog(null, "La fecha ingresada no es valida.", "Formato Fecha", JOptionPane.WARNING_MESSAGE); 
 		}
 	}
 	
 	/**
 	 * 
-	 * @param fecha
+	 * @param fecha en texto a convertir
 	 * @return Fecha
 	 * toma un dato string con formato fecha xx/xx/xxxx y lo transforma a un objeto Fecha
 	 */
@@ -136,6 +142,48 @@ public abstract class CtrlGenerico {
 			String[] tokens = fecha.split(delims);
 			if(tokens.length == 3) {
 				fechaRet = new Fecha(Integer.valueOf(tokens[2]), Integer.valueOf(tokens[1]), Integer.valueOf(tokens[0]));
+			}
+		}
+		return fechaRet;
+	}
+	
+	/**
+	 * recibe una hora en formato texto, y parsea con simpledateformat
+	 * @param comp
+	 */
+	@SuppressWarnings("deprecation")
+	public void formatoHoraEnTxt(Component comp) {
+		JTextField fechaComp = (JTextField) comp;
+		String horaStr = fechaComp.getText();
+		if(horaStr != null && horaStr.trim().length() == LENGTH_HHMM) {
+			try {
+				SimpleDateFormat sdfHora = new SimpleDateFormat(SDF_HHMM);
+				sdfHora.setLenient(false);
+				Date hora = sdfHora.parse(horaStr);
+				if(hora.getMinutes() != 0 && hora.getMinutes() != 30) {
+					clearComponent(comp);
+					enviarWarning("Formato Hora", "El rango de hora debe ser cada media hora.");
+				}
+			} catch (ParseException ex) { 
+				clearComponent(comp);
+				enviarWarning("Formato Hora", "La hora ingresada no es valida.");
+			}
+		}
+	}
+	
+	/**
+	 * 
+	 * @param hora en texto a convertir
+	 * @return Fecha
+	 * toma un dato string con formato hora HH:mm y lo transforma a un objeto Fecha
+	 */
+	protected Fecha convertirHoraDesdeTxt(String hora) {
+		Fecha fechaRet = null;
+		if(hora != null && hora.trim().length() == LENGTH_HHMM) {
+			String delims = ":";
+			String[] tokens = hora.split(delims);
+			if(tokens.length == 3) {
+				fechaRet = new Fecha(Integer.valueOf(tokens[0]), Integer.valueOf(tokens[1]));
 			}
 		}
 		return fechaRet;

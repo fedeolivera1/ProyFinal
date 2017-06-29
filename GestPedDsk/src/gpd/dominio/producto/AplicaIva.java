@@ -3,7 +3,7 @@ package gpd.dominio.producto;
 public enum AplicaIva {
 	B("Basico", "iva_basico", 'B'),
 	M("Minimo", "iva_minimo", 'M'),
-	E("Exento", "iva_exento", 'E');
+	E("Exento", "iva_exento", 'X');
 	
 	private final String aplIvaDesc;
 	private final String aplIvaProp;

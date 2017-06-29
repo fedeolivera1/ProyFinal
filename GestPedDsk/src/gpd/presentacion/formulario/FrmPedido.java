@@ -1,12 +1,13 @@
 package gpd.presentacion.formulario;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.GregorianCalendar;
@@ -21,8 +22,10 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
@@ -35,8 +38,6 @@ import gpd.dominio.producto.Producto;
 import gpd.dominio.producto.TipoProd;
 import gpd.dominio.usuario.UsuarioDsk;
 import gpd.presentacion.controlador.CtrlFrmPedido;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 
 public class FrmPedido extends JFrame {
 
@@ -51,15 +52,15 @@ public class FrmPedido extends JFrame {
 	private JComboBox<EstadoPedido> cbxPedidoEstado;
 	private JComboBox<TipoProd> cbxPedidoTp;
 	private JComboBox<Producto> cbxPedidoProd;
-	private JFormattedTextField txtPedidoCant;
+	private JFormattedTextField ftxtPedCant;
 	private JDateChooser dchPedidoIni;
 	private JDateChooser dchPedidoFin;
 	private JTextField txtPersDesc;
 	private JDesktopPane desktopPane;
 	private JTable jtPedidoLin;
-	private JTextField txtPedInfo;
 	private JFormattedTextField ftxtPedLotePrecio;
 	private JFormattedTextField ftxtPedLoteStock;
+	private JTextArea txtPedInfo;
 
 	public static FrmPedido getFrmPedido(UsuarioDsk usr) {
 		if(instance == null) {
@@ -68,6 +69,7 @@ public class FrmPedido extends JFrame {
 		}
 		return instance;
 	}
+
 
 	/**
 	 * Create the frame.
@@ -125,9 +127,9 @@ public class FrmPedido extends JFrame {
 		label_2.setBounds(16, 76, 46, 14);
 		pnlDatosPedido.add(label_2);
 		
-		txtPedidoCant = new JFormattedTextField();
-		txtPedidoCant.setBounds(72, 73, 52, 20);
-		pnlDatosPedido.add(txtPedidoCant);
+		ftxtPedCant = new JFormattedTextField();
+		ftxtPedCant.setBounds(72, 73, 52, 20);
+		pnlDatosPedido.add(ftxtPedCant);
 		
 		JLabel lblPrecio = new JLabel("Precio");
 		lblPrecio.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -262,14 +264,6 @@ public class FrmPedido extends JFrame {
 		btnPedActPedido.setBounds(516, 521, 124, 23);
 		pnlPedido.add(btnPedActPedido);
 		
-		txtPedInfo = new JTextField();
-		txtPedInfo.setBorder(new LineBorder(new Color(0, 0, 0)));
-		txtPedInfo.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		txtPedInfo.setEditable(false);
-		txtPedInfo.setBounds(468, 9, 306, 34);
-		pnlPedido.add(txtPedInfo);
-		txtPedInfo.setColumns(10);
-		
 		JButton btnPedLimpiar = new JButton("Limpiar");
 		btnPedLimpiar.setBounds(612, 57, 89, 23);
 		pnlPedido.add(btnPedLimpiar);
@@ -278,7 +272,7 @@ public class FrmPedido extends JFrame {
 		dchPedFecha.setBounds(224, 308, 87, 20);
 		pnlPedido.add(dchPedFecha);
 		
-		JFormattedTextField ftxtPedHora = new JFormattedTextField();
+		JFormattedTextField ftxtPedHora = new JFormattedTextField(ctrlPed.mascNumerica("##:##"));
 		ftxtPedHora.setBounds(321, 308, 52, 20);
 		pnlPedido.add(ftxtPedHora);
 		
@@ -287,10 +281,24 @@ public class FrmPedido extends JFrame {
 		pnlPedido.add(lblFechahora);
 		lblFechahora.setHorizontalAlignment(SwingConstants.RIGHT);
 		
+		txtPedInfo = new JTextArea();
+		txtPedInfo.setRows(2);
+		txtPedInfo.setEditable(false);
+		txtPedInfo.setBackground(UIManager.getColor("InternalFrame.borderColor"));
+		txtPedInfo.setBounds(468, 0, 316, 51);
+		pnlPedido.add(txtPedInfo);
+		
 		/*****************************************************************************************************************************************************/
 		/* ACCIONES CONTROLES */
 		/*****************************************************************************************************************************************************/
 		
+		//mascara hora
+		ftxtPedHora.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				ctrlPed.formatoHoraEnTxt(ftxtPedHora);
+			}
+		});
 		//boton buscar personas
 		btnPedBp.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -330,6 +338,7 @@ public class FrmPedido extends JFrame {
 		//boton generar pedido
 		btnPedGenPedido.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				ctrlPed.generarPedido(dchPedFecha, ftxtPedHora);
 			}
 		});
 		//boton generar venta
@@ -337,8 +346,14 @@ public class FrmPedido extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 			}
 		});
+		//boton agregar item a pedido
+		button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				ctrlPed.agregarItemAPedido(cbxPedidoProd, ftxtPedCant);
+			}
+		});
 		//control num en cantidad
-		txtPedidoCant.addKeyListener(new KeyAdapter() {
+		ftxtPedCant.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyTyped(KeyEvent e) {
 				ctrlPed.controlInputNum(e);
@@ -402,11 +417,11 @@ public class FrmPedido extends JFrame {
 		this.cbxPedidoProd = cbxPedidoProd;
 	}
 
-	public JFormattedTextField getTxtPedidoCant() {
-		return txtPedidoCant;
+	public JFormattedTextField getTxtPedCant() {
+		return ftxtPedCant;
 	}
-	public void setTxtPedidoCant(JFormattedTextField txtPedidoCant) {
-		this.txtPedidoCant = txtPedidoCant;
+	public void setTxtPedCant(JFormattedTextField txtPedCant) {
+		this.ftxtPedCant = txtPedCant;
 	}
 
 	public JDateChooser getDchPedidoIni() {
@@ -430,13 +445,6 @@ public class FrmPedido extends JFrame {
 		this.jtPedidoLin = jtPedidoLin;
 	}
 
-	public JTextField getTxtPedInfo() {
-		return txtPedInfo;
-	}
-	public void setTxtPedInfo(JTextField txtPedInfo) {
-		this.txtPedInfo = txtPedInfo;
-	}
-	
 	public JFormattedTextField getFtxtPedLotePrecio() {
 		return ftxtPedLotePrecio;
 	}
@@ -447,7 +455,23 @@ public class FrmPedido extends JFrame {
 	public JFormattedTextField getFtxtPedLoteStock() {
 		return ftxtPedLoteStock;
 	}
+	
 	public void setFtxtPedLoteStock(JFormattedTextField ftxtPedLoteStock) {
 		this.ftxtPedLoteStock = ftxtPedLoteStock;
 	}
+	
+	public JFormattedTextField getFtxtPedCant() {
+		return ftxtPedCant;
+	}
+	public void setFtxtPedCant(JFormattedTextField ftxtPedCant) {
+		this.ftxtPedCant = ftxtPedCant;
+	}
+	
+	public JTextArea getTxtPedInfo() {
+		return txtPedInfo;
+	}
+	public void setTxtPedInfo(JTextArea txtPedInfo) {
+		this.txtPedInfo = txtPedInfo;
+	}
+	
 }

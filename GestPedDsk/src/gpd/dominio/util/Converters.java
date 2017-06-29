@@ -40,4 +40,26 @@ public abstract class Converters {
 		}
 		return nroBd.doubleValue();
 	}
+	
+	public static Double obtenerIvaDePrecio(Double precio, Float iva) {
+		Double ivaDePrecio = new Double(0);
+		if(iva > 0) {
+			Float ivaMult = convertirPorcAMult(iva);
+			ivaDePrecio = precio - (precio / ivaMult);
+			ivaDePrecio = redondearDosDec(ivaDePrecio);
+		}
+		return ivaDePrecio;
+	}
+	
+	public static Double obtenerPrecioMasIva(Double precio, Float iva) {
+		Double precioConIva = new Double(0);
+		if(iva > 0) {
+			Float ivaMult = convertirPorcAMult(iva);
+			precioConIva = precio * ivaMult;
+			precioConIva = redondearDosDec(precioConIva);
+		} else {
+			precioConIva = precio;
+		}
+		return precioConIva;
+	}
 }
