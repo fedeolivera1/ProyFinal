@@ -13,6 +13,9 @@ import gpd.dominio.transaccion.EstadoTran;
 import gpd.dominio.transaccion.TipoTran;
 import gpd.dominio.transaccion.TranLinea;
 import gpd.dominio.transaccion.Transaccion;
+import gpd.dominio.util.Converters;
+import gpd.dominio.util.Origen;
+import gpd.dominio.util.Sinc;
 import gpd.exceptions.PersistenciaException;
 import gpd.exceptions.PresentacionException;
 import gpd.interfaces.pedido.IPersPedido;
@@ -100,8 +103,14 @@ public class ManagerPedido {
 				//se genera nueva transaccion de VENTA con estado P
 				Conector.getConn();
 				ManagerTransaccion mgrTransac = new ManagerTransaccion();
+				//transaccion
+				Sinc sinc = Sinc.N;
+				Fecha  ultAct = new Fecha(Fecha.AMDHMS);
 				Transaccion transac = new Transaccion(TipoTran.V);
 				List<TranLinea> listaTransacLinea = new ArrayList<>();
+				Double subTotal = new Double(0);
+				Double ivaTotal = new Double(0);
+				Double total = new Double(0);
 				for(PedidoLinea pl : pedido.getListaPedidoLinea()) {
 					TranLinea tl = new TranLinea(transac);
 					Producto prod = pl.getProducto();
@@ -110,14 +119,29 @@ public class ManagerPedido {
 					tl.setIva(pl.getIva());
 					tl.setPrecioUnit(pl.getPrecioUnit());
 					listaTransacLinea.add(tl);
+					total += pl.getPrecioUnit() * pl.getCantidad();
+					ivaTotal += pl.getIva() * pl.getCantidad();
+					pl.setSinc(sinc);
+					pl.setUltAct(ultAct);
 				}
+				subTotal = total - ivaTotal;
+				subTotal = Converters.redondearDosDec(subTotal);
+				ivaTotal = Converters.redondearDosDec(ivaTotal);
+				total = Converters.redondearDosDec(total);
+				pedido.setSubTotal(subTotal);
+				pedido.setIva(ivaTotal);
+				pedido.setTotal(total);
 				transac.setEstadoTran(EstadoTran.P);
 				transac.setPersona(pedido.getPersona());
 				transac.setFechaHora(pedido.getFechaHora());
 				transac.setSubTotal(pedido.getSubTotal());
 				transac.setIva(pedido.getIva());
 				transac.setTotal(pedido.getTotal());
+				//pedido
 				pedido.setTransaccion(transac);
+				pedido.setOrigen(Origen.D);
+				pedido.setSinc(sinc);
+				pedido.setUltAct(ultAct);
 				transac.setListaTranLinea(listaTransacLinea);
 				//generar trnsaccion de venta
 				mgrTransac.generarTransaccionVenta(transac);

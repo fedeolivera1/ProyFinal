@@ -32,6 +32,7 @@ import gpd.dominio.persona.PersonaJuridica;
 import gpd.dominio.persona.TipoPersona;
 import gpd.dominio.producto.Producto;
 import gpd.dominio.producto.TipoProd;
+import gpd.dominio.usuario.UsuarioDsk;
 import gpd.dominio.util.Converters;
 import gpd.exceptions.PresentacionException;
 import gpd.manager.pedido.ManagerPedido;
@@ -48,6 +49,7 @@ import gpd.util.KeyMapLp;
 public class CtrlFrmPedido extends CtrlGenerico implements CnstPresGeneric {
 
 	private FrmPedido frm; 
+	private UsuarioDsk usr;
 	private JDesktopPane deskPane;
 	private ManagerProducto mgrProd = new ManagerProducto();
 	private ManagerPersona mgrPers = new ManagerPersona();
@@ -58,9 +60,10 @@ public class CtrlFrmPedido extends CtrlGenerico implements CnstPresGeneric {
 	private HashMap<KeyMapLp, PedidoLinea> mapLineasPedido;
 	
 
-	public CtrlFrmPedido(FrmPedido frmPed) {
+	public CtrlFrmPedido(FrmPedido frmPed, UsuarioDsk usr) {
 		super();
 		this.setFrm(frmPed);
+		this.setUsr(usr);
 	}
 	
 	/*****************************************************************************************************************************************************/
@@ -369,7 +372,9 @@ public class CtrlFrmPedido extends CtrlGenerico implements CnstPresGeneric {
 					ArrayList<PedidoLinea> listaPl = new ArrayList<>();
 					listaPl.addAll(mapLineasPedido.values());
 					pedido.setListaPedidoLinea(listaPl);
+					pedido.setUsuario(getUsr());
 					mgrPed.generarNuevoPedido(getNuevoPedido());
+					enviarInfo(PED, PEDIDO_GEN_OK);
 				} else {
 					enviarWarning(PED, PEDIDO_NO_GENERADO);
 				}
@@ -549,6 +554,13 @@ public class CtrlFrmPedido extends CtrlGenerico implements CnstPresGeneric {
 	}
 	public void setIfrmPb(IfrmPersBuscador ifrmPb) {
 		this.ifrmPb = ifrmPb;
+	}
+
+	public UsuarioDsk getUsr() {
+		return usr;
+	}
+	public void setUsr(UsuarioDsk usr) {
+		this.usr = usr;
 	}
 
 	

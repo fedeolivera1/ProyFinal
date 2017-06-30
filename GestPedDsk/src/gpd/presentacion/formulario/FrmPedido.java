@@ -75,7 +75,7 @@ public class FrmPedido extends JFrame {
 	 * Create the frame.
 	 */
 	public FrmPedido(UsuarioDsk usr) {
-		ctrlPed = new CtrlFrmPedido(this);
+		ctrlPed = new CtrlFrmPedido(this, usr);
 				 
 		setTitle("Pedido");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);

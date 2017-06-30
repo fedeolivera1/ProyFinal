@@ -13,7 +13,7 @@ public interface CnstQryPedido {
 												+ "FROM pedido p "
 												+ "WHERE (p.id_persona = ? OR -1 = ?) "
 												+ "AND p.estado = ? "
-												+ "AND ( TO_CHAR(p.fecha_hora, 'yyyy-mm-dd') BETWEEN ? AND ?) "
+												+ "AND (p.fecha_hora::date BETWEEN ? AND ?) "
 												+ "ORDER BY p.fecha_hora DESC";
 	
 	public static final String QRY_INSERT_PEDIDO = "INSERT INTO pedido "

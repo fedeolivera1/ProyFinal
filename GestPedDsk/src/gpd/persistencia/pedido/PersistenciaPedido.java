@@ -10,9 +10,12 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import gpd.db.constantes.CnstQryPedido;
+import gpd.db.generic.GenSqlExecType;
 import gpd.db.generic.GenSqlSelectType;
 import gpd.dominio.pedido.EstadoPedido;
 import gpd.dominio.pedido.Pedido;
+import gpd.dominio.persona.PersonaFisica;
+import gpd.dominio.persona.PersonaJuridica;
 import gpd.dominio.util.Origen;
 import gpd.dominio.util.Sinc;
 import gpd.exceptions.ConectorException;
@@ -138,16 +141,50 @@ public class PersistenciaPedido extends Conector implements IPersPedido, CnstQry
 	}
 
 	@Override
-	public Integer guardarPedido(Pedido pedido) {
+	public Integer guardarPedido(Pedido pedido) throws PersistenciaException {
+		Integer resultado = null;
+		GenSqlExecType genExec = new GenSqlExecType(QRY_INSERT_PEDIDO);
+		Long idPersona = null;
+		if(pedido.getPersona() instanceof PersonaFisica) {
+			PersonaFisica pf = (PersonaFisica) pedido.getPersona();
+			idPersona = pf.getDocumento();
+		} else if(pedido.getPersona() instanceof PersonaJuridica) {
+			PersonaJuridica pj = (PersonaJuridica) pedido.getPersona();
+			idPersona = pj.getRut();
+		}
+		genExec.setParam(idPersona);
+		genExec.setParam(pedido.getFechaHora());
+		genExec.setParam(pedido.getEstado().getAsChar());
+		genExec.setParam(pedido.getFechaProg());
+		genExec.setParam(pedido.getHoraProg());
+		genExec.setParam(pedido.getOrigen().getAsChar());
+		genExec.setParam(pedido.getSubTotal());
+		genExec.setParam(pedido.getIva());
+		genExec.setParam(pedido.getTotal());
+		genExec.setParam(pedido.getUsuario().getNomUsu());
+		genExec.setParam(pedido.getTransaccion().getNroTransac());
+		genExec.setParam(pedido.getSinc().getAsChar());
+		genExec.setParam(pedido.getUltAct());
+		try {
+			resultado = (Integer) runGeneric(genExec);
+		} catch (ConectorException e) {
+			Conector.rollbackConn();
+			logger.error("Excepcion al guardarTransaccionVenta: " + e.getMessage(), e);
+			throw new PersistenciaException(e);
+		}
+		return resultado;
+	}
+
+	@Override
+	public Integer modificarPedido(Pedido pedido) throws PersistenciaException  {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Integer eliminarPedido(Pedido pedido) {
+	public Integer eliminarPedido(Pedido pedido) throws PersistenciaException  {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 
 }

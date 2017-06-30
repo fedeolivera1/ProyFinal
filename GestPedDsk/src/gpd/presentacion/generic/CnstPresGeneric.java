@@ -57,6 +57,7 @@ public interface CnstPresGeneric {
 	
 	//pedido
 	public static final String PED = "Pedido";
+	public static final String PEDIDO_GEN_OK = "EL pedido se ha generado correctamente.";
 	public static final String PEDIDO_SIN_PERS = "Debe seleccionar una persona para el pedido.";
 	public static final String NUEVO_PEDIDO_CONF = "Si genera un nuevo pedido perdera los datos que no haya guardado, continuar?";
 	public static final String JTABLE_SIN_PEDIDOS = "No hay pedidos para mostrar...";

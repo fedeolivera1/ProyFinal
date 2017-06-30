@@ -75,7 +75,7 @@ public class PersistenciaPedidoLinea extends Conector implements IPersPedidoLine
 				paramList.add(pl.getCantidad());
 				paramList.add(pl.getIva());
 				paramList.add(pl.getPrecioUnit());
-				paramList.add(pl.getSinc());
+				paramList.add(pl.getSinc().getAsChar());
 				paramList.add(pl.getUltAct());
 				genExec.setParamList(paramList);
 			}

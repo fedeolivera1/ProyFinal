@@ -30,11 +30,13 @@ public abstract class Conector {
 	 */
 	public static void getConn() {
 		try {
-			ConfigDriver cfgDrv = ConfigDriver.getConfigDriver();
-			Class.forName(cfgDrv.getDbDriver());
-			conn = DriverManager.getConnection(cfgDrv.getDbUrl()+cfgDrv.getDbName(), cfgDrv.getDbUser(), cfgDrv.getDbPass());
-			conn.setAutoCommit(false);
-			logger.debug("Se abre conexion db... Thread: " + Thread.currentThread().getId());
+			if(conn == null || conn.isClosed()) {
+				ConfigDriver cfgDrv = ConfigDriver.getConfigDriver();
+				Class.forName(cfgDrv.getDbDriver());
+				conn = DriverManager.getConnection(cfgDrv.getDbUrl()+cfgDrv.getDbName(), cfgDrv.getDbUser(), cfgDrv.getDbPass());
+				conn.setAutoCommit(false);
+				logger.debug("Se abre conexion db... Thread: " + Thread.currentThread().getId());
+			}
 		} catch (SQLException | ClassNotFoundException e) {
 			try {
 				conn.rollback();

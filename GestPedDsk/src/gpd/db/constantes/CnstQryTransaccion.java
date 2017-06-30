@@ -35,7 +35,7 @@ public interface CnstQryTransaccion {
 															+ "AND t.estado_act = te.estado "
 															+ "WHERE (operacion = ? OR '' = ?) "
 															+ "AND (t.estado_act = ? OR '' = ?) "
-															+ "AND ( TO_CHAR(t.fecha_hora, 'yyyy-mm-dd') BETWEEN ? AND ? ) "
+															+ "AND (t.fecha_hora::date BETWEEN ? AND ? ) "
 															+ "ORDER BY te.fecha_hora DESC";
 	
 	public static final String QRY_SELECT_ULT_TRANESTADO_XID = "SELECT te.estado FROM tran_estado te "
