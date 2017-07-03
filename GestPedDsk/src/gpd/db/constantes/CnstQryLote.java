@@ -10,6 +10,9 @@ public interface CnstQryLote {
 												+ "venc = ?, nro_dep = ?, id_util = ? "
 												+ "WHERE id_lote = ?";
 	
+	public static final String QRY_UPDATE_STOCK_LOTE = "UPDATE lote SET stock = ? "
+												+ "WHERE id_lote = ?";
+	
 	public static final String QRY_SELECT_LOTES_XTRANSAC = "SELECT l.id_lote, l.nro_transac, l.id_producto, l.venc, l.nro_dep, l.id_util, l.stock "
 												+ "FROM lote l "
 												+ "INNER JOIN tran_linea tl "

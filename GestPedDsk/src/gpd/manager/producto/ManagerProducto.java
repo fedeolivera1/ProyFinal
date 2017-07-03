@@ -605,6 +605,8 @@ public class ManagerProducto {
 					if(lote.getStock() > restanteActStock) {
 						logger.info(" >> El lote: " + lote.getIdLote() + " tiene stock suficiente para el producto: " + idProducto);
 						//actualizo lote restando cantidad a bajar
+						Integer nuevoStockLote = lote.getStock() - restanteActStock;
+						getInterfaceLote().actualizarStockLote(lote.getIdLote(), nuevoStockLote);
 						break;
 					} else {
 						logger.info(" >> El lote: " + lote.getIdLote() + " utlizará su stock restante [" + lote.getStock() + " unidades] para "
@@ -612,6 +614,7 @@ public class ManagerProducto {
 						restanteActStock -= lote.getStock();
 						//actualizo lote pasando stock de lote a 0 
 						//y busco en siguiente lote
+						getInterfaceLote().actualizarStockLote(lote.getIdLote(), 0);
 					}
 				}
 			}

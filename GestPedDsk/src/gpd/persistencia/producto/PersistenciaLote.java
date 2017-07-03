@@ -127,6 +127,22 @@ public class PersistenciaLote extends Conector implements IPersLote, CnstQryLote
 		}
 		return resultado;
 	}
+	
+	@Override
+	public Integer actualizarStockLote(Integer idLote, Integer stock) throws PersistenciaException {
+		Integer resultado = null;
+		GenSqlExecType genExec = new GenSqlExecType(QRY_UPDATE_STOCK_LOTE);
+		genExec.setParam(stock);
+		genExec.setParam(idLote);
+		try {
+			resultado = (Integer) runGeneric(genExec);
+		} catch (ConectorException e) {
+			Conector.rollbackConn();
+			logger.error("Excepcion al actualizarLote: " + e.getMessage(), e);
+			throw new PersistenciaException(e);
+		}
+		return resultado;
+	}
 
 	@Override
 	public Integer eliminarLote(Lote lote) throws PersistenciaException {
