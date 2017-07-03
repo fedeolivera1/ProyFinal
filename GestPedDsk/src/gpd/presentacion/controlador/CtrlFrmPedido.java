@@ -233,22 +233,45 @@ public class CtrlFrmPedido extends CtrlGenerico implements CnstPresGeneric {
 	/* ACCIONES */
 	/*****************************************************************************************************************************************************/
 	
+	public void activarPedidoNuevo() { 
+		//ingresa a nuevo pedido
+		clearForm(getFrm().getContentPane());
+		cargarPersonaSeleccionada();
+		mapLineasPedido = new HashMap<>();
+		Pedido pedido = new Pedido();
+		pedido.setFechaHora(new Fecha(Fecha.AMDHMS));
+		pedido.setPersona(getPersSel());
+		pedido.setEstado(EstadoPedido.P);
+		setNuevoPedido(pedido);
+		setContainerEnabled(getFrm().getPnlPedBus(), false);
+		setearInfoPedido(null);
+	}
+	
+	public void activarPedidoExistente() { 
+		clearForm(getFrm().getContentPane());
+		cargarPersonaSeleccionada();
+		mapLineasPedido = new HashMap<>();
+		setContainerEnabled(getFrm().getPnlPedBus(), true);
+		setNuevoPedido(null);
+		setearInfoPedido(null);
+	}
+	
 	public void nuevoPedido() {
-		if(enviarConfirm(PED, NUEVO_PEDIDO_CONF) == CONFIRM_OK) {
-			if(getPersSel() != null) {
-				clearForm(getFrm().getContentPane());
-				cargarPersonaSeleccionada();
-				mapLineasPedido = new HashMap<>();
-				Pedido pedido = new Pedido();
-				pedido.setFechaHora(new Fecha(Fecha.AMDHMS));
-				pedido.setPersona(getPersSel());
-				pedido.setEstado(EstadoPedido.P);
-				setNuevoPedido(pedido);
-				setearInfoPedido(null);
-			} else {
-				enviarWarning(PED, PEDIDO_SIN_PERS);
-			}
-		}
+//		if(enviarConfirm(PED, NUEVO_PEDIDO_CONF) == CONFIRM_OK) {
+//			if(getPersSel() != null) {
+//				clearForm(getFrm().getContentPane());
+//				cargarPersonaSeleccionada();
+//				mapLineasPedido = new HashMap<>();
+//				Pedido pedido = new Pedido();
+//				pedido.setFechaHora(new Fecha(Fecha.AMDHMS));
+//				pedido.setPersona(getPersSel());
+//				pedido.setEstado(EstadoPedido.P);
+//				setNuevoPedido(pedido);
+//				setearInfoPedido(null);
+//			} else {
+//				enviarWarning(PED, PEDIDO_SIN_PERS);
+//			}
+//		}
 	}
 	
 	public void agregarItemAPedido(JComboBox<Producto> cbxPedProd, JFormattedTextField ftxtPedCant) {
@@ -257,24 +280,28 @@ public class CtrlFrmPedido extends CtrlGenerico implements CnstPresGeneric {
 			genComp.setComp(cbxPedProd);
 			genComp.setComp(ftxtPedCant);
 			if(controlDatosObl(genComp)) {
-				PedidoLinea pl = new PedidoLinea(getNuevoPedido());
-				pl.setProducto((Producto) cbxPedProd.getSelectedItem());
-				pl.setCantidad(Integer.valueOf(ftxtPedCant.getText()));
-				Double precioCalcProd = Double.valueOf(getFrm().getFtxtPedLotePrecio().getText());
-				
-				ConfigDriver cfg = new ConfigDriver();
-				Float ivaDeProd = Float.valueOf(cfg.getIva(pl.getProducto().getAplIva().getAplIvaProp()));
-				pl.setIva(Converters.obtenerIvaDePrecio(precioCalcProd, ivaDeProd));
-				pl.setPrecioUnit(Double.valueOf(getFrm().getFtxtPedLotePrecio().getText()));
-				Pedido pedidoAct = pl.getPedido();
-				KeyMapLp key = new KeyMapLp(pedidoAct.getPersona().getIdPersona(), 
-						pedidoAct.getFechaHora().getAsNumber(Fecha.AMDHMS), 
-						pl.getProducto().getIdProducto());
-				if(!mapLineasPedido.containsKey(key)) {
-					mapLineasPedido.put(key, pl);
-					cargarJtPedidoLin();
+				if(getNuevoPedido() != null) {
+					PedidoLinea pl = new PedidoLinea(getNuevoPedido());
+					pl.setProducto((Producto) cbxPedProd.getSelectedItem());
+					pl.setCantidad(Integer.valueOf(ftxtPedCant.getText()));
+					Double precioCalcProd = Double.valueOf(getFrm().getFtxtPedLotePrecio().getText());
+					
+					ConfigDriver cfg = new ConfigDriver();
+					Float ivaDeProd = Float.valueOf(cfg.getIva(pl.getProducto().getAplIva().getAplIvaProp()));
+					pl.setIva(Converters.obtenerIvaDePrecio(precioCalcProd, ivaDeProd));
+					pl.setPrecioUnit(Double.valueOf(getFrm().getFtxtPedLotePrecio().getText()));
+					Pedido pedidoAct = pl.getPedido();
+					KeyMapLp key = new KeyMapLp(pedidoAct.getPersona().getIdPersona(), 
+							pedidoAct.getFechaHora().getAsNumber(Fecha.AMDHMS), 
+							pl.getProducto().getIdProducto());
+					if(!mapLineasPedido.containsKey(key)) {
+						mapLineasPedido.put(key, pl);
+						cargarJtPedidoLin();
+					} else {
+						enviarWarning(PED, PEDIDO_LINEA_EXISTE);
+					}
 				} else {
-					enviarWarning(PED, PEDIDO_LINEA_EXISTE);
+					enviarWarning(PED, PEDIDO_INEXISTENTE);
 				}
 			} else {
 				enviarWarning(PED, DATOS_OBLIG);
@@ -384,6 +411,11 @@ public class CtrlFrmPedido extends CtrlGenerico implements CnstPresGeneric {
 		} catch(Exception e) {
 			manejarExcepcion(e);
 		}
+	}
+	
+	public void actualizarPedido() {
+		// TODO Auto-generated method stub
+		
 	}
 	
 	/*****************************************************************************************************************************************************/

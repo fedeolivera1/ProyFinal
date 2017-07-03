@@ -21,6 +21,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
+import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -47,6 +48,7 @@ public class FrmPedido extends JFrame {
 	private CtrlFrmPedido ctrlPed;
 	//
 	private JPanel contentPane;
+	private JPanel pnlPedBus;
 	private JTable jtPedido;
 	private JPanel pnlDatosPedido;
 	private JComboBox<EstadoPedido> cbxPedidoEstado;
@@ -60,6 +62,7 @@ public class FrmPedido extends JFrame {
 	private JTable jtPedidoLin;
 	private JFormattedTextField ftxtPedLotePrecio;
 	private JFormattedTextField ftxtPedLoteStock;
+	private JDateChooser dchPedFecha;
 	private JTextArea txtPedInfo;
 
 	public static FrmPedido getFrmPedido(UsuarioDsk usr) {
@@ -161,68 +164,38 @@ public class FrmPedido extends JFrame {
 		pnlDatosPedido.add(ftxtPedLoteStock);
 		
 		JScrollPane scrollPanePedido = new JScrollPane();
-		scrollPanePedido.setBounds(10, 117, 764, 133);
+		scrollPanePedido.setBounds(10, 139, 764, 133);
 		pnlPedido.add(scrollPanePedido);
 		
 		jtPedido = new JTable();
 		scrollPanePedido.setColumnHeaderView(jtPedido);
 		scrollPanePedido.setViewportView(jtPedido);
 		
-		JLabel lblEstado = new JLabel("Estado*");
-		lblEstado.setBounds(10, 19, 56, 14);
-		pnlPedido.add(lblEstado);
-		lblEstado.setHorizontalAlignment(SwingConstants.RIGHT);
-		
-		cbxPedidoEstado = new JComboBox<>();
-		cbxPedidoEstado.setBounds(76, 16, 122, 20);
-		pnlPedido.add(cbxPedidoEstado);
-		
-		ctrlPed.cargarCbxPedidoEstado(cbxPedidoEstado);
-		
-		JLabel lblPeriodo = new JLabel("Periodo*");
-		lblPeriodo.setBounds(208, 19, 56, 14);
-		pnlPedido.add(lblPeriodo);
-		lblPeriodo.setHorizontalAlignment(SwingConstants.RIGHT);
-		
-		dchPedidoIni = new JDateChooser();
-		dchPedidoIni.setBounds(274, 16, 87, 20);
-		pnlPedido.add(dchPedidoIni);
-		dchPedidoIni.setCalendar(new GregorianCalendar());
-		
-		dchPedidoFin = new JDateChooser();
-		dchPedidoFin.setBounds(371, 16, 87, 20);
-		pnlPedido.add(dchPedidoFin);
-		dchPedidoFin.setCalendar(new GregorianCalendar());
-		
-		JButton btnPedObtener = new JButton("Obtener");
-		btnPedObtener.setBounds(513, 57, 89, 23);
-		pnlPedido.add(btnPedObtener);
-		
 		JSeparator separator_1 = new JSeparator();
-		separator_1.setBounds(10, 91, 764, 2);
+		separator_1.setBounds(10, 122, 764, 2);
 		pnlPedido.add(separator_1);
 		separator_1.setForeground(SystemColor.info);
 		separator_1.setBackground(SystemColor.info);
 		
 		txtPersDesc = new JTextField();
-		txtPersDesc.setBounds(76, 58, 382, 20);
+		txtPersDesc.setBounds(76, 45, 340, 20);
 		pnlPedido.add(txtPersDesc);
 		txtPersDesc.setEnabled(false);
 		txtPersDesc.setColumns(10);
 		
 		JLabel lblPersona = new JLabel("Persona");
-		lblPersona.setBounds(10, 61, 56, 14);
+		lblPersona.setBounds(10, 48, 56, 14);
 		pnlPedido.add(lblPersona);
 		lblPersona.setHorizontalAlignment(SwingConstants.RIGHT);
 		
 		JButton btnPedBp = new JButton("...");
-		btnPedBp.setBounds(471, 57, 32, 22);
+		btnPedBp.setBounds(426, 44, 32, 22);
 		pnlPedido.add(btnPedBp);
 		
 		JSeparator separator = new JSeparator();
 		separator.setForeground(SystemColor.info);
 		separator.setBackground(SystemColor.info);
-		separator.setBounds(10, 295, 764, 2);
+		separator.setBounds(10, 317, 764, 2);
 		pnlPedido.add(separator);
 		
 		JScrollPane scrollPanePedidoLin = new JScrollPane();
@@ -234,7 +207,7 @@ public class FrmPedido extends JFrame {
 		scrollPanePedidoLin.setViewportView(jtPedidoLin);
 		
 		JButton btnPedGenVenta = new JButton("Generar Venta");
-		btnPedGenVenta.setBounds(650, 261, 124, 23);
+		btnPedGenVenta.setBounds(650, 283, 124, 23);
 		pnlPedido.add(btnPedGenVenta);
 		
 		JButton btnPedGenPedido = new JButton("Generar Pedido");
@@ -253,31 +226,32 @@ public class FrmPedido extends JFrame {
 		
 		JLabel lblPedidosExistentesFiltrados = new JLabel("Pedidos existentes filtrados");
 		lblPedidosExistentesFiltrados.setHorizontalAlignment(SwingConstants.LEFT);
-		lblPedidosExistentesFiltrados.setBounds(10, 104, 145, 14);
+		lblPedidosExistentesFiltrados.setBounds(10, 125, 145, 14);
 		pnlPedido.add(lblPedidosExistentesFiltrados);
 		
 		JButton btnPedNuevo = new JButton("Nuevo Pedido");
-		btnPedNuevo.setBounds(10, 305, 124, 23);
+		btnPedNuevo.setBounds(650, 337, 124, 23);
 		pnlPedido.add(btnPedNuevo);
 		
 		JButton btnPedActPedido = new JButton("Actualizar Pedido");
-		btnPedActPedido.setBounds(516, 521, 124, 23);
+		btnPedActPedido.setBounds(516, 283, 124, 23);
 		pnlPedido.add(btnPedActPedido);
 		
 		JButton btnPedLimpiar = new JButton("Limpiar");
-		btnPedLimpiar.setBounds(612, 57, 89, 23);
+		btnPedLimpiar.setBounds(388, 9, 89, 23);
 		pnlPedido.add(btnPedLimpiar);
 		
-		JDateChooser dchPedFecha = new JDateChooser();
-		dchPedFecha.setBounds(224, 308, 87, 20);
+		dchPedFecha = new JDateChooser();
+		dchPedFecha.setBounds(233, 326, 87, 20);
 		pnlPedido.add(dchPedFecha);
+		dchPedFecha.setCalendar(new GregorianCalendar());
 		
 		JFormattedTextField ftxtPedHora = new JFormattedTextField(ctrlPed.mascNumerica("##:##"));
-		ftxtPedHora.setBounds(321, 308, 52, 20);
+		ftxtPedHora.setBounds(330, 326, 52, 20);
 		pnlPedido.add(ftxtPedHora);
 		
 		JLabel lblFechahora = new JLabel("Programar");
-		lblFechahora.setBounds(144, 308, 70, 14);
+		lblFechahora.setBounds(153, 328, 70, 14);
 		pnlPedido.add(lblFechahora);
 		lblFechahora.setHorizontalAlignment(SwingConstants.RIGHT);
 		
@@ -285,12 +259,82 @@ public class FrmPedido extends JFrame {
 		txtPedInfo.setRows(2);
 		txtPedInfo.setEditable(false);
 		txtPedInfo.setBackground(UIManager.getColor("InternalFrame.borderColor"));
-		txtPedInfo.setBounds(468, 0, 316, 51);
+		txtPedInfo.setBounds(479, 0, 305, 66);
 		pnlPedido.add(txtPedInfo);
+		
+		JSeparator separator_2 = new JSeparator();
+		separator_2.setForeground(SystemColor.info);
+		separator_2.setBackground(SystemColor.info);
+		separator_2.setBounds(12, 35, 461, 2);
+		pnlPedido.add(separator_2);
+		
+		JSplitPane splitPane = new JSplitPane();
+		splitPane.setBounds(10, 9, 240, 25);
+		pnlPedido.add(splitPane);
+		
+		JButton btnPedExistente = new JButton("Pedido Existente");
+		splitPane.setRightComponent(btnPedExistente);
+		
+		JButton btnPedidoNuevo = new JButton("Pedido Nuevo");
+		splitPane.setLeftComponent(btnPedidoNuevo);
+		
+		pnlPedBus = new JPanel();
+		pnlPedBus.setBounds(10, 76, 566, 38);
+		pnlPedido.add(pnlPedBus);
+		pnlPedBus.setLayout(null);
+		
+		JLabel lblEstado = new JLabel("Estado*");
+		lblEstado.setBounds(0, 14, 56, 14);
+		pnlPedBus.add(lblEstado);
+		lblEstado.setHorizontalAlignment(SwingConstants.RIGHT);
+		
+		cbxPedidoEstado = new JComboBox<>();
+		cbxPedidoEstado.setBounds(66, 11, 122, 20);
+		pnlPedBus.add(cbxPedidoEstado);
+		
+		JLabel lblPeriodo = new JLabel("Periodo*");
+		lblPeriodo.setBounds(198, 14, 56, 14);
+		pnlPedBus.add(lblPeriodo);
+		lblPeriodo.setHorizontalAlignment(SwingConstants.RIGHT);
+		
+		dchPedidoIni = new JDateChooser();
+		dchPedidoIni.setBounds(264, 11, 87, 20);
+		pnlPedBus.add(dchPedidoIni);
+		dchPedidoIni.setCalendar(new GregorianCalendar());
+		
+		dchPedidoFin = new JDateChooser();
+		dchPedidoFin.setBounds(361, 11, 87, 20);
+		pnlPedBus.add(dchPedidoFin);
+		dchPedidoFin.setCalendar(new GregorianCalendar());
+		
+		JButton btnPedObtener = new JButton("Obtener");
+		btnPedObtener.setBounds(467, 10, 89, 23);
+		pnlPedBus.add(btnPedObtener);
 		
 		/*****************************************************************************************************************************************************/
 		/* ACCIONES CONTROLES */
 		/*****************************************************************************************************************************************************/
+		
+		ctrlPed.cargarCbxPedidoEstado(cbxPedidoEstado);
+		
+		//boton pedido nuevo
+		btnPedidoNuevo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ctrlPed.activarPedidoNuevo();
+			}
+		});
+		//boton pedido existente
+		btnPedExistente.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ctrlPed.activarPedidoExistente();
+			}
+		});
+		//boton obtener pedido
+		btnPedObtener.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				ctrlPed.obtenerPedidos(cbxPedidoEstado, txtPersDesc, dchPedidoIni, dchPedidoFin);
+			}
+		});
 		
 		//mascara hora
 		ftxtPedHora.addKeyListener(new KeyAdapter() {
@@ -317,12 +361,6 @@ public class FrmPedido extends JFrame {
 				ctrlPed.obtenerDatosLotePorProducto(cbxPedidoProd);
 			}
 		});
-		//boton obtener pedido
-		btnPedObtener.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				ctrlPed.obtenerPedidos(cbxPedidoEstado, txtPersDesc, dchPedidoIni, dchPedidoFin);
-			}
-		});
 		//boton limpiar
 		btnPedLimpiar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -339,6 +377,12 @@ public class FrmPedido extends JFrame {
 		btnPedGenPedido.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ctrlPed.generarPedido(dchPedFecha, ftxtPedHora);
+			}
+		});
+		//boton actualizar pedido
+		btnPedActPedido.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				ctrlPed.actualizarPedido();
 			}
 		});
 		//boton generar venta
@@ -474,4 +518,10 @@ public class FrmPedido extends JFrame {
 		this.txtPedInfo = txtPedInfo;
 	}
 	
+	public JPanel getPnlPedBus() {
+		return pnlPedBus;
+	}
+	public void setPnlPedBus(JPanel pnlPedBus) {
+		this.pnlPedBus = pnlPedBus;
+	}
 }

@@ -18,12 +18,16 @@ import gpd.dominio.util.Origen;
 import gpd.dominio.util.Sinc;
 import gpd.exceptions.PersistenciaException;
 import gpd.exceptions.PresentacionException;
+import gpd.exceptions.ProductoSinStockException;
 import gpd.interfaces.pedido.IPersPedido;
 import gpd.interfaces.pedido.IPersPedidoLinea;
+import gpd.interfaces.transaccion.IPersTransaccion;
+import gpd.manager.producto.ManagerProducto;
 import gpd.manager.transaccion.ManagerTransaccion;
 import gpd.persistencia.conector.Conector;
 import gpd.persistencia.pedido.PersistenciaPedido;
 import gpd.persistencia.pedido.PersistenciaPedidoLinea;
+import gpd.persistencia.transaccion.PersistenciaTransaccion;
 import gpd.types.Fecha;
 
 public class ManagerPedido {
@@ -31,7 +35,7 @@ public class ManagerPedido {
 	private static final Logger logger = Logger.getLogger(ManagerPedido.class);
 	private static IPersPedido interfacePedido;
 	private static IPersPedidoLinea interfacePedidoLinea;
-//	private static IPersTransaccion interfaceTransac;
+	private static IPersTransaccion interfaceTransac;
 	
 	private static IPersPedido getInterfacePedido() {
 		if(interfacePedido == null) {
@@ -45,12 +49,12 @@ public class ManagerPedido {
 		}
 		return interfacePedidoLinea;
 	}
-//	private static IPersTransaccion getInterfaceTransac() {
-//		if(interfaceTransac == null) {
-//			interfaceTransac = new PersistenciaTransaccion();
-//		}
-//		return interfaceTransac;
-//	}
+	private static IPersTransaccion getInterfaceTransaccion() {
+		if(interfaceTransac == null) {
+			interfaceTransac = new PersistenciaTransaccion();
+		}
+		return interfaceTransac;
+	}
 	
 	/*****************************************************************************************************************************************************/
 	/** PEDIDO */
@@ -158,7 +162,69 @@ public class ManagerPedido {
 		return null;
 	}
 	
-	public Integer actualizarPedido(Pedido pedido) throws PresentacionException {
+	/**
+	 * metodo para actualizar pedidos tanto para ventas (a estado confirmado), como para pedidos pendientes que
+	 * se cambian sus lineas o actualizan desde el sistema web
+	 * @param pedido
+	 * @param estadoPedido
+	 * @return
+	 * @throws PresentacionException
+	 * @throws ProductoSinStockException
+	 */
+	public Integer actualizarPedido(Pedido pedido, EstadoPedido estadoPedido) throws PresentacionException, ProductoSinStockException {
+		try {
+			if(pedido.getEstado().equals(EstadoPedido.P) && estadoPedido.equals(EstadoPedido.C)) {
+				logger.info("<< Ingresa actualizacion de pedidos >> estado actual: " + pedido.getEstado().getEstadoPedido() + 
+						"estado actualiza: " + estadoPedido.getEstadoPedido() + " [actualizacion a venta]");
+				ManagerProducto mgrProd = new ManagerProducto();
+				pedido.setEstado(estadoPedido);
+				// en caso de que alcance Y que el estadoPedido sea C (confirmado)... 
+				// comienzo a bajar stock por producto con fecha de vencimiento mas cercana a hoy
+				for(PedidoLinea pl : pedido.getListaPedidoLinea()) {
+					mgrProd.manejarStockLotePorProducto(pl.getProducto().getIdProducto(), pl.getCantidad());
+				}
+				getInterfacePedido().modificarPedido(pedido);
+				//modifico estado de transaccion a confirmado (seteo aca mismo el estado tran a C)
+				Transaccion transac = pedido.getTransaccion();
+				transac.setEstadoTran(EstadoTran.C);
+				getInterfaceTransaccion().modificarEstadoTransaccion(transac);
+				//guardo nuevo estado en tabla de estados (seteo fecha-hora temporalmente para estado_tran)
+				transac.setFechaHora(new Fecha(Fecha.AMDHMS));
+				getInterfaceTransaccion().guardarTranEstado(transac);
+			} else if(pedido.getEstado().equals(EstadoPedido.P) && estadoPedido.equals(EstadoPedido.P)) {
+				logger.info("<< Ingresa actualizacion de pedidos >> estado actual: " + pedido.getEstado().getEstadoPedido() + 
+						"estado actualiza: " + estadoPedido.getEstadoPedido() + " [actualizacion de lineas de pedido en estado C]");
+				Double subTotal = new Double(0);
+				Double ivaTotal = new Double(0);
+				Double total = new Double(0);
+				for(PedidoLinea pl : pedido.getListaPedidoLinea()) {
+					total += pl.getPrecioUnit() * pl.getCantidad();
+					ivaTotal += pl.getIva() * pl.getCantidad();
+//					pl.setSinc(sinc);		//FIXME ver esto de acuerdo a si va a tener sinc y ult_act la linea
+//					pl.setUltAct(ultAct);	//FIXME ver esto de acuerdo a si va a tener sinc y ult_act la linea
+				}
+				subTotal = total - ivaTotal;
+				subTotal = Converters.redondearDosDec(subTotal);
+				ivaTotal = Converters.redondearDosDec(ivaTotal);
+				total = Converters.redondearDosDec(total);
+				pedido.setSubTotal(subTotal);
+				pedido.setIva(ivaTotal);
+				pedido.setTotal(total);
+				getInterfacePedido().modificarPedido(pedido);
+				//elimino lista de lineas de pedido
+				getInterfacePedidoLinea().eliminarListaPedidoLinea(pedido);
+				//agrego nueva lista de lineas de pedido
+				getInterfacePedidoLinea().guardarListaPedidoLinea(pedido.getListaPedidoLinea());
+			} else {
+				throw new PresentacionException("actualizaPedido mal implementado!!!");
+			}
+		} catch (PresentacionException pe) {
+			throw pe;
+		} catch (ProductoSinStockException psse) {
+			throw psse;
+		} catch (Exception e) {
+			throw new PresentacionException(e);
+		}
 		return null;
 	}
 	

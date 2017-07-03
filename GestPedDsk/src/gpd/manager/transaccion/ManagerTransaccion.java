@@ -131,10 +131,11 @@ public class ManagerTransaccion {
 				transaccion.setNroTransac(nroTransac);
 				//se persiste la transaccion de tipo V (venta)
 				resultado = getInterfaceTransaccion().guardarTransaccionVenta(transaccion);
-				//se persiste el estado de la transaccion con estado 'P'
-				getInterfaceTransaccion().guardarTranEstado(transaccion);
 				//se persisten las lineas de la transaccion
 				getInterfaceTranLinea().guardarListaTranLinea(transaccion.getListaTranLinea());
+				//se persiste el estado de la transaccion con estado 'P'
+				transaccion.setFechaHora(new Fecha(Fecha.AMDHMS));
+				getInterfaceTransaccion().guardarTranEstado(transaccion);
 //				Conector.closeConn("generarTransaccionVenta");//FIXME ver esto, no lo llamo porque la conexion está contenida arriba
 			} else {
 				throw new PresentacionException("generarTransaccionVenta ha sido mal implementado!");
@@ -213,6 +214,29 @@ public class ManagerTransaccion {
 	}
 	
 	public Integer modificarTransaccionCompra(Transaccion transaccion, List<Lote> listaLote) throws PresentacionException {
+		if(transaccion != null) {
+			//transaccion de tipo "compra"
+			if(transaccion.getTipoTran().equals(TipoTran.C)) {
+				try {
+					Conector.getConn();
+					//seteo estado a "confirmado"
+					transaccion.setEstadoTran(EstadoTran.C);
+					getInterfaceTransaccion().guardarTranEstado(transaccion);
+					getInterfaceTransaccion().modificarEstadoTransaccion(transaccion);
+					for(Lote lote : listaLote) {
+						getInterfaceLote().actualizarLote(lote);
+					}
+					Conector.closeConn("modificarTransaccionCompra");
+				} catch (PersistenciaException e) {
+					logger.fatal("Excepcion en ManagerTransaccion > modificarTransaccionCompra: " + e.getMessage(), e);
+					throw new PresentacionException(e);
+				}
+			}
+		}
+		return null;
+	}
+	
+	public Integer modificarEstadoTransaccion(Transaccion transaccion, List<Lote> listaLote) throws PresentacionException {
 		if(transaccion != null) {
 			//transaccion de tipo "compra"
 			if(transaccion.getTipoTran().equals(TipoTran.C)) {

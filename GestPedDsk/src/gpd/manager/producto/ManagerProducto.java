@@ -1,8 +1,10 @@
 package gpd.manager.producto;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
 
@@ -18,6 +20,7 @@ import gpd.dominio.util.Converters;
 import gpd.dominio.util.Sinc;
 import gpd.exceptions.PersistenciaException;
 import gpd.exceptions.PresentacionException;
+import gpd.exceptions.ProductoSinStockException;
 import gpd.interfaces.producto.IPersDeposito;
 import gpd.interfaces.producto.IPersLote;
 import gpd.interfaces.producto.IPersProducto;
@@ -558,16 +561,30 @@ public class ManagerProducto {
 		return hlpProd;
 	}
 
-	public List<Lote> manejarStockLotePorProducto(Integer idProducto, Integer cantidad) throws PresentacionException {
-		logger.info("Se ingresa a obtenerListaLotePorProducto");
+	/**
+	 * metodo que maneja el stock por lotes dependiendo del vencimiento
+	 * no maneja conexiones ya que debería ser llamado desde otro manager
+	 * @param idProducto
+	 * @param cantidad
+	 * @throws PresentacionException
+	 */
+	public void manejarStockLotePorProducto(Integer idProducto, Integer cantidad) throws PresentacionException, ProductoSinStockException {
+		logger.info("Se ingresa a obtenerListaLotePorProducto: cantidad inicial del pedido: " + cantidad);
 		List<Lote> listaLote = null;
 		try {
 			ConfigDriver cfgDrv = ConfigDriver.getConfigDriver();
 			Integer diasParaVenc = Integer.valueOf(cfgDrv.getDiasParaVenc());
 			Conector.getConn();
+			//vuelvo a comprobar cantidad de stock para el produto, en caso de no haber suficientes, corto la ejecucion
+			//con una excepcion del tipo
+			HlpProducto hlpProd = obtenerStockPrecioLotePorProducto(idProducto);
+			if(hlpProd.getStock() < cantidad) {
+				throw new ProductoSinStockException("--Stock insuficiente para el producto: " + idProducto + " !!!");
+			}
 			listaLote = getInterfaceLote().obtenerListaLotePorProd(idProducto, diasParaVenc);
-			Conector.closeConn("obtenerListaLotePorProducto");
-			HashMap<Long, List<Lote>> mapLotes = new HashMap<>();
+			logger.info("# Cantidad de lotes para el producto: " + listaLote.size());
+//			HashMap<Long, List<Lote>> mapLotes = new HashMap<>();
+			SortedMap<Long, List<Lote>> mapLotes = new TreeMap<>(java.util.Collections.reverseOrder());
 			for(Lote lote : listaLote) {
 				Long venc = lote.getVenc().getAsNumber(Fecha.AMD);
 				if(mapLotes.containsKey(venc)) {
@@ -578,14 +595,35 @@ public class ManagerProducto {
 					mapLotes.put(venc, listaPorVenc);
 				}
 			}
+			Integer restanteActStock = cantidad;
+			for (Map.Entry<Long, List<Lote>> entry : mapLotes.entrySet()) {
+				List<Lote> listaPorVenc = mapLotes.get(entry);
+				logger.info("# Ingreso a verificar lotes, fecha vencimiento (aaaammdd) de lotes a verificar: " + entry.getKey().longValue());
+				logger.info("# cant de lotes: " + listaPorVenc.size());
+				//recorro cada uno de los lotes con misma fecha de vencimiento
+				for(Lote lote : listaPorVenc) {
+					if(lote.getStock() > restanteActStock) {
+						logger.info(" >> El lote: " + lote.getIdLote() + " tiene stock suficiente para el producto: " + idProducto);
+						//actualizo lote restando cantidad a bajar
+						break;
+					} else {
+						logger.info(" >> El lote: " + lote.getIdLote() + " utlizará su stock restante [" + lote.getStock() + " unidades] para "
+								+ " el producto: " + idProducto);
+						restanteActStock -= lote.getStock();
+						//actualizo lote pasando stock de lote a 0 
+						//y busco en siguiente lote
+					}
+				}
+			}
+//			Conector.closeConn("manejarStockLotePorProducto");
 		} catch (PersistenciaException e) {
-			logger.fatal("Excepcion en ManagerProducto > obtenerListaLotePorProducto: " + e.getMessage(), e);
+			logger.fatal("Excepcion en ManagerProducto > manejarStockLotePorProducto: " + e.getMessage(), e);
 			throw new PresentacionException(e);
 		} catch (Exception e) {
-			logger.fatal("Excepcion no controlada en ManagerProducto > obtenerListaLotePorProducto: " + e.getMessage(), e);
+			logger.fatal("Excepcion no controlada en ManagerProducto > manejarStockLotePorProducto: " + e.getMessage(), e);
 			throw new PresentacionException(e);
 		}
-		return listaLote;
+//		return mapLotes;
 	}
 	
 //	public Lote obtenerLotePorId(Integer idLote) {

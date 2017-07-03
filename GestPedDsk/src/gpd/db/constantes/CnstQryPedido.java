@@ -21,6 +21,10 @@ public interface CnstQryPedido {
 													+ "sub_total, iva, total, nom_usu, nro_transac, sinc, ult_act) "
 												+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 	
+	public static final String QRY_UPDATE_PEDIDO = "UPDATE pedido SET estado = ?, fecha_prog = ?, hora_prog = ?, sub_total = ?, iva = ?, total = ?, sinc = ?, ult_act = ? "
+												+ "WHERE p.id_persona = ? "
+												+ "AND p.fecha_hora = ? ";
+	
 	public static final String QRY_DELETE_PEDIDO = "DELETE FROM pedido WHERE id_persona = ? AND fecha_hora = ? ";
 
 }

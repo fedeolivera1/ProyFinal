@@ -91,22 +91,22 @@ public class IfrmDeposito extends JInternalFrame {
 		
 		jlDeposito.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent arg0) {
-				ctrl.cargarControlesDep(txtDepNombre, jlDeposito);
+				ctrlInterno.cargarControlesDep(txtDepNombre, jlDeposito);
 			}
 		});
 		btnDepAgr.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				ctrl.agregarDeposito(txtDepNombre, jlDeposito);
+				ctrlInterno.agregarDeposito(txtDepNombre, jlDeposito);
 			}
 		});
 		btnDepMod.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				ctrl.modificarDeposito(txtDepNombre, jlDeposito);
+				ctrlInterno.modificarDeposito(txtDepNombre, jlDeposito);
 			}
 		});
 		btnDepEli.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				ctrl.eliminarDeposito(jlDeposito);
+				ctrlInterno.eliminarDeposito(jlDeposito);
 			}
 		});
 		/***************************************************/

@@ -10,5 +10,6 @@ public interface IPersPedidoLinea {
 
 	public List<PedidoLinea> obtenerListaPedidoLinea(Pedido pedido) throws PersistenciaException;
 	public Integer guardarListaPedidoLinea(List<PedidoLinea> listaPedidoLinea) throws PersistenciaException;
+	public Integer eliminarListaPedidoLinea(Pedido pedido) throws PersistenciaException;
 	
 }

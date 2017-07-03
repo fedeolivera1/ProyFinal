@@ -87,5 +87,21 @@ public class PersistenciaPedidoLinea extends Conector implements IPersPedidoLine
 		}
 		return resultado;
 	}
+	
+	@Override
+	public Integer eliminarListaPedidoLinea(Pedido pedido) throws PersistenciaException {
+		Integer resultado = null;
+		try {
+			GenSqlExecType genExec = new GenSqlExecType(QRY_DELETE_PL);
+			genExec.setParam(pedido.getPersona().getIdPersona());
+			genExec.setParam(pedido.getFechaHora());
+			resultado = (Integer) runGeneric(genExec);
+		} catch (ConectorException e) {
+			Conector.rollbackConn();
+			logger.error("Excepcion al guardarTranLinea: " + e.getMessage(), e);
+			throw new PersistenciaException(e);
+		}
+		return resultado;
+	}
 
 }

@@ -30,7 +30,6 @@ public class IfrmPersBuscador extends JInternalFrame {
 
 	private static final long serialVersionUID = 1L;
 	private CtrlFrmPedido ctrlInterno;
-//	private Persona persona;
 	private JTextField txtPbFiltro;
 	private JComboBox<TipoPersona> cbxPbTipoPers;
 	private JComboBox<Departamento> cbxPbDep;
@@ -127,7 +126,7 @@ public class IfrmPersBuscador extends JInternalFrame {
 		jlPersBusq.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent arg0) {
 				if(jlPersBusq.getSelectedIndex() > -1) {
-					ctrlPed.setPersSel(jlPersBusq.getSelectedValue());
+					ctrlInterno.setPersSel(jlPersBusq.getSelectedValue());
 				}
 			}
 		});
@@ -136,7 +135,7 @@ public class IfrmPersBuscador extends JInternalFrame {
 			public void mouseClicked(MouseEvent me) {
 				JList<?> listaPers = (JList<?>) me.getSource();
 			    if (me.getClickCount() == 2 && listaPers.locationToIndex(me.getPoint()) > -1) {
-			    	ctrlPed.cerrarBuscadorPers(jlPersBusq.getSelectedValue());
+			    	ctrlInterno.cerrarBuscadorPers(jlPersBusq.getSelectedValue());
 			    }
 			}
 		});
@@ -189,12 +188,5 @@ public class IfrmPersBuscador extends JInternalFrame {
 	public void setJlPersBusq(JList<Persona> jlPersBusq) {
 		this.jlPersBusq = jlPersBusq;
 	}
-	
-//	public Persona getPersona() {
-//		return persona;
-//	}
-//	public void setPersona(Persona persona) {
-//		this.persona = persona;
-//	}
 	
 }

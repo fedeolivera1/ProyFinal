@@ -177,14 +177,58 @@ public class PersistenciaPedido extends Conector implements IPersPedido, CnstQry
 
 	@Override
 	public Integer modificarPedido(Pedido pedido) throws PersistenciaException  {
-		// TODO Auto-generated method stub
-		return null;
+		Integer resultado = null;
+		GenSqlExecType genExec = new GenSqlExecType(QRY_UPDATE_PEDIDO);
+		Long idPersona = null;
+		if(pedido.getPersona() instanceof PersonaFisica) {
+			PersonaFisica pf = (PersonaFisica) pedido.getPersona();
+			idPersona = pf.getDocumento();
+		} else if(pedido.getPersona() instanceof PersonaJuridica) {
+			PersonaJuridica pj = (PersonaJuridica) pedido.getPersona();
+			idPersona = pj.getRut();
+		}
+		genExec.setParam(pedido.getEstado().getAsChar());
+		genExec.setParam(pedido.getFechaProg());
+		genExec.setParam(pedido.getHoraProg());
+		genExec.setParam(pedido.getSubTotal());
+		genExec.setParam(pedido.getIva());
+		genExec.setParam(pedido.getTotal());
+		genExec.setParam(pedido.getUltAct());
+		genExec.setParam(pedido.getSinc().getAsChar());
+		genExec.setParam(idPersona);
+		genExec.setParam(pedido.getFechaHora());
+		try {
+			resultado = (Integer) runGeneric(genExec);
+		} catch (ConectorException e) {
+			Conector.rollbackConn();
+			logger.error("Excepcion al guardarTransaccionVenta: " + e.getMessage(), e);
+			throw new PersistenciaException(e);
+		}
+		return resultado;
 	}
 
 	@Override
 	public Integer eliminarPedido(Pedido pedido) throws PersistenciaException  {
-		// TODO Auto-generated method stub
-		return null;
+		Integer resultado = null;
+		GenSqlExecType genExec = new GenSqlExecType(QRY_DELETE_PEDIDO);
+		Long idPersona = null;
+		if(pedido.getPersona() instanceof PersonaFisica) {
+			PersonaFisica pf = (PersonaFisica) pedido.getPersona();
+			idPersona = pf.getDocumento();
+		} else if(pedido.getPersona() instanceof PersonaJuridica) {
+			PersonaJuridica pj = (PersonaJuridica) pedido.getPersona();
+			idPersona = pj.getRut();
+		}
+		genExec.setParam(idPersona);
+		genExec.setParam(pedido.getFechaHora());
+		try {
+			resultado = (Integer) runGeneric(genExec);
+		} catch (ConectorException e) {
+			Conector.rollbackConn();
+			logger.error("Excepcion al guardarTransaccionVenta: " + e.getMessage(), e);
+			throw new PersistenciaException(e);
+		}
+		return resultado;
 	}
 
 }

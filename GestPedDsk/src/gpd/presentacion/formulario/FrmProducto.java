@@ -397,18 +397,19 @@ public class FrmProducto extends JFrame {
 		ctrlProd.cargarCbxUtil(cbxLoteUtil);
 		ctrlProd.cargarCbxFiltroLote(cbxFiltroLote);
 		
-		
+		//boton agregar utilidad
 		btnUtilAgregar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ctrlProd.abrirIFrmUtil();
 			}
 		});
+		//boton agregar deposito
 		btnDepAgregar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				ctrlProd.abrirIFrmDep();
 			}
 		});
-		
+		//
 		ftxtProStockMin.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyTyped(KeyEvent e) {
@@ -432,18 +433,21 @@ public class FrmProducto extends JFrame {
 				ctrlProd.obtenerTransac(cbxFiltroLote, dchLoteIni, dchLoteFin);
 			}
 		});
+		//boton agregar producto
 		btnProAgr.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				ctrlProd.agregarProducto(cbxTipoProd, txtProCod, txtProNom, txtProDesc, ftxtProStockMin, 
 						ftxtProPres, cbxProUni, cbxProAplIva, ftxtProPrecio);
 			}
 		});
+		//boton modificar producto
 		btnProMod.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ctrlProd.modificarProducto(cbxTipoProd, txtProId, txtProCod, txtProNom, txtProDesc, ftxtProStockMin, 
 						ftxtProPres, cbxProUni, cbxProAplIva, ftxtProPrecio);
 			}
 		});
+		//boton eliminar producto
 		btnProEli.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ctrlProd.eliminarProducto(txtProId);
@@ -454,11 +458,13 @@ public class FrmProducto extends JFrame {
 				ctrlProd.abrirIFrmTp();
 			}
 		});
+		//boton buscar producto
 		btnProBuscar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				ctrlProd.buscarProducto(cbxTipoProd, txtProCod, txtProNom, txtProDesc);
 			}
 		});
+		//boton limpiar producto
 		btnProLimpiar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ctrlProd.clearForm(getContentPane());
