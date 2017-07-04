@@ -65,6 +65,12 @@ public interface CnstPresGeneric {
 	public static final String JTABLE_SIN_LINEASPED = "No hay lineas de pedido para mostrar...";
 	public static final String PEDIDO_LINEA_EXISTE = "La linea ya existe en el pedido.";
 	public static final String PEDIDO_NO_GENERADO = "El pedido no fue generado, o no tiene items.";
+	public static final String PEDIDO_CONF_VTA = "Está seguro que desea generar la venta? ";
+	
+	//venta
+	public static final String VTA = "Pedido";
+	public static final String VTA_GENERADA_OK = "La venta se ha generado correctamente.";
+	
 	
 	//controles genericos
 	public static final String CONF_LIMPIAR = "Confirma que desea limpiar el formulario ?";

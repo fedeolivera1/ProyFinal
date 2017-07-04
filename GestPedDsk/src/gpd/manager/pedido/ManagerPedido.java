@@ -125,8 +125,6 @@ public class ManagerPedido {
 					listaTransacLinea.add(tl);
 					total += pl.getPrecioUnit() * pl.getCantidad();
 					ivaTotal += pl.getIva() * pl.getCantidad();
-					pl.setSinc(sinc);
-					pl.setUltAct(ultAct);
 				}
 				subTotal = total - ivaTotal;
 				subTotal = Converters.redondearDosDec(subTotal);
@@ -175,13 +173,14 @@ public class ManagerPedido {
 		try {
 			if(pedido.getEstado().equals(EstadoPedido.P) && estadoPedido.equals(EstadoPedido.C)) {
 				logger.info("<< Ingresa actualizacion de pedidos >> estado actual: " + pedido.getEstado().getEstadoPedido() + 
-						"estado actualiza: " + estadoPedido.getEstadoPedido() + " [actualizacion a venta]");
+						" - estado actualiza: " + estadoPedido.getEstadoPedido() + " [actualizacion a venta]");
+				Conector.getConn();
 				ManagerProducto mgrProd = new ManagerProducto();
 				pedido.setEstado(estadoPedido);
 				// en caso de que alcance Y que el estadoPedido sea C (confirmado)... 
 				// comienzo a bajar stock por producto con fecha de vencimiento mas cercana a hoy
 				for(PedidoLinea pl : pedido.getListaPedidoLinea()) {
-					mgrProd.manejarStockLotePorProducto(pl.getProducto().getIdProducto(), pl.getCantidad());
+					mgrProd.manejarStockLotePorProductoNoConn(pl.getProducto().getIdProducto(), pl.getCantidad());
 				}
 				getInterfacePedido().modificarPedido(pedido);
 				//modifico estado de transaccion a confirmado (seteo aca mismo el estado tran a C)
@@ -191,17 +190,17 @@ public class ManagerPedido {
 				//guardo nuevo estado en tabla de estados (seteo fecha-hora temporalmente para estado_tran)
 				transac.setFechaHora(new Fecha(Fecha.AMDHMS));
 				getInterfaceTransaccion().guardarTranEstado(transac);
+				Conector.closeConn("actualizarPedido - venta");
 			} else if(pedido.getEstado().equals(EstadoPedido.P) && estadoPedido.equals(EstadoPedido.P)) {
+				Conector.getConn();
 				logger.info("<< Ingresa actualizacion de pedidos >> estado actual: " + pedido.getEstado().getEstadoPedido() + 
-						"estado actualiza: " + estadoPedido.getEstadoPedido() + " [actualizacion de lineas de pedido en estado C]");
+						" - estado actualiza: " + estadoPedido.getEstadoPedido() + " [actualizacion de lineas de pedido en estado C]");
 				Double subTotal = new Double(0);
 				Double ivaTotal = new Double(0);
 				Double total = new Double(0);
 				for(PedidoLinea pl : pedido.getListaPedidoLinea()) {
 					total += pl.getPrecioUnit() * pl.getCantidad();
 					ivaTotal += pl.getIva() * pl.getCantidad();
-//					pl.setSinc(sinc);		//FIXME ver esto de acuerdo a si va a tener sinc y ult_act la linea
-//					pl.setUltAct(ultAct);	//FIXME ver esto de acuerdo a si va a tener sinc y ult_act la linea
 				}
 				subTotal = total - ivaTotal;
 				subTotal = Converters.redondearDosDec(subTotal);
@@ -215,6 +214,7 @@ public class ManagerPedido {
 				getInterfacePedidoLinea().eliminarListaPedidoLinea(pedido);
 				//agrego nueva lista de lineas de pedido
 				getInterfacePedidoLinea().guardarListaPedidoLinea(pedido.getListaPedidoLinea());
+				Conector.closeConn("actualizarPedido - actualizacion");
 			} else {
 				throw new PresentacionException("actualizaPedido mal implementado!!!");
 			}

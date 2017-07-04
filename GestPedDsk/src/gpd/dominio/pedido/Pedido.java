@@ -132,7 +132,7 @@ public class Pedido implements Serializable {
 	}
 	@Override
 	public String toString() {
-		return persona + " | estado: " + estado.name() + " | orig: " + origen;
+		return persona + " | fecha-hora: " + fechaHora.toString() + " | estado: " + estado.name() + " | orig: " + origen;
 	}
 
 }

@@ -418,6 +418,26 @@ public class CtrlFrmPedido extends CtrlGenerico implements CnstPresGeneric {
 		
 	}
 	
+	public void generarVenta(JTable jtPedido) {
+		try {
+			GenCompType genComp = new GenCompType();
+			genComp.setComp(jtPedido);
+			if(controlDatosObl(genComp)) {
+				Persona pers = (Persona) jtPedido.getModel().getValueAt(jtPedido.getSelectedRow(), 0);
+				Fecha fechaHora = (Fecha) jtPedido.getModel().getValueAt(jtPedido.getSelectedRow(), 1);
+				Pedido pedido = mgrPed.obtenerPedidoPorId(pers.getIdPersona(), fechaHora);
+				if(enviarConfirm(PED, PEDIDO_CONF_VTA) == CONFIRM_OK) {
+					mgrPed.actualizarPedido(pedido, EstadoPedido.C);
+					enviarInfo(VTA, VTA_GENERADA_OK);
+				}
+			} else {
+				enviarWarning(PED, DATOS_OBLIG);
+			}
+		} catch(Exception e) {
+			manejarExcepcion(e);
+		}
+	}
+	
 	/*****************************************************************************************************************************************************/
 	/* BUSCADOR PERS */
 	/*****************************************************************************************************************************************************/

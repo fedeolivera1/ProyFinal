@@ -1,6 +1,5 @@
 package gpd.persistencia.pedido;
 
-import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -14,13 +13,11 @@ import gpd.db.generic.GenSqlExecType;
 import gpd.db.generic.GenSqlSelectType;
 import gpd.dominio.pedido.Pedido;
 import gpd.dominio.pedido.PedidoLinea;
-import gpd.dominio.util.Sinc;
 import gpd.exceptions.ConectorException;
 import gpd.exceptions.PersistenciaException;
 import gpd.interfaces.pedido.IPersPedidoLinea;
 import gpd.persistencia.conector.Conector;
 import gpd.persistencia.producto.PersistenciaProducto;
-import gpd.types.Fecha;
 
 public class PersistenciaPedidoLinea extends Conector implements IPersPedidoLinea, CnstQryPedidoLinea {
 
@@ -43,14 +40,9 @@ public class PersistenciaPedidoLinea extends Conector implements IPersPedidoLine
 				pedidoLinea.setCantidad(rs.getInt("cantidad"));
 				pedidoLinea.setIva(rs.getDouble("iva"));
 				pedidoLinea.setPrecioUnit(rs.getDouble("precio_unit"));
-				char[] sincChar = new char[1];
-				rs.getCharacterStream("sinc").read(sincChar);
-				Sinc sinc = Sinc.getSincPorChar(sincChar[0]);
-				pedidoLinea.setSinc(sinc);
-				pedidoLinea.setUltAct(new Fecha(rs.getTimestamp("ult_act")));
 				listaPedidoLinea.add(pedidoLinea);
 			}
-		} catch (ConectorException | SQLException | IOException e) {
+		} catch (ConectorException | SQLException e) {
 			Conector.rollbackConn();
 			logger.log(Level.FATAL, "Excepcion al obtenerListaPedidoLinea: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
@@ -75,8 +67,6 @@ public class PersistenciaPedidoLinea extends Conector implements IPersPedidoLine
 				paramList.add(pl.getCantidad());
 				paramList.add(pl.getIva());
 				paramList.add(pl.getPrecioUnit());
-				paramList.add(pl.getSinc().getAsChar());
-				paramList.add(pl.getUltAct());
 				genExec.setParamList(paramList);
 			}
 			resultado = (Integer) runGeneric(genExec);

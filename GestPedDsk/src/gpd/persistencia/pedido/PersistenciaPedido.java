@@ -1,8 +1,10 @@
 package gpd.persistencia.pedido;
 
 import java.io.IOException;
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,12 +54,20 @@ public class PersistenciaPedido extends Conector implements IPersPedido, CnstQry
 				rs.getCharacterStream("estado").read(estadoChar);
 				EstadoPedido estado = EstadoPedido.getEstadoPedidoPorChar(estadoChar[0]);
 				pedido.setEstado(estado);
-				pedido.setFechaProg(new Fecha(rs.getDate("fecha_prog")));
-				pedido.setHoraProg(new Fecha(rs.getTime("hora_prog")));
+				Date fechaProg = rs.getDate("fecha_prog");
+				if(!rs.wasNull()) {
+					pedido.setFechaProg(new Fecha(fechaProg));
+				}
+				Time horaProg = rs.getTime("hora_prog");
+				if(!rs.wasNull()) {
+					pedido.setHoraProg(new Fecha(horaProg));
+				}
 				char[] origenChar = new char[1];
 				rs.getCharacterStream("origen").read(origenChar);
 				Origen origen = Origen.getOrigenPorChar(origenChar[0]);
 				pedido.setOrigen(origen);
+				pedido.setSubTotal(rs.getDouble("sub_total"));
+				pedido.setIva(rs.getDouble("iva"));
 				pedido.setTotal(rs.getDouble("total"));
 				String nomUsu = rs.getString("nom_usu");
 				if(!rs.wasNull()) {
@@ -106,8 +116,14 @@ public class PersistenciaPedido extends Conector implements IPersPedido, CnstQry
 				rs.getCharacterStream("estado").read(estadoChar);
 				EstadoPedido estado = EstadoPedido.getEstadoPedidoPorChar(estadoChar[0]);
 				pedido.setEstado(estado);
-				pedido.setFechaProg(new Fecha(rs.getDate("fecha_prog")));
-				pedido.setHoraProg(new Fecha(rs.getTime("hora_prog")));
+				Date fechaProg = rs.getDate("fecha_prog");
+				if(!rs.wasNull()) {
+					pedido.setFechaProg(new Fecha(fechaProg));
+				}
+				Time horaProg = rs.getTime("hora_prog");
+				if(!rs.wasNull()) {
+					pedido.setHoraProg(new Fecha(horaProg));
+				}
 				char[] origenChar = new char[1];
 				rs.getCharacterStream("origen").read(origenChar);
 				Origen origen = Origen.getOrigenPorChar(origenChar[0]);
@@ -193,8 +209,8 @@ public class PersistenciaPedido extends Conector implements IPersPedido, CnstQry
 		genExec.setParam(pedido.getSubTotal());
 		genExec.setParam(pedido.getIva());
 		genExec.setParam(pedido.getTotal());
-		genExec.setParam(pedido.getUltAct());
 		genExec.setParam(pedido.getSinc().getAsChar());
+		genExec.setParam(pedido.getUltAct());
 		genExec.setParam(idPersona);
 		genExec.setParam(pedido.getFechaHora());
 		try {

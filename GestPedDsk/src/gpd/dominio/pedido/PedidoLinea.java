@@ -3,8 +3,6 @@ package gpd.dominio.pedido;
 import java.io.Serializable;
 
 import gpd.dominio.producto.Producto;
-import gpd.dominio.util.Sinc;
-import gpd.types.Fecha;
 
 public class PedidoLinea implements Serializable {
 
@@ -14,8 +12,6 @@ public class PedidoLinea implements Serializable {
 	private Integer cantidad;
 	private Double iva;
 	private Double precioUnit;
-	private Sinc sinc;
-	private Fecha ultAct;
 	
 	
 	public PedidoLinea(Pedido pedido) {
@@ -58,18 +54,5 @@ public class PedidoLinea implements Serializable {
 	public void setPrecioUnit(Double precioUnit) {
 		this.precioUnit = precioUnit;
 	}
-	
-	public Sinc getSinc() {
-		return sinc;
-	}
-	public void setSinc(Sinc sinc) {
-		this.sinc = sinc;
-	}
-	
-	public Fecha getUltAct() {
-		return ultAct;
-	}
-	public void setUltAct(Fecha ultAct) {
-		this.ultAct = ultAct;
-	}
+
 }

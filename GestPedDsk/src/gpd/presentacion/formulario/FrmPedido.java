@@ -388,6 +388,7 @@ public class FrmPedido extends JFrame {
 		//boton generar venta
 		btnPedGenVenta.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				ctrlPed.generarVenta(jtPedido);
 			}
 		});
 		//boton agregar item a pedido
