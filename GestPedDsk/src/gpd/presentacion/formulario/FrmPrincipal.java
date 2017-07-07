@@ -16,6 +16,9 @@ import javax.swing.border.EmptyBorder;
 import gpd.dominio.usuario.TipoUsr;
 import gpd.dominio.usuario.UsuarioDsk;
 import gpd.presentacion.controlador.CtrlFrmUsuario;
+import java.awt.Toolkit;
+import java.awt.Color;
+import javax.swing.JTextPane;
 
 public class FrmPrincipal extends JFrame {
 
@@ -30,6 +33,8 @@ public class FrmPrincipal extends JFrame {
 	 * Create the frame.
 	 */
 	public FrmPrincipal(UsuarioDsk usr) {
+		setTitle("Principal");
+		setIconImage(Toolkit.getDefaultToolkit().getImage(FrmPrincipal.class.getResource("/Recursos/Icono.png")));
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 800, 600);
@@ -206,9 +211,15 @@ public class FrmPrincipal extends JFrame {
 		ctrlUsuario.setDeskPane(desktopPane);
 		
 		JPanel pnlPpal = new JPanel();
+		pnlPpal.setBackground(Color.BLACK);
 		pnlPpal.setBounds(0, 0, 784, 545);
 		contentPane.add(pnlPpal);
 		pnlPpal.setLayout(null);
+		
+		JTextPane tbxStock = new JTextPane();
+		tbxStock.setText("De momento no hay nada que requiera su atenci\u00F3n.");
+		tbxStock.setBounds(178, 87, 411, 169);
+		pnlPpal.add(tbxStock);
 		
 	}
 
@@ -218,5 +229,11 @@ public class FrmPrincipal extends JFrame {
 	}
 	public void setUsrLogueado(UsuarioDsk usrLogueado) {
 		this.usrLogueado = usrLogueado;
+	}
+	
+	//Método que actualice el JTextPanel
+	
+	public void actualizarPanel(JTextPane tp){
+		
 	}
 }

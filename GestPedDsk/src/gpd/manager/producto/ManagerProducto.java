@@ -651,6 +651,10 @@ public class ManagerProducto {
 //		return mapLotes;
 	}
 	
+	public ArrayList<Producto> obtenerStockBajo(){
+		
+	}
+	
 //	public Lote obtenerLotePorId(Integer idLote) {
 //		logger.info("Se ingresa a obtenerLotePorId");
 //		try {

@@ -7,7 +7,7 @@ import org.apache.log4j.Logger;
 
 import gpd.dominio.usuario.UsuarioDsk;
 import gpd.exceptions.PersistenciaException;
-import gpd.exceptions.PresentacionException;
+//import gpd.exceptions.PresentacionException;
 import gpd.interfaces.usuario.IPersUsuario;
 import gpd.persistencia.conector.Conector;
 import gpd.persistencia.usuario.PersistenciaUsuario;
@@ -29,7 +29,7 @@ public class ManagerUsuario {
 	/** USUARIO */
 	/*****************************************************************************************************************************************************/
 	
-	public UsuarioDsk obtenerUsuario(String nombreUsuario, String passwd) throws PresentacionException {
+	public UsuarioDsk obtenerUsuario(String nombreUsuario, String passwd) {
 		logger.info("Se ingresa a obtenerUsuario para " + nombreUsuario);
 		UsuarioDsk usuario = null;
 		try {
@@ -38,12 +38,12 @@ public class ManagerUsuario {
 			Conector.closeConn("obtenerUsuario");
 		} catch (PersistenciaException e) {
 			logger.fatal("Excepcion en ManagerUsuario > obtenerUsuario: " + e.getMessage(), e);
-			throw new PresentacionException(e);
+			//throw new PresentacionException(e);
 		}
 		return usuario;
 	}
 	
-	public List<UsuarioDsk> obtenerListaUsuarios() throws PresentacionException{
+	public List<UsuarioDsk> obtenerListaUsuarios(){
 		List<UsuarioDsk> listaUsuario = new ArrayList<UsuarioDsk>();
 		
 		IPersUsuario interfaceUsuario = new PersistenciaUsuario();
@@ -53,13 +53,13 @@ public class ManagerUsuario {
 			Conector.closeConn("obtenerTodosLosUsuarios");
 		} catch (PersistenciaException e) {
 			logger.fatal("Excepcion en ManagerUsuario > obtenerUsuario: " + e.getMessage(), e);
-			throw new PresentacionException(e);
+			//throw new PresentacionException(e);
 		}
 		
 		return listaUsuario;
 	}
 
-	public Integer guardarUsuario(UsuarioDsk usuario) throws PresentacionException {
+	public Integer guardarUsuario(UsuarioDsk usuario){
 		logger.info("Ingresa guardarUsuario");
 		if(usuario != null) {
 			try {
@@ -68,13 +68,13 @@ public class ManagerUsuario {
 				Conector.closeConn("guardarUsuario");
 			} catch (PersistenciaException e) {
 				logger.fatal("Excepcion en ManagerUsuario > guardarUsuario: " + e.getMessage(), e);
-				throw new PresentacionException(e);
+				//throw new PresentacionException(e);
 			}
 		}
 		return resultado;
 	}
 
-	public Integer modificarUsuario(UsuarioDsk usuario) throws PresentacionException {
+	public Integer modificarUsuario(UsuarioDsk usuario){
 		logger.info("Ingresa modificarUsuario");
 		if(usuario != null) {
 			try {
@@ -83,13 +83,13 @@ public class ManagerUsuario {
 				Conector.closeConn("modificarUsuario");
 			} catch (PersistenciaException e) {
 				logger.fatal("Excepcion en ManagerUsuario > modificarUsuario: " + e.getMessage(), e);
-				throw new PresentacionException(e);
+				//throw new PresentacionException(e);
 			}
 		}
 		return resultado;
 	}
 
-	public Integer eliminarUsuario(UsuarioDsk usuario) throws PresentacionException {
+	public Integer eliminarUsuario(UsuarioDsk usuario){
 		logger.info("Ingresa eliminarUsuario");
 		if(usuario != null) {
 			try {
@@ -98,7 +98,7 @@ public class ManagerUsuario {
 				Conector.closeConn("eliminarUsuario");
 			} catch (PersistenciaException e) {
 				logger.fatal("Excepcion en ManagerUsuario > eliminarUsuario: " + e.getMessage(), e);
-				throw new PresentacionException(e);
+				//throw new PresentacionException(e);
 			}
 		}
 		return resultado;

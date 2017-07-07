@@ -7,7 +7,7 @@
 	<classpathentry kind="lib" path="/Shared/ext_jars/log4j-1.2.17.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="lib" path="/Config/properties"/>
-	<classpathentry kind="lib" path="/Shared/ext_jars/jcalendar-1.4.jar"/>
-	<classpathentry kind="lib" path="/Shared/ext_jars/jasperreports-6.4.1.jar"/>
+	<classpathentry kind="lib" path="D:/De disco c/Documents/Integradores/Integrador 2/Recursos/jasperreports-6.4.1/dist/jasperreports-6.4.1.jar"/>
+	<classpathentry kind="lib" path="D:/De disco c/Documents/Integradores/Integrador 2/Recursos/jcalendar-1.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
