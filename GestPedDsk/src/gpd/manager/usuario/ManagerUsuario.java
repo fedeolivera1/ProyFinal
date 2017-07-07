@@ -1,5 +1,8 @@
 package gpd.manager.usuario;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.log4j.Logger;
 
 import gpd.dominio.usuario.UsuarioDsk;
@@ -38,6 +41,22 @@ public class ManagerUsuario {
 			throw new PresentacionException(e);
 		}
 		return usuario;
+	}
+	
+	public List<UsuarioDsk> obtenerListaUsuarios() throws PresentacionException{
+		List<UsuarioDsk> listaUsuario = new ArrayList<UsuarioDsk>();
+		
+		IPersUsuario interfaceUsuario = new PersistenciaUsuario();
+		try {
+			Conector.getConn();
+			listaUsuario = interfaceUsuario.obtenerListaUsuario();
+			Conector.closeConn("obtenerTodosLosUsuarios");
+		} catch (PersistenciaException e) {
+			logger.fatal("Excepcion en ManagerUsuario > obtenerUsuario: " + e.getMessage(), e);
+			throw new PresentacionException(e);
+		}
+		
+		return listaUsuario;
 	}
 
 	public Integer guardarUsuario(UsuarioDsk usuario) throws PresentacionException {

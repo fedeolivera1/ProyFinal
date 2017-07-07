@@ -21,10 +21,10 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
-import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.JToggleButton;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
@@ -48,6 +48,8 @@ public class FrmPedido extends JFrame {
 	private CtrlFrmPedido ctrlPed;
 	//
 	private JPanel contentPane;
+	private JDesktopPane desktopPane;
+	private JToggleButton tglbtnPedNuevo;
 	private JPanel pnlPedBus;
 	private JTable jtPedido;
 	private JPanel pnlDatosPedido;
@@ -58,11 +60,11 @@ public class FrmPedido extends JFrame {
 	private JDateChooser dchPedidoIni;
 	private JDateChooser dchPedidoFin;
 	private JTextField txtPersDesc;
-	private JDesktopPane desktopPane;
 	private JTable jtPedidoLin;
 	private JFormattedTextField ftxtPedLotePrecio;
 	private JFormattedTextField ftxtPedLoteStock;
 	private JDateChooser dchPedFecha;
+	private JFormattedTextField ftxtPedHora;
 	private JTextArea txtPedInfo;
 
 	public static FrmPedido getFrmPedido(UsuarioDsk usr) {
@@ -229,16 +231,12 @@ public class FrmPedido extends JFrame {
 		lblPedidosExistentesFiltrados.setBounds(10, 125, 145, 14);
 		pnlPedido.add(lblPedidosExistentesFiltrados);
 		
-		JButton btnPedNuevo = new JButton("Nuevo Pedido");
-		btnPedNuevo.setBounds(650, 337, 124, 23);
-		pnlPedido.add(btnPedNuevo);
-		
 		JButton btnPedActPedido = new JButton("Actualizar Pedido");
 		btnPedActPedido.setBounds(516, 283, 124, 23);
 		pnlPedido.add(btnPedActPedido);
 		
 		JButton btnPedLimpiar = new JButton("Limpiar");
-		btnPedLimpiar.setBounds(388, 9, 89, 23);
+		btnPedLimpiar.setBounds(384, 9, 89, 23);
 		pnlPedido.add(btnPedLimpiar);
 		
 		dchPedFecha = new JDateChooser();
@@ -246,7 +244,7 @@ public class FrmPedido extends JFrame {
 		pnlPedido.add(dchPedFecha);
 		dchPedFecha.setCalendar(new GregorianCalendar());
 		
-		JFormattedTextField ftxtPedHora = new JFormattedTextField(ctrlPed.mascNumerica("##:##"));
+		ftxtPedHora = new JFormattedTextField(ctrlPed.mascNumerica("##:##"));
 		ftxtPedHora.setBounds(330, 326, 52, 20);
 		pnlPedido.add(ftxtPedHora);
 		
@@ -267,16 +265,6 @@ public class FrmPedido extends JFrame {
 		separator_2.setBackground(SystemColor.info);
 		separator_2.setBounds(12, 35, 461, 2);
 		pnlPedido.add(separator_2);
-		
-		JSplitPane splitPane = new JSplitPane();
-		splitPane.setBounds(10, 9, 240, 25);
-		pnlPedido.add(splitPane);
-		
-		JButton btnPedExistente = new JButton("Pedido Existente");
-		splitPane.setRightComponent(btnPedExistente);
-		
-		JButton btnPedidoNuevo = new JButton("Pedido Nuevo");
-		splitPane.setLeftComponent(btnPedidoNuevo);
 		
 		pnlPedBus = new JPanel();
 		pnlPedBus.setBounds(10, 76, 566, 38);
@@ -311,6 +299,10 @@ public class FrmPedido extends JFrame {
 		btnPedObtener.setBounds(467, 10, 89, 23);
 		pnlPedBus.add(btnPedObtener);
 		
+		tglbtnPedNuevo = new JToggleButton("Pedido Nuevo");
+		tglbtnPedNuevo.setBounds(10, 9, 121, 23);
+		pnlPedido.add(tglbtnPedNuevo);
+		
 		/*****************************************************************************************************************************************************/
 		/* ACCIONES CONTROLES */
 		/*****************************************************************************************************************************************************/
@@ -318,15 +310,9 @@ public class FrmPedido extends JFrame {
 		ctrlPed.cargarCbxPedidoEstado(cbxPedidoEstado);
 		
 		//boton pedido nuevo
-		btnPedidoNuevo.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				ctrlPed.activarPedidoNuevo();
-			}
-		});
-		//boton pedido existente
-		btnPedExistente.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				ctrlPed.activarPedidoExistente();
+		tglbtnPedNuevo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				ctrlPed.controlarPedido(tglbtnPedNuevo);
 			}
 		});
 		//boton obtener pedido
@@ -365,12 +351,6 @@ public class FrmPedido extends JFrame {
 		btnPedLimpiar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ctrlPed.clearForm(getContentPane());
-			}
-		});
-		//boton nuevo pedido
-		btnPedNuevo.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				ctrlPed.nuevoPedido();
 			}
 		});
 		//boton generar pedido
@@ -420,6 +400,20 @@ public class FrmPedido extends JFrame {
 	/*****************************************************************************************************************************************************/
 	/* GET Y SET */
 	/*****************************************************************************************************************************************************/
+	public JToggleButton getTglbtnPedNuevo() {
+		return tglbtnPedNuevo;
+	}
+	public void setTglbtnPedNuevo(JToggleButton tglbtnPedNuevo) {
+		this.tglbtnPedNuevo = tglbtnPedNuevo;
+	}
+
+	public JDateChooser getDchPedFecha() {
+		return dchPedFecha;
+	}
+	public void setDchPedFecha(JDateChooser dchPedFecha) {
+		this.dchPedFecha = dchPedFecha;
+	}
+	
 	public JTextField getTxtPersDesc() {
 		return txtPersDesc;
 	}
@@ -525,4 +519,12 @@ public class FrmPedido extends JFrame {
 	public void setPnlPedBus(JPanel pnlPedBus) {
 		this.pnlPedBus = pnlPedBus;
 	}
+	
+	public JFormattedTextField getFtxtPedHora() {
+		return ftxtPedHora;
+	}
+	public void setFtxtPedHora(JFormattedTextField ftxtPedHora) {
+		this.ftxtPedHora = ftxtPedHora;
+	}
+	
 }

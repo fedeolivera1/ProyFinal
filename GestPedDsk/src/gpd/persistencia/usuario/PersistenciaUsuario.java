@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
@@ -60,7 +62,7 @@ public class PersistenciaUsuario extends Conector implements IPersUsuario, CnstQ
 		logger.info("Ejecucion de obtenerUsuario para: " + nombreUsuario);
 		UsuarioDsk usuario = null;
 		try {
-			GenSqlSelectType genType = new GenSqlSelectType(QRY_SELECT_USR);
+			GenSqlSelectType genType = new GenSqlSelectType(QRY_SELECT_USR_XID);
 			genType.setParam(nombreUsuario);
 			rs = (ResultSet) runGeneric(genType);
 			if(rs.next()) {
@@ -80,6 +82,32 @@ public class PersistenciaUsuario extends Conector implements IPersUsuario, CnstQ
 		}
 		return usuario;
 	}
+	
+	@Override
+	public List<UsuarioDsk> obtenerListaUsuario() throws PersistenciaException {
+		ArrayList<UsuarioDsk> listaUsuario = null;
+		ResultSet resultado;
+		GenSqlSelectType genSel = new GenSqlSelectType(CnstQryUsuario.QRY_SELECT_USR);
+		
+		try {
+			resultado = (ResultSet) Conector.runGeneric(genSel);
+			listaUsuario = new ArrayList<UsuarioDsk>();
+			while(resultado.next()) {
+				UsuarioDsk usuario= new UsuarioDsk();
+				usuario.setNomUsu(resultado.getString(1));
+				char[] tipoChar = new char[1];
+				resultado.getCharacterStream("tipo").read(tipoChar);
+				TipoUsr tipo = TipoUsr.getTipoUsrPorChar(tipoChar[0]);
+				usuario.setTipoUsr(tipo);
+				listaUsuario.add(usuario);
+			}
+		} catch (ConectorException | SQLException | IOException e) {
+			Conector.rollbackConn();
+			logger.fatal("Excepcion al obtenerListaUsuario: " + e.getMessage(), e);
+			throw new PersistenciaException(e);
+		}
+		return listaUsuario;
+	}
 
 	@Override
 	public Integer guardarUsuario(UsuarioDsk usuario) throws PersistenciaException {
@@ -89,7 +117,7 @@ public class PersistenciaUsuario extends Conector implements IPersUsuario, CnstQ
 			PreparedStatement ps = conn.prepareStatement(QRY_INSERT_USR);
 			ps.setString(1, usuario.getNomUsu());
 			ps.setString(2, usuario.getPass());
-			ps.setString(2, usuario.getPass());
+			ps.setObject(3, usuario.getTipoUsr().getAsChar(), java.sql.Types.CHAR);
 			resultado = ps.executeUpdate();
 		} catch (SQLException e) {
 			Conector.rollbackConn();
@@ -106,7 +134,8 @@ public class PersistenciaUsuario extends Conector implements IPersUsuario, CnstQ
 		try {
 			PreparedStatement ps = conn.prepareStatement(QRY_UPDATE_USR);
 			ps.setString(1, usuario.getPass());
-			ps.setString(2, usuario.getNomUsu());
+			ps.setObject(2, usuario.getTipoUsr().getAsChar(), java.sql.Types.CHAR);
+			ps.setString(3, usuario.getNomUsu());
 			resultado = ps.executeUpdate();
 		} catch (SQLException e) {
 			Conector.rollbackConn();

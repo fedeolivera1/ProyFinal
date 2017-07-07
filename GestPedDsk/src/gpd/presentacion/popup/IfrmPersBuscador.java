@@ -4,6 +4,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -113,9 +115,19 @@ public class IfrmPersBuscador extends JInternalFrame {
 				ctrlInterno.cargarCbxLoc(cbxPbDep, cbxPbLoc);
 			}
 		});
+		//boton buscar persona
 		btnPbBusq.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ctrlInterno.buscarPersona(cbxPbTipoPers, txtPbFiltro, cbxPbLoc);
+			}
+		});
+		//enter en campo filtro
+		txtPbFiltro.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent ke) {
+				if(ke.getKeyCode() == KeyEvent.VK_ENTER) {
+					ctrlInterno.buscarPersona(cbxPbTipoPers, txtPbFiltro, cbxPbLoc);
+				}
 			}
 		});
 		btnPbLimpiar.addActionListener(new ActionListener() {

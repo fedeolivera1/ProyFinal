@@ -27,4 +27,10 @@ public enum TipoUsr {
     	}
         return null;
     }
+	
+	@Override
+	 public String toString() {
+		 return tipoUsr;
+	 }
+	
 }

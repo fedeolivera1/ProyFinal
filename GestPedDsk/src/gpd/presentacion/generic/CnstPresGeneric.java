@@ -6,6 +6,15 @@ public interface CnstPresGeneric {
 	public static final String USR = "Usuario";
 	public final static String USR_DATOS = "Debe proporcionar nombre de usuario y password.";
 	public final static String USR_NO_AUTENTICADO = "El usuario no se ha podido autenticar.";
+	public final static String USR_PASS_LARGO = "El largo de las nuevas contraseñas deben ser al menos 6 caracteres.";
+	public final static String USR_PASS_VAL = "Las contraseña actual no coincide con el registro.";
+	public final static String USR_PASS_REP = "Las contraseñas no coinciden.";
+	public final static String USR_PASS_NO_INGRESADO = "Ingrese una contraseña.";
+	public final static String USR_ING_OK = "El usuario ha sido ingresado correctamente.";
+	public final static String USR_MOD_OK = "El usuario ha sido modificado correctamente.";
+	public final static String USR_ELI_OK = "El usuario ha sido eliminado correctamente.";
+	public final static String USR_ELI_CONFIRM = "Está seguro que desea eliminar a ";
+	public final static String USR_CONFIRM_CC = "El cambio de contraseña ha sido efectuado correctamente.";
 	
 	//prod
 	public static final String PROD = "Producto";
@@ -68,7 +77,7 @@ public interface CnstPresGeneric {
 	public static final String PEDIDO_CONF_VTA = "Está seguro que desea generar la venta? ";
 	
 	//venta
-	public static final String VTA = "Pedido";
+	public static final String VTA = "Venta";
 	public static final String VTA_GENERADA_OK = "La venta se ha generado correctamente.";
 	
 	
@@ -78,5 +87,7 @@ public interface CnstPresGeneric {
 	public static final String DATOS_OBLIG = "Los datos marcados son obligatorios.";
 	public static final String JTABLE_EMPTY = "No se encontraron resultados...";
 	public static final String N_A = "N/A";
+	public static final String QUESTION = "?";
+	
 	
 }

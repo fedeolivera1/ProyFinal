@@ -184,6 +184,7 @@ public abstract class CtrlGenerico {
 			String[] tokens = hora.split(delims);
 			if(tokens.length == 3) {
 				fechaRet = new Fecha(Integer.valueOf(tokens[0]), Integer.valueOf(tokens[1]));
+				fechaRet.setFormato(Fecha.HM);
 			}
 		}
 		return fechaRet;
@@ -544,6 +545,9 @@ public abstract class CtrlGenerico {
 		} else if (nombreClase.equals("javax.swing.JFormattedTextField")) {
 			// Es un JFormattedTextField asi que lo ponemos en blanco
 			((javax.swing.JFormattedTextField) comp).setText("");
+		} else if (nombreClase.equals("javax.swing.JPasswordField")) {
+			// Es un JFormattedTextField asi que lo ponemos en blanco
+			((javax.swing.JPasswordField) comp).setText("");
 		} else if (nombreClase.equals("javax.swing.JComboBox")) {
 			// Es un JComboBox asi que ponemos el primer elemento
 			((javax.swing.JComboBox<?>) comp).setSelectedIndex(-1);

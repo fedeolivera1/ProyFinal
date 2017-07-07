@@ -1,8 +1,10 @@
 package gpd.presentacion.formulario;
 
+import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -11,12 +13,17 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.border.EmptyBorder;
 
+import gpd.dominio.usuario.TipoUsr;
 import gpd.dominio.usuario.UsuarioDsk;
+import gpd.presentacion.controlador.CtrlFrmUsuario;
 
 public class FrmPrincipal extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
+	private CtrlFrmUsuario ctrlUsuario;
+	private JDesktopPane desktopPane;
+	private UsuarioDsk usrLogueado;
 
 
 	/**
@@ -26,6 +33,8 @@ public class FrmPrincipal extends JFrame {
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 800, 600);
+		ctrlUsuario = new CtrlFrmUsuario(this);
+		setUsrLogueado(usr);
 		
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
@@ -41,7 +50,23 @@ public class FrmPrincipal extends JFrame {
 		});
 		
 		JMenuItem mntmUsuario = new JMenuItem("Usuario");
+		mntmUsuario.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				ctrlUsuario.abrirIFrmUsu();
+			}
+		});
+		//control usr //FIXME revisar esto
+		mntmUsuario.setEnabled(usr.getTipoUsr().equals(TipoUsr.A) ? true : false);
+		//
 		mnArchivo.add(mntmUsuario);
+		
+		JMenuItem mntmCambioContr = new JMenuItem("Cambio Contr");
+		mntmCambioContr.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ctrlUsuario.abrirIFrmCp();
+			}
+		});
+		mnArchivo.add(mntmCambioContr);
 		mnArchivo.add(mnSalir);
 		
 		JMenu mnCliente = new JMenu("Persona");
@@ -171,10 +196,27 @@ public class FrmPrincipal extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
+		desktopPane = new JDesktopPane();
+		desktopPane.setBounds(0, 0, 0, 0);
+		contentPane.add(desktopPane);
+		desktopPane.setBackground(SystemColor.control);
+		desktopPane.setLayout(null);
+		contentPane.add(desktopPane);
+		//agrego desktopPane a controlador
+		ctrlUsuario.setDeskPane(desktopPane);
+		
 		JPanel pnlPpal = new JPanel();
 		pnlPpal.setBounds(0, 0, 784, 545);
 		contentPane.add(pnlPpal);
 		pnlPpal.setLayout(null);
 		
+	}
+
+
+	public UsuarioDsk getUsrLogueado() {
+		return usrLogueado;
+	}
+	public void setUsrLogueado(UsuarioDsk usrLogueado) {
+		this.usrLogueado = usrLogueado;
 	}
 }
