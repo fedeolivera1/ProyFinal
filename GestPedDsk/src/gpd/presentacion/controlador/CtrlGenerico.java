@@ -75,6 +75,7 @@ public abstract class CtrlGenerico {
 			enviarError(CnstPresExceptions.GEN, CnstPresExceptions.ENC + e.getMessage());
 		}
 	}
+	
 	/**
 	 * metodo que transforma una password sin cifrar a una cifrada con el metodo
 	 * MD5. 
@@ -98,6 +99,11 @@ public abstract class CtrlGenerico {
 		}
 	}
 	
+	/**
+	 * 
+	 * @param formatter
+	 * @return
+	 */
 	public MaskFormatter mascNumerica(String formatter) {
 		MaskFormatter mascara = null;
 		try {
@@ -107,6 +113,23 @@ public abstract class CtrlGenerico {
 		}
 		return mascara;
     }
+	
+	/**
+	 * 
+	 * @param dato
+	 * @param mascara
+	 * @return
+	 */
+	public String removerMascara(String dato, String mascara) {
+		try {
+			if(dato != null && !dato.isEmpty() && dato.contains(mascara)) {
+				dato = dato.replaceAll(mascara, STR_VACIO);
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+		return dato;
+	}
 	
 	/**
 	 * recibe una fecha en formato texto, y parsea con dateformat

@@ -156,6 +156,9 @@ public class CtrlFrmPedido extends CtrlGenerico implements CnstPresGeneric {
 							Fecha fechaHora = (Fecha) tabla.getModel().getValueAt(fila, 1);
 							try {
 								Pedido pedido = mgrPed.obtenerPedidoPorId(pers.getIdPersona(), fechaHora);
+								setPedidoActual(pedido);
+								setPersSel(pers);
+								cargarPersonaSeleccionada();
 								cargarMapDesdePedido(pedido);
 								cargarJtPedidoLin();
 								setearInfoPedido();
@@ -198,7 +201,7 @@ public class CtrlFrmPedido extends CtrlGenerico implements CnstPresGeneric {
 					fila[1] = pl.getPedido().getFechaHora();
 					fila[2] = pl.getPrecioUnit();
 					fila[3] = pl.getCantidad();
-					fila[4] = pl.getPrecioUnit()*pl.getCantidad();//fixme revisar decimales
+					fila[4] = pl.getPrecioUnit() * pl.getCantidad();//fixme revisar decimales
 					modeloJtPed.addRow(fila);
 				}
 				
@@ -318,6 +321,49 @@ public class CtrlFrmPedido extends CtrlGenerico implements CnstPresGeneric {
 			manejarExcepcion(e);
 		}
 	}
+	
+	public void modificarItemAPedido(JTable jtPedidoLin, JComboBox<Producto> cbxPedProd, JFormattedTextField ftxtPedCant) {
+		try {
+			GenCompType genComp = new GenCompType();
+			genComp.setComp(jtPedidoLin);
+			genComp.setComp(cbxPedProd);
+			genComp.setComp(ftxtPedCant);
+			genComp.setComp(getFrm().getTxtPersDesc());
+			if(controlDatosObl(genComp)) {
+				if(getPedidoActual() != null) {
+					getPedidoActual().setPersona(getPersSel());
+//					PedidoLinea pl = new PedidoLinea(getPedidoActual());
+					Producto prod = (Producto) jtPedidoLin.getValueAt(jtPedidoLin.getSelectedRow(), 0);//posi prod
+					Fecha fechaHora = (Fecha) jtPedidoLin.getValueAt(jtPedidoLin.getSelectedRow(), 1);//posi fecha-hora pedido
+					
+					KeyMapLp key = new KeyMapLp(getPersSel().getIdPersona(), 
+							fechaHora.getAsNumber(Fecha.AMDHMS), 
+							prod.getIdProducto());
+					if(mapLineasPedido.containsKey(key)) {
+						PedidoLinea pl = mapLineasPedido.get(key);
+						Double precioCalcProd = Double.valueOf(getFrm().getFtxtPedLotePrecio().getText());
+						ConfigDriver cfg = new ConfigDriver();
+						Float ivaDeProd = Float.valueOf(cfg.getIva(pl.getProducto().getAplIva().getAplIvaProp()));
+						
+						pl.setProducto((Producto) cbxPedProd.getSelectedItem());
+						pl.setCantidad(Integer.valueOf(ftxtPedCant.getText()));
+						pl.setIva(Converters.obtenerIvaDePrecio(precioCalcProd, ivaDeProd));
+						pl.setPrecioUnit(Double.valueOf(getFrm().getFtxtPedLotePrecio().getText()));
+						cargarJtPedidoLin(); 
+					} else {
+						enviarWarning(PED, PEDIDO_LINEA_NO_EXISTE);
+					}
+				} else {
+					enviarWarning(PED, PEDIDO_INEXISTENTE);
+				}
+			} else {
+				enviarWarning(PED, DATOS_OBLIG);
+			}
+		
+		} catch(Exception e) {
+			manejarExcepcion(e);
+		}
+	}
 
 	public void obtenerPedidos(JComboBox<EstadoPedido> cbxPedidoEstado, JTextField txtPedidoPers, JDateChooser dchPedFecIni, JDateChooser dchPedFecFin) {
 		try {
@@ -429,9 +475,37 @@ public class CtrlFrmPedido extends CtrlGenerico implements CnstPresGeneric {
 		}
 	}
 	
-	public void actualizarPedido() {
-		// TODO Auto-generated method stub
-		
+	public void actualizarPedido(JDateChooser dchPedFec, JFormattedTextField ftxtPedHora, JTable jtPedido) {
+		try {
+			GenCompType genComp = new GenCompType();
+			genComp.setComp(dchPedFec);
+			genComp.setComp(ftxtPedHora);
+			genComp.setComp(jtPedido);
+			if(controlDatosObl(genComp)) {
+				if(getPedidoActual() != null && (getPedidoActual().getEstado().equals(EstadoPedido.P) || getPedidoActual().getEstado().equals(EstadoPedido.R)) 
+						&& mapLineasPedido != null && !mapLineasPedido.isEmpty()) {
+					Pedido pedido = getPedidoActual();
+					ArrayList<PedidoLinea> listaPl = new ArrayList<>();
+					listaPl.addAll(mapLineasPedido.values());
+					pedido.setListaPedidoLinea(listaPl);
+					pedido.setUsuario(getUsr());
+					if(getFrm().getDchPedFecha() != null) {
+						Fecha fechaProg = new Fecha(getFrm().getDchPedFecha().getDate());
+						pedido.setFechaProg(fechaProg);
+					}
+					if(getFrm().getFtxtPedHora().getText() != ":") {
+						Fecha horaProg = convertirHoraDesdeTxt(getFrm().getFtxtPedHora().getText());
+						pedido.setHoraProg(horaProg);
+					}
+					mgrPed.actualizarPedido(pedido, EstadoPedido.P);
+					enviarInfo(PED, PEDIDO_ACT_OK);
+				}
+			} else {
+				enviarWarning(PED, DATOS_OBLIG);
+			}
+		} catch(Exception e) {
+			manejarExcepcion(e);
+		}
 	}
 	
 	public void generarVenta(JTable jtPedido) {
@@ -638,6 +712,5 @@ public class CtrlFrmPedido extends CtrlGenerico implements CnstPresGeneric {
 	public void setStrInfoPedido(StringBuilder strInfoPedido) {
 		this.strInfoPedido = strInfoPedido;
 	}
-
 	
 }

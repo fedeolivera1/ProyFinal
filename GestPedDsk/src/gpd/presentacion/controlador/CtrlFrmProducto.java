@@ -15,7 +15,6 @@ import javax.swing.JComboBox;
 import javax.swing.JDesktopPane;
 import javax.swing.JFormattedTextField;
 import javax.swing.JList;
-import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
@@ -44,7 +43,7 @@ import gpd.presentacion.popup.IfrmTipoProd;
 import gpd.presentacion.popup.IfrmUtilidad;
 import gpd.types.Fecha;
 
-public class CtrlFrmProducto extends CtrlGenerico {
+public class CtrlFrmProducto extends CtrlGenerico implements CnstPresGeneric {
 
 	private ManagerProducto mgrProd = new ManagerProducto();
 	private ManagerTransaccion mgrTransac = new ManagerTransaccion();
@@ -261,9 +260,9 @@ public class CtrlFrmProducto extends CtrlGenerico {
 					fila[1] = lote.getTranLinea().getProducto();
 					fila[2] = lote.getTranLinea().getTransaccion().getNroTransac();
 					fila[3] = lote.getStock();
-					fila[4] = lote.getDeposito() != null ? lote.getDeposito() : CnstPresGeneric.N_A;
-					fila[5] = lote.getUtilidad() != null ? lote.getUtilidad() : CnstPresGeneric.N_A;
-					fila[6] = lote.getVenc() != null ? lote.getVenc().toString(Fecha.DMA) : CnstPresGeneric.N_A;
+					fila[4] = lote.getDeposito() != null ? lote.getDeposito() : N_A;
+					fila[5] = lote.getUtilidad() != null ? lote.getUtilidad() : N_A;
+					fila[6] = lote.getVenc() != null ? lote.getVenc().toString(Fecha.DMA) : N_A;
 					modeloJtLote.addRow(fila);
 				}
 				tabla.addMouseListener(new MouseAdapter() {
@@ -277,7 +276,7 @@ public class CtrlFrmProducto extends CtrlGenerico {
 					}
 				});
 			} else {
-				cargarJTableVacia(tabla, CnstPresGeneric.JTABLE_SIN_LOTES);
+				cargarJTableVacia(tabla, JTABLE_SIN_LOTES);
 				clearPanel(frmProd.getPnlLoteDatos());
 			}
 		} catch(Exception e) {
@@ -470,7 +469,7 @@ public class CtrlFrmProducto extends CtrlGenerico {
 				List<Producto> lst = mgrProd.obtenerListaProductoPorTipoProd(tp);
 				cargarJtProd(lst);
 			} else {
-				enviarWarning(CnstPresGeneric.PROD, CnstPresGeneric.DATOS_OBLIG);
+				enviarWarning(PROD, DATOS_OBLIG);
 			}
 		} catch(Exception e) {
 			manejarExcepcion(e);
@@ -509,7 +508,7 @@ public class CtrlFrmProducto extends CtrlGenerico {
 				List<Producto> lst = mgrProd.obtenerListaProductoPorTipoProd(tp);
 				cargarJtProd(lst);
 			} else {
-				enviarWarning(CnstPresGeneric.PROD, CnstPresGeneric.DATOS_OBLIG);
+				enviarWarning(PROD, DATOS_OBLIG);
 			}
 		} catch(Exception e) {
 			manejarExcepcion(e);
@@ -526,7 +525,7 @@ public class CtrlFrmProducto extends CtrlGenerico {
 				prod.setIdProducto(idInt);
 				mgrProd.eliminarProducto(prod);
 			} else {
-				enviarWarning(CnstPresGeneric.PROD, CnstPresGeneric.DATOS_OBLIG);
+				enviarWarning(PROD, DATOS_OBLIG);
 			}
 		} catch(Exception e) {
 			manejarExcepcion(e);
@@ -544,9 +543,9 @@ public class CtrlFrmProducto extends CtrlGenerico {
 				mgrProd.guardarTipoProd(tipoProd);
 				clearForm(getiFrmTp().getContentPane());
 				cargarListTipoProd(jlTp);
-				JOptionPane.showMessageDialog(null, CnstPresGeneric.TP_ING_OK, CnstPresGeneric.TP, JOptionPane.PLAIN_MESSAGE);
+				enviarInfo(TP, TP_ING_OK);
 			} else {
-				enviarWarning(CnstPresGeneric.TP, CnstPresGeneric.DATOS_OBLIG);
+				enviarWarning(TP, DATOS_OBLIG);
 			}
 		} catch(Exception e) {
 			manejarExcepcion(e);
@@ -562,9 +561,9 @@ public class CtrlFrmProducto extends CtrlGenerico {
 				mgrProd.modificarTipoProd(tp);
 				clearForm(getiFrmTp().getContentPane());
 				cargarListTipoProd(jlTp);
-				JOptionPane.showMessageDialog(null, CnstPresGeneric.TP_MOD_OK, CnstPresGeneric.TP, JOptionPane.PLAIN_MESSAGE);
+				enviarInfo(TP, TP_MOD_OK);
 			} else {
-				enviarWarning(CnstPresGeneric.TP, CnstPresGeneric.DATOS_OBLIG);
+				enviarWarning(TP, DATOS_OBLIG);
 			}
 		} catch(Exception e) {
 			manejarExcepcion(e);
@@ -579,9 +578,9 @@ public class CtrlFrmProducto extends CtrlGenerico {
 				mgrProd.eliminarTipoProd(tp);
 				clearForm(getiFrmTp().getContentPane());
 				cargarListTipoProd(jlTp);
-				JOptionPane.showMessageDialog(null, CnstPresGeneric.TP_ELI_OK, CnstPresGeneric.TP, JOptionPane.PLAIN_MESSAGE);
+				enviarInfo(TP, TP_ELI_OK);
 			} else {
-				enviarWarning(CnstPresGeneric.TP, CnstPresGeneric.DATOS_OBLIG);
+				enviarWarning(TP, DATOS_OBLIG);
 			}
 		} catch(Exception e) {
 			manejarExcepcion(e);
@@ -625,9 +624,9 @@ public class CtrlFrmProducto extends CtrlGenerico {
 				mgrProd.guardarDeposito(dep);
 				clearForm(getiFrmDep().getContentPane());
 				cargarListDeposito(jlDep);
-				JOptionPane.showMessageDialog(null, CnstPresGeneric.DEP_ING_OK, CnstPresGeneric.DEP, JOptionPane.PLAIN_MESSAGE);
+				enviarInfo(DEP, DEP_ING_OK);
 			} else {
-				enviarWarning(CnstPresGeneric.TP, CnstPresGeneric.DATOS_OBLIG);
+				enviarWarning(TP, DATOS_OBLIG);
 			}
 		} catch(Exception e) {
 			manejarExcepcion(e);
@@ -643,9 +642,9 @@ public class CtrlFrmProducto extends CtrlGenerico {
 				mgrProd.modificarDeposito(dep);
 				clearForm(getiFrmDep().getContentPane());
 				cargarListDeposito(jlDep);
-				JOptionPane.showMessageDialog(null, CnstPresGeneric.DEP_MOD_OK, CnstPresGeneric.DEP, JOptionPane.PLAIN_MESSAGE);
+				enviarInfo(DEP, DEP_MOD_OK);
 			} else {
-				enviarWarning(CnstPresGeneric.TP, CnstPresGeneric.DATOS_OBLIG);
+				enviarWarning(TP, DATOS_OBLIG);
 			}
 		} catch(Exception e) {
 			manejarExcepcion(e);
@@ -660,9 +659,9 @@ public class CtrlFrmProducto extends CtrlGenerico {
 				mgrProd.eliminarDeposito(dep);
 				clearForm(getiFrmDep().getContentPane());
 				cargarListDeposito(jlDep);
-				JOptionPane.showMessageDialog(null, CnstPresGeneric.DEP_ELI_OK, CnstPresGeneric.DEP, JOptionPane.PLAIN_MESSAGE);
+				enviarInfo(DEP, DEP_ELI_OK);
 			} else {
-				enviarWarning(CnstPresGeneric.TP, CnstPresGeneric.DATOS_OBLIG);
+				enviarWarning(TP, DATOS_OBLIG);
 			}
 		} catch(Exception e) {
 			manejarExcepcion(e);
@@ -706,9 +705,9 @@ public class CtrlFrmProducto extends CtrlGenerico {
 				mgrProd.guardarUtilidad(util);
 				clearForm(getiFrmUtil().getContentPane());
 				cargarListUtil(jlUtil);
-				enviarInfo(CnstPresGeneric.UTIL, CnstPresGeneric.UTIL_ING_OK);
+				enviarInfo(UTIL, UTIL_ING_OK);
 			} else {
-				enviarWarning(CnstPresGeneric.TP, CnstPresGeneric.DATOS_OBLIG);
+				enviarWarning(TP, DATOS_OBLIG);
 			}
 		} catch(Exception e) {
 			manejarExcepcion(e);
@@ -724,9 +723,9 @@ public class CtrlFrmProducto extends CtrlGenerico {
 				mgrProd.modificarUtilidad(util);
 				clearForm(getiFrmUtil().getContentPane());
 				cargarListUtil(jlUtil);
-				enviarInfo(CnstPresGeneric.UTIL, CnstPresGeneric.UTIL_MOD_OK);
+				enviarInfo(UTIL, UTIL_MOD_OK);
 			} else {
-				enviarWarning(CnstPresGeneric.TP, CnstPresGeneric.DATOS_OBLIG);
+				enviarWarning(TP, DATOS_OBLIG);
 			}
 		} catch(Exception e) {
 			manejarExcepcion(e);
@@ -740,9 +739,9 @@ public class CtrlFrmProducto extends CtrlGenerico {
 				mgrProd.eliminarUtilidad(util);
 				clearForm(getiFrmUtil().getContentPane());
 				cargarListUtil(jlUtil);
-				enviarInfo(CnstPresGeneric.UTIL, CnstPresGeneric.UTIL_ELI_OK);
+				enviarInfo(UTIL, UTIL_ELI_OK);
 			} else {
-				enviarWarning(CnstPresGeneric.UTIL, CnstPresGeneric.DATOS_OBLIG);
+				enviarWarning(UTIL, DATOS_OBLIG);
 			}
 		} catch(Exception e) {
 			manejarExcepcion(e);
@@ -829,7 +828,7 @@ public class CtrlFrmProducto extends CtrlGenerico {
 					cargarJtLote();
 				}
 			} else {
-				enviarWarning(CnstPresGeneric.LOTE, CnstPresGeneric.DATOS_OBLIG);
+				enviarWarning(LOTE, DATOS_OBLIG);
 			}
 		} catch(Exception e) {
 			manejarExcepcion(e);
@@ -854,12 +853,15 @@ public class CtrlFrmProducto extends CtrlGenerico {
 					if(lotesValidos) {
 						List<Lote> listaLote = new ArrayList<>(hashLotes.values());
 						mgrTransac.modificarTransaccionCompra(transac, listaLote);
+						clearControlsInJPanel(getFrm().getPnlLoteDatos());
+						clearControlsInJPanel(getFrm().getScrollPaneProd());
+						enviarInfo(LOTE, LOTES_ACT_OK);
 					} else {
-						enviarWarning(CnstPresGeneric.LOTE, CnstPresGeneric.LOTES_NO_COMPLETADOS);
+						enviarWarning(LOTE, LOTES_NO_COMPLETADOS);
 					}
 				}
 			} else {
-				enviarWarning(CnstPresGeneric.LOTE, CnstPresGeneric.DATOS_OBLIG);
+				enviarWarning(LOTE, DATOS_OBLIG);
 			}
 		} catch(Exception e) {
 			manejarExcepcion(e);
