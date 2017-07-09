@@ -45,7 +45,7 @@ public class UsuarioDsk implements Serializable {
 	//Override para que muestre el nombreUsuario en combobox y otros
 	@Override
 	public String toString() {
-	    return nomUsu;
+	    return nomUsu + " - " + getTipoUsr();
 	}
 
 }

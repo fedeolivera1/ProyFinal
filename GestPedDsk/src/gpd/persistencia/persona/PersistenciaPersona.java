@@ -182,7 +182,7 @@ public class PersistenciaPersona extends Conector implements IPersPersona, CnstQ
 					pf.getSinc(), pf.getUltAct());
 			
 			GenSqlExecType genExec = new GenSqlExecType(QRY_UPDATE_PF);
-			genExec.setParam(documento);
+			genExec.setParam(docAnt != null ? docAnt : documento);
 			genExec.setParam(pf.getTipoDoc().getIdTipoDoc());
 			genExec.setParam(pf.getApellido1());
 			genExec.setParam(pf.getApellido2());
@@ -190,7 +190,7 @@ public class PersistenciaPersona extends Conector implements IPersPersona, CnstQ
 			genExec.setParam(pf.getNombre2());
 			genExec.setParam(pf.getFechaNac());
 			genExec.setParam(pf.getSexo().getAsChar());
-			genExec.setParam(docAnt != null ? docAnt : documento);
+			genExec.setParam(documento);
 			resultado = (Integer) runGeneric(genExec);
 		} catch (ConectorException e) {
 			Conector.rollbackConn();
@@ -254,13 +254,13 @@ public class PersistenciaPersona extends Conector implements IPersPersona, CnstQ
 					pj.getSinc(), pj.getUltAct());
 			
 			GenSqlExecType genExec = new GenSqlExecType(QRY_UPDATE_PJ);
-			genExec.setParam(rut);
+			genExec.setParam(rutAnt != null ? rutAnt : rut);
 			genExec.setParam(pj.getNombre());
 			genExec.setParam(pj.getRazonSocial());
 			genExec.setParam(pj.getBps());
 			genExec.setParam(pj.getBse());
 			genExec.setParam(pj.getEsProv() ? S_CHAR : N_CHAR);
-			genExec.setParam(rutAnt != null ? rutAnt : rut);
+			genExec.setParam(rut);
 			resultado = (Integer) runGeneric(genExec);
 			
 		} catch (ConectorException e) {
@@ -324,7 +324,7 @@ public class PersistenciaPersona extends Conector implements IPersPersona, CnstQ
 					throws ConectorException {
 		try {
 			GenSqlExecType genExec = new GenSqlExecType(QRY_UPDATE_PERS);
-			genExec.setParam(idPersona);
+			genExec.setParam(idPersonaAnt != null ? idPersonaAnt : idPersona);
 			genExec.setParam(direccion);
 			genExec.setParam(puerta);
 			genExec.setParam(solar);
@@ -339,7 +339,7 @@ public class PersistenciaPersona extends Conector implements IPersPersona, CnstQ
 			genExec.setParam(origen.getAsChar());
 			genExec.setParam(sinc.getAsChar());
 			genExec.setParam(ultAct);
-			genExec.setParam(idPersonaAnt != null ? idPersonaAnt : idPersona);
+			genExec.setParam(idPersona);
 			resultado = (Integer) runGeneric(genExec);
 		} catch (ConectorException e) {
 			Conector.rollbackConn();

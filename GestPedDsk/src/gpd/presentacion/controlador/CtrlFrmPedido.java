@@ -225,11 +225,11 @@ public class CtrlFrmPedido extends CtrlGenerico implements CnstPresGeneric {
 	
 	private void setearInfoPedido() {
 		clearComponent(getFrm().getTxtPedInfo());
+		setStrInfoPedido(new StringBuilder());
 		if(getPedidoActual() != null) {
-			setStrInfoPedido(new StringBuilder());
-			strInfoPedido.append("Pedido nuevo.");
+			strInfoPedido.append("Pedido nuevo. \n");
 		} else {
-			strInfoPedido.append("Pedido existente.");
+			strInfoPedido.append("Pedido existente. \n");
 		}
 		if(mapLineasPedido != null && !mapLineasPedido.isEmpty()) {
 			strInfoPedido.append("Items: \n");
@@ -237,6 +237,7 @@ public class CtrlFrmPedido extends CtrlGenerico implements CnstPresGeneric {
 				strInfoPedido.append(pl.getProducto().toString() + "\n");
 			}
 		}
+		clearComponent(getFrm().getTxtPedInfo());
 		getFrm().getTxtPedInfo().setText(strInfoPedido.toString());
 	}
 	
