@@ -8,6 +8,13 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="lib" path="/Config/properties"/>
 	<classpathentry kind="lib" path="/Shared/ext_jars/jcalendar-1.4.jar"/>
+	<classpathentry kind="lib" path="/Shared/ext_jars/commons-beanutils-1.8.2.jar"/>
+	<classpathentry kind="lib" path="/Shared/ext_jars/commons-collections-3.2.1.jar"/>
+	<classpathentry kind="lib" path="/Shared/ext_jars/commons-logging-1.1.2.jar"/>
 	<classpathentry kind="lib" path="/Shared/ext_jars/jasperreports-6.4.1.jar"/>
+	<classpathentry kind="lib" path="/Shared/ext_jars/jcommon-1.0.15.jar"/>
+	<classpathentry kind="lib" path="/Shared/ext_jars/commons-digester-2.1.jar"/>
+	<classpathentry kind="lib" path="/Shared/ext_jars/groovy-all-2.0.1.jar"/>
+	<classpathentry kind="lib" path="/Shared/reports"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

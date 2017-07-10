@@ -33,6 +33,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.JSeparator;
 import java.awt.SystemColor;
+import com.toedter.calendar.JDateChooser;
 
 public class FrmMovimiento extends JFrame {
 
@@ -53,6 +54,8 @@ public class FrmMovimiento extends JFrame {
 	private JPanel pnlCompraItems;
 	private JTable jtComprasPend;
 	private JPanel pnlGenerarCompra;
+	private JTable jtVenta;
+	private JTable jtVentaLin;
 
 
 	public static FrmMovimiento getFrmMovimiento(UsuarioDsk usr) {
@@ -165,6 +168,47 @@ public class FrmMovimiento extends JFrame {
 		JPanel tpVenta = new JPanel();
 		tabbedPane.addTab("Venta", null, tpVenta, null);
 		tpVenta.setLayout(null);
+		
+		JScrollPane scrollPaneVenta = new JScrollPane();
+		scrollPaneVenta.setBounds(10, 47, 759, 200);
+		tpVenta.add(scrollPaneVenta);
+		
+		jtVenta = new JTable();
+		scrollPaneVenta.setColumnHeaderView(jtVenta);
+		
+		JScrollPane scrollPaneVentaLin = new JScrollPane();
+		scrollPaneVentaLin.setBounds(10, 270, 759, 200);
+		tpVenta.add(scrollPaneVentaLin);
+		
+		jtVentaLin = new JTable();
+		scrollPaneVentaLin.setColumnHeaderView(jtVentaLin);
+		
+		JButton btnVtaAnular = new JButton("Anular Venta");
+		btnVtaAnular.setBounds(645, 13, 124, 23);
+		tpVenta.add(btnVtaAnular);
+		
+		JSeparator separator_1 = new JSeparator();
+		separator_1.setForeground(SystemColor.info);
+		separator_1.setBackground(SystemColor.info);
+		separator_1.setBounds(10, 258, 759, 1);
+		tpVenta.add(separator_1);
+		
+		JLabel label = new JLabel("Periodo*");
+		label.setHorizontalAlignment(SwingConstants.RIGHT);
+		label.setBounds(10, 17, 56, 14);
+		tpVenta.add(label);
+		
+		JDateChooser dateChooser = new JDateChooser();
+		dateChooser.setBounds(76, 14, 87, 20);
+		tpVenta.add(dateChooser);
+		
+		JDateChooser dateChooser_1 = new JDateChooser();
+		dateChooser_1.setBounds(173, 14, 87, 20);
+		tpVenta.add(dateChooser_1);
+		
+		JButton button = new JButton("Obtener");
+		button.setBounds(279, 13, 89, 23);
+		tpVenta.add(button);
 		
 		JButton btnLimpiar = new JButton("Limpiar");
 		btnLimpiar.setBounds(645, 499, 124, 23);

@@ -310,6 +310,13 @@ public abstract class Conector {
 	}
 	
 	public static Connection devolverConnection() {
+		try {
+			if(conn != null && conn.isClosed()) {
+				getConn();
+			}
+		} catch (SQLException e) {
+			logger.fatal("ERROR - Conector al devolverConnection" + e.getMessage(), e);
+		}
 		return conn;
 	}
 	
