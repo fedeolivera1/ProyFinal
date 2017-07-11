@@ -10,7 +10,7 @@ public class GeneradorReportesTest {
 
 	@Test
 	public void test() {
-		GeneradorReportes.abrirReporte("a");
+		GeneradorReportes.abrirReporte("a", null);
 		
 	}
 
