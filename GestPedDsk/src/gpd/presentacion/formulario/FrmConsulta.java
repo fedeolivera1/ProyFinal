@@ -15,11 +15,15 @@ import org.apache.log4j.Logger;
 
 import gpd.dominio.usuario.UsuarioDsk;
 import gpd.presentacion.controlador.CtrlFrmConsulta;
+import gpd.reports.TipoReporte;
+
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import com.toedter.calendar.JDateChooser;
 import javax.swing.JComboBox;
 import javax.swing.JTextField;
+import java.awt.event.ItemListener;
+import java.awt.event.ItemEvent;
 
 public class FrmConsulta extends JFrame {
 
@@ -30,7 +34,7 @@ public class FrmConsulta extends JFrame {
 	private CtrlFrmConsulta ctrlInterno;
 	private JPanel contentPane;
 	private JTextField txtConsPersona;
-	private JComboBox<?> cbxConsFiltro;
+	private JComboBox<TipoReporte> cbxConsFiltro;
 	private JDateChooser dchConsIni;
 	private JDateChooser dchConsFin;
 
@@ -86,7 +90,7 @@ public class FrmConsulta extends JFrame {
 		
 		JLabel lblTipoReporte = new JLabel("Tipo Reporte *");
 		lblTipoReporte.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblTipoReporte.setBounds(25, 14, 81, 14);
+		lblTipoReporte.setBounds(22, 14, 81, 14);
 		panel.add(lblTipoReporte);
 		
 		JLabel label_1 = new JLabel("Persona");
@@ -108,9 +112,15 @@ public class FrmConsulta extends JFrame {
 		/* ACCIONES CONTROLES */
 		/*****************************************************************************************************************************************************/
 		
+		ctrlInterno.cargarTipoRep(cbxConsFiltro);
+		
+		cbxConsFiltro.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent arg0) {
+			}
+		});
 		btnReporte.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				ctrlInterno.generarReporte(cbxConsFiltro, dchConsIni, dchConsFin);
+				ctrlInterno.controlComponenteReporte(cbxConsFiltro);
 			}
 		});
 		
@@ -123,6 +133,7 @@ public class FrmConsulta extends JFrame {
 				instance = null;
 			}
 		});
+		
 	}
 	
 	/*****************************************************************************************************************************************************/
@@ -139,7 +150,7 @@ public class FrmConsulta extends JFrame {
 	public JComboBox<?> getCbxConsFiltro() {
 		return cbxConsFiltro;
 	}
-	public void setCbxConsFiltro(JComboBox<?> cbxConsFiltro) {
+	public void setCbxConsFiltro(JComboBox<TipoReporte> cbxConsFiltro) {
 		this.cbxConsFiltro = cbxConsFiltro;
 	}
 

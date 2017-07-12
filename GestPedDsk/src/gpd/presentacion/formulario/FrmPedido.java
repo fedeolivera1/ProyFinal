@@ -297,12 +297,6 @@ public class FrmPedido extends JFrame {
 		tglbtnPedNuevo.setBounds(10, 9, 121, 23);
 		pnlPedido.add(tglbtnPedNuevo);
 		
-		/*****************************************************************************************************************************************************/
-		/* ACCIONES CONTROLES */
-		/*****************************************************************************************************************************************************/
-		
-		ctrlPed.cargarCbxPedidoEstado(cbxPedidoEstado);
-		
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(481, 1, 303, 73);
 		pnlPedido.add(scrollPane);
@@ -313,6 +307,12 @@ public class FrmPedido extends JFrame {
 		txtPedInfo.setRows(2);
 		txtPedInfo.setEditable(false);
 		txtPedInfo.setBackground(UIManager.getColor("InternalFrame.borderColor"));
+		
+		/*****************************************************************************************************************************************************/
+		/* ACCIONES CONTROLES */
+		/*****************************************************************************************************************************************************/
+		
+		ctrlPed.cargarCbxPedidoEstado(cbxPedidoEstado);
 		
 		//boton pedido nuevo
 		tglbtnPedNuevo.addActionListener(new ActionListener() {

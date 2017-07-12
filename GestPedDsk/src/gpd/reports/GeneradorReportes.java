@@ -19,7 +19,7 @@ public class GeneradorReportes {
 	private static String EXT_JR = ".jrxml";
 	private static String FILE_SEP = "/";
 	
-	public static void abrirReporte(String archivo, Map<String, Object> params) {
+	public static void abrirReporte(String archivo, Map<String, Object> params) { 
         try {
         	InputStream inputReport = GeneradorReportes.class.getResourceAsStream(FILE_SEP + archivo + EXT_JR);
             JasperReport report = JasperCompileManager.compileReport(inputReport);
