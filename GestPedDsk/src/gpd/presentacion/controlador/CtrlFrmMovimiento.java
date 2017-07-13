@@ -13,6 +13,7 @@ import javax.swing.JFormattedTextField;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+import gpd.dominio.persona.PersonaFisica;
 import gpd.dominio.persona.PersonaJuridica;
 import gpd.dominio.producto.Producto;
 import gpd.dominio.producto.TipoProd;
@@ -245,6 +246,65 @@ public class CtrlFrmMovimiento extends CtrlGenerico {
 				frmMov.getFtxtCompraPu().setText(String.valueOf(prod.getPrecio()));
 			} else {
 				clearComponent(frmMov.getFtxtCompraPu());
+			}
+		} catch(Exception e) {
+			manejarExcepcion(e);
+		}
+	}
+	
+	public void cargarJtVenta(List<Transaccion> listaTransac) {
+		try {
+			JTable tabla = frmMov.getJtVenta();
+			clearTable(tabla);
+			deleteModelTable(tabla);
+			if(listaTransac != null && !listaTransac.isEmpty()) {
+				DefaultTableModel modeloJtComprasPend = new DefaultTableModel() {
+					private static final long serialVersionUID = 1L;
+					@Override
+				    public boolean isCellEditable (int fila, int columna) {
+				        return false;
+				    }
+				};
+				tabla.setModel(modeloJtComprasPend);
+				modeloJtComprasPend.addColumn("Id Transac");
+				modeloJtComprasPend.addColumn("Proveedor");
+				modeloJtComprasPend.addColumn("Fecha - Hora");
+				modeloJtComprasPend.addColumn("Items (prod|cant)");
+				for(Transaccion transac : listaTransac) {
+					Object [] fila = new Object[4];
+					String datoPersona = null;
+					if(transac.getPersona() instanceof PersonaFisica) {
+						PersonaFisica pf = (PersonaFisica) transac.getPersona();
+						datoPersona = pf.toString();
+					} else if(transac.getPersona() instanceof PersonaJuridica) {
+						PersonaJuridica pj = (PersonaJuridica) transac.getPersona();
+						datoPersona = pj.toString();
+					}
+					
+					fila[0] = transac.getNroTransac();
+					fila[1] = datoPersona;
+					fila[2] = transac.getFechaHora().toString(Fecha.AMDHMS);
+					fila[3] = transac.toStringLineas(); 
+					modeloJtComprasPend.addRow(fila);
+				}
+				tabla.addMouseListener(new MouseAdapter() {
+					@Override
+					public void mouseClicked(MouseEvent me) {
+//						try {
+							int fila = tabla.rowAtPoint(me.getPoint());
+							int cols = tabla.getModel().getColumnCount();
+							if (fila > -1 && cols > 1) {
+								Long nroTransac = (Long) tabla.getModel().getValueAt(fila, 0);
+//								cargarTransaccion(mgrTran.obtenerTransaccionPorId(nroTransac));
+//								cargarJtVentaItems(null);
+							}
+//						} catch (PresentacionException  e) {
+//							enviarError(CnstPresExceptions.DB, e.getMessage());
+//						}
+					}
+				});
+			} else {
+				cargarJTableVacia(tabla, CnstPresGeneric.JTABLE_SIN_COMPRAS);
 			}
 		} catch(Exception e) {
 			manejarExcepcion(e);

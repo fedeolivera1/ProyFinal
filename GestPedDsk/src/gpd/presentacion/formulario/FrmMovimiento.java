@@ -31,6 +31,8 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.GregorianCalendar;
+
 import javax.swing.JSeparator;
 import java.awt.SystemColor;
 import com.toedter.calendar.JDateChooser;
@@ -198,13 +200,15 @@ public class FrmMovimiento extends JFrame {
 		label.setBounds(10, 17, 56, 14);
 		tpVenta.add(label);
 		
-		JDateChooser dateChooser = new JDateChooser();
-		dateChooser.setBounds(76, 14, 87, 20);
-		tpVenta.add(dateChooser);
+		JDateChooser dchVentaIni = new JDateChooser();
+		dchVentaIni.setBounds(76, 14, 87, 20);
+		tpVenta.add(dchVentaIni);
+		dchVentaIni.setCalendar(new GregorianCalendar());
 		
-		JDateChooser dateChooser_1 = new JDateChooser();
-		dateChooser_1.setBounds(173, 14, 87, 20);
-		tpVenta.add(dateChooser_1);
+		JDateChooser dchVentaFin = new JDateChooser();
+		dchVentaFin.setBounds(173, 14, 87, 20);
+		tpVenta.add(dchVentaFin);
+		dchVentaFin.setCalendar(new GregorianCalendar());
 		
 		JButton button = new JButton("Obtener");
 		button.setBounds(279, 13, 89, 23);
@@ -437,4 +441,19 @@ public class FrmMovimiento extends JFrame {
 	public void setPnlGenerarCompra(JPanel pnlGenerarCompra) {
 		this.pnlGenerarCompra = pnlGenerarCompra;
 	}
+	
+	public JTable getJtVenta() {
+		return jtVenta;
+	}
+	public void setJtVenta(JTable jtVenta) {
+		this.jtVenta = jtVenta;
+	}
+
+	public JTable getJtVentaLin() {
+		return jtVentaLin;
+	}
+	public void setJtVentaLin(JTable jtVentaLin) {
+		this.jtVentaLin = jtVentaLin;
+	}
+
 }

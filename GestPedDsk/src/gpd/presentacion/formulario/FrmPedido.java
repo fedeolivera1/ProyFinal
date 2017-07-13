@@ -1,6 +1,7 @@
 package gpd.presentacion.formulario;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -39,7 +40,6 @@ import gpd.dominio.producto.Producto;
 import gpd.dominio.producto.TipoProd;
 import gpd.dominio.usuario.UsuarioDsk;
 import gpd.presentacion.controlador.CtrlFrmPedido;
-import java.awt.Font;
 
 public class FrmPedido extends JFrame {
 
@@ -337,7 +337,7 @@ public class FrmPedido extends JFrame {
 		//boton buscar personas
 		btnPedBp.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				ctrlPed.abrirBuscadorPers();
+				ctrlPed.abrirIfrmPersBuscador(getContentPane(), getDesktopPane(), getTxtPersDesc());
 			}
 		});
 		//combo tipo prod
@@ -411,6 +411,13 @@ public class FrmPedido extends JFrame {
 	/*****************************************************************************************************************************************************/
 	/* GET Y SET */
 	/*****************************************************************************************************************************************************/
+	public JDesktopPane getDesktopPane() {
+		return desktopPane;
+	}
+	public void setDesktopPane(JDesktopPane desktopPane) {
+		this.desktopPane = desktopPane;
+	}
+	
 	public JToggleButton getTglbtnPedNuevo() {
 		return tglbtnPedNuevo;
 	}

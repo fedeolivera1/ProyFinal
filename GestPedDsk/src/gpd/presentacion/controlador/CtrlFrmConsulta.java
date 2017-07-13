@@ -1,10 +1,13 @@
 package gpd.presentacion.controlador;
 
+import java.awt.Container;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.JComboBox;
+import javax.swing.JDesktopPane;
+import javax.swing.JTextField;
 
 import com.toedter.calendar.JDateChooser;
 
@@ -20,13 +23,20 @@ public class CtrlFrmConsulta extends CtrlGenerico implements CnstPresGeneric {
 
 	private FrmConsulta frm;
 	private UsuarioDsk usr;
+	private JDesktopPane deskPane;
 	private Map<String, Object> mapParamsJr;
+	private CtrlFrmPersBuscador ctrlPb;
 	
 
 	public CtrlFrmConsulta(FrmConsulta frmCon, UsuarioDsk usr) {
 		super();
 		this.setFrm(frmCon);
 		this.setUsr(usr);
+		ctrlPb = new CtrlFrmPersBuscador();
+	}
+	
+	public void abrirIfrmPersBuscador(Container contentPane, JDesktopPane deskPane, JTextField txtPersDesc) {
+		ctrlPb.abrirBuscadorPers(contentPane, deskPane, txtPersDesc);
 	}
 	
 	public void cargarTipoRep(JComboBox<TipoReporte> cbxConsFiltro) {
@@ -49,7 +59,8 @@ public class CtrlFrmConsulta extends CtrlGenerico implements CnstPresGeneric {
 				TipoReporte tr = (TipoReporte) cbxTipoRep.getSelectedItem();
 				switch(tr) {
 					case C: case V:
-						generarReporteTransac((TipoReporte.C.equals(tr) ? TipoTran.C : TipoTran.V), getFrm().getDchConsIni(), getFrm().getDchConsFin());
+						Long idPersona = ctrlPb.getPersSel() != null ? ctrlPb.getPersSel().getIdPersona() : -1;
+						generarReporteTransac((TipoReporte.C.equals(tr) ? TipoTran.C : TipoTran.V), idPersona, getFrm().getDchConsIni(), getFrm().getDchConsFin());
 						break;
 					case PR:
 						generarReporteProducto();
@@ -64,7 +75,7 @@ public class CtrlFrmConsulta extends CtrlGenerico implements CnstPresGeneric {
 		}
 	}
 	
-	public void generarReporteTransac(TipoTran tipoTran, JDateChooser dchConsIni, JDateChooser dchConsFin) {
+	public void generarReporteTransac(TipoTran tipoTran, Long idPersona, JDateChooser dchConsIni, JDateChooser dchConsFin) {
 		try {
 			GenCompType genComp = new GenCompType();
 			genComp.setComp(dchConsIni);
@@ -75,7 +86,7 @@ public class CtrlFrmConsulta extends CtrlGenerico implements CnstPresGeneric {
 
 				mapParamsJr = new HashMap<>();
 				mapParamsJr.put("tipo_transac", String.valueOf(tipoTran.getAsChar()));
-				mapParamsJr.put("id_persona", new Long(-1));
+				mapParamsJr.put("id_persona", idPersona);
 				mapParamsJr.put("fecha_ini", dateIni);
 				mapParamsJr.put("fecha_fin", dateFin);
 			}
@@ -93,9 +104,7 @@ public class CtrlFrmConsulta extends CtrlGenerico implements CnstPresGeneric {
 		
 	}
 	
-	public void cargarCbxConsFiltro() {
-		getFrm().getCbxConsFiltro().setSelectedItem("Filtro1");
-	}
+
 	/*****************************************************************************************************************************************************/
 	/* GET Y SET */
 	/*****************************************************************************************************************************************************/
@@ -119,5 +128,12 @@ public class CtrlFrmConsulta extends CtrlGenerico implements CnstPresGeneric {
 	}
 	public void setMapParamsJr(Map<String, Object> mapParamsJr) {
 		this.mapParamsJr = mapParamsJr;
+	}
+	
+	public JDesktopPane getDeskPane() {
+		return deskPane;
+	}
+	public void setDeskPane(JDesktopPane deskPane) {
+		this.deskPane = deskPane;
 	}
 }

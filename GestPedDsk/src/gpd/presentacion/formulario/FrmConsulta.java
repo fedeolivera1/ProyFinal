@@ -1,29 +1,31 @@
 package gpd.presentacion.formulario;
 
+import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.GregorianCalendar;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
 import org.apache.log4j.Logger;
 
+import com.toedter.calendar.JDateChooser;
+
 import gpd.dominio.usuario.UsuarioDsk;
 import gpd.presentacion.controlador.CtrlFrmConsulta;
 import gpd.reports.TipoReporte;
-
-import javax.swing.JLabel;
-import javax.swing.SwingConstants;
-import com.toedter.calendar.JDateChooser;
-import javax.swing.JComboBox;
-import javax.swing.JTextField;
-import java.awt.event.ItemListener;
-import java.awt.event.ItemEvent;
 
 public class FrmConsulta extends JFrame {
 
@@ -33,6 +35,7 @@ public class FrmConsulta extends JFrame {
 	//
 	private CtrlFrmConsulta ctrlInterno;
 	private JPanel contentPane;
+	private JDesktopPane desktopPane;
 	private JTextField txtConsPersona;
 	private JComboBox<TipoReporte> cbxConsFiltro;
 	private JDateChooser dchConsIni;
@@ -59,6 +62,14 @@ public class FrmConsulta extends JFrame {
 		contentPane.setLayout(null);
 		
 		ctrlInterno = new CtrlFrmConsulta(this, usr);
+		
+		desktopPane = new JDesktopPane();
+		desktopPane.setBackground(SystemColor.control);
+		desktopPane.setBounds(0, 0, 0, 0);
+		desktopPane.setLayout(null);
+		contentPane.add(desktopPane);
+		//agrego desktopPane a controlador de busqueda
+		ctrlInterno.setDeskPane(desktopPane);
 		
 		JPanel panel = new JPanel();
 		panel.setBounds(10, 11, 764, 211);
@@ -104,9 +115,9 @@ public class FrmConsulta extends JFrame {
 		txtConsPersona.setBounds(111, 71, 340, 20);
 		panel.add(txtConsPersona);
 		
-		JButton button = new JButton("...");
-		button.setBounds(461, 70, 32, 22);
-		panel.add(button);
+		JButton btnConsBp = new JButton("...");
+		btnConsBp.setBounds(461, 70, 32, 22);
+		panel.add(btnConsBp);
 		
 		/*****************************************************************************************************************************************************/
 		/* ACCIONES CONTROLES */
@@ -116,6 +127,12 @@ public class FrmConsulta extends JFrame {
 		
 		cbxConsFiltro.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent arg0) {
+			}
+		});
+		//boton buscar personas
+		btnConsBp.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ctrlInterno.abrirIfrmPersBuscador(getContentPane(), getDesktopPane(), getTxtConsPersona());
 			}
 		});
 		btnReporte.addActionListener(new ActionListener() {
@@ -167,5 +184,11 @@ public class FrmConsulta extends JFrame {
 	public void setDchConsFin(JDateChooser dchConsFin) {
 		this.dchConsFin = dchConsFin;
 	}
-
+	
+	public JDesktopPane getDesktopPane() {
+		return desktopPane;
+	}
+	public void setDesktopPane(JDesktopPane desktopPane) {
+		this.desktopPane = desktopPane;
+	}
 }

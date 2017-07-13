@@ -172,6 +172,12 @@ public class FrmPrincipal extends JFrame {
 		JMenuItem mntmVenta = new JMenuItem("Venta");
 		mntmVenta.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				FrmMovimiento frmMov = FrmMovimiento.getFrmMovimiento(usr);
+				frmMov.setLocationRelativeTo(null);
+				//panel.pestaña("Venta");
+				JTabbedPane comp = (JTabbedPane) frmMov.getContentPane().getComponent(1);
+				comp.setSelectedIndex(1);
+				frmMov.setVisible(true);
 			}
 		});
 		mnMovimiento.add(mntmVenta);
