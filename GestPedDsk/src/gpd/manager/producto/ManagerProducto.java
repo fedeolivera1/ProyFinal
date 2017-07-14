@@ -495,6 +495,27 @@ public class ManagerProducto {
 	/** LOTE */
 	/*****************************************************************************************************************************************************/
 	
+	/**
+	 * metodo que a partir de una transaccion y un producto devuelve el lote asociado a dicha transaccion 
+	 * @param nroTransac
+	 * @param idProducto
+	 * @param diasTol
+	 * @return
+	 * @throws PresentacionException
+	 * METODO NO CONN: NO ABRE NI CIERRA CONEXIONES, DEBE SER LLAMADO DESDE METODO CONTENEDOR DE CONEXION
+	 */
+	public Lote obtenerLotePorTransacProdNoConn(Long nroTransac, Integer idProducto) throws PersistenciaException {
+		logger.info("Se ingresa a obtenerLotePorTransacProd");
+		Lote lote = null;
+		try {
+			lote = getInterfaceLote().obtenerLotePorTransacProd(nroTransac, idProducto);
+		} catch (PersistenciaException e) {
+			logger.fatal("Excepcion en ManagerProducto > obtenerListaLotePorTransac: " + e.getMessage(), e);
+			throw e;
+		}
+		return lote;
+	}
+	
 	public List<Lote> obtenerListaLotePorTransac(Long nroTransac) throws PresentacionException {
 		logger.info("Se ingresa a obtenerListaLotePorTransac");
 		List<Lote> listaLote = null;

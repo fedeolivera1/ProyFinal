@@ -13,6 +13,16 @@ public interface CnstQryLote {
 	public static final String QRY_UPDATE_STOCK_LOTE = "UPDATE lote SET stock = ? "
 												+ "WHERE id_lote = ?";
 	
+	public static final String QRY_SELECT_LOTE_XTRANSACPROD = "SELECT l.id_lote, l.nro_transac, l.id_producto, l.venc, l.nro_dep, l.id_util, l.stock "
+												+ "FROM lote l "
+												+ "INNER JOIN tran_linea tl "
+												+ "ON l.nro_transac = tl.nro_transac "
+												+ "AND l.id_producto = tl.id_producto "
+												+ "INNER JOIN transaccion t "
+												+ "ON t.nro_transac = tl.nro_transac "
+												+ "WHERE t.nro_transac= ? "
+												+ "AND t.id_producto = ?";
+	
 	public static final String QRY_SELECT_LOTES_XTRANSAC = "SELECT l.id_lote, l.nro_transac, l.id_producto, l.venc, l.nro_dep, l.id_util, l.stock "
 												+ "FROM lote l "
 												+ "INNER JOIN tran_linea tl "

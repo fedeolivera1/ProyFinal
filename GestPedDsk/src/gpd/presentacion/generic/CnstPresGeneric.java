@@ -77,11 +77,13 @@ public interface CnstPresGeneric {
 	public static final String PEDIDO_LINEA_EXISTE = "La linea ya existe en el pedido.";
 	public static final String PEDIDO_LINEA_NO_EXISTE = "La linea no existe en el pedido.";
 	public static final String PEDIDO_NO_GENERADO = "El pedido no fue generado, o no tiene items.";
-	public static final String PEDIDO_CONF_VTA = "Está seguro que desea generar la venta? ";
 	
 	//venta
 	public static final String VTA = "Venta";
+	public static final String VTA_CONF_GEN = "Está seguro que desea generar la venta? ";
+	public static final String VTA_CONF_ANULA = "Está seguro que desea anular la venta? ";
 	public static final String VTA_GENERADA_OK = "La venta se ha generado correctamente.";
+	public static final String VTA_ANULADA = "La venta se ha anulado.";
 	
 	
 	//controles genericos

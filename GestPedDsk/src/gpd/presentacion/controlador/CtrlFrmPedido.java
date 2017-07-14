@@ -506,7 +506,7 @@ public class CtrlFrmPedido extends CtrlGenerico implements CnstPresGeneric {
 				Persona pers = (Persona) jtPedido.getModel().getValueAt(jtPedido.getSelectedRow(), 0);
 				Fecha fechaHora = (Fecha) jtPedido.getModel().getValueAt(jtPedido.getSelectedRow(), 1);
 				Pedido pedido = mgrPed.obtenerPedidoPorId(pers.getIdPersona(), fechaHora);
-				if(enviarConfirm(PED, PEDIDO_CONF_VTA) == CONFIRM_OK) {
+				if(enviarConfirm(PED, VTA_CONF_GEN) == CONFIRM_OK) {
 					mgrPed.actualizarPedido(pedido, EstadoPedido.C);
 					enviarInfo(VTA, VTA_GENERADA_OK);
 				}

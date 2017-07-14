@@ -2,6 +2,7 @@ package gpd.manager.transaccion;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
 
@@ -19,10 +20,12 @@ import gpd.exceptions.PresentacionException;
 import gpd.interfaces.producto.IPersLote;
 import gpd.interfaces.transaccion.IPersTranLinea;
 import gpd.interfaces.transaccion.IPersTransaccion;
+import gpd.manager.producto.ManagerProducto;
 import gpd.persistencia.conector.Conector;
 import gpd.persistencia.producto.PersistenciaLote;
 import gpd.persistencia.transaccion.PersistenciaTranLinea;
 import gpd.persistencia.transaccion.PersistenciaTransaccion;
+import gpd.types.ErrorLogico;
 import gpd.types.Fecha;
 import gpd.util.ConfigDriver;
 
@@ -259,12 +262,18 @@ public class ManagerTransaccion {
 		return null;
 	}
 	
-	public Integer anularTransaccion(Transaccion transaccion) throws PresentacionException {
+	public Integer anularTransaccionVenta(Transaccion transaccion) throws PresentacionException {
 		try {
 			Conector.getConn();
 			if(transaccion != null) {
 				transaccion.setEstadoTran(EstadoTran.A);
 				transaccion.setFechaHora(new Fecha(Fecha.AMDHMS));
+				//se debe manejar lote para devolver cantidad de productos
+				ErrorLogico error = validarAnulacionVto(transaccion);
+				//TODO ver como manejar el error que generaría un problema
+				for(TranLinea tl : transaccion.getListaTranLinea()) {
+					//TODO falta y resto (actualizar)
+				}
 				getInterfaceTransaccion().guardarTranEstado(transaccion);
 				getInterfaceTransaccion().modificarEstadoTransaccion(transaccion);
 			}
@@ -273,7 +282,37 @@ public class ManagerTransaccion {
 			logger.fatal("Excepcion en ManagerTransaccion > anularTransaccion: " + e.getMessage(), e);
 			throw new PresentacionException(e);
 		}
-			return null;
+		return null;
+	}
+	
+	//FIXME chequear este metodo
+	private ErrorLogico validarAnulacionVto(Transaccion transaccion) throws PresentacionException {
+		ErrorLogico error = null;
+		try {
+			ManagerProducto mgrProd = new ManagerProducto();
+			ConfigDriver cfgDrv = ConfigDriver.getConfigDriver();
+			Integer diasTol = Integer.valueOf(cfgDrv.getVencTolerableAnul());
+			for(TranLinea tl : transaccion.getListaTranLinea()) {
+				Lote lote = mgrProd.obtenerLotePorTransacProdNoConn(tl.getTransaccion().getNroTransac(), tl.getProducto().getIdProducto());
+				Fecha fechaAnulacion = new Fecha(Fecha.AMD);
+				Fecha fechaVto = lote.getVenc();
+				long diff = fechaAnulacion.getTimeInMillis() - fechaVto.getTimeInMillis(); 
+			    long dias = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
+				if(dias > diasTol.longValue()) {
+					error = new ErrorLogico();
+					error.setCodigo(0);
+					error.setDescripcion("Alguno de los productos no cumple con el requisito de tolerancia de vencimiento.");
+					return error;
+				}
+			}
+		} catch (PersistenciaException e) {
+			logger.fatal("Excepcion en ManagerTransaccion > validarAnulacionVto: " + e.getMessage(), e);
+			throw new PresentacionException(e);
+		} catch (Exception e) {
+			logger.fatal("Excepcion no controlada en ManagerTransaccion > validarAnulacionVto: " + e.getMessage(), e);
+			throw new PresentacionException(e);
+		}
+		return error;
 	}
 	
 }

@@ -56,7 +56,9 @@ public class FrmMovimiento extends JFrame {
 	private JPanel pnlCompraItems;
 	private JTable jtComprasPend;
 	private JPanel pnlGenerarCompra;
+	private JScrollPane scrollPaneVenta;
 	private JTable jtVenta;
+	private JScrollPane scrollPaneVentaLin;
 	private JTable jtVentaLin;
 
 
@@ -171,19 +173,21 @@ public class FrmMovimiento extends JFrame {
 		tabbedPane.addTab("Venta", null, tpVenta, null);
 		tpVenta.setLayout(null);
 		
-		JScrollPane scrollPaneVenta = new JScrollPane();
+		scrollPaneVenta = new JScrollPane();
 		scrollPaneVenta.setBounds(10, 47, 759, 200);
 		tpVenta.add(scrollPaneVenta);
 		
 		jtVenta = new JTable();
 		scrollPaneVenta.setColumnHeaderView(jtVenta);
+		scrollPaneVenta.setViewportView(jtVenta);
 		
-		JScrollPane scrollPaneVentaLin = new JScrollPane();
+		scrollPaneVentaLin = new JScrollPane();
 		scrollPaneVentaLin.setBounds(10, 270, 759, 200);
 		tpVenta.add(scrollPaneVentaLin);
 		
 		jtVentaLin = new JTable();
 		scrollPaneVentaLin.setColumnHeaderView(jtVentaLin);
+		scrollPaneVentaLin.setViewportView(jtVentaLin);
 		
 		JButton btnVtaAnular = new JButton("Anular Venta");
 		btnVtaAnular.setBounds(645, 13, 124, 23);
@@ -210,13 +214,17 @@ public class FrmMovimiento extends JFrame {
 		tpVenta.add(dchVentaFin);
 		dchVentaFin.setCalendar(new GregorianCalendar());
 		
-		JButton button = new JButton("Obtener");
-		button.setBounds(279, 13, 89, 23);
-		tpVenta.add(button);
+		JButton btnVtaObtener = new JButton("Obtener");
+		btnVtaObtener.setBounds(279, 13, 89, 23);
+		tpVenta.add(btnVtaObtener);
 		
-		JButton btnLimpiar = new JButton("Limpiar");
-		btnLimpiar.setBounds(645, 499, 124, 23);
-		tpCompra.add(btnLimpiar);
+		JButton btnVtaLimpiar = new JButton("Limpiar");
+		btnVtaLimpiar.setBounds(378, 13, 124, 23);
+		tpVenta.add(btnVtaLimpiar);
+		
+		JButton btnComLimpiar = new JButton("Limpiar");
+		btnComLimpiar.setBounds(645, 499, 124, 23);
+		tpCompra.add(btnComLimpiar);
 		
 		JScrollPane scrollPaneComprasPend = new JScrollPane();
 		scrollPaneComprasPend.setBounds(10, 299, 625, 223);
@@ -331,7 +339,7 @@ public class FrmMovimiento extends JFrame {
 				ctrlMov.generarCompra();
 			}
 		});
-		btnLimpiar.addActionListener(new ActionListener() {
+		btnComLimpiar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ctrlMov.limpiarCompra(getFrmMovimiento(usr), true);
 			}
@@ -339,6 +347,24 @@ public class FrmMovimiento extends JFrame {
 		btnCompraAnular.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				ctrlMov.anularCompra();
+			}
+		});
+		//boton obtener venta
+		btnVtaObtener.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ctrlMov.obtenerVentas(dchVentaIni, dchVentaFin);
+			}
+		});
+		//boton anular venta
+		btnVtaAnular.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ctrlMov.anularVenta();
+			}
+		});
+		//boton limpiar venta
+		btnVtaLimpiar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				ctrlMov.limpiarVenta();
 			}
 		});
 
@@ -456,4 +482,17 @@ public class FrmMovimiento extends JFrame {
 		this.jtVentaLin = jtVentaLin;
 	}
 
+	public JScrollPane getScrollPaneVenta() {
+		return scrollPaneVenta;
+	}
+	public void setScrollPaneVenta(JScrollPane scrollPaneVenta) {
+		this.scrollPaneVenta = scrollPaneVenta;
+	}
+
+	public JScrollPane getScrollPaneVentaLin() {
+		return scrollPaneVentaLin;
+	}
+	public void setScrollPaneVentaLin(JScrollPane scrollPaneVentaLin) {
+		this.scrollPaneVentaLin = scrollPaneVentaLin;
+	}
 }
