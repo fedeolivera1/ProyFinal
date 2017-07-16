@@ -221,7 +221,7 @@ public class CtrlFrmMovimiento extends CtrlGenerico implements CnstPresGeneric {
 								int fila = tabla.rowAtPoint(me.getPoint());
 								int cols = tabla.getModel().getColumnCount();
 								if (fila > -1 && cols > 1) {
-									Long nroTransac = (Long) tabla.getModel().getValueAt(fila, 0);
+									Integer nroTransac = (Integer) tabla.getModel().getValueAt(fila, 0);
 									cargarTransaccion(mgrTran.obtenerTransaccionPorId(nroTransac));
 									cargarJtCompraItems();
 								}
@@ -304,7 +304,7 @@ public class CtrlFrmMovimiento extends CtrlGenerico implements CnstPresGeneric {
 							int fila = tabla.rowAtPoint(me.getPoint());
 							int cols = tabla.getModel().getColumnCount();
 							if (fila > -1 && cols > 1) {
-								Long nroTransac = (Long) tabla.getModel().getValueAt(fila, 0);
+								Integer nroTransac = (Integer) tabla.getModel().getValueAt(fila, 0);
 								Transaccion transac = mgrTran.obtenerTransaccionPorId(nroTransac);
 								cargarJtVentaItems(transac);
 							}
@@ -348,6 +348,22 @@ public class CtrlFrmMovimiento extends CtrlGenerico implements CnstPresGeneric {
 					fila[3] = tl.getPrecioUnit();
 					modeloJtVentaLin.addRow(fila);
 				}
+				tabla.addMouseListener(new MouseAdapter() {
+					@Override
+					public void mouseClicked(MouseEvent me) {
+						try {
+							int fila = tabla.rowAtPoint(me.getPoint());
+							int cols = tabla.getModel().getColumnCount();
+							if (fila > -1 && cols > 1) {
+								Integer nroTransac = (Integer) tabla.getModel().getValueAt(fila, 0);
+								Transaccion transac = mgrTran.obtenerTransaccionPorId(nroTransac);
+								cargarJtVentaItems(transac);
+							}
+						} catch (PresentacionException  e) {
+							enviarError(CnstPresExceptions.DB, e.getMessage());
+						}
+					}
+				});
 			} else {
 				cargarJTableVacia(tabla, JTABLE_SIN_ITEMS);
 			}
@@ -548,7 +564,7 @@ public class CtrlFrmMovimiento extends CtrlGenerico implements CnstPresGeneric {
 			gct.setComp(frmMov.getJtVenta());
 			if(controlDatosObl(gct)) {
 				if(enviarConfirm(VTA, VTA_CONF_ANULA) == CONFIRM_OK) {
-					Long nroTransac = (Long) frmMov.getJtVenta().getModel().getValueAt(frmMov.getJtVenta().getSelectedRow(), 0);
+					Integer nroTransac = (Integer) frmMov.getJtVenta().getModel().getValueAt(frmMov.getJtVenta().getSelectedRow(), 0);
 					Transaccion transac = (Transaccion) mgrTran.obtenerTransaccionPorId(nroTransac);
 					mgrTran.anularTransaccionVenta(transac);
 					enviarInfo(VTA, VTA_ANULADA);

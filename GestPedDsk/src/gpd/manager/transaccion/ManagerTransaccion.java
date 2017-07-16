@@ -12,6 +12,7 @@ import gpd.dominio.producto.Producto;
 import gpd.dominio.transaccion.EstadoTran;
 import gpd.dominio.transaccion.TipoTran;
 import gpd.dominio.transaccion.TranLinea;
+import gpd.dominio.transaccion.TranLineaLote;
 import gpd.dominio.transaccion.Transaccion;
 import gpd.dominio.util.Converters;
 import gpd.exceptions.ConectorException;
@@ -95,7 +96,7 @@ public class ManagerTransaccion {
 				//se sustrae el ivaTotal al total ya que se manejan directamente precios con iva en la compra
 				subTotal = Converters.redondearDosDec(total - ivaTotal);
 				total = Converters.redondearDosDec(total);
-				Long nroTransac = Conector.obtenerSecuencia(CnstQryTransaccion.SEC_TRANSAC);
+				Integer nroTransac = Conector.obtenerSecuencia(CnstQryTransaccion.SEC_TRANSAC);
 				transaccion.setNroTransac(nroTransac);
 				transaccion.setEstadoTran(EstadoTran.P);
 				transaccion.setFechaHora(new Fecha(Fecha.AMDHMS));
@@ -130,7 +131,7 @@ public class ManagerTransaccion {
 		try {
 			if(transaccion != null && TipoTran.V.equals(transaccion.getTipoTran())) {
 				Conector.getConn();
-				Long nroTransac = Conector.obtenerSecuencia(CnstQryTransaccion.SEC_TRANSAC);
+				Integer nroTransac = Conector.obtenerSecuencia(CnstQryTransaccion.SEC_TRANSAC);
 				transaccion.setNroTransac(nroTransac);
 				//se persiste la transaccion de tipo V (venta)
 				resultado = getInterfaceTransaccion().guardarTransaccionVenta(transaccion);
@@ -153,7 +154,7 @@ public class ManagerTransaccion {
 		return resultado;
 	}
 	
-	public Transaccion obtenerTransaccionPorId(Long idTransac) throws PresentacionException {
+	public Transaccion obtenerTransaccionPorId(Integer idTransac) throws PresentacionException {
 		Transaccion transac = null;
 		try {
 			Conector.getConn();
@@ -262,27 +263,48 @@ public class ManagerTransaccion {
 		return null;
 	}
 	
-	public Integer anularTransaccionVenta(Transaccion transaccion) throws PresentacionException {
+	//anulaciones //FIXME revisar y probar este metodo
+	
+	public ErrorLogico anularTransaccionVenta(Transaccion transaccion) throws PresentacionException {
+		ErrorLogico error = null;
 		try {
 			Conector.getConn();
 			if(transaccion != null) {
 				transaccion.setEstadoTran(EstadoTran.A);
 				transaccion.setFechaHora(new Fecha(Fecha.AMDHMS));
 				//se debe manejar lote para devolver cantidad de productos
-				ErrorLogico error = validarAnulacionVto(transaccion);
-				//TODO ver como manejar el error que generaría un problema
-				for(TranLinea tl : transaccion.getListaTranLinea()) {
-					//TODO falta y resto (actualizar)
+				error = validarAnulacionVto(transaccion);
+				if(error != null) {
+					return error;
+				} else {
+					List<TranLineaLote> listaTll = new ArrayList<>();
+					for(TranLinea tl : transaccion.getListaTranLinea()) {
+						listaTll.addAll(getInterfaceTransaccion().obtenerListaTranLineaLote(tl.getTransaccion().getNroTransac(), 
+														tl.getProducto().getIdProducto()));
+					}
+					for(TranLineaLote tll : listaTll) {
+						/*
+						 * obtengo lote acutal de base, y le sumo la cantidad restada en la venta
+						 * para la transaccion que se esta manejando
+						 */
+						Lote loteActual = getInterfaceLote().obtenerLotePorId(tll.getLote().getIdLote());
+						Integer stock = loteActual.getStock() + tll.getCantidad();
+						//actualizo en base
+						getInterfaceLote().actualizarStockLote(loteActual.getIdLote(), stock);
+					}
+					
 				}
 				getInterfaceTransaccion().guardarTranEstado(transaccion);
 				getInterfaceTransaccion().modificarEstadoTransaccion(transaccion);
+				//elimino tran_vta_lote para la transaccion que se anula
+				getInterfaceTransaccion().eliminarTranLineaLote(transaccion.getNroTransac());
 			}
-			Conector.closeConn("anularTransaccion");
+			Conector.closeConn("anularTransaccionVenta");
 		} catch (PersistenciaException e) {
-			logger.fatal("Excepcion en ManagerTransaccion > anularTransaccion: " + e.getMessage(), e);
+			logger.fatal("Excepcion en ManagerTransaccion > anularTransaccionVenta: " + e.getMessage(), e);
 			throw new PresentacionException(e);
 		}
-		return null;
+		return error;
 	}
 	
 	//FIXME chequear este metodo
@@ -298,6 +320,10 @@ public class ManagerTransaccion {
 				Fecha fechaVto = lote.getVenc();
 				long diff = fechaAnulacion.getTimeInMillis() - fechaVto.getTimeInMillis(); 
 			    long dias = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
+			    /*
+			     * se maneja para la anulacion que los días restantes de vencimiento de los productos
+			     * no superen lo establecido por properties
+			     */
 				if(dias > diasTol.longValue()) {
 					error = new ErrorLogico();
 					error.setCodigo(0);

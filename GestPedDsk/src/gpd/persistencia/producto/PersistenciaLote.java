@@ -25,20 +25,19 @@ public class PersistenciaLote extends Conector implements IPersLote, CnstQryLote
 	private ResultSet rs;
 	
 	@Override
-	public Lote obtenerLotePorTransacProd(Long nroTransac, Integer idProd) throws PersistenciaException {
+	public Lote obtenerLotePorId(Integer idLote) throws PersistenciaException {
 		Lote lote = null;
 		PersistenciaTranLinea ptl = new PersistenciaTranLinea();
 		PersistenciaUtilidad pu = new PersistenciaUtilidad();
 		PersistenciaDeposito pd = new PersistenciaDeposito();
 		try {
 			GenSqlSelectType genType = new GenSqlSelectType(QRY_SELECT_LOTE_XTRANSACPROD);
-			genType.setParam(nroTransac);
-			genType.setParam(idProd);
+			genType.setParam(idLote);
 			rs = (ResultSet) runGeneric(genType);
 			if(rs.next()) {
 				lote = new Lote();
 				lote.setIdLote(rs.getInt("id_lote"));
-				Long nroTransaccion = rs.getLong("nro_transac");
+				Integer nroTransaccion = rs.getInt("nro_transac");
 				Integer idProducto = rs.getInt("id_producto");
 				lote.setTranLinea(ptl.obtenerTranLineaPorId(nroTransaccion, idProducto));
 				Fecha venc = new Fecha(rs.getDate("venc"));
@@ -66,7 +65,48 @@ public class PersistenciaLote extends Conector implements IPersLote, CnstQryLote
 	}
 	
 	@Override
-	public List<Lote> obtenerListaLotePorTransac(Long nroTransac) throws PersistenciaException {
+	public Lote obtenerLotePorTransacProd(Integer nroTransac, Integer idProd) throws PersistenciaException {
+		Lote lote = null;
+		PersistenciaTranLinea ptl = new PersistenciaTranLinea();
+		PersistenciaUtilidad pu = new PersistenciaUtilidad();
+		PersistenciaDeposito pd = new PersistenciaDeposito();
+		try {
+			GenSqlSelectType genType = new GenSqlSelectType(QRY_SELECT_LOTE_XTRANSACPROD);
+			genType.setParam(nroTransac);
+			genType.setParam(idProd);
+			rs = (ResultSet) runGeneric(genType);
+			if(rs.next()) {
+				lote = new Lote();
+				lote.setIdLote(rs.getInt("id_lote"));
+				Integer nroTransaccion = rs.getInt("nro_transac");
+				Integer idProducto = rs.getInt("id_producto");
+				lote.setTranLinea(ptl.obtenerTranLineaPorId(nroTransaccion, idProducto));
+				Fecha venc = new Fecha(rs.getDate("venc"));
+				if(!rs.wasNull()) {
+					lote.setVenc(venc);
+				}
+				Integer idUtil = rs.getInt("id_util");
+				if(!rs.wasNull()) {
+					lote.setUtilidad(pu.obtenerUtilidadPorId(idUtil));
+				}
+				Integer nroDep = rs.getInt("nro_dep");
+				if(!rs.wasNull()) {
+					lote.setDeposito(pd.obtenerDepositoPorId(nroDep));
+				}
+				lote.setStock(rs.getInt("stock"));
+			}
+		} catch (ConectorException | SQLException | PersistenciaException e) {
+			Conector.rollbackConn();
+			logger.log(Level.FATAL, "Excepcion al obtenerLotePorTransacProd: " + e.getMessage(), e);
+			throw new PersistenciaException(e);
+		} finally {
+			closeRs(rs);
+		}
+		return lote;
+	}
+	
+	@Override
+	public List<Lote> obtenerListaLotePorTransac(Integer nroTransac) throws PersistenciaException {
 		List<Lote> listaLote = null;
 		try {
 			GenSqlSelectType genType = new GenSqlSelectType(QRY_SELECT_LOTES_XTRANSAC);
@@ -210,7 +250,7 @@ public class PersistenciaLote extends Conector implements IPersLote, CnstQryLote
 			while(rs.next()) {
 				Lote lote = new Lote();
 				lote.setIdLote(rs.getInt("id_lote"));
-				Long nroTransaccion = rs.getLong("nro_transac");
+				Integer nroTransaccion = rs.getInt("nro_transac");
 				Integer idProducto = rs.getInt("id_producto");
 				lote.setTranLinea(ptl.obtenerTranLineaPorId(nroTransaccion, idProducto));
 				Fecha venc = new Fecha(rs.getDate("venc"));

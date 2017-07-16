@@ -14,14 +14,20 @@ import gpd.db.generic.GenSqlExecType;
 import gpd.db.generic.GenSqlSelectType;
 import gpd.dominio.persona.PersonaFisica;
 import gpd.dominio.persona.PersonaJuridica;
+import gpd.dominio.producto.Lote;
+import gpd.dominio.producto.Producto;
 import gpd.dominio.transaccion.EstadoTran;
 import gpd.dominio.transaccion.TipoTran;
+import gpd.dominio.transaccion.TranLinea;
+import gpd.dominio.transaccion.TranLineaLote;
 import gpd.dominio.transaccion.Transaccion;
 import gpd.exceptions.ConectorException;
 import gpd.exceptions.PersistenciaException;
 import gpd.interfaces.transaccion.IPersTransaccion;
 import gpd.persistencia.conector.Conector;
 import gpd.persistencia.persona.PersistenciaPersona;
+import gpd.persistencia.producto.PersistenciaLote;
+import gpd.persistencia.producto.PersistenciaProducto;
 import gpd.types.Fecha;
 
 public class PersistenciaTransaccion extends Conector implements IPersTransaccion, CnstQryTransaccion {
@@ -101,7 +107,7 @@ public class PersistenciaTransaccion extends Conector implements IPersTransaccio
 
 
 	@Override
-	public Transaccion obtenerTransaccionPorId(Long idTransac) throws PersistenciaException {
+	public Transaccion obtenerTransaccionPorId(Integer idTransac) throws PersistenciaException {
 		Transaccion transac = null;
 		PersistenciaPersona pp = new PersistenciaPersona();
 		try {
@@ -110,7 +116,7 @@ public class PersistenciaTransaccion extends Conector implements IPersTransaccio
 			rs = (ResultSet) runGeneric(genType);
 			if(rs.next()) {
 				transac = new Transaccion(null);
-				transac.setNroTransac(rs.getLong("nro_transac"));
+				transac.setNroTransac(rs.getInt("nro_transac"));
 				transac.setPersona(pp.obtenerPersGenerico(rs.getLong("id_persona")));
 				char[] tipo = new char[1];
 				rs.getCharacterStream("operacion").read(tipo);
@@ -149,7 +155,7 @@ public class PersistenciaTransaccion extends Conector implements IPersTransaccio
 			rs = (ResultSet) runGeneric(genType);
 			while(rs.next()) {
 				Transaccion transac = new Transaccion(null);
-				transac.setNroTransac(rs.getLong("nro_transac"));
+				transac.setNroTransac(rs.getInt("nro_transac"));
 				transac.setPersona(pp.obtenerPersGenerico(rs.getLong("id_persona")));
 				char[] tipo = new char[1];
 				rs.getCharacterStream("operacion").read(tipo);
@@ -190,7 +196,7 @@ public class PersistenciaTransaccion extends Conector implements IPersTransaccio
 			rs = (ResultSet) runGeneric(genType);
 			while(rs.next()) {
 				Transaccion transac = new Transaccion(null);
-				transac.setNroTransac(rs.getLong("nro_transac"));
+				transac.setNroTransac(rs.getInt("nro_transac"));
 				transac.setPersona(pp.obtenerPersGenerico(rs.getLong("id_persona")));
 				char[] tipo = new char[1];
 				rs.getCharacterStream("operacion").read(tipo);
@@ -236,7 +242,7 @@ public class PersistenciaTransaccion extends Conector implements IPersTransaccio
 	}
 
 	@Override
-	public EstadoTran obtenerUltTranEstadoPorId(Long idTransac) throws PersistenciaException {
+	public EstadoTran obtenerUltTranEstadoPorId(Integer idTransac) throws PersistenciaException {
 		EstadoTran estadoTran = null;
 		try {
 			GenSqlSelectType genType = new GenSqlSelectType(QRY_SELECT_ULT_TRANESTADO_XID);
@@ -255,6 +261,72 @@ public class PersistenciaTransaccion extends Conector implements IPersTransaccio
 			closeRs(rs);
 		}
 		return estadoTran;
+	}
+
+	/*****************************************************************************************************************************************************/
+	
+	@Override
+	public List<TranLineaLote> obtenerListaTranLineaLote(Integer nroTransac, Integer idProducto) throws PersistenciaException {
+		List<TranLineaLote> listaTll = new ArrayList<>();
+		PersistenciaTranLinea ptl = new PersistenciaTranLinea();
+		PersistenciaLote pl = new PersistenciaLote();
+		try {
+			GenSqlSelectType genType = new GenSqlSelectType(QRY_SELECT_TRA_VTA_LOTE_XID);
+			genType.setParam(nroTransac);
+			genType.setParam(idProducto);
+			rs = (ResultSet) runGeneric(genType);
+			while(rs.next()) {
+				TranLinea tl = ptl.obtenerTranLineaPorId(nroTransac, idProducto);
+				Lote lote = pl.obtenerLotePorId(rs.getInt("id_lote"));
+				TranLineaLote tll = new TranLineaLote(tl, lote, rs.getInt("cantidad"));
+				listaTll.add(tll);
+			}
+		} catch (ConectorException | SQLException e) {
+			Conector.rollbackConn();
+			logger.log(Level.FATAL, "Excepcion al obtenerListaTransaccionPorPersona: " + e.getMessage(), e);
+			throw new PersistenciaException(e);
+		} finally {
+			closeRs(rs);
+		}
+		return null;
+	}
+	
+	@Override
+	public Integer guardarListaTranLineaLote(List<TranLineaLote> listaTll) throws PersistenciaException {
+		Integer resultado = null;
+		try {
+			GenSqlExecType genExec = new GenSqlExecType(QRY_INSERT_TRA_VTA_LOTE);
+			ArrayList<Object> paramList = null;
+			for(TranLineaLote tll : listaTll) {
+				paramList = new ArrayList<>();
+				paramList.add(tll.getTranLinea().getTransaccion().getNroTransac());
+				paramList.add(tll.getTranLinea().getProducto().getIdProducto());
+				paramList.add(tll.getLote().getIdLote());
+				paramList.add(tll.getCantidad());
+				genExec.setParamList(paramList);
+				resultado = (Integer) runGeneric(genExec);
+			}
+		} catch (ConectorException e) {
+			Conector.rollbackConn();
+			logger.log(Level.FATAL, "Excepcion al guardarListaTranLineaLote: " + e.getMessage(), e);
+			throw new PersistenciaException(e);
+		}
+		return resultado;
+	}
+
+	@Override
+	public Integer eliminarTranLineaLote(Integer nroTransac) throws PersistenciaException {
+		Integer resultado = null;
+		try {
+			GenSqlExecType genExec = new GenSqlExecType(QRY_DELETE_TRA_VTA_LOTE);
+			genExec.setParam(nroTransac);
+			resultado = (Integer) runGeneric(genExec);
+		} catch (ConectorException e) {
+			Conector.rollbackConn();
+			logger.log(Level.FATAL, "Excepcion al eliminarTranLineaLote: " + e.getMessage(), e);
+			throw new PersistenciaException(e);
+		}
+		return resultado;
 	}
 
 }

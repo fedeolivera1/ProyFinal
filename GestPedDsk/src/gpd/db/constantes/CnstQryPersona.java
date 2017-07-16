@@ -112,11 +112,11 @@ public interface CnstQryPersona {
 														+ "WHERE id_persona = ?";//INFO: tipo no va a proposito, no se puede cambiar tipo de persona
 	
 	public static final String QRY_UPDATE_PF = "UPDATE pers_fisica "
-														+ "SET documento = ?, id_tipo_doc = ?, apellido1 = ?, apellido2 = ?, nombre1 = ?, nombre2 = ?, fecha_nac = ?, sexo = ? "
+														+ "SET id_tipo_doc = ?, apellido1 = ?, apellido2 = ?, nombre1 = ?, nombre2 = ?, fecha_nac = ?, sexo = ? "
 														+ "WHERE documento = ?";
 	
 	public static final String QRY_UPDATE_PJ = "UPDATE pers_juridica "
-														+ "SET rut = ?, nombre = ?, razon_social = ?, bps = ?, bse = ?, es_prov = ? "
+														+ "SET nombre = ?, razon_social = ?, bps = ?, bse = ?, es_prov = ? "
 														+ "WHERE rut = ?";
 	
 	public static final String QRY_DELETE_PF = "DELETE FROM pers_fisica WHERE documento = ?";

@@ -38,13 +38,31 @@ public interface CnstQryTransaccion {
 															+ "AND (t.fecha_hora::date BETWEEN ? AND ? ) "
 															+ "ORDER BY te.fecha_hora DESC";
 	
+	//tran_estado
 	public static final String QRY_SELECT_ULT_TRANESTADO_XID = "SELECT te.estado FROM tran_estado te "
 															+ "WHERE te.nro_transac = ? "
 															+ "ORDER BY te.fecha_hora DESC "
 															+ "LIMIT 1";
 	
-	public static final String QRY_INSERT_TRANESTADO = "INSERT INTO TRAN_ESTADO "
+	public static final String QRY_INSERT_TRANESTADO = "INSERT INTO tran_estado "
 															+ "(nro_transac, estado, fecha_hora) "
 															+ "VALUES (?, ?, ?)";
+	
+	//tran_vta_lote
+	public static final String QRY_SELECT_TRA_VTA_LOTE_XID = "SELECT tl.nro_transac, tl.id_producto, l.id_lote, tvl.cantidad "
+															+ "FROM tran_vta_lote tvl "
+															+ "INNER JOIN tran_linea tl "
+															+ "ON tvl.nro_transac = tl.nro_transac "
+															+ "AND tvl.id_producto - tl.id_producto "
+															+ "INNER JOIN lote l "
+															+ "ON tvl.id_lote = l.id_lote "
+															+ "WHERE tvl.nro_transac = ? "
+															+ "AND tvl.id_producto = ? ";
+	
+	public static final String QRY_INSERT_TRA_VTA_LOTE = "INSERT INTO tran_vta_lote "
+															+ "(nro_transac, id_producto, id_lote, cantidad) "
+															+ "VALUES (?, ?, ?, ?)";
+	
+	public static final String QRY_DELETE_TRA_VTA_LOTE = "DELETE FROM tran_vta_lote WHERE nro_transac = ?";
 	
 }

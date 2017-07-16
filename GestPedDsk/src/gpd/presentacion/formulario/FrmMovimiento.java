@@ -60,6 +60,7 @@ public class FrmMovimiento extends JFrame {
 	private JTable jtVenta;
 	private JScrollPane scrollPaneVentaLin;
 	private JTable jtVentaLin;
+	private JTable table;
 
 
 	public static FrmMovimiento getFrmMovimiento(UsuarioDsk usr) {
@@ -182,7 +183,7 @@ public class FrmMovimiento extends JFrame {
 		scrollPaneVenta.setViewportView(jtVenta);
 		
 		scrollPaneVentaLin = new JScrollPane();
-		scrollPaneVentaLin.setBounds(10, 270, 759, 200);
+		scrollPaneVentaLin.setBounds(10, 284, 452, 200);
 		tpVenta.add(scrollPaneVentaLin);
 		
 		jtVentaLin = new JTable();
@@ -221,6 +222,23 @@ public class FrmMovimiento extends JFrame {
 		JButton btnVtaLimpiar = new JButton("Limpiar");
 		btnVtaLimpiar.setBounds(378, 13, 124, 23);
 		tpVenta.add(btnVtaLimpiar);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(472, 284, 297, 200);
+		tpVenta.add(scrollPane);
+		
+		table = new JTable();
+		scrollPane.setColumnHeaderView(table);
+		
+		JLabel lblItems = new JLabel("Items");
+		lblItems.setHorizontalAlignment(SwingConstants.LEFT);
+		lblItems.setBounds(10, 270, 87, 14);
+		tpVenta.add(lblItems);
+		
+		JLabel lblLotesStock = new JLabel("Lotes stock");
+		lblLotesStock.setHorizontalAlignment(SwingConstants.LEFT);
+		lblLotesStock.setBounds(472, 270, 80, 14);
+		tpVenta.add(lblLotesStock);
 		
 		JButton btnComLimpiar = new JButton("Limpiar");
 		btnComLimpiar.setBounds(645, 499, 124, 23);
