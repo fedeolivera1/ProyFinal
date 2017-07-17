@@ -15,7 +15,6 @@ import gpd.db.generic.GenSqlSelectType;
 import gpd.dominio.persona.PersonaFisica;
 import gpd.dominio.persona.PersonaJuridica;
 import gpd.dominio.producto.Lote;
-import gpd.dominio.producto.Producto;
 import gpd.dominio.transaccion.EstadoTran;
 import gpd.dominio.transaccion.TipoTran;
 import gpd.dominio.transaccion.TranLinea;
@@ -27,7 +26,6 @@ import gpd.interfaces.transaccion.IPersTransaccion;
 import gpd.persistencia.conector.Conector;
 import gpd.persistencia.persona.PersistenciaPersona;
 import gpd.persistencia.producto.PersistenciaLote;
-import gpd.persistencia.producto.PersistenciaProducto;
 import gpd.types.Fecha;
 
 public class PersistenciaTransaccion extends Conector implements IPersTransaccion, CnstQryTransaccion {
@@ -288,7 +286,7 @@ public class PersistenciaTransaccion extends Conector implements IPersTransaccio
 		} finally {
 			closeRs(rs);
 		}
-		return null;
+		return listaTll;
 	}
 	
 	@Override

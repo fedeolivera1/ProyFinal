@@ -17,15 +17,11 @@ public interface CnstQryLote {
 												+ "FROM lote l "
 												+ "WHERE id_lote = ?";
 	
-	public static final String QRY_SELECT_LOTE_XTRANSACPROD = "SELECT l.id_lote, l.nro_transac, l.id_producto, l.venc, l.nro_dep, l.id_util, l.stock "
-												+ "FROM lote l "
-												+ "INNER JOIN tran_linea tl "
-												+ "ON l.nro_transac = tl.nro_transac "
-												+ "AND l.id_producto = tl.id_producto "
-												+ "INNER JOIN transaccion t "
-												+ "ON t.nro_transac = tl.nro_transac "
-												+ "WHERE t.nro_transac= ? "
-												+ "AND t.id_producto = ?";
+	public static final String QRY_SELECT_LOTEVTA_XTRANSACPROD = "SELECT l.id_lote, tvl.nro_transac, l.id_producto, l.venc, l.nro_dep, l.id_util, l.stock FROM lote l "
+												+ "INNER JOIN tran_vta_lote tvl ON l.id_lote = tvl.id_lote "
+												+ "INNER JOIN tran_linea tl ON tvl.nro_transac = tl.nro_transac AND tvl.id_producto = tl.id_producto " 
+												+ "INNER JOIN transaccion t ON t.nro_transac = tl.nro_transac "
+												+ "WHERE tvl.nro_transac = ? AND tvl.id_producto = ?"; 
 	
 	public static final String QRY_SELECT_LOTES_XTRANSAC = "SELECT l.id_lote, l.nro_transac, l.id_producto, l.venc, l.nro_dep, l.id_util, l.stock "
 												+ "FROM lote l "

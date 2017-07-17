@@ -16,6 +16,7 @@ import gpd.dominio.producto.Producto;
 import gpd.dominio.producto.TipoProd;
 import gpd.dominio.producto.Unidad;
 import gpd.dominio.producto.Utilidad;
+import gpd.dominio.transaccion.TranLinea;
 import gpd.dominio.transaccion.TranLineaLote;
 import gpd.dominio.util.Converters;
 import gpd.dominio.util.Sinc;
@@ -28,6 +29,7 @@ import gpd.interfaces.producto.IPersProducto;
 import gpd.interfaces.producto.IPersTipoProd;
 import gpd.interfaces.producto.IPersUnidad;
 import gpd.interfaces.producto.IPersUtilidad;
+import gpd.interfaces.transaccion.IPersTranLinea;
 import gpd.interfaces.transaccion.IPersTransaccion;
 import gpd.persistencia.conector.Conector;
 import gpd.persistencia.producto.PersistenciaDeposito;
@@ -36,6 +38,7 @@ import gpd.persistencia.producto.PersistenciaProducto;
 import gpd.persistencia.producto.PersistenciaTipoProd;
 import gpd.persistencia.producto.PersistenciaUnidad;
 import gpd.persistencia.producto.PersistenciaUtilidad;
+import gpd.persistencia.transaccion.PersistenciaTranLinea;
 import gpd.persistencia.transaccion.PersistenciaTransaccion;
 import gpd.types.Fecha;
 import gpd.util.ConfigDriver;
@@ -50,6 +53,7 @@ public class ManagerProducto {
 	private static IPersUtilidad interfaceUtilidad;
 	private static IPersLote interfaceLote;
 	private static IPersTransaccion interfaceTransac;
+	private static IPersTranLinea interfaceTranLinea;
 	private Integer resultado;
 	
 	
@@ -94,6 +98,12 @@ public class ManagerProducto {
 			interfaceTransac = new PersistenciaTransaccion();
 		}
 		return interfaceTransac;
+	}
+	private static IPersTranLinea getInterfaceTranLinea() {
+		if(interfaceTranLinea == null) {
+			interfaceTranLinea = new PersistenciaTranLinea();
+		}
+		return interfaceTranLinea;
 	}
 	
 	/*****************************************************************************************************************************************************/
@@ -514,11 +524,11 @@ public class ManagerProducto {
 	 * @throws PresentacionException
 	 * METODO NO CONN: NO ABRE NI CIERRA CONEXIONES, DEBE SER LLAMADO DESDE METODO CONTENEDOR DE CONEXION
 	 */
-	public Lote obtenerLotePorTransacProdNoConn(Integer nroTransac, Integer idProducto) throws PersistenciaException {
+	public Lote obtenerLoteVtaPorTransacProdNoConn(Integer nroTransac, Integer idProducto) throws PersistenciaException {
 		logger.info("Se ingresa a obtenerLotePorTransacProd");
 		Lote lote = null;
 		try {
-			lote = getInterfaceLote().obtenerLotePorTransacProd(nroTransac, idProducto);
+			lote = getInterfaceLote().obtenerLoteVtaPorTransacProd(nroTransac, idProducto);
 		} catch (PersistenciaException e) {
 			logger.fatal("Excepcion en ManagerProducto > obtenerListaLotePorTransac: " + e.getMessage(), e);
 			throw e;
@@ -618,7 +628,7 @@ public class ManagerProducto {
 	 * @param cantidad
 	 * @throws PresentacionException
 	 */
-	public void manejarStockLotePorProductoNoConn(Integer idProducto, Integer cantidad) throws PresentacionException, ProductoSinStockException {
+	public void manejarStockLotePorProductoNoConn(Integer nroTransac, Integer idProducto, Integer cantidad) throws PresentacionException, ProductoSinStockException {
 		logger.info("Se ingresa a manejarStockLotePorProducto: cantidad inicial del pedido: " + cantidad);
 		List<Lote> listaLote = null;
 		try {
@@ -654,9 +664,11 @@ public class ManagerProducto {
 				List<Lote> listaPorVenc = entry.getValue();
 				logger.info("# Ingreso a verificar lotes, fecha vencimiento (aaaammdd) de lotes a verificar: " + entry.getKey().longValue());
 				logger.info("# cant de lotes: " + listaPorVenc.size());
-				//recorro cada uno de los lotes con misma fecha de vencimiento
+				//recorro cada uno de los lotes [COMPRADOS] con misma fecha de vencimiento
 				for(Lote lote : listaPorVenc) {
-					TranLineaLote tll = new TranLineaLote(lote.getTranLinea(), lote, 0);
+					//obtengo la linea de VENTA
+					TranLinea tl = getInterfaceTranLinea().obtenerTranLineaPorId(nroTransac, idProducto);
+					TranLineaLote tll = new TranLineaLote(tl, lote, 0);
 					if(lote.getStock() > restanteActStock) {
 						logger.info(" >> El lote: " + lote.getIdLote() + " tiene stock suficiente para el producto: " + idProducto);
 						/*

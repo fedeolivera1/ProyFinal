@@ -4,11 +4,13 @@
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="tipo_transac" class="java.lang.String"/>
-	<parameter name="id_persona" class="java.lang.Long"/>
+	<parameter name="id_persona" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
 	<parameter name="fecha_ini" class="java.util.Date"/>
 	<parameter name="fecha_fin" class="java.util.Date"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA["C:\\Proyecto\\ProyFinal2017Dsk\\Shared\\reports\\"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA["/"]]></defaultValueExpression>
 	</parameter>
 	<queryString>
 		<![CDATA[SELECT t.nro_transac, t.fecha_hora, p.id_persona,
@@ -16,7 +18,9 @@ CASE
 	WHEN p.tipo = 'F' THEN (pf.nombre1 || ' ' || pf.apellido1)
 	WHEN p.tipo = 'J' THEN (pj.nombre)
 	END AS nombre_persona,
-t.sub_total, t.iva, t.total
+t.sub_total, t.iva, t.total,
+p.direccion, p.puerta, p.solar, p.manzana, p.km, p.complemento, p.telefono, p.celular,
+l.nombre as localidad, d.nombre as departamento
 FROM transaccion t
 INNER JOIN persona p
 ON t.id_persona = p.id_persona
@@ -24,17 +28,31 @@ LEFT OUTER JOIN pers_fisica pf
 ON p.id_persona = pf.documento
 LEFT OUTER JOIN pers_juridica pj
 ON p.id_persona = pj.rut
+INNER JOIN localidad l
+ON p.id_loc = l.id_loc
+INNER JOIN departamento d
+ON l.id_dep = d.id_dep
 WHERE (p.id_persona = $P{id_persona} OR $P{id_persona} = -1)
 AND t.fecha_hora::date BETWEEN $P{fecha_ini} AND $P{fecha_fin}
 AND t.operacion = $P{tipo_transac}]]>
 	</queryString>
-	<field name="nro_transac" class="java.lang.Long"/>
+	<field name="nro_transac" class="java.lang.Integer"/>
 	<field name="fecha_hora" class="java.sql.Timestamp"/>
 	<field name="id_persona" class="java.lang.Long"/>
 	<field name="nombre_persona" class="java.lang.String"/>
 	<field name="sub_total" class="java.math.BigDecimal"/>
 	<field name="iva" class="java.math.BigDecimal"/>
 	<field name="total" class="java.math.BigDecimal"/>
+	<field name="direccion" class="java.lang.String"/>
+	<field name="puerta" class="java.lang.String"/>
+	<field name="solar" class="java.lang.String"/>
+	<field name="manzana" class="java.lang.String"/>
+	<field name="km" class="java.math.BigDecimal"/>
+	<field name="complemento" class="java.lang.String"/>
+	<field name="telefono" class="java.lang.String"/>
+	<field name="celular" class="java.lang.String"/>
+	<field name="localidad" class="java.lang.String"/>
+	<field name="departamento" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -128,7 +146,7 @@ AND t.operacion = $P{tipo_transac}]]>
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="58" splitType="Stretch">
+		<band height="78" splitType="Stretch">
 			<textField>
 				<reportElement x="0" y="3" width="38" height="20" uuid="4ca8f9df-8551-4483-b21b-55d9ff467130"/>
 				<textElement>
@@ -179,7 +197,7 @@ AND t.operacion = $P{tipo_transac}]]>
 				<textFieldExpression><![CDATA[$F{total}]]></textFieldExpression>
 			</textField>
 			<subreport>
-				<reportElement x="0" y="23" width="555" height="33" uuid="1e0d18d4-2efc-47cc-ac13-b68345a95c67"/>
+				<reportElement x="0" y="45" width="555" height="33" uuid="1e0d18d4-2efc-47cc-ac13-b68345a95c67"/>
 				<subreportParameter name="nro_transac">
 					<subreportParameterExpression><![CDATA[$F{nro_transac}]]></subreportParameterExpression>
 				</subreportParameter>
@@ -189,6 +207,23 @@ AND t.operacion = $P{tipo_transac}]]>
 			<line>
 				<reportElement x="0" y="0" width="555" height="1" uuid="b9b6f4d8-bdb6-40a0-be17-c895647f11a8"/>
 			</line>
+			<line>
+				<reportElement x="163" y="23" width="392" height="1" uuid="681ca3b7-3127-48bf-a7b1-e56fee1130e5"/>
+			</line>
+			<line>
+				<reportElement x="163" y="44" width="392" height="1" uuid="ac3c5f74-24d8-49c1-a2bf-ea5c54cffe31"/>
+			</line>
+			<textField>
+				<reportElement x="163" y="24" width="392" height="20" uuid="a7c7b8d5-afe6-480c-922b-0e05c3408aed"/>
+				<textFieldExpression><![CDATA[$F{direccion} + " " + String.valueOf($F{puerta})
++ (!$F{solar}.equals("") ? (" Solar: " + $F{solar}) : "")
++ (!$F{manzana}.equals("") ? (" Manzana: " + $F{manzana}) : "")
++ (!$F{km}.equals("") ? (" Km: " + $F{km}) : "")
++ (!$F{complemento}.equals("") ? (" Comp: " + $F{complemento}) : "")
++ (!$F{telefono}.equals("") ? (" Tel: " + $F{telefono}) : "")
++ (!$F{celular}.equals("") ? (" Cel: " + $F{celular}) : "")
++ " " + $F{localidad} + ", " + $F{departamento}]]></textFieldExpression>
+			</textField>
 		</band>
 	</detail>
 	<columnFooter>

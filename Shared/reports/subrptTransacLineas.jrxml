@@ -3,7 +3,7 @@
 	<property name="ireport.zoom" value="1.948717100000002"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<parameter name="nro_transac" class="java.lang.Long"/>
+	<parameter name="nro_transac" class="java.lang.Integer"/>
 	<queryString>
 		<![CDATA[SELECT tl.id_producto, p.codigo, p.nombre, p.apl_iva, tl.cantidad, tl.iva, tl.precio_unit
 FROM tran_linea tl
@@ -30,7 +30,7 @@ WHERE tl.nro_transac = $P{nro_transac}]]>
 	<columnHeader>
 		<band height="16" splitType="Stretch">
 			<staticText>
-				<reportElement x="117" y="0" width="239" height="16" uuid="4302809a-b976-48a3-8308-3e1cdc634677"/>
+				<reportElement x="122" y="0" width="234" height="16" uuid="4302809a-b976-48a3-8308-3e1cdc634677"/>
 				<textElement>
 					<font fontName="Arial" size="8"/>
 				</textElement>
@@ -62,7 +62,7 @@ WHERE tl.nro_transac = $P{nro_transac}]]>
 	<detail>
 		<band height="16" splitType="Stretch">
 			<textField>
-				<reportElement x="117" y="0" width="239" height="16" uuid="697b8d85-feef-48ae-8e43-b153b546e885"/>
+				<reportElement x="122" y="0" width="234" height="16" uuid="697b8d85-feef-48ae-8e43-b153b546e885"/>
 				<textElement>
 					<font fontName="Arial" size="8"/>
 				</textElement>

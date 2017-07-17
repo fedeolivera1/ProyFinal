@@ -60,7 +60,8 @@ public class FrmMovimiento extends JFrame {
 	private JTable jtVenta;
 	private JScrollPane scrollPaneVentaLin;
 	private JTable jtVentaLin;
-	private JTable table;
+	private JScrollPane scrollPaneVentaLinLote;
+	private JTable jtVentaLinLote;
 
 
 	public static FrmMovimiento getFrmMovimiento(UsuarioDsk usr) {
@@ -183,7 +184,7 @@ public class FrmMovimiento extends JFrame {
 		scrollPaneVenta.setViewportView(jtVenta);
 		
 		scrollPaneVentaLin = new JScrollPane();
-		scrollPaneVentaLin.setBounds(10, 284, 452, 200);
+		scrollPaneVentaLin.setBounds(10, 284, 537, 200);
 		tpVenta.add(scrollPaneVentaLin);
 		
 		jtVentaLin = new JTable();
@@ -223,12 +224,13 @@ public class FrmMovimiento extends JFrame {
 		btnVtaLimpiar.setBounds(378, 13, 124, 23);
 		tpVenta.add(btnVtaLimpiar);
 		
-		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(472, 284, 297, 200);
-		tpVenta.add(scrollPane);
+		scrollPaneVentaLinLote = new JScrollPane();
+		scrollPaneVentaLinLote.setBounds(557, 284, 212, 200);
+		tpVenta.add(scrollPaneVentaLinLote);
 		
-		table = new JTable();
-		scrollPane.setColumnHeaderView(table);
+		jtVentaLinLote = new JTable();
+		scrollPaneVentaLinLote.setColumnHeaderView(jtVentaLinLote);
+		scrollPaneVentaLinLote.setViewportView(jtVentaLinLote);
 		
 		JLabel lblItems = new JLabel("Items");
 		lblItems.setHorizontalAlignment(SwingConstants.LEFT);
@@ -237,7 +239,7 @@ public class FrmMovimiento extends JFrame {
 		
 		JLabel lblLotesStock = new JLabel("Lotes stock");
 		lblLotesStock.setHorizontalAlignment(SwingConstants.LEFT);
-		lblLotesStock.setBounds(472, 270, 80, 14);
+		lblLotesStock.setBounds(557, 270, 80, 14);
 		tpVenta.add(lblLotesStock);
 		
 		JButton btnComLimpiar = new JButton("Limpiar");
@@ -512,5 +514,19 @@ public class FrmMovimiento extends JFrame {
 	}
 	public void setScrollPaneVentaLin(JScrollPane scrollPaneVentaLin) {
 		this.scrollPaneVentaLin = scrollPaneVentaLin;
+	}
+
+	public JScrollPane getScrollPaneVentaLinLote() {
+		return scrollPaneVentaLinLote;
+	}
+	public void setScrollPaneVentaLinLote(JScrollPane scrollPaneVentaLinLote) {
+		this.scrollPaneVentaLinLote = scrollPaneVentaLinLote;
+	}
+
+	public JTable getJtVentaLinLote() {
+		return jtVentaLinLote;
+	}
+	public void setJtVentaLinLote(JTable jtVentaLinLote) {
+		this.jtVentaLinLote = jtVentaLinLote;
 	}
 }

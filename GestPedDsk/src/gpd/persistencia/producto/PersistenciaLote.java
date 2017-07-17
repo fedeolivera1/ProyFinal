@@ -31,7 +31,7 @@ public class PersistenciaLote extends Conector implements IPersLote, CnstQryLote
 		PersistenciaUtilidad pu = new PersistenciaUtilidad();
 		PersistenciaDeposito pd = new PersistenciaDeposito();
 		try {
-			GenSqlSelectType genType = new GenSqlSelectType(QRY_SELECT_LOTE_XTRANSACPROD);
+			GenSqlSelectType genType = new GenSqlSelectType(QRY_SELECT_LOTE_XID);
 			genType.setParam(idLote);
 			rs = (ResultSet) runGeneric(genType);
 			if(rs.next()) {
@@ -65,13 +65,13 @@ public class PersistenciaLote extends Conector implements IPersLote, CnstQryLote
 	}
 	
 	@Override
-	public Lote obtenerLotePorTransacProd(Integer nroTransac, Integer idProd) throws PersistenciaException {
+	public Lote obtenerLoteVtaPorTransacProd(Integer nroTransac, Integer idProd) throws PersistenciaException {
 		Lote lote = null;
 		PersistenciaTranLinea ptl = new PersistenciaTranLinea();
 		PersistenciaUtilidad pu = new PersistenciaUtilidad();
 		PersistenciaDeposito pd = new PersistenciaDeposito();
 		try {
-			GenSqlSelectType genType = new GenSqlSelectType(QRY_SELECT_LOTE_XTRANSACPROD);
+			GenSqlSelectType genType = new GenSqlSelectType(QRY_SELECT_LOTEVTA_XTRANSACPROD);
 			genType.setParam(nroTransac);
 			genType.setParam(idProd);
 			rs = (ResultSet) runGeneric(genType);

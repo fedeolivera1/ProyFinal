@@ -53,7 +53,7 @@ public interface CnstQryTransaccion {
 															+ "FROM tran_vta_lote tvl "
 															+ "INNER JOIN tran_linea tl "
 															+ "ON tvl.nro_transac = tl.nro_transac "
-															+ "AND tvl.id_producto - tl.id_producto "
+															+ "AND tvl.id_producto = tl.id_producto "
 															+ "INNER JOIN lote l "
 															+ "ON tvl.id_lote = l.id_lote "
 															+ "WHERE tvl.nro_transac = ? "

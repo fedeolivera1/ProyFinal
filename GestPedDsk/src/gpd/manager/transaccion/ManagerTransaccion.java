@@ -240,30 +240,44 @@ public class ManagerTransaccion {
 		return null;
 	}
 	
-	public Integer modificarEstadoTransaccion(Transaccion transaccion, List<Lote> listaLote) throws PresentacionException {
-		if(transaccion != null) {
-			//transaccion de tipo "compra"
-			if(transaccion.getTipoTran().equals(TipoTran.C)) {
-				try {
-					Conector.getConn();
-					//seteo estado a "confirmado"
-					transaccion.setEstadoTran(EstadoTran.C);
-					getInterfaceTransaccion().guardarTranEstado(transaccion);
-					getInterfaceTransaccion().modificarEstadoTransaccion(transaccion);
-					for(Lote lote : listaLote) {
-						getInterfaceLote().actualizarLote(lote);
-					}
-					Conector.closeConn("modificarTransaccionCompra");
-				} catch (PersistenciaException e) {
-					logger.fatal("Excepcion en ManagerTransaccion > modificarTransaccionCompra: " + e.getMessage(), e);
-					throw new PresentacionException(e);
-				}
-			}
+//	public Integer modificarEstadoTransaccion(Transaccion transaccion, List<Lote> listaLote) throws PresentacionException {
+//		if(transaccion != null) {
+//			//transaccion de tipo "compra"
+//			if(transaccion.getTipoTran().equals(TipoTran.C)) {
+//				try {
+//					Conector.getConn();
+//					//seteo estado a "confirmado"
+//					transaccion.setEstadoTran(EstadoTran.C);
+//					getInterfaceTransaccion().guardarTranEstado(transaccion);
+//					getInterfaceTransaccion().modificarEstadoTransaccion(transaccion);
+//					for(Lote lote : listaLote) {
+//						getInterfaceLote().actualizarLote(lote);
+//					}
+//					Conector.closeConn("modificarTransaccionCompra");
+//				} catch (PersistenciaException e) {
+//					logger.fatal("Excepcion en ManagerTransaccion > modificarTransaccionCompra: " + e.getMessage(), e);
+//					throw new PresentacionException(e);
+//				}
+//			}
+//		}
+//		return null;
+//	}
+	
+	public List<TranLineaLote> obtenerListaTranLineaLote(Integer nroTransac, Integer idProducto) throws PresentacionException {
+		logger.info("Se ingresa a obtenerListaTranLineaLote");
+		List<TranLineaLote> listaTll = null;
+		try {
+			Conector.getConn();
+			listaTll = getInterfaceTransaccion().obtenerListaTranLineaLote(nroTransac, idProducto);
+			Conector.closeConn("obtenerListaLotePorTransac");
+		} catch (PersistenciaException e) {
+			logger.fatal("Excepcion en ManagerTransaccion > obtenerListaTranLineaLote: " + e.getMessage(), e);
+			throw new PresentacionException(e);
 		}
-		return null;
+		return listaTll;
 	}
 	
-	//anulaciones //FIXME revisar y probar este metodo
+	//anulaciones
 	
 	public ErrorLogico anularTransaccionVenta(Transaccion transaccion) throws PresentacionException {
 		ErrorLogico error = null;
@@ -292,7 +306,6 @@ public class ManagerTransaccion {
 						//actualizo en base
 						getInterfaceLote().actualizarStockLote(loteActual.getIdLote(), stock);
 					}
-					
 				}
 				getInterfaceTransaccion().guardarTranEstado(transaccion);
 				getInterfaceTransaccion().modificarEstadoTransaccion(transaccion);
@@ -315,16 +328,16 @@ public class ManagerTransaccion {
 			ConfigDriver cfgDrv = ConfigDriver.getConfigDriver();
 			Integer diasTol = Integer.valueOf(cfgDrv.getVencTolerableAnul());
 			for(TranLinea tl : transaccion.getListaTranLinea()) {
-				Lote lote = mgrProd.obtenerLotePorTransacProdNoConn(tl.getTransaccion().getNroTransac(), tl.getProducto().getIdProducto());
+				Lote lote = mgrProd.obtenerLoteVtaPorTransacProdNoConn(tl.getTransaccion().getNroTransac(), tl.getProducto().getIdProducto());
 				Fecha fechaAnulacion = new Fecha(Fecha.AMD);
 				Fecha fechaVto = lote.getVenc();
-				long diff = fechaAnulacion.getTimeInMillis() - fechaVto.getTimeInMillis(); 
+				long diff = fechaVto.getTimeInMillis() - fechaAnulacion.getTimeInMillis(); 
 			    long dias = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
 			    /*
 			     * se maneja para la anulacion que los días restantes de vencimiento de los productos
 			     * no superen lo establecido por properties
 			     */
-				if(dias > diasTol.longValue()) {
+				if(diasTol.longValue() > dias) {
 					error = new ErrorLogico();
 					error.setCodigo(0);
 					error.setDescripcion("Alguno de los productos no cumple con el requisito de tolerancia de vencimiento.");

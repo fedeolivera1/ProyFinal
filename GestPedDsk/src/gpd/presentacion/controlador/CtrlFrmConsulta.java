@@ -57,17 +57,23 @@ public class CtrlFrmConsulta extends CtrlGenerico implements CnstPresGeneric {
 			genComp.setComp(cbxTipoRep);
 			if(controlDatosObl(genComp)) {
 				TipoReporte tr = (TipoReporte) cbxTipoRep.getSelectedItem();
+				Long idPersona;
 				switch(tr) {
 					case C: case V:
-						Long idPersona = ctrlPb.getPersSel() != null ? ctrlPb.getPersSel().getIdPersona() : -1;
+						idPersona = ctrlPb.getPersSel() != null ? ctrlPb.getPersSel().getIdPersona() : -1;
 						generarReporteTransac((TipoReporte.C.equals(tr) ? TipoTran.C : TipoTran.V), idPersona, getFrm().getDchConsIni(), getFrm().getDchConsFin());
 						break;
+					case P:
+						idPersona = ctrlPb.getPersSel() != null ? ctrlPb.getPersSel().getIdPersona() : -1;
+						generarReportePedido(idPersona, getFrm().getDchConsIni(), getFrm().getDchConsFin());
 					case PR:
 						generarReporteProducto();
 						break;
 					case PE:
 						generarReportePersona();
 						break;
+				default:
+					break;
 				}
 			}
 		} catch(Exception e) {
@@ -89,8 +95,28 @@ public class CtrlFrmConsulta extends CtrlGenerico implements CnstPresGeneric {
 				mapParamsJr.put("id_persona", idPersona);
 				mapParamsJr.put("fecha_ini", dateIni);
 				mapParamsJr.put("fecha_fin", dateFin);
+				GeneradorReportes.abrirReporte("rptTransacPorFecha", mapParamsJr);
 			}
-			GeneradorReportes.abrirReporte("rptTransacPorFecha", mapParamsJr);
+		} catch(Exception e) {
+			manejarExcepcion(e);
+		}
+	}
+	
+	public void generarReportePedido(Long idPersona, JDateChooser dchConsIni, JDateChooser dchConsFin) {
+		try {
+			GenCompType genComp = new GenCompType();
+			genComp.setComp(dchConsIni);
+			genComp.setComp(dchConsFin);
+			if(controlDatosObl(genComp)) {
+				Date dateIni = dchConsIni.getDate();
+				Date dateFin = dchConsFin.getDate();
+				
+				mapParamsJr = new HashMap<>();
+				mapParamsJr.put("id_persona", idPersona);
+				mapParamsJr.put("fecha_ini", dateIni);
+				mapParamsJr.put("fecha_fin", dateFin);
+				GeneradorReportes.abrirReporte("rptPedidosPorPers", mapParamsJr);
+			}
 		} catch(Exception e) {
 			manejarExcepcion(e);
 		}

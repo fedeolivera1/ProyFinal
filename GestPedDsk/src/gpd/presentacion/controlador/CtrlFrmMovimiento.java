@@ -23,6 +23,7 @@ import gpd.dominio.producto.Utilidad;
 import gpd.dominio.transaccion.EstadoTran;
 import gpd.dominio.transaccion.TipoTran;
 import gpd.dominio.transaccion.TranLinea;
+import gpd.dominio.transaccion.TranLineaLote;
 import gpd.dominio.transaccion.Transaccion;
 import gpd.exceptions.PresentacionException;
 import gpd.manager.persona.ManagerPersona;
@@ -335,35 +336,66 @@ public class CtrlFrmMovimiento extends CtrlGenerico implements CnstPresGeneric {
 				        return false;
 				    }
 				};
+				modeloJtVentaLin.addColumn("NroTx");
 				modeloJtVentaLin.addColumn("Producto");
 				modeloJtVentaLin.addColumn("Cantidad");
 				modeloJtVentaLin.addColumn("Iva");
 				modeloJtVentaLin.addColumn("Precio Unit");
 				tabla.setModel(modeloJtVentaLin);
 				for(TranLinea tl : transac.getListaTranLinea()) {
-					Object [] fila = new Object[4];
-					fila[0] = tl.getProducto();
-					fila[1] = tl.getCantidad();
-					fila[2] = tl.getIva();
-					fila[3] = tl.getPrecioUnit();
+					Object [] fila = new Object[5];
+					fila[0] = tl.getTransaccion().getNroTransac();
+					fila[1] = tl.getProducto();
+					fila[2] = tl.getCantidad();
+					fila[3] = tl.getIva();
+					fila[4] = tl.getPrecioUnit();
 					modeloJtVentaLin.addRow(fila);
 				}
 				tabla.addMouseListener(new MouseAdapter() {
 					@Override
 					public void mouseClicked(MouseEvent me) {
-						try {
-							int fila = tabla.rowAtPoint(me.getPoint());
-							int cols = tabla.getModel().getColumnCount();
-							if (fila > -1 && cols > 1) {
-								Integer nroTransac = (Integer) tabla.getModel().getValueAt(fila, 0);
-								Transaccion transac = mgrTran.obtenerTransaccionPorId(nroTransac);
-								cargarJtVentaItems(transac);
-							}
-						} catch (PresentacionException  e) {
-							enviarError(CnstPresExceptions.DB, e.getMessage());
+						int fila = tabla.rowAtPoint(me.getPoint());
+						int cols = tabla.getModel().getColumnCount();
+						if (fila > -1 && cols > 1) {
+							Integer nroTransac = (Integer) tabla.getModel().getValueAt(fila, 0);
+							Producto prod = (Producto) tabla.getModel().getValueAt(fila, 1);
+							cargarJtVentaItemsLotes(nroTransac, prod.getIdProducto());
 						}
 					}
 				});
+			} else {
+				cargarJTableVacia(tabla, JTABLE_SIN_ITEMS);
+			}
+		} catch(Exception e) {
+			manejarExcepcion(e);
+		}
+	}
+	
+	public void cargarJtVentaItemsLotes(Integer nroTransac, Integer idProd) {
+		try {
+			JTable tabla = getFrm().getJtVentaLinLote();
+			clearTable(tabla);
+			deleteModelTable(tabla);
+			List<TranLineaLote> listaTll = mgrTran.obtenerListaTranLineaLote(nroTransac, idProd);
+			if(listaTll != null && !listaTll.isEmpty()) {
+				DefaultTableModel modeloJtVentaLinLote = new DefaultTableModel() {
+					private static final long serialVersionUID = 1L;
+					@Override
+					public boolean isCellEditable (int fila, int columna) {
+						return false;
+					}
+				};
+				modeloJtVentaLinLote.addColumn("Id Lote");
+				modeloJtVentaLinLote.addColumn("Cantidad Vta");
+				modeloJtVentaLinLote.addColumn("Cantidad Restante");
+				tabla.setModel(modeloJtVentaLinLote);
+				for(TranLineaLote tll : listaTll) {
+					Object [] fila = new Object[3];
+					fila[0] = tll.getLote().getIdLote();
+					fila[1] = tll.getCantidad();
+					fila[2] = tll.getLote().getStock();
+					modeloJtVentaLinLote.addRow(fila);
+				}
 			} else {
 				cargarJTableVacia(tabla, JTABLE_SIN_ITEMS);
 			}
@@ -567,6 +599,7 @@ public class CtrlFrmMovimiento extends CtrlGenerico implements CnstPresGeneric {
 					Integer nroTransac = (Integer) frmMov.getJtVenta().getModel().getValueAt(frmMov.getJtVenta().getSelectedRow(), 0);
 					Transaccion transac = (Transaccion) mgrTran.obtenerTransaccionPorId(nroTransac);
 					mgrTran.anularTransaccionVenta(transac);
+					limpiarVenta();
 					enviarInfo(VTA, VTA_ANULADA);
 				}
 			}
