@@ -39,6 +39,7 @@ import gpd.dominio.producto.Producto;
 import gpd.dominio.producto.TipoProd;
 import gpd.dominio.usuario.UsuarioDsk;
 import gpd.presentacion.controlador.CtrlFrmPedido;
+import java.awt.Font;
 
 public class FrmPedido extends JFrame {
 
@@ -253,13 +254,6 @@ public class FrmPedido extends JFrame {
 		pnlPedido.add(lblFechahora);
 		lblFechahora.setHorizontalAlignment(SwingConstants.RIGHT);
 		
-		txtPedInfo = new JTextArea();
-		txtPedInfo.setRows(2);
-		txtPedInfo.setEditable(false);
-		txtPedInfo.setBackground(UIManager.getColor("InternalFrame.borderColor"));
-		txtPedInfo.setBounds(479, 0, 305, 66);
-		pnlPedido.add(txtPedInfo);
-		
 		JSeparator separator_2 = new JSeparator();
 		separator_2.setForeground(SystemColor.info);
 		separator_2.setBackground(SystemColor.info);
@@ -308,6 +302,17 @@ public class FrmPedido extends JFrame {
 		/*****************************************************************************************************************************************************/
 		
 		ctrlPed.cargarCbxPedidoEstado(cbxPedidoEstado);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(481, 1, 303, 73);
+		pnlPedido.add(scrollPane);
+		
+		txtPedInfo = new JTextArea();
+		scrollPane.setViewportView(txtPedInfo);
+		txtPedInfo.setFont(new Font("Monospaced", Font.PLAIN, 9));
+		txtPedInfo.setRows(2);
+		txtPedInfo.setEditable(false);
+		txtPedInfo.setBackground(UIManager.getColor("InternalFrame.borderColor"));
 		
 		//boton pedido nuevo
 		tglbtnPedNuevo.addActionListener(new ActionListener() {
@@ -526,5 +531,4 @@ public class FrmPedido extends JFrame {
 	public void setFtxtPedHora(JFormattedTextField ftxtPedHora) {
 		this.ftxtPedHora = ftxtPedHora;
 	}
-	
 }

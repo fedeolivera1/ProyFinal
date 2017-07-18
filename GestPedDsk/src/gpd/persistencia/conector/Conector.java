@@ -309,4 +309,8 @@ public abstract class Conector {
 		return resultado;
 	}
 	
+	public static Connection devolverConnection() {
+		return conn;
+	}
+	
 }

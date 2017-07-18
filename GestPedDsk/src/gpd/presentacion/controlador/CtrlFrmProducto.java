@@ -493,7 +493,7 @@ public class CtrlFrmProducto extends CtrlGenerico {
 			genComp.setComp(precio);
 			if(controlDatosObl(genComp)) {
 				Integer idInt = ctrlNumLong(id.getText()) ? new Integer(id.getText()) : null;
-				TipoProd tp = (TipoProd)cbxTp.getSelectedItem();
+				TipoProd tp = (TipoProd) cbxTp.getSelectedItem();
 				Producto prod = mgrProd.obtenerProductoPorId(idInt);
 				prod.setTipoProd(tp);
 				prod.setCodigo(codigo.getText());

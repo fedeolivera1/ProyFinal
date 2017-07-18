@@ -612,7 +612,7 @@ public class FrmPersona extends JFrame {
 		btnPfMod.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				ctrlPers.modificarPersFisica(cbxPfTipoDoc, txtPfDoc, txtPfApe1, txtPfApe2, txtPfNom1, txtPfNom2, txtPfFnac, cbxPfSexo, 
-						txtPfDir, txtPfPue, txtPfSol, txtPfMan, txtPfKm, txtPfComp, txtPfTel, txtPfCel, txtPfEml, cbxPfLoc);
+						txtPfDir, txtPfPue, txtPfSol, txtPfMan, txtPfKm, txtPfComp, txtPfTel, txtPfCel, txtPfEml, cbxPfLoc, jtPersFisica);
 			}
 		});
 		btnPfEli.addActionListener(new ActionListener() {
@@ -640,7 +640,7 @@ public class FrmPersona extends JFrame {
 		btnPjMod.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				ctrlPers.modificarPersJuridica(txtPjRut, txtPjNom, txtPjRs, txtPjBps, txtPjBse, chkPjProv, txtPjDir, txtPjPue, txtPjSol, txtPjMan, 
-						txtPjKm, txtPjComp, txtPjTel, txtPjCel, txtPjEml, cbxPjLoc);
+						txtPjKm, txtPjComp, txtPjTel, txtPjCel, txtPjEml, cbxPjLoc, jtPersJuridica);
 			}
 		});
 		btnPjEli.addActionListener(new ActionListener() {

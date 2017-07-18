@@ -355,7 +355,7 @@ public class CtrlFrmPersona extends CtrlGenerico {
 	public void modificarPersFisica(JComboBox<TipoDoc> cbxPfTipoDpc, JTextField txtPfDoc, JTextField txtPfApe1, JTextField txtPfApe2, JTextField txtPfNom1,
 			JTextField txtPfNom2, JTextField txtPfFnac, JComboBox<Sexo> cbxPfSexo, JTextField txtPfDir,
 			JTextField txtPfPue, JTextField txtPfSol, JTextField txtPfMan, JTextField txtPfKm, JTextField txtPfComp,
-			JTextField txtPfTel, JTextField txtPfCel, JTextField txtPfEml, JComboBox<Localidad> cbxPersLoc) {
+			JTextField txtPfTel, JTextField txtPfCel, JTextField txtPfEml, JComboBox<Localidad> cbxPersLoc, JTable jtPersFisica) {
 		try {
 			GenCompType genComp = new GenCompType();
 			genComp.setComp(cbxPfTipoDpc);
@@ -365,13 +365,19 @@ public class CtrlFrmPersona extends CtrlGenerico {
 			genComp.setComp(txtPfDir);
 			genComp.setComp(cbxPfSexo);
 			genComp.setComp(cbxPersLoc);
+			genComp.setComp(jtPersFisica);
 			
 			if(controlDatosObl(genComp)) {
-				PersonaFisica pf = new PersonaFisica();
+				Long docFpActual = (Long) jtPersFisica.getModel().getValueAt(jtPersFisica.getSelectedRow(), 0);
+				PersonaFisica pf = (PersonaFisica) mgrPers.obtenerPersFisicaPorId(docFpActual);
+				Long docPresentacion = new Long(txtPfDoc.getText());
 				TipoDoc tipoDoc = (TipoDoc) cbxPfTipoDpc.getSelectedItem();
 				pf.setTipoDoc(tipoDoc);
 				//datos pf
-				pf.setDocumento(new Long(txtPfDoc.getText()));
+				if(!pf.getDocumento().equals(docPresentacion)) {
+					pf.setDocumentoAnt(pf.getDocumento());
+				}
+				pf.setDocumento(docPresentacion);
 				pf.setApellido1(txtPfApe1.getText());
 				pf.setApellido2(txtPfApe2.getText());
 				pf.setNombre1(txtPfNom1.getText());
@@ -484,17 +490,23 @@ public class CtrlFrmPersona extends CtrlGenerico {
 	
 	public void modificarPersJuridica(JTextField txtPjRut, JTextField txtPjNom, JTextField txtPjRs, JTextField txtPjBps, JTextField txtPjBse, 
 			JCheckBox chkPjProv, JTextField txtPfDir, JTextField txtPfPue, JTextField txtPfSol, JTextField txtPfMan, JTextField txtPfKm, 
-			JTextField txtPfComp, JTextField txtPfTel, JTextField txtPfCel, JTextField txtPfEml, JComboBox<Localidad> cbxPersLoc) {
+			JTextField txtPfComp, JTextField txtPfTel, JTextField txtPfCel, JTextField txtPfEml, JComboBox<Localidad> cbxPersLoc, JTable jtPersJuridica) {
 		try {
 			GenCompType genComp = new GenCompType();
 			genComp.setComp(txtPjRut);
 			genComp.setComp(txtPjNom);
 			genComp.setComp(txtPfDir);
 			genComp.setComp(cbxPersLoc);
+			genComp.setComp(jtPersJuridica);
 			if(controlDatosObl(genComp)) {
-				PersonaJuridica pj = new PersonaJuridica();
+				Long rutPjActual = (Long) jtPersJuridica.getModel().getValueAt(jtPersJuridica.getSelectedRow(), 0);
+				PersonaJuridica pj = (PersonaJuridica) mgrPers.obtenerPersJuridicaPorId(rutPjActual);
+				Long rutPresentacion = new Long(txtPjRut.getText());
 				//datos pj
-				pj.setRut(new Long(txtPjRut.getText()));
+				if(!pj.getRut().equals(rutPresentacion)) {
+					pj.setRutAnt(pj.getRut());
+				}
+				pj.setRut(rutPresentacion);
 				pj.setNombre(txtPjNom.getText());
 				pj.setRazonSocial(txtPjRs.getText());
 				pj.setBps(txtPjBps.getText());
