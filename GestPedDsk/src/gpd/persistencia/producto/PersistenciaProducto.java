@@ -220,5 +220,44 @@ public class PersistenciaProducto extends Conector implements IPersProducto, Cns
 		return resultado;
 	}
 
+	@Override
+	public ArrayList<Producto> obtenerBajoStock() throws PersistenciaException {
+		ArrayList <Producto> prod = new ArrayList<Producto>();
+		PersistenciaTipoProd ptp = new PersistenciaTipoProd();
+		PersistenciaUnidad pu = new PersistenciaUnidad();
+
+		try {
+			GenSqlSelectType genSel = new GenSqlSelectType(QRY_SELECT_PROD_BAJOSTOCK);
+			rs = (ResultSet) runGeneric(genSel);
+			while(rs.next()) {
+				Producto producto = new Producto();
+				producto.setIdProducto(rs.getInt("id_producto"));
+				producto.setTipoProd(ptp.obtenerTipoProdPorId(rs.getInt("id_tipo_prod")));
+				producto.setCodigo(rs.getString("codigo"));
+				producto.setNombre(rs.getString("nombre"));
+				producto.setDescripcion(rs.getString("descripcion"));
+				producto.setStockMin(rs.getFloat("stock_min"));
+				char[] aplIvaChar = new char[1];
+				rs.getCharacterStream("apl_iva").read(aplIvaChar);
+				AplicaIva aplIva = AplicaIva.getAplicaIvaPorChar(aplIvaChar[0]);
+				producto.setAplIva(aplIva);
+				producto.setUnidad(pu.obtenerUnidadPorId(rs.getInt("id_unidad")));
+				producto.setCantUnidad(rs.getInt("cant_unidad"));
+				producto.setPrecio(rs.getDouble("precio"));
+				char[] tipoChar = new char[1];
+				rs.getCharacterStream("sinc").read(tipoChar);
+				Sinc sinc = Sinc.getSincPorChar(tipoChar[0]);
+				producto.setSinc(sinc);
+				producto.setUltAct(new Fecha(rs.getTimestamp("ult_act")));
+				prod.add(producto);
+			}
+		} catch (ConectorException | SQLException | IOException e) {
+			Conector.rollbackConn();
+			logger.log(Level.FATAL, "Excepcion al obtenerProductoPorId: " + e.getMessage(), e);
+			throw new PersistenciaException(e);
+		}
+		return prod;
+	}
+
 
 }

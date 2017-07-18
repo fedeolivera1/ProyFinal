@@ -1,5 +1,6 @@
 package gpd.interfaces.producto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import gpd.dominio.producto.Producto;
@@ -14,5 +15,6 @@ public interface IPersProducto {
 	public Integer guardarProducto(Producto producto) throws PersistenciaException;
 	public Integer modificarProducto(Producto producto) throws PersistenciaException;
 	public Integer eliminarProducto(Producto producto) throws PersistenciaException;
+	public ArrayList<Producto> obtenerBajoStock() throws PersistenciaException;
 
 }

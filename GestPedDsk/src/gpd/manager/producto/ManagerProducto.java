@@ -651,7 +651,21 @@ public class ManagerProducto {
 //		return mapLotes;
 	}
 	
-	public ArrayList<Producto> obtenerStockBajo(){
+	
+	public ArrayList<Producto> obtenerStockBajo() throws PresentacionException{
+		
+		logger.info("Se ingresa a obtenerStockBajo");
+		ArrayList<Producto> listaStockBajo = null;
+		try {
+			Conector.getConn();
+			listaStockBajo = getInterfaceProducto().obtenerBajoStock();
+			Conector.closeConn("obtenerStockBajo");
+		} catch (PersistenciaException e) {
+			logger.fatal("Excepcion en ManagerProducto > obtenerStockBajo: " + e.getMessage(), e);
+			throw new PresentacionException(e);
+		}
+		return listaStockBajo;
+		
 		
 	}
 	

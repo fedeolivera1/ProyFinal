@@ -3,6 +3,7 @@ package gpd.presentacion.formulario;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
@@ -13,8 +14,11 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.border.EmptyBorder;
 
+import gpd.dominio.producto.Producto;
 import gpd.dominio.usuario.TipoUsr;
 import gpd.dominio.usuario.UsuarioDsk;
+import gpd.exceptions.PresentacionException;
+import gpd.manager.producto.ManagerProducto;
 import gpd.presentacion.controlador.CtrlFrmUsuario;
 import java.awt.Toolkit;
 import java.awt.Color;
@@ -27,6 +31,7 @@ public class FrmPrincipal extends JFrame {
 	private CtrlFrmUsuario ctrlUsuario;
 	private JDesktopPane desktopPane;
 	private UsuarioDsk usrLogueado;
+	
 
 
 	/**
@@ -217,9 +222,14 @@ public class FrmPrincipal extends JFrame {
 		pnlPpal.setLayout(null);
 		
 		JTextPane tbxStock = new JTextPane();
-		tbxStock.setText("De momento no hay nada que requiera su atenci\u00F3n.");
 		tbxStock.setBounds(178, 87, 411, 169);
 		pnlPpal.add(tbxStock);
+		try {
+			actualizarPanel(tbxStock);
+		} catch (PresentacionException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		
 	}
 
@@ -231,9 +241,40 @@ public class FrmPrincipal extends JFrame {
 		this.usrLogueado = usrLogueado;
 	}
 	
-	//Método que actualice el JTextPanel
+	//Método que actualice el JTextPanel controlando stocks
 	
-	public void actualizarPanel(JTextPane tp){
-		
+	public void actualizarPanel(JTextPane tp) throws PresentacionException{
+		ManagerProducto mp=new ManagerProducto();
+		ArrayList<Producto> prods= mp.obtenerStockBajo();
+
+        int i = 0;
+        for (Producto p : prods)
+        {
+            i++;
+            if (i > 0)
+            {
+                break;
+            }
+        }
+
+        String textoMostrar="";
+
+        //Si hay registros, carga un string y lo muestra
+        if (i > 0)
+        {
+            for (Producto pr : prods)
+            {
+                textoMostrar = textoMostrar + pr.getNombre() + " tiene un stock bajo de " + pr.getCantUnidad() + " unidad/es. /n";
+            }
+
+            tp.setText(textoMostrar);
+            
+        }
+        else
+        {
+            tp.setText("De momento no hay alertas que requieran de su atención.");
+        }
 	}
+	
+	
 }

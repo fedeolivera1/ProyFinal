@@ -30,4 +30,6 @@ public interface CnstQryProducto {
 	
 	public static final String QRY_DELETE_PROD = "DELETE FROM producto WHERE id_producto = ?";
 	
+	public static final String QRY_SELECT_PROD_BAJOSTOCK = "SELECT * FROM Producto WHERE (stock_min+1)> (SELECT SUM(stock) FROM lote WHERE lote.id_producto=producto.id_producto AND venc<=now()::timestamp)";
+	
 }
