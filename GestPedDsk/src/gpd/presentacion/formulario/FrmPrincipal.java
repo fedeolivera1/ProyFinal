@@ -172,6 +172,12 @@ public class FrmPrincipal extends JFrame {
 		JMenuItem mntmVenta = new JMenuItem("Venta");
 		mntmVenta.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				FrmMovimiento frmMov = FrmMovimiento.getFrmMovimiento(usr);
+				frmMov.setLocationRelativeTo(null);
+				//panel.pestaña("Venta");
+				JTabbedPane comp = (JTabbedPane) frmMov.getContentPane().getComponent(1);
+				comp.setSelectedIndex(1);
+				frmMov.setVisible(true);
 			}
 		});
 		mnMovimiento.add(mntmVenta);
@@ -191,6 +197,16 @@ public class FrmPrincipal extends JFrame {
 		
 		JMenu mnConsulta = new JMenu("Consulta");
 		menuBar.add(mnConsulta);
+		
+		JMenuItem mntmConsulta = new JMenuItem("Consulta");
+		mntmConsulta.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				FrmConsulta frmCons = FrmConsulta.getFrmConsulta(usr);
+				frmCons.setLocationRelativeTo(null);
+				frmCons.setVisible(true);
+			}
+		});
+		mnConsulta.add(mntmConsulta);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);

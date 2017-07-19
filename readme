@@ -6,8 +6,11 @@ Para mejor compatibilidad, se creara la siguiente estructura de directorios para
   1-C:\Proyecto
         \ProyFinal2017Dsk
         \ProyFinal2017Web
+		\ProyFinal2017Db
         
 Informacion de BRANCHES:
 
-  master
+  master 	> branch principal main.
+  branch-1 	> utilizada por melina para generar datos de usuarios.
+  branch-2 	> se utilizará para mostrar info sobre stock minimo de prod contra actual.
   

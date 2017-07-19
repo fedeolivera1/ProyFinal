@@ -10,7 +10,7 @@ import gpd.types.Fecha;
 public class Transaccion implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	private Long nroTransac;
+	private Integer nroTransac;
 	private Persona persona;
 	private TipoTran tipoTran;
 	private EstadoTran estadoTran;
@@ -26,10 +26,10 @@ public class Transaccion implements Serializable {
 		this.tipoTran = tipoTran;
 	}
 	
-	public Long getNroTransac() {
+	public Integer getNroTransac() {
 		return nroTransac;
 	}
-	public void setNroTransac(Long nroTransac) {
+	public void setNroTransac(Integer nroTransac) {
 		this.nroTransac = nroTransac;
 	}
 	

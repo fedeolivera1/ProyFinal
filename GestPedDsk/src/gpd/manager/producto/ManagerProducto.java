@@ -16,6 +16,8 @@ import gpd.dominio.producto.Producto;
 import gpd.dominio.producto.TipoProd;
 import gpd.dominio.producto.Unidad;
 import gpd.dominio.producto.Utilidad;
+import gpd.dominio.transaccion.TranLinea;
+import gpd.dominio.transaccion.TranLineaLote;
 import gpd.dominio.util.Converters;
 import gpd.dominio.util.Sinc;
 import gpd.exceptions.PersistenciaException;
@@ -27,6 +29,8 @@ import gpd.interfaces.producto.IPersProducto;
 import gpd.interfaces.producto.IPersTipoProd;
 import gpd.interfaces.producto.IPersUnidad;
 import gpd.interfaces.producto.IPersUtilidad;
+import gpd.interfaces.transaccion.IPersTranLinea;
+import gpd.interfaces.transaccion.IPersTransaccion;
 import gpd.persistencia.conector.Conector;
 import gpd.persistencia.producto.PersistenciaDeposito;
 import gpd.persistencia.producto.PersistenciaLote;
@@ -34,6 +38,8 @@ import gpd.persistencia.producto.PersistenciaProducto;
 import gpd.persistencia.producto.PersistenciaTipoProd;
 import gpd.persistencia.producto.PersistenciaUnidad;
 import gpd.persistencia.producto.PersistenciaUtilidad;
+import gpd.persistencia.transaccion.PersistenciaTranLinea;
+import gpd.persistencia.transaccion.PersistenciaTransaccion;
 import gpd.types.Fecha;
 import gpd.util.ConfigDriver;
 
@@ -46,6 +52,8 @@ public class ManagerProducto {
 	private static IPersDeposito interfaceDeposito;
 	private static IPersUtilidad interfaceUtilidad;
 	private static IPersLote interfaceLote;
+	private static IPersTransaccion interfaceTransac;
+	private static IPersTranLinea interfaceTranLinea;
 	private Integer resultado;
 	
 	
@@ -84,6 +92,18 @@ public class ManagerProducto {
 			interfaceLote = new PersistenciaLote();
 		}
 		return interfaceLote;
+	}
+	private static IPersTransaccion getInterfaceTransac() {
+		if(interfaceTransac == null) {
+			interfaceTransac = new PersistenciaTransaccion();
+		}
+		return interfaceTransac;
+	}
+	private static IPersTranLinea getInterfaceTranLinea() {
+		if(interfaceTranLinea == null) {
+			interfaceTranLinea = new PersistenciaTranLinea();
+		}
+		return interfaceTranLinea;
 	}
 	
 	/*****************************************************************************************************************************************************/
@@ -495,7 +515,28 @@ public class ManagerProducto {
 	/** LOTE */
 	/*****************************************************************************************************************************************************/
 	
-	public List<Lote> obtenerListaLotePorTransac(Long nroTransac) throws PresentacionException {
+	/**
+	 * metodo que a partir de una transaccion y un producto devuelve el lote asociado a dicha transaccion 
+	 * @param nroTransac
+	 * @param idProducto
+	 * @param diasTol
+	 * @return
+	 * @throws PresentacionException
+	 * METODO NO CONN: NO ABRE NI CIERRA CONEXIONES, DEBE SER LLAMADO DESDE METODO CONTENEDOR DE CONEXION
+	 */
+	public Lote obtenerLoteVtaPorTransacProdNoConn(Integer nroTransac, Integer idProducto) throws PersistenciaException {
+		logger.info("Se ingresa a obtenerLotePorTransacProd");
+		Lote lote = null;
+		try {
+			lote = getInterfaceLote().obtenerLoteVtaPorTransacProd(nroTransac, idProducto);
+		} catch (PersistenciaException e) {
+			logger.fatal("Excepcion en ManagerProducto > obtenerListaLotePorTransac: " + e.getMessage(), e);
+			throw e;
+		}
+		return lote;
+	}
+	
+	public List<Lote> obtenerListaLotePorTransac(Integer nroTransac) throws PresentacionException {
 		logger.info("Se ingresa a obtenerListaLotePorTransac");
 		List<Lote> listaLote = null;
 		try {
@@ -587,16 +628,18 @@ public class ManagerProducto {
 	 * @param cantidad
 	 * @throws PresentacionException
 	 */
-	public void manejarStockLotePorProductoNoConn(Integer idProducto, Integer cantidad) throws PresentacionException, ProductoSinStockException {
+	public void manejarStockLotePorProductoNoConn(Integer nroTransac, Integer idProducto, Integer cantidad) throws PresentacionException, ProductoSinStockException {
 		logger.info("Se ingresa a manejarStockLotePorProducto: cantidad inicial del pedido: " + cantidad);
 		List<Lote> listaLote = null;
 		try {
 			ConfigDriver cfgDrv = ConfigDriver.getConfigDriver();
 			Integer diasParaVenc = Integer.valueOf(cfgDrv.getDiasParaVenc());
-			//vuelvo a comprobar cantidad de stock para el producto, en caso de no haber suficientes, corto la ejecucion
-			//con una excepcion del tipo
+			/*
+			 * vuelvo a comprobar cantidad de stock para el producto, en caso de no haber suficientes, corto la ejecucion
+			 * con una excepcion del tipo ProductoSinStockException
+			 */
 			HlpProducto hlpProd = obtenerStockPrecioLotePorProductoNoConn(idProducto);
-			if(hlpProd.getStock() < cantidad) {
+			if(hlpProd == null || hlpProd.getStock() < cantidad) {
 				throw new ProductoSinStockException("--Stock insuficiente para el producto: " + idProducto + " !!!");
 			}
 			listaLote = getInterfaceLote().obtenerListaLotePorProd(idProducto, diasParaVenc);
@@ -614,17 +657,27 @@ public class ManagerProducto {
 			}
 			
 			Map<Long, List<Lote>> sortedMapLotes = new TreeMap<Long, List<Lote>>(mapLotes);
+			List<TranLineaLote> listaTll = new ArrayList<>();
 			
 			Integer restanteActStock = cantidad;
 			for (Map.Entry<Long, List<Lote>> entry : sortedMapLotes.entrySet()) {
 				List<Lote> listaPorVenc = entry.getValue();
 				logger.info("# Ingreso a verificar lotes, fecha vencimiento (aaaammdd) de lotes a verificar: " + entry.getKey().longValue());
 				logger.info("# cant de lotes: " + listaPorVenc.size());
-				//recorro cada uno de los lotes con misma fecha de vencimiento
+				//recorro cada uno de los lotes [COMPRADOS] con misma fecha de vencimiento
 				for(Lote lote : listaPorVenc) {
+					//obtengo la linea de VENTA
+					TranLinea tl = getInterfaceTranLinea().obtenerTranLineaPorId(nroTransac, idProducto);
+					TranLineaLote tll = new TranLineaLote(tl, lote, 0);
 					if(lote.getStock() > restanteActStock) {
 						logger.info(" >> El lote: " + lote.getIdLote() + " tiene stock suficiente para el producto: " + idProducto);
-						//actualizo lote restando cantidad a bajar
+						/*
+						 * agrego a tabla de control la cantidad que se le resta al lote >>
+						 * esta tabla guarda para cada venta, el lote el cual provee las unidades 
+						 * actualizo lote restando cantidad a bajar
+						 */
+						tll.setCantidad(restanteActStock);
+						listaTll.add(tll);
 						Integer nuevoStockLote = lote.getStock() - restanteActStock;
 						restanteActStock = 0;
 						getInterfaceLote().actualizarStockLote(lote.getIdLote(), nuevoStockLote);
@@ -633,14 +686,25 @@ public class ManagerProducto {
 						logger.info(" >> El lote: " + lote.getIdLote() + " utlizará su stock restante [" + lote.getStock() + " unidades] para "
 								+ " el producto: " + idProducto);
 						restanteActStock -= lote.getStock();
-						//actualizo lote pasando stock de lote a 0 
-						//y busco en siguiente lote
+						/*
+						 * agrego a tabla de control la cantidad que se le resta al lote >>
+						 * esta tabla guarda para cada venta, el lote el cual provee las unidades 
+						 * agrego a tabla de control la cantidad restante del lote
+						 */
+						tll.setCantidad(lote.getStock());
+						listaTll.add(tll);
+						/*
+						 * actualizo lote pasando stock de lote a 0 
+						 * y busco en siguiente lote
+						 */
 						getInterfaceLote().actualizarStockLote(lote.getIdLote(), 0);
 					}
 				}
 				//corto si ya no hay restante a actualizar (finalizo la actualizacion de lote para el prod)
 				if(restanteActStock == 0) break;
 			}
+			//se manda a persistir lista con datos de stock por lotes
+			getInterfaceTransac().guardarListaTranLineaLote(listaTll);
 		} catch (PersistenciaException e) {
 			logger.fatal("Excepcion en ManagerProducto > manejarStockLotePorProducto: " + e.getMessage(), e);
 			throw new PresentacionException(e);

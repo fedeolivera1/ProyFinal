@@ -4,12 +4,12 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.apache.log4j.Logger;
 
 public abstract class PropReader {
 	
-	private static final Logger logger = Logger.getLogger(PropReader.class.getName());
+	private static final Logger logger = Logger.getLogger(PropReader.class);
 
 	public static Hashtable<String, String> readProp(String nombre) {
 		ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(nombre);
@@ -21,9 +21,9 @@ public abstract class PropReader {
 		        name = keyList.nextElement();
 		        hashProp.put(name, RESOURCE_BUNDLE.getString(name));
 		    }
-		    logger.log(Level.INFO, "Prop values read: " + hashProp.size() + " for " + nombre);
+		    logger.info("Prop values leido: " + hashProp.size() + " para " + nombre);
 		} catch (MissingResourceException e) {
-		    logger.warning("Key not found in primary property.");
+		    logger.fatal("Clave no encontrada en arhivo de properties.");
 		}
 		return hashProp;
 	}

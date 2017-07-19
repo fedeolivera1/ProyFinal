@@ -84,8 +84,6 @@ public interface CnstQryPersona {
 															+ "OR (p.email ILIKE ?) ) "
 														+ "AND (p.id_loc = ? OR -1 = ?) ";
 	
-//	public static final String QRY_SEARCH_PERS_GENERIC = "";
-	
 	public static final String QRY_SELECT_PJ = "SELECT pj.rut, pj.nombre, pj.razon_social, pj.bps, pj.bse, pj.es_prov, p.direccion, p.puerta, p.solar, "
 															+ "p.manzana, p.km, p.complemento, p.telefono, p.celular, p.email, p.fecha_reg, p.tipo, "
 															+ "p.id_loc, p.origen, p.sinc, p.ult_act "
@@ -112,11 +110,11 @@ public interface CnstQryPersona {
 														+ "WHERE id_persona = ?";//INFO: tipo no va a proposito, no se puede cambiar tipo de persona
 	
 	public static final String QRY_UPDATE_PF = "UPDATE pers_fisica "
-														+ "SET documento = ?, id_tipo_doc = ?, apellido1 = ?, apellido2 = ?, nombre1 = ?, nombre2 = ?, fecha_nac = ?, sexo = ? "
+														+ "SET id_tipo_doc = ?, apellido1 = ?, apellido2 = ?, nombre1 = ?, nombre2 = ?, fecha_nac = ?, sexo = ? "
 														+ "WHERE documento = ?";
 	
 	public static final String QRY_UPDATE_PJ = "UPDATE pers_juridica "
-														+ "SET rut = ?, nombre = ?, razon_social = ?, bps = ?, bse = ?, es_prov = ? "
+														+ "SET nombre = ?, razon_social = ?, bps = ?, bse = ?, es_prov = ? "
 														+ "WHERE rut = ?";
 	
 	public static final String QRY_DELETE_PF = "DELETE FROM pers_fisica WHERE documento = ?";

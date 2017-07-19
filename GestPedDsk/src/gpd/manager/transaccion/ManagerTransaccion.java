@@ -2,6 +2,7 @@ package gpd.manager.transaccion;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
 
@@ -11,6 +12,7 @@ import gpd.dominio.producto.Producto;
 import gpd.dominio.transaccion.EstadoTran;
 import gpd.dominio.transaccion.TipoTran;
 import gpd.dominio.transaccion.TranLinea;
+import gpd.dominio.transaccion.TranLineaLote;
 import gpd.dominio.transaccion.Transaccion;
 import gpd.dominio.util.Converters;
 import gpd.exceptions.ConectorException;
@@ -19,10 +21,12 @@ import gpd.exceptions.PresentacionException;
 import gpd.interfaces.producto.IPersLote;
 import gpd.interfaces.transaccion.IPersTranLinea;
 import gpd.interfaces.transaccion.IPersTransaccion;
+import gpd.manager.producto.ManagerProducto;
 import gpd.persistencia.conector.Conector;
 import gpd.persistencia.producto.PersistenciaLote;
 import gpd.persistencia.transaccion.PersistenciaTranLinea;
 import gpd.persistencia.transaccion.PersistenciaTransaccion;
+import gpd.types.ErrorLogico;
 import gpd.types.Fecha;
 import gpd.util.ConfigDriver;
 
@@ -92,7 +96,7 @@ public class ManagerTransaccion {
 				//se sustrae el ivaTotal al total ya que se manejan directamente precios con iva en la compra
 				subTotal = Converters.redondearDosDec(total - ivaTotal);
 				total = Converters.redondearDosDec(total);
-				Long nroTransac = Conector.obtenerSecuencia(CnstQryTransaccion.SEC_TRANSAC);
+				Integer nroTransac = Conector.obtenerSecuencia(CnstQryTransaccion.SEC_TRANSAC);
 				transaccion.setNroTransac(nroTransac);
 				transaccion.setEstadoTran(EstadoTran.P);
 				transaccion.setFechaHora(new Fecha(Fecha.AMDHMS));
@@ -127,7 +131,7 @@ public class ManagerTransaccion {
 		try {
 			if(transaccion != null && TipoTran.V.equals(transaccion.getTipoTran())) {
 				Conector.getConn();
-				Long nroTransac = Conector.obtenerSecuencia(CnstQryTransaccion.SEC_TRANSAC);
+				Integer nroTransac = Conector.obtenerSecuencia(CnstQryTransaccion.SEC_TRANSAC);
 				transaccion.setNroTransac(nroTransac);
 				//se persiste la transaccion de tipo V (venta)
 				resultado = getInterfaceTransaccion().guardarTransaccionVenta(transaccion);
@@ -150,7 +154,7 @@ public class ManagerTransaccion {
 		return resultado;
 	}
 	
-	public Transaccion obtenerTransaccionPorId(Long idTransac) throws PresentacionException {
+	public Transaccion obtenerTransaccionPorId(Integer idTransac) throws PresentacionException {
 		Transaccion transac = null;
 		try {
 			Conector.getConn();
@@ -236,44 +240,118 @@ public class ManagerTransaccion {
 		return null;
 	}
 	
-	public Integer modificarEstadoTransaccion(Transaccion transaccion, List<Lote> listaLote) throws PresentacionException {
-		if(transaccion != null) {
-			//transaccion de tipo "compra"
-			if(transaccion.getTipoTran().equals(TipoTran.C)) {
-				try {
-					Conector.getConn();
-					//seteo estado a "confirmado"
-					transaccion.setEstadoTran(EstadoTran.C);
-					getInterfaceTransaccion().guardarTranEstado(transaccion);
-					getInterfaceTransaccion().modificarEstadoTransaccion(transaccion);
-					for(Lote lote : listaLote) {
-						getInterfaceLote().actualizarLote(lote);
-					}
-					Conector.closeConn("modificarTransaccionCompra");
-				} catch (PersistenciaException e) {
-					logger.fatal("Excepcion en ManagerTransaccion > modificarTransaccionCompra: " + e.getMessage(), e);
-					throw new PresentacionException(e);
-				}
-			}
+//	public Integer modificarEstadoTransaccion(Transaccion transaccion, List<Lote> listaLote) throws PresentacionException {
+//		if(transaccion != null) {
+//			//transaccion de tipo "compra"
+//			if(transaccion.getTipoTran().equals(TipoTran.C)) {
+//				try {
+//					Conector.getConn();
+//					//seteo estado a "confirmado"
+//					transaccion.setEstadoTran(EstadoTran.C);
+//					getInterfaceTransaccion().guardarTranEstado(transaccion);
+//					getInterfaceTransaccion().modificarEstadoTransaccion(transaccion);
+//					for(Lote lote : listaLote) {
+//						getInterfaceLote().actualizarLote(lote);
+//					}
+//					Conector.closeConn("modificarTransaccionCompra");
+//				} catch (PersistenciaException e) {
+//					logger.fatal("Excepcion en ManagerTransaccion > modificarTransaccionCompra: " + e.getMessage(), e);
+//					throw new PresentacionException(e);
+//				}
+//			}
+//		}
+//		return null;
+//	}
+	
+	public List<TranLineaLote> obtenerListaTranLineaLote(Integer nroTransac, Integer idProducto) throws PresentacionException {
+		logger.info("Se ingresa a obtenerListaTranLineaLote");
+		List<TranLineaLote> listaTll = null;
+		try {
+			Conector.getConn();
+			listaTll = getInterfaceTransaccion().obtenerListaTranLineaLote(nroTransac, idProducto);
+			Conector.closeConn("obtenerListaLotePorTransac");
+		} catch (PersistenciaException e) {
+			logger.fatal("Excepcion en ManagerTransaccion > obtenerListaTranLineaLote: " + e.getMessage(), e);
+			throw new PresentacionException(e);
 		}
-		return null;
+		return listaTll;
 	}
 	
-	public Integer anularTransaccion(Transaccion transaccion) throws PresentacionException {
+	//anulaciones
+	
+	public ErrorLogico anularTransaccionVenta(Transaccion transaccion) throws PresentacionException {
+		ErrorLogico error = null;
 		try {
 			Conector.getConn();
 			if(transaccion != null) {
 				transaccion.setEstadoTran(EstadoTran.A);
 				transaccion.setFechaHora(new Fecha(Fecha.AMDHMS));
+				//se debe manejar lote para devolver cantidad de productos
+				error = validarAnulacionVto(transaccion);
+				if(error != null) {
+					return error;
+				} else {
+					List<TranLineaLote> listaTll = new ArrayList<>();
+					for(TranLinea tl : transaccion.getListaTranLinea()) {
+						listaTll.addAll(getInterfaceTransaccion().obtenerListaTranLineaLote(tl.getTransaccion().getNroTransac(), 
+														tl.getProducto().getIdProducto()));
+					}
+					for(TranLineaLote tll : listaTll) {
+						/*
+						 * obtengo lote acutal de base, y le sumo la cantidad restada en la venta
+						 * para la transaccion que se esta manejando
+						 */
+						Lote loteActual = getInterfaceLote().obtenerLotePorId(tll.getLote().getIdLote());
+						Integer stock = loteActual.getStock() + tll.getCantidad();
+						//actualizo en base
+						getInterfaceLote().actualizarStockLote(loteActual.getIdLote(), stock);
+					}
+				}
 				getInterfaceTransaccion().guardarTranEstado(transaccion);
 				getInterfaceTransaccion().modificarEstadoTransaccion(transaccion);
+				//elimino tran_vta_lote para la transaccion que se anula
+				getInterfaceTransaccion().eliminarTranLineaLote(transaccion.getNroTransac());
 			}
-			Conector.closeConn("anularTransaccion");
+			Conector.closeConn("anularTransaccionVenta");
 		} catch (PersistenciaException e) {
-			logger.fatal("Excepcion en ManagerTransaccion > anularTransaccion: " + e.getMessage(), e);
+			logger.fatal("Excepcion en ManagerTransaccion > anularTransaccionVenta: " + e.getMessage(), e);
 			throw new PresentacionException(e);
 		}
-			return null;
+		return error;
+	}
+	
+	//FIXME chequear este metodo
+	private ErrorLogico validarAnulacionVto(Transaccion transaccion) throws PresentacionException {
+		ErrorLogico error = null;
+		try {
+			ManagerProducto mgrProd = new ManagerProducto();
+			ConfigDriver cfgDrv = ConfigDriver.getConfigDriver();
+			Integer diasTol = Integer.valueOf(cfgDrv.getVencTolerableAnul());
+			for(TranLinea tl : transaccion.getListaTranLinea()) {
+				Lote lote = mgrProd.obtenerLoteVtaPorTransacProdNoConn(tl.getTransaccion().getNroTransac(), tl.getProducto().getIdProducto());
+				Fecha fechaAnulacion = new Fecha(Fecha.AMD);
+				Fecha fechaVto = lote.getVenc();
+				long diff = fechaVto.getTimeInMillis() - fechaAnulacion.getTimeInMillis(); 
+			    long dias = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
+			    /*
+			     * se maneja para la anulacion que los días restantes de vencimiento de los productos
+			     * no superen lo establecido por properties
+			     */
+				if(diasTol.longValue() > dias) {
+					error = new ErrorLogico();
+					error.setCodigo(0);
+					error.setDescripcion("Alguno de los productos no cumple con el requisito de tolerancia de vencimiento.");
+					return error;
+				}
+			}
+		} catch (PersistenciaException e) {
+			logger.fatal("Excepcion en ManagerTransaccion > validarAnulacionVto: " + e.getMessage(), e);
+			throw new PresentacionException(e);
+		} catch (Exception e) {
+			logger.fatal("Excepcion no controlada en ManagerTransaccion > validarAnulacionVto: " + e.getMessage(), e);
+			throw new PresentacionException(e);
+		}
+		return error;
 	}
 	
 }

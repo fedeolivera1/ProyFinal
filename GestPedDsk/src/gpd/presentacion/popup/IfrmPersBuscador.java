@@ -6,6 +6,8 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -24,14 +26,12 @@ import gpd.dominio.persona.Departamento;
 import gpd.dominio.persona.Localidad;
 import gpd.dominio.persona.Persona;
 import gpd.dominio.persona.TipoPersona;
-import gpd.presentacion.controlador.CtrlFrmPedido;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import gpd.presentacion.controlador.CtrlFrmPersBuscador;
 
 public class IfrmPersBuscador extends JInternalFrame {
 
 	private static final long serialVersionUID = 1L;
-	private CtrlFrmPedido ctrlInterno;
+	private CtrlFrmPersBuscador ctrlInterno;
 	private JTextField txtPbFiltro;
 	private JComboBox<TipoPersona> cbxPbTipoPers;
 	private JComboBox<Departamento> cbxPbDep;
@@ -41,13 +41,13 @@ public class IfrmPersBuscador extends JInternalFrame {
 	/**
 	 * Create the frame.
 	 */
-	public IfrmPersBuscador(CtrlFrmPedido ctrlPed, Persona pers) {
+	public IfrmPersBuscador(CtrlFrmPersBuscador ctrl) {
 		setTitle("Buscador Persona");
 		setClosable(true);
 		setBounds(100, 100, 450, 320);
-		ctrlInterno = ctrlPed;
-//		persona = pers;
-		ctrlPed.setIfrmPb(this);
+		ctrlInterno = ctrl;
+
+		ctrlInterno.setIfrmPb(this);
 		getContentPane().setLayout(null);
 		
 		JButton btnPbLimpiar = new JButton("Limpiar");

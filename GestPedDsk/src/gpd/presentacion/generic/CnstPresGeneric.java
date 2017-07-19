@@ -61,24 +61,29 @@ public interface CnstPresGeneric {
 	
 	//lote
 	public static final String LOTE = "Lote";
+	public static final String LOTES_ACT_OK = "El lote ha sido actualizado correctamente.";
 	public static final String JTABLE_SIN_LOTES = "No hay lotes para mostrar...";
 	public static final String LOTES_NO_COMPLETADOS = "Hay lotes sin actualizar, complete la informacion.";
 	
 	//pedido
 	public static final String PED = "Pedido";
 	public static final String PEDIDO_INEXISTENTE = "No existe pedido abierto, genere nuevo pedido.";
-	public static final String PEDIDO_GEN_OK = "EL pedido se ha generado correctamente.";
+	public static final String PEDIDO_GEN_OK = "El pedido se ha generado correctamente.";
+	public static final String PEDIDO_ACT_OK = "El pedido se ha actualizado correctamente.";
 	public static final String PEDIDO_SIN_PERS = "Debe seleccionar una persona para el pedido.";
 	public static final String NUEVO_PEDIDO_CONF = "Si genera un nuevo pedido perdera los datos que no haya guardado, continuar?";
 	public static final String JTABLE_SIN_PEDIDOS = "No hay pedidos para mostrar...";
 	public static final String JTABLE_SIN_LINEASPED = "No hay lineas de pedido para mostrar...";
 	public static final String PEDIDO_LINEA_EXISTE = "La linea ya existe en el pedido.";
+	public static final String PEDIDO_LINEA_NO_EXISTE = "La linea no existe en el pedido.";
 	public static final String PEDIDO_NO_GENERADO = "El pedido no fue generado, o no tiene items.";
-	public static final String PEDIDO_CONF_VTA = "Está seguro que desea generar la venta? ";
 	
 	//venta
 	public static final String VTA = "Venta";
+	public static final String VTA_CONF_GEN = "Está seguro que desea generar la venta? ";
+	public static final String VTA_CONF_ANULA = "Está seguro que desea anular la venta? ";
 	public static final String VTA_GENERADA_OK = "La venta se ha generado correctamente.";
+	public static final String VTA_ANULADA = "La venta se ha anulado.";
 	
 	
 	//controles genericos

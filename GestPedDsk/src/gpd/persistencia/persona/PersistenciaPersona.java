@@ -182,7 +182,6 @@ public class PersistenciaPersona extends Conector implements IPersPersona, CnstQ
 					pf.getSinc(), pf.getUltAct());
 			
 			GenSqlExecType genExec = new GenSqlExecType(QRY_UPDATE_PF);
-			genExec.setParam(docAnt != null ? docAnt : documento);
 			genExec.setParam(pf.getTipoDoc().getIdTipoDoc());
 			genExec.setParam(pf.getApellido1());
 			genExec.setParam(pf.getApellido2());
@@ -254,7 +253,6 @@ public class PersistenciaPersona extends Conector implements IPersPersona, CnstQ
 					pj.getSinc(), pj.getUltAct());
 			
 			GenSqlExecType genExec = new GenSqlExecType(QRY_UPDATE_PJ);
-			genExec.setParam(rutAnt != null ? rutAnt : rut);
 			genExec.setParam(pj.getNombre());
 			genExec.setParam(pj.getRazonSocial());
 			genExec.setParam(pj.getBps());
@@ -324,7 +322,7 @@ public class PersistenciaPersona extends Conector implements IPersPersona, CnstQ
 					throws ConectorException {
 		try {
 			GenSqlExecType genExec = new GenSqlExecType(QRY_UPDATE_PERS);
-			genExec.setParam(idPersonaAnt != null ? idPersonaAnt : idPersona);
+			genExec.setParam(idPersona);
 			genExec.setParam(direccion);
 			genExec.setParam(puerta);
 			genExec.setParam(solar);
@@ -339,7 +337,7 @@ public class PersistenciaPersona extends Conector implements IPersPersona, CnstQ
 			genExec.setParam(origen.getAsChar());
 			genExec.setParam(sinc.getAsChar());
 			genExec.setParam(ultAct);
-			genExec.setParam(idPersona);
+			genExec.setParam(idPersonaAnt != null ? idPersonaAnt : idPersona);
 			resultado = (Integer) runGeneric(genExec);
 		} catch (ConectorException e) {
 			Conector.rollbackConn();

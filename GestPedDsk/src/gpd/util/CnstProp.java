@@ -15,7 +15,7 @@ public interface CnstProp {
 	public static final String DB_DRIVER_VAL = "dbdriver";
 
 	//datos properties config
-//	public static final String CFG_IVA = "iva";// se toma valor de enum para levantar del .properties
-	public static final String CFG_DPV = "dias_para_venc";
+	public static final String CFG_DIAS_PARA_VENC = "dias_para_venc";
+	public static final String CFG_VENC_TOL_ANUL = "venc_tolerable_anulacion";
 	
 }
