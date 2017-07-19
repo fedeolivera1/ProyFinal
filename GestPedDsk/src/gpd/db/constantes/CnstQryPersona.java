@@ -84,8 +84,6 @@ public interface CnstQryPersona {
 															+ "OR (p.email ILIKE ?) ) "
 														+ "AND (p.id_loc = ? OR -1 = ?) ";
 	
-//	public static final String QRY_SEARCH_PERS_GENERIC = "";
-	
 	public static final String QRY_SELECT_PJ = "SELECT pj.rut, pj.nombre, pj.razon_social, pj.bps, pj.bse, pj.es_prov, p.direccion, p.puerta, p.solar, "
 															+ "p.manzana, p.km, p.complemento, p.telefono, p.celular, p.email, p.fecha_reg, p.tipo, "
 															+ "p.id_loc, p.origen, p.sinc, p.ult_act "
