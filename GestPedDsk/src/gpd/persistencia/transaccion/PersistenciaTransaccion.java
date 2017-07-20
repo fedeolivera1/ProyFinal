@@ -6,7 +6,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import gpd.db.constantes.CnstQryTransaccion;
@@ -131,7 +130,7 @@ public class PersistenciaTransaccion extends Conector implements IPersTransaccio
 			}
 		} catch (ConectorException | SQLException | IOException e) {
 			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al obtenerListaTransaccionPorPersona: " + e.getMessage(), e);
+			logger.fatal("Excepcion al obtenerListaTransaccionPorPersona: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		} finally {
 			closeRs(rs);
@@ -171,7 +170,7 @@ public class PersistenciaTransaccion extends Conector implements IPersTransaccio
 			}
 		} catch (ConectorException | SQLException | IOException e) {
 			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al obtenerListaTransaccionPorPersona: " + e.getMessage(), e);
+			logger.fatal("Excepcion al obtenerListaTransaccionPorPersona: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		} finally {
 			closeRs(rs);
@@ -212,7 +211,7 @@ public class PersistenciaTransaccion extends Conector implements IPersTransaccio
 			}
 		} catch (ConectorException | SQLException | IOException e) {
 			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al obtenerListaTransaccionPorPersona: " + e.getMessage(), e);
+			logger.fatal("Excepcion al obtenerListaTransaccionPorPersona: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		} finally {
 			closeRs(rs);
@@ -233,7 +232,7 @@ public class PersistenciaTransaccion extends Conector implements IPersTransaccio
 			resultado = (Integer) runGeneric(genExec);
 		} catch (ConectorException e) {
 			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al guardarTranEstado: " + e.getMessage(), e);
+			logger.fatal("Excepcion al guardarTranEstado: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		}
 		return resultado;
@@ -253,7 +252,7 @@ public class PersistenciaTransaccion extends Conector implements IPersTransaccio
 			}
 		} catch (ConectorException | SQLException | IOException e) {
 			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al obtenerUltTranEstadoPorId: " + e.getMessage(), e);
+			logger.fatal("Excepcion al obtenerUltTranEstadoPorId: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		} finally {
 			closeRs(rs);
@@ -281,7 +280,7 @@ public class PersistenciaTransaccion extends Conector implements IPersTransaccio
 			}
 		} catch (ConectorException | SQLException e) {
 			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al obtenerListaTransaccionPorPersona: " + e.getMessage(), e);
+			logger.fatal("Excepcion al obtenerListaTransaccionPorPersona: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		} finally {
 			closeRs(rs);
@@ -306,7 +305,7 @@ public class PersistenciaTransaccion extends Conector implements IPersTransaccio
 			}
 		} catch (ConectorException e) {
 			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al guardarListaTranLineaLote: " + e.getMessage(), e);
+			logger.fatal("Excepcion al guardarListaTranLineaLote: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		}
 		return resultado;
@@ -321,7 +320,7 @@ public class PersistenciaTransaccion extends Conector implements IPersTransaccio
 			resultado = (Integer) runGeneric(genExec);
 		} catch (ConectorException e) {
 			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al eliminarTranLineaLote: " + e.getMessage(), e);
+			logger.fatal("Excepcion al eliminarTranLineaLote: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		}
 		return resultado;

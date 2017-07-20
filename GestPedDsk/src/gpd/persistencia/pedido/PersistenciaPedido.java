@@ -8,7 +8,6 @@ import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import gpd.db.constantes.CnstQryPedido;
@@ -86,7 +85,7 @@ public class PersistenciaPedido extends Conector implements IPersPedido, CnstQry
 			}
 		} catch (ConectorException | SQLException | IOException e) {
 			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al obtenerPedidoPorId: " + e.getMessage(), e);
+			logger.fatal("Excepcion al obtenerPedidoPorId: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		} finally {
 			closeRs(rs);
@@ -148,7 +147,7 @@ public class PersistenciaPedido extends Conector implements IPersPedido, CnstQry
 			}
 		} catch (ConectorException | SQLException | IOException e) {
 			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al obtenerListaTransaccionPorPersona: " + e.getMessage(), e);
+			logger.fatal("Excepcion al obtenerListaTransaccionPorPersona: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		} finally {
 			closeRs(rs);

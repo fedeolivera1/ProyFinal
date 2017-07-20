@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import gpd.db.constantes.CnstQryPedidoLinea;
@@ -44,7 +43,7 @@ public class PersistenciaPedidoLinea extends Conector implements IPersPedidoLine
 			}
 		} catch (ConectorException | SQLException e) {
 			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al obtenerListaPedidoLinea: " + e.getMessage(), e);
+			logger.fatal("Excepcion al obtenerListaPedidoLinea: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		} finally {
 			closeRs(rs);

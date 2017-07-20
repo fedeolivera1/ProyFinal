@@ -6,7 +6,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import gpd.db.constantes.CnstQryPersona;
@@ -80,7 +79,7 @@ public class PersistenciaPersona extends Conector implements IPersPersona, CnstQ
 			}
 		} catch (ConectorException | SQLException | IOException e) {
 			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al obtenerProductoPorId: " + e.getMessage(), e);
+			logger.fatal("Excepcion al obtenerProductoPorId: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		} finally {
 			closeRs(rs);
@@ -133,7 +132,7 @@ public class PersistenciaPersona extends Conector implements IPersPersona, CnstQ
 			}
 		} catch (ConectorException | SQLException | IOException e) {
 			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al obtenerProductoPorId: " + e.getMessage(), e);
+			logger.fatal("Excepcion al obtenerProductoPorId: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		} finally {
 			closeRs(rs);
@@ -164,7 +163,7 @@ public class PersistenciaPersona extends Conector implements IPersPersona, CnstQ
 			
 		} catch (ConectorException e) {
 			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al guardarPersFisica: " + e.getMessage(), e);
+			logger.fatal("Excepcion al guardarPersFisica: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		}
 		return resultado;
@@ -193,7 +192,7 @@ public class PersistenciaPersona extends Conector implements IPersPersona, CnstQ
 			resultado = (Integer) runGeneric(genExec);
 		} catch (ConectorException e) {
 			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al guardarPersFisica: " + e.getMessage(), e);
+			logger.fatal("Excepcion al guardarPersFisica: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		}
 		return resultado;
@@ -210,7 +209,7 @@ public class PersistenciaPersona extends Conector implements IPersPersona, CnstQ
 			resultado = (Integer) runGeneric(genExec);
 		} catch (ConectorException e) {
 			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al eliminarPersFisica: " + e.getMessage(), e);
+			logger.fatal("Excepcion al eliminarPersFisica: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		}
 		return resultado;
@@ -235,7 +234,7 @@ public class PersistenciaPersona extends Conector implements IPersPersona, CnstQ
 			
 		} catch (ConectorException e) {
 			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al guardarPersJuridica: " + e.getMessage(), e);
+			logger.fatal("Excepcion al guardarPersJuridica: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		}
 		return resultado;
@@ -263,7 +262,7 @@ public class PersistenciaPersona extends Conector implements IPersPersona, CnstQ
 			
 		} catch (ConectorException e) {
 			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al modificarPersJuridica: " + e.getMessage(), e);
+			logger.fatal("Excepcion al modificarPersJuridica: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		}
 		return resultado;
@@ -280,7 +279,7 @@ public class PersistenciaPersona extends Conector implements IPersPersona, CnstQ
 			resultado = (Integer) runGeneric(genExec);
 		} catch (ConectorException e) {
 			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al eliminarPersJuridica: " + e.getMessage(), e);
+			logger.fatal("Excepcion al eliminarPersJuridica: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		}
 		return resultado;
@@ -310,7 +309,7 @@ public class PersistenciaPersona extends Conector implements IPersPersona, CnstQ
 			resultado = (Integer) runGeneric(genExec);
 		} catch (ConectorException e) {
 			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al guardarPersona: " + e.getMessage(), e);
+			logger.fatal("Excepcion al guardarPersona: " + e.getMessage(), e);
 			throw e;
 		}
 		return resultado;
@@ -341,7 +340,7 @@ public class PersistenciaPersona extends Conector implements IPersPersona, CnstQ
 			resultado = (Integer) runGeneric(genExec);
 		} catch (ConectorException e) {
 			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al modificarPersona: " + e.getMessage(), e);
+			logger.fatal("Excepcion al modificarPersona: " + e.getMessage(), e);
 			throw e;
 		}
 		return resultado;
@@ -354,7 +353,7 @@ public class PersistenciaPersona extends Conector implements IPersPersona, CnstQ
 			resultado = (Integer) runGeneric(genExec);
 		} catch (ConectorException e) {
 			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al eliminarPersona: " + e.getMessage(), e);
+			logger.fatal("Excepcion al eliminarPersona: " + e.getMessage(), e);
 			throw e;
 		}
 		return resultado;
@@ -393,7 +392,7 @@ public class PersistenciaPersona extends Conector implements IPersPersona, CnstQ
 			listaPf.addAll(cargarPfDesdeRs(rs));
 		} catch (ConectorException e) {
 			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al obtenerListaTipoDoc: " + e.getMessage());
+			logger.fatal("Excepcion al obtenerBusquedaPersFisica: " + e.getMessage());
 			throw new PersistenciaException(e);
 		} finally {
 			closeRs(rs);
@@ -423,7 +422,7 @@ public class PersistenciaPersona extends Conector implements IPersPersona, CnstQ
 			listaPf.addAll(cargarPfDesdeRs(rs));
 		} catch (ConectorException e) {
 			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al obtenerListaTipoDoc: " + e.getMessage());
+			logger.fatal("Excepcion al obtenerBusquedaPersFisicaGenerico: " + e.getMessage());
 			throw new PersistenciaException(e);
 		} finally {
 			closeRs(rs);
@@ -464,7 +463,7 @@ public class PersistenciaPersona extends Conector implements IPersPersona, CnstQ
 			listaPj.addAll(cargarPjDesdeRs(rs));
 		} catch (ConectorException e) {
 			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al obtenerListaTipoDoc: " + e.getMessage());
+			logger.fatal("Excepcion al obtenerBusquedaPersJuridica: " + e.getMessage());
 			throw new PersistenciaException(e);
 		} finally {
 			closeRs(rs);
@@ -493,7 +492,7 @@ public class PersistenciaPersona extends Conector implements IPersPersona, CnstQ
 			listaPj.addAll(cargarPjDesdeRs(rs));
 		} catch (ConectorException e) {
 			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al obtenerListaTipoDoc: " + e.getMessage());
+			logger.fatal("Excepcion al obtenerBusquedaPersJuridicaGenerico: " + e.getMessage());
 			throw new PersistenciaException(e);
 		} finally {
 			closeRs(rs);
@@ -549,7 +548,7 @@ public class PersistenciaPersona extends Conector implements IPersPersona, CnstQ
 			}
 		} catch (ConectorException | SQLException | IOException e) {
 			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al obtenerListaTipoDoc: " + e.getMessage(), e);
+			logger.fatal("Excepcion al obtenerListaEmpresasPorTipo: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		} finally {
 			closeRs(rs);
@@ -578,7 +577,7 @@ public class PersistenciaPersona extends Conector implements IPersPersona, CnstQ
 			}
 		} catch (ConectorException | SQLException | IOException e) {
 			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al obtenerProductoPorId: " + e.getMessage(), e);
+			logger.fatal("Excepcion al obtenerPersGenerico: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		} finally {
 			closeRs(rs);
@@ -643,7 +642,7 @@ public class PersistenciaPersona extends Conector implements IPersPersona, CnstQ
 			}
 		} catch (SQLException | PersistenciaException | IOException e) {
 			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al cargarRsConPf: " + e.getMessage(), e);
+			logger.fatal("Excepcion al cargarPfDesdeRs: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		}
 		return listaPf;
@@ -698,7 +697,7 @@ public class PersistenciaPersona extends Conector implements IPersPersona, CnstQ
 			}
 		} catch (SQLException | PersistenciaException | IOException e) {
 			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al cargarRsConPf: " + e.getMessage(), e);
+			logger.fatal("Excepcion al cargarPjDesdeRs: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		}
 		return listaPj;

@@ -6,7 +6,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import gpd.db.constantes.CnstQryProducto;
@@ -67,7 +66,7 @@ public class PersistenciaProducto extends Conector implements IPersProducto, Cns
 			}
 		} catch (ConectorException | SQLException | IOException e) {
 			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al obtenerBusquedaProducto: " + e.getMessage(), e);
+			logger.fatal("Excepcion al obtenerBusquedaProducto: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		} finally {
 			closeRs(rs);
@@ -107,7 +106,7 @@ public class PersistenciaProducto extends Conector implements IPersProducto, Cns
 			}
 		} catch (ConectorException | SQLException | IOException e) {
 			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al obtenerProductoPorId: " + e.getMessage(), e);
+			logger.fatal("Excepcion al obtenerProductoPorId: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		}
 		return producto;
@@ -146,7 +145,7 @@ public class PersistenciaProducto extends Conector implements IPersProducto, Cns
 			}
 		} catch (ConectorException | SQLException | IOException e) {
 			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al obtenerProductoPorId: " + e.getMessage(), e);
+			logger.fatal("Excepcion al obtenerProductoPorId: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		}
 		return listaProducto;
@@ -173,7 +172,7 @@ public class PersistenciaProducto extends Conector implements IPersProducto, Cns
 			resultado = (Integer) runGeneric(genExec);
 		} catch (ConectorException e) {
 			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al guardarProducto: " + e.getMessage(), e);
+			logger.fatal("Excepcion al guardarProducto: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		}
 		return resultado;
@@ -199,7 +198,7 @@ public class PersistenciaProducto extends Conector implements IPersProducto, Cns
 			resultado = (Integer) runGeneric(genExec);
 		} catch (ConectorException e) {
 			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al modificarProducto: " + e.getMessage(), e);
+			logger.fatal("Excepcion al modificarProducto: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		}
 		return resultado;
@@ -214,7 +213,7 @@ public class PersistenciaProducto extends Conector implements IPersProducto, Cns
 			resultado = (Integer) runGeneric(genExec);
 		} catch (ConectorException e) {
 			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al eliminarProducto: " + e.getMessage(), e);
+			logger.fatal("Excepcion al eliminarProducto: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		}
 		return resultado;

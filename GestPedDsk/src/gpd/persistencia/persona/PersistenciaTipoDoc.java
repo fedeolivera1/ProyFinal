@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import gpd.db.constantes.CnstQryTipoDoc;
@@ -36,7 +35,7 @@ public class PersistenciaTipoDoc extends Conector implements IPersTipoDoc, CnstQ
 			}
 		} catch (ConectorException | SQLException e) {
 			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al obtenerListaTipoDoc: " + e.getMessage(), e);
+			logger.fatal("Excepcion al obtenerListaTipoDoc: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		} finally {
 			closeRs(rs);
@@ -53,7 +52,7 @@ public class PersistenciaTipoDoc extends Conector implements IPersTipoDoc, CnstQ
 			resultado = (Integer) runGeneric(genExec);
 		} catch (ConectorException e) {
 			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al guardarTipoProd: " + e.getMessage(), e);
+			logger.fatal("Excepcion al guardarTipoProd: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		}
 		return resultado;
@@ -69,7 +68,7 @@ public class PersistenciaTipoDoc extends Conector implements IPersTipoDoc, CnstQ
 			resultado = (Integer) runGeneric(genExec);
 		} catch (ConectorException e) {
 			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al modificarTipoProd: " + e.getMessage(), e);
+			logger.fatal("Excepcion al modificarTipoProd: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		}
 		return resultado;
@@ -84,7 +83,7 @@ public class PersistenciaTipoDoc extends Conector implements IPersTipoDoc, CnstQ
 			resultado = (Integer) runGeneric(genExec);
 		} catch (ConectorException e) {
 			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al eliminarTipoProd: " + e.getMessage(), e);
+			logger.fatal("Excepcion al eliminarTipoProd: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		}
 		return resultado;
@@ -104,7 +103,7 @@ public class PersistenciaTipoDoc extends Conector implements IPersTipoDoc, CnstQ
 			}
 		} catch (ConectorException | SQLException e) {
 			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al obtenerListaTipoDoc: " + e.getMessage(), e);
+			logger.fatal("Excepcion al obtenerListaTipoDoc: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		} finally {
 			closeRs(rs);

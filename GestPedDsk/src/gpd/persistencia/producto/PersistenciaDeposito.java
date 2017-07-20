@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import gpd.db.constantes.CnstQryDeposito;
@@ -36,7 +35,7 @@ public class PersistenciaDeposito extends Conector implements IPersDeposito, Cns
 			}
 		} catch (ConectorException | SQLException e) {
 			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al obtenerDepositoPorId: " + e.getMessage(), e);
+			logger.fatal("Excepcion al obtenerDepositoPorId: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		} finally {
 			closeRs(rs);
@@ -58,7 +57,7 @@ public class PersistenciaDeposito extends Conector implements IPersDeposito, Cns
 			}
 		} catch (ConectorException | SQLException e) {
 			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al obtenerListaDeposito: " + e.getMessage(), e);
+			logger.fatal("Excepcion al obtenerListaDeposito: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		} finally {
 			closeRs(rs);
@@ -75,7 +74,7 @@ public class PersistenciaDeposito extends Conector implements IPersDeposito, Cns
 			resultado = (Integer) runGeneric(genExec);
 		} catch (ConectorException e) {
 			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al guardarDeposito: " + e.getMessage(), e);
+			logger.fatal("Excepcion al guardarDeposito: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		}
 		return resultado;
@@ -91,7 +90,7 @@ public class PersistenciaDeposito extends Conector implements IPersDeposito, Cns
 			resultado = (Integer) runGeneric(genExec);
 		} catch (ConectorException e) {
 			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al modificarDeposito: " + e.getMessage(), e);
+			logger.fatal("Excepcion al modificarDeposito: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		}
 		return resultado;
@@ -106,7 +105,7 @@ public class PersistenciaDeposito extends Conector implements IPersDeposito, Cns
 			resultado = (Integer) runGeneric(genExec);
 		} catch (ConectorException e) {
 			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al eliminarDeposito: " + e.getMessage(), e);
+			logger.fatal("Excepcion al eliminarDeposito: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		}
 		return resultado;

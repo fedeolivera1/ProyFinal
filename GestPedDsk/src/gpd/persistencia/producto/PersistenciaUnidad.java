@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import gpd.db.constantes.CnstQryUnidad;
@@ -38,7 +37,7 @@ public class PersistenciaUnidad extends Conector implements IPersUnidad, CnstQry
 			}
 		} catch (ConectorException | SQLException e) {
 			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al obtenerUnidadPorId: " + e.getMessage(), e);
+			logger.fatal("Excepcion al obtenerUnidadPorId: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		} finally {
 			closeRs(rs);
@@ -60,7 +59,7 @@ public class PersistenciaUnidad extends Conector implements IPersUnidad, CnstQry
 			}
 		} catch (ConectorException | SQLException e) {
 			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al obtenerListaUnidad: " + e.getMessage(), e);
+			logger.fatal("Excepcion al obtenerListaUnidad: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		} finally {
 			closeRs(rs);
@@ -77,7 +76,7 @@ public class PersistenciaUnidad extends Conector implements IPersUnidad, CnstQry
 			resultado = (Integer) runGeneric(genExec);
 		} catch (ConectorException e) {
 			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al guardarUnidad: " + e.getMessage(), e);
+			logger.fatal("Excepcion al guardarUnidad: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		}
 		return resultado;
@@ -93,7 +92,7 @@ public class PersistenciaUnidad extends Conector implements IPersUnidad, CnstQry
 			resultado = (Integer) runGeneric(genExec);
 		} catch (ConectorException e) {
 			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al modificarUnidad: " + e.getMessage(), e);
+			logger.fatal("Excepcion al modificarUnidad: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		}
 		return resultado;
@@ -108,7 +107,7 @@ public class PersistenciaUnidad extends Conector implements IPersUnidad, CnstQry
 			resultado = (Integer) runGeneric(genExec);
 		} catch (ConectorException e) {
 			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al eliminarUnidad: " + e.getMessage(), e);
+			logger.fatal("Excepcion al eliminarUnidad: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		}
 		return resultado;

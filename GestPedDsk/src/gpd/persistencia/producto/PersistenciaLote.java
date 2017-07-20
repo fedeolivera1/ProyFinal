@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import gpd.db.constantes.CnstQryLote;
@@ -56,7 +55,7 @@ public class PersistenciaLote extends Conector implements IPersLote, CnstQryLote
 			}
 		} catch (ConectorException | SQLException | PersistenciaException e) {
 			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al obtenerLotePorTransacProd: " + e.getMessage(), e);
+			logger.fatal("Excepcion al obtenerLotePorTransacProd: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		} finally {
 			closeRs(rs);
@@ -97,7 +96,7 @@ public class PersistenciaLote extends Conector implements IPersLote, CnstQryLote
 			}
 		} catch (ConectorException | SQLException | PersistenciaException e) {
 			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al obtenerLotePorTransacProd: " + e.getMessage(), e);
+			logger.fatal("Excepcion al obtenerLotePorTransacProd: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		} finally {
 			closeRs(rs);
@@ -115,7 +114,7 @@ public class PersistenciaLote extends Conector implements IPersLote, CnstQryLote
 			listaLote = cargarLoteDesdeRs(rs);
 		} catch (ConectorException e) {
 			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al obtenerListaTransaccionPorPersona: " + e.getMessage(), e);
+			logger.fatal("Excepcion al obtenerListaTransaccionPorPersona: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		} finally {
 			closeRs(rs);
@@ -136,7 +135,7 @@ public class PersistenciaLote extends Conector implements IPersLote, CnstQryLote
 //			}
 //		} catch (ConectorException | SQLException e) {
 //			Conector.rollbackConn();
-//			logger.log(Level.FATAL, "Excepcion al obtenerStockLotePorProd: " + e.getMessage(), e);
+//			logger.fatal("Excepcion al obtenerStockLotePorProd: " + e.getMessage(), e);
 //			throw new PersistenciaException(e);
 //		} finally {
 //			closeRs(rs);
@@ -155,7 +154,7 @@ public class PersistenciaLote extends Conector implements IPersLote, CnstQryLote
 			listaLote = cargarLoteDesdeRs(rs);
 		} catch (ConectorException e) {
 			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al obtenerListaTransaccionPorPersona: " + e.getMessage(), e);
+			logger.fatal("Excepcion al obtenerListaTransaccionPorPersona: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		} finally {
 			closeRs(rs);
@@ -270,7 +269,7 @@ public class PersistenciaLote extends Conector implements IPersLote, CnstQryLote
 			}
 		} catch (SQLException | PersistenciaException e) {
 			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al cargarRsConPf: " + e.getMessage(), e);
+			logger.fatal("Excepcion al cargarRsConPf: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		}
 		return listaLote;

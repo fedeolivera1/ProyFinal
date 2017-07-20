@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import gpd.db.constantes.CnstQryDepLoc;
@@ -36,7 +35,7 @@ public class PersistenciaDepLoc extends Conector implements IPersDepLoc, CnstQry
 			}
 		} catch (ConectorException | SQLException e) {
 			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al obtenerListaDepartamentos: " + e.getMessage(), e);
+			logger.fatal("Excepcion al obtenerListaDepartamentos: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		}
 		return listaDep;
@@ -56,7 +55,7 @@ public class PersistenciaDepLoc extends Conector implements IPersDepLoc, CnstQry
 			}
 		} catch (ConectorException | SQLException e) {
 			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al obtenerDepartamentoPorId: " + e.getMessage(), e);
+			logger.fatal("Excepcion al obtenerDepartamentoPorId: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		}
 		return departamento;
@@ -78,7 +77,7 @@ public class PersistenciaDepLoc extends Conector implements IPersDepLoc, CnstQry
 			}
 		} catch (ConectorException | SQLException e) {
 			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al obtenerListaLocPorDep: " + e.getMessage(), e);
+			logger.fatal("Excepcion al obtenerListaLocPorDep: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		}
 		return listaLoc;
@@ -99,7 +98,7 @@ public class PersistenciaDepLoc extends Conector implements IPersDepLoc, CnstQry
 			}
 		} catch (ConectorException | SQLException e) {
 			Conector.rollbackConn();
-			logger.log(Level.FATAL, "Excepcion al obtenerLocalidadPorId: " + e.getMessage(), e);
+			logger.fatal("Excepcion al obtenerLocalidadPorId: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		}
 		return localidad;
