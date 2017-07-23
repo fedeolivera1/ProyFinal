@@ -18,4 +18,9 @@ public interface CnstProp {
 	public static final String CFG_DIAS_PARA_VENC = "dias_para_venc";
 	public static final String CFG_VENC_TOL_ANUL = "venc_tolerable_anulacion";
 	
+	//datos properties consumo del webservice
+	public static final String CFG_WS_URL = "ws_url";
+	public static final String CFG_WS_TN = "ws_target_ns";
+	public static final String CFG_WS_NAME = "ws_name";
+	
 }

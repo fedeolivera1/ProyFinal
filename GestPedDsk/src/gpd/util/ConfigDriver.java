@@ -70,6 +70,10 @@ public class ConfigDriver extends PropManager {
 		return super.getPropertyValue(CnstProp.PROP_DB, CnstProp.DB_PASS_VAL);
 	}
 	
+	/**
+	 * Transac Values
+	 * @throws Exception
+	 */
 	public String getIva(String iva) throws Exception {
 		return super.getPropertyValue(CnstProp.PROP_CONFIG, iva);
 	}
@@ -78,8 +82,24 @@ public class ConfigDriver extends PropManager {
 		return super.getPropertyValue(CnstProp.PROP_CONFIG, CnstProp.CFG_DIAS_PARA_VENC);
 	}
 	
+	/**
+	 * WebService Values
+	 * @throws Exception
+	 */
 	public String getVencTolerableAnul() throws Exception {
 		return super.getPropertyValue(CnstProp.PROP_CONFIG, CnstProp.CFG_VENC_TOL_ANUL);
+	}
+	
+	public String getWsUrl() throws Exception {
+		return super.getPropertyValue(CnstProp.PROP_CONFIG, CnstProp.CFG_WS_URL);
+	}
+	
+	public String getWsTargetNs() throws Exception {
+		return super.getPropertyValue(CnstProp.PROP_CONFIG, CnstProp.CFG_WS_TN);
+	}
+	
+	public String getWsName() throws Exception {
+		return super.getPropertyValue(CnstProp.PROP_CONFIG, CnstProp.CFG_WS_NAME);
 	}
 
 }
