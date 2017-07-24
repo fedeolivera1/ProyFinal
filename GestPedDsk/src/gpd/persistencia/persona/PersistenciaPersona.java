@@ -702,4 +702,39 @@ public class PersistenciaPersona extends Conector implements IPersPersona, CnstQ
 		}
 		return listaPj;
 	}
+
+	@Override
+	public Boolean checkExistPersona(Long idPersona) throws PersistenciaException {
+		try {
+			GenSqlSelectType genType = new GenSqlSelectType(QRY_CHECK_EXIST_PERS);
+			genType.setParam(idPersona);
+			rs = (ResultSet) runGeneric(genType);
+			if(rs.next()) {
+				return true;
+			}
+		} catch (ConectorException | SQLException e) {
+			Conector.rollbackConn();
+			logger.fatal("Excepcion al obtenerListaEmpresasPorTipo: " + e.getMessage(), e);
+			throw new PersistenciaException(e);
+		} finally {
+			closeRs(rs);
+		}
+		return false;
+	}
+
+	@Override
+	public Integer actualizarSincPersona(Long idPersona, Sinc sinc, Fecha ultAct) throws PersistenciaException {
+		try {
+			GenSqlExecType genExec = new GenSqlExecType(QRY_UPDATE_SINC_PERS);
+			genExec.setParam(sinc.getAsChar());
+			genExec.setParam(ultAct);
+			genExec.setParam(idPersona);
+			resultado = (Integer) runGeneric(genExec);
+		} catch (ConectorException e) {
+			Conector.rollbackConn();
+			logger.fatal("Excepcion al obtenerListaEmpresasPorTipo: " + e.getMessage(), e);
+			throw new PersistenciaException(e);
+		}
+		return resultado;
+	}
 }

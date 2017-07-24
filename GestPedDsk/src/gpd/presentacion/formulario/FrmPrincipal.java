@@ -207,6 +207,19 @@ public class FrmPrincipal extends JFrame {
 			}
 		});
 		mnConsulta.add(mntmConsulta);
+		
+		JMenu mnSinc = new JMenu("Sinc");
+		menuBar.add(mnSinc);
+		
+		JMenuItem mntmSincronizador = new JMenuItem("Sincronizador");
+		mntmSincronizador.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				FrmSinc frmSinc = FrmSinc.getFrmSinc(usr);
+				frmSinc.setLocationRelativeTo(null);
+				frmSinc.setVisible(true);
+			}
+		});
+		mnSinc.add(mntmSincronizador);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);

@@ -1,4 +1,4 @@
-package gpd.service.consumer;
+package gpd.ws.consumer;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -7,7 +7,7 @@ import javax.xml.namespace.QName;
 
 import org.apache.log4j.Logger;
 
-import gpd.exceptions.PresentacionException;
+import gpd.exceptions.SincronizadorException;
 import gpd.util.ConfigDriver;
 import gpw.webservice.proxy.WsGestPed;
 import gpw.webservice.proxy.WsGestPed_Service;
@@ -17,7 +17,7 @@ public class ServiceConsumer {
 	private static final Logger logger = Logger.getLogger(ServiceConsumer.class);
 	private static final String WS_URL_END = "?wsdl";
 
-	public WsGestPed consumirWebService(String nombreOp) throws PresentacionException {
+	public WsGestPed consumirWebService() throws SincronizadorException {
 		WsGestPed_Service proxy = null;
 		WsGestPed iGestPed = null;
         try {
@@ -35,13 +35,13 @@ public class ServiceConsumer {
 //            provider.getRequestContext().put(BindingProvider.USERNAME_PROPERTY, "wsgestped");   
 //            provider.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, "pf2017");
 
-//            System.out.println(port.servicioFuncional());
+//            System.out.println(iGestPed.servicioFuncional());
         } catch (MalformedURLException e) {
         	logger.fatal("Excepcion en ServiceConsumer > consumirWebService: " + e.getMessage(), e);
-			throw new PresentacionException(e);
-        } catch (Exception e ) {
+			throw new SincronizadorException(e);
+        } catch (Exception e) {
         	logger.fatal("Excepcion en ServiceConsumer > consumirWebService: " + e.getMessage(), e);
-			throw new PresentacionException(e);
+			throw new SincronizadorException(e);
         }
 		return iGestPed;
 	}

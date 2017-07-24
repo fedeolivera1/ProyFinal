@@ -123,4 +123,8 @@ public interface CnstQryPersona {
 	
 	public static final String QRY_DELETE_PERS = "DELETE FROM persona WHERE id_persona = ?";
 	
+	public static final String QRY_CHECK_EXIST_PERS = "SELECT (1) AS existe FROM persona WHERE id_persona = ?";
+	
+	public static final String QRY_UPDATE_SINC_PERS = "UPDATE persona SET sinc = ?, ult_act = ? WHERE id_persona = ?";
+	
 }

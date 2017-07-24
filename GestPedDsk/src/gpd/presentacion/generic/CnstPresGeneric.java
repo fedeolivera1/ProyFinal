@@ -85,6 +85,8 @@ public interface CnstPresGeneric {
 	public static final String VTA_GENERADA_OK = "La venta se ha generado correctamente.";
 	public static final String VTA_ANULADA = "La venta se ha anulado.";
 	
+	//sinc
+	public static final String SINC = "Sincronizador";
 	
 	//controles genericos
 	public static final String CONF_LIMPIAR = "Confirma que desea limpiar el formulario ?";

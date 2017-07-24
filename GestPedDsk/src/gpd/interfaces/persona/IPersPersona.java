@@ -5,7 +5,9 @@ import java.util.List;
 import gpd.dominio.persona.Persona;
 import gpd.dominio.persona.PersonaFisica;
 import gpd.dominio.persona.PersonaJuridica;
+import gpd.dominio.util.Sinc;
 import gpd.exceptions.PersistenciaException;
+import gpd.types.Fecha;
 
 public interface IPersPersona {
 	
@@ -28,4 +30,6 @@ public interface IPersPersona {
 	public Integer eliminarPersJuridica(PersonaJuridica pj) throws PersistenciaException;
 	//generico
 	public Persona obtenerPersGenerico(Long idPersona) throws PersistenciaException;
+	public Boolean checkExistPersona(Long idPersona) throws PersistenciaException;
+	public Integer actualizarSincPersona(Long idPersona, Sinc sinc, Fecha ultAct) throws PersistenciaException;
 }
