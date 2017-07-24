@@ -22,7 +22,7 @@ public interface CnstQryProducto {
 	
 	public static final String QRY_INSERT_PROD = "INSERT INTO producto "
 													+ "(id_tipo_prod, codigo, nombre, descripcion, stock_min, apl_iva, id_unidad, cant_unidad, precio, sinc, ult_act) "
-													+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+													+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 	
 	public static final String QRY_UPDATE_PROD = "UPDATE producto SET id_tipo_prod = ?, codigo = ?, nombre = ?, descripcion = ?, stock_min = ?, apl_iva = ?, "
 													+ "id_unidad = ?, cant_unidad = ?, precio = ?, sinc = ?, ult_act = ? "

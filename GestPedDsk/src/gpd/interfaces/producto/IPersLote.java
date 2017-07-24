@@ -7,8 +7,9 @@ import gpd.exceptions.PersistenciaException;
 
 public interface IPersLote {
 
-	public List<Lote> obtenerListaLotePorTransac(Long nroTransac) throws PersistenciaException;
-//	public ? obtenerStockLotePorProd(Integer idProducto, Integer diasParaVenc) throws PersistenciaException;
+	public Lote obtenerLotePorId(Integer idLote) throws PersistenciaException;
+	public Lote obtenerLoteVtaPorTransacProd(Integer nroTransac, Integer idProd) throws PersistenciaException;
+	public List<Lote> obtenerListaLotePorTransac(Integer nroTransac) throws PersistenciaException;
 	public List<Lote> obtenerListaLotePorProd(Integer idProducto, Integer diasParaVenc) throws PersistenciaException;
 	public Integer guardarListaLote(List<Lote> listaLote) throws PersistenciaException;
 	public Integer guardarLote(Lote lote) throws PersistenciaException;

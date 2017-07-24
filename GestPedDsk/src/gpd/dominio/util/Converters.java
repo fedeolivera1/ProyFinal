@@ -20,17 +20,7 @@ public abstract class Converters {
 		}
 		return nroConv;
 	}
-	
-//	public static Float convertirPorcSustraccion(Float porc) {
-//		Float nroConv = null;
-//		try {
-//			nroConv = ((100 - porc) / 100);
-//		} catch (NumberFormatException ne) {
-//			logger.fatal("Error al operar con numeros en método convertirIva: " + ne.getMessage(), ne);
-//		}
-//		return nroConv;
-//	}
-//	
+
 	public static Double redondearDosDec(Double numero) {
 		BigDecimal nroBd = new BigDecimal(numero);
 		try {

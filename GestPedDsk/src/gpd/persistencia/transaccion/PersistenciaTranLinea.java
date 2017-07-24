@@ -26,7 +26,7 @@ public class PersistenciaTranLinea extends Conector implements IPersTranLinea, C
 	
 	
 	@Override
-	public TranLinea obtenerTranLineaPorId(Long nroTransac, Integer idProducto) throws PersistenciaException {
+	public TranLinea obtenerTranLineaPorId(Integer nroTransac, Integer idProducto) throws PersistenciaException {
 		TranLinea tranLinea = null;
 		PersistenciaProducto pp = new PersistenciaProducto();
 		PersistenciaTransaccion pt = new PersistenciaTransaccion();
@@ -104,7 +104,7 @@ public class PersistenciaTranLinea extends Conector implements IPersTranLinea, C
 	}
 	
 	@Override
-	public Integer eliminarTranLinea(Long nroTransac) throws PersistenciaException {
+	public Integer eliminarTranLinea(Integer nroTransac) throws PersistenciaException {
 		Integer resultado = null;
 		GenSqlExecType genExec = new GenSqlExecType(QRY_DELETE_TRANLINEA);
 		genExec.setParam(nroTransac);

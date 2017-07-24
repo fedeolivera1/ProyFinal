@@ -75,7 +75,11 @@ public class ConfigDriver extends PropManager {
 	}
 	
 	public String getDiasParaVenc() throws Exception {
-		return super.getPropertyValue(CnstProp.PROP_CONFIG, CnstProp.CFG_DPV);
+		return super.getPropertyValue(CnstProp.PROP_CONFIG, CnstProp.CFG_DIAS_PARA_VENC);
+	}
+	
+	public String getVencTolerableAnul() throws Exception {
+		return super.getPropertyValue(CnstProp.PROP_CONFIG, CnstProp.CFG_VENC_TOL_ANUL);
 	}
 
 }

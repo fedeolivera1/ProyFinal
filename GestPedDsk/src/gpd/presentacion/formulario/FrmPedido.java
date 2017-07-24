@@ -1,6 +1,7 @@
 package gpd.presentacion.formulario;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -39,7 +40,6 @@ import gpd.dominio.producto.Producto;
 import gpd.dominio.producto.TipoProd;
 import gpd.dominio.usuario.UsuarioDsk;
 import gpd.presentacion.controlador.CtrlFrmPedido;
-import java.awt.Font;
 
 public class FrmPedido extends JFrame {
 
@@ -147,13 +147,13 @@ public class FrmPedido extends JFrame {
 		ftxtPedLotePrecio.setBounds(72, 104, 52, 20);
 		pnlDatosPedido.add(ftxtPedLotePrecio);
 		
-		JButton button = new JButton("Agregar Item");
-		button.setBounds(240, 72, 124, 23);
-		pnlDatosPedido.add(button);
+		JButton btnPedItemAgr = new JButton("Agregar Item");
+		btnPedItemAgr.setBounds(240, 72, 124, 23);
+		pnlDatosPedido.add(btnPedItemAgr);
 		
-		JButton button_1 = new JButton("Modificar Item");
-		button_1.setBounds(240, 103, 124, 23);
-		pnlDatosPedido.add(button_1);
+		JButton btnPedItemMod = new JButton("Modificar Item");
+		btnPedItemMod.setBounds(240, 103, 124, 23);
+		pnlDatosPedido.add(btnPedItemMod);
 		ctrlPed.cargarCbxTipoProd(cbxPedidoTp);
 		
 		JLabel lblDe = new JLabel("de");
@@ -233,7 +233,7 @@ public class FrmPedido extends JFrame {
 		pnlPedido.add(lblPedidosExistentesFiltrados);
 		
 		JButton btnPedActPedido = new JButton("Actualizar Pedido");
-		btnPedActPedido.setBounds(516, 283, 124, 23);
+		btnPedActPedido.setBounds(516, 521, 124, 23);
 		pnlPedido.add(btnPedActPedido);
 		
 		JButton btnPedLimpiar = new JButton("Limpiar");
@@ -297,22 +297,22 @@ public class FrmPedido extends JFrame {
 		tglbtnPedNuevo.setBounds(10, 9, 121, 23);
 		pnlPedido.add(tglbtnPedNuevo);
 		
-		/*****************************************************************************************************************************************************/
-		/* ACCIONES CONTROLES */
-		/*****************************************************************************************************************************************************/
-		
-		ctrlPed.cargarCbxPedidoEstado(cbxPedidoEstado);
-		
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(481, 1, 303, 73);
 		pnlPedido.add(scrollPane);
 		
 		txtPedInfo = new JTextArea();
 		scrollPane.setViewportView(txtPedInfo);
-		txtPedInfo.setFont(new Font("Monospaced", Font.PLAIN, 9));
+		txtPedInfo.setFont(new Font("Consolas", Font.PLAIN, 10));
 		txtPedInfo.setRows(2);
 		txtPedInfo.setEditable(false);
 		txtPedInfo.setBackground(UIManager.getColor("InternalFrame.borderColor"));
+		
+		/*****************************************************************************************************************************************************/
+		/* ACCIONES CONTROLES */
+		/*****************************************************************************************************************************************************/
+		
+		ctrlPed.cargarCbxPedidoEstado(cbxPedidoEstado);
 		
 		//boton pedido nuevo
 		tglbtnPedNuevo.addActionListener(new ActionListener() {
@@ -337,7 +337,7 @@ public class FrmPedido extends JFrame {
 		//boton buscar personas
 		btnPedBp.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				ctrlPed.abrirBuscadorPers();
+				ctrlPed.abrirIfrmPersBuscador(getContentPane(), getDesktopPane(), getTxtPersDesc());
 			}
 		});
 		//combo tipo prod
@@ -367,7 +367,7 @@ public class FrmPedido extends JFrame {
 		//boton actualizar pedido
 		btnPedActPedido.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				ctrlPed.actualizarPedido();
+				ctrlPed.actualizarPedido(dchPedFecha, ftxtPedHora, jtPedido);
 			}
 		});
 		//boton generar venta
@@ -377,9 +377,15 @@ public class FrmPedido extends JFrame {
 			}
 		});
 		//boton agregar item a pedido
-		button.addActionListener(new ActionListener() {
+		btnPedItemAgr.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				ctrlPed.agregarItemAPedido(cbxPedidoProd, ftxtPedCant);
+			}
+		});
+		//boton modificar item a pedido
+		btnPedItemMod.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ctrlPed.modificarItemAPedido(jtPedidoLin, cbxPedidoProd, ftxtPedCant);
 			}
 		});
 		//control num en cantidad
@@ -405,6 +411,13 @@ public class FrmPedido extends JFrame {
 	/*****************************************************************************************************************************************************/
 	/* GET Y SET */
 	/*****************************************************************************************************************************************************/
+	public JDesktopPane getDesktopPane() {
+		return desktopPane;
+	}
+	public void setDesktopPane(JDesktopPane desktopPane) {
+		this.desktopPane = desktopPane;
+	}
+	
 	public JToggleButton getTglbtnPedNuevo() {
 		return tglbtnPedNuevo;
 	}

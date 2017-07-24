@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subrptTransacLineas" language="groovy" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="cb83259d-4cde-48af-9c9a-03d09c4e9164">
+	<property name="ireport.zoom" value="1.948717100000002"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="nro_transac" class="java.lang.Integer"/>
+	<queryString>
+		<![CDATA[SELECT tl.id_producto, p.codigo, p.nombre, p.apl_iva, tl.cantidad, tl.iva, tl.precio_unit
+FROM tran_linea tl
+INNER JOIN producto p
+ON tl.id_producto = p.id_producto
+WHERE tl.nro_transac = $P{nro_transac}]]>
+	</queryString>
+	<field name="id_producto" class="java.lang.Integer"/>
+	<field name="codigo" class="java.lang.String"/>
+	<field name="nombre" class="java.lang.String"/>
+	<field name="apl_iva" class="java.lang.String"/>
+	<field name="cantidad" class="java.lang.Integer"/>
+	<field name="iva" class="java.math.BigDecimal"/>
+	<field name="precio_unit" class="java.math.BigDecimal"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="16" splitType="Stretch">
+			<staticText>
+				<reportElement x="122" y="0" width="234" height="16" uuid="4302809a-b976-48a3-8308-3e1cdc634677"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Producto]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="356" y="0" width="53" height="16" uuid="d6eded31-a9e1-4441-8246-acd43326e188"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Cant.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="478" y="0" width="58" height="16" uuid="49581b7d-f7bc-4436-b39e-d8a389726ed6"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Precio Unit]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="409" y="0" width="69" height="16" uuid="6075f141-6750-4f81-8578-831093964bbb"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[IVA]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="16" splitType="Stretch">
+			<textField>
+				<reportElement x="122" y="0" width="234" height="16" uuid="697b8d85-feef-48ae-8e43-b153b546e885"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{id_producto} + " | " + $F{codigo} + " | " + $F{nombre} + " | iva: " + $F{apl_iva}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="356" y="0" width="53" height="16" uuid="1ab8ded1-79ad-4c3a-8ef7-157b52de35d3"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cantidad}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="409" y="0" width="69" height="16" uuid="f3345094-4ea9-48eb-abe7-a62db0ae2565"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{iva}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="478" y="0" width="58" height="16" uuid="cf8d1414-16ff-41d6-9e58-296130d337d0"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{precio_unit}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

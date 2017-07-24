@@ -177,17 +177,19 @@ public class ManagerPedido {
 				Conector.getConn();
 				ManagerProducto mgrProd = new ManagerProducto();
 				pedido.setEstado(estadoPedido);
-				// en caso de que alcance Y que el estadoPedido sea C (confirmado)... 
-				// comienzo a bajar stock por producto con fecha de vencimiento mas cercana a hoy
+				/*
+				 * en caso de que alcance Y que el estadoPedido sea C (confirmado)... 
+				 * comienzo a bajar stock por producto con fecha de vencimiento mas cercana a hoy
+				 */
+				Transaccion transac = pedido.getTransaccion();
 				for(PedidoLinea pl : pedido.getListaPedidoLinea()) {
-					mgrProd.manejarStockLotePorProductoNoConn(pl.getProducto().getIdProducto(), pl.getCantidad());
+					mgrProd.manejarStockLotePorProductoNoConn(transac.getNroTransac(), pl.getProducto().getIdProducto(), pl.getCantidad());
 				}
 				getInterfacePedido().modificarPedido(pedido);
-				//modifico estado de transaccion a confirmado (seteo aca mismo el estado tran a C)
-				Transaccion transac = pedido.getTransaccion();
+				//* modifico estado de transaccion a confirmado (seteo aca mismo el estado tran a C)
 				transac.setEstadoTran(EstadoTran.C);
 				getInterfaceTransaccion().modificarEstadoTransaccion(transac);
-				//guardo nuevo estado en tabla de estados (seteo fecha-hora temporalmente para estado_tran)
+				//* guardo nuevo estado en tabla de estados (seteo fecha-hora temporalmente para estado_tran)
 				transac.setFechaHora(new Fecha(Fecha.AMDHMS));
 				getInterfaceTransaccion().guardarTranEstado(transac);
 				Conector.closeConn("actualizarPedido - venta");
@@ -210,9 +212,9 @@ public class ManagerPedido {
 				pedido.setIva(ivaTotal);
 				pedido.setTotal(total);
 				getInterfacePedido().modificarPedido(pedido);
-				//elimino lista de lineas de pedido
+				//* elimino lista de lineas de pedido
 				getInterfacePedidoLinea().eliminarListaPedidoLinea(pedido);
-				//agrego nueva lista de lineas de pedido
+				//* agrego nueva lista de lineas de pedido
 				getInterfacePedidoLinea().guardarListaPedidoLinea(pedido.getListaPedidoLinea());
 				Conector.closeConn("actualizarPedido - actualizacion");
 			} else {

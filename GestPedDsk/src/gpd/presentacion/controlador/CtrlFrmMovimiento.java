@@ -13,6 +13,9 @@ import javax.swing.JFormattedTextField;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+import com.toedter.calendar.JDateChooser;
+
+import gpd.dominio.persona.PersonaFisica;
 import gpd.dominio.persona.PersonaJuridica;
 import gpd.dominio.producto.Producto;
 import gpd.dominio.producto.TipoProd;
@@ -20,6 +23,7 @@ import gpd.dominio.producto.Utilidad;
 import gpd.dominio.transaccion.EstadoTran;
 import gpd.dominio.transaccion.TipoTran;
 import gpd.dominio.transaccion.TranLinea;
+import gpd.dominio.transaccion.TranLineaLote;
 import gpd.dominio.transaccion.Transaccion;
 import gpd.exceptions.PresentacionException;
 import gpd.manager.persona.ManagerPersona;
@@ -31,7 +35,7 @@ import gpd.presentacion.generic.CnstPresGeneric;
 import gpd.presentacion.generic.GenCompType;
 import gpd.types.Fecha;
 
-public class CtrlFrmMovimiento extends CtrlGenerico {
+public class CtrlFrmMovimiento extends CtrlGenerico implements CnstPresGeneric {
 
 	private ManagerTransaccion mgrTran = new ManagerTransaccion();
 	private ManagerProducto mgrProd = new ManagerProducto();
@@ -175,7 +179,7 @@ public class CtrlFrmMovimiento extends CtrlGenerico {
 					}
 				});
 			} else {
-				cargarJTableVacia(tabla, CnstPresGeneric.JTABLE_SIN_ITEMS);
+				cargarJTableVacia(tabla, JTABLE_SIN_ITEMS);
 			}
 		} catch(Exception e) {
 			manejarExcepcion(e);
@@ -198,11 +202,11 @@ public class CtrlFrmMovimiento extends CtrlGenerico {
 					        return false;
 					    }
 					};
-					tabla.setModel(modeloJtComprasPend);
 					modeloJtComprasPend.addColumn("Id Transac");
 					modeloJtComprasPend.addColumn("Proveedor");
 					modeloJtComprasPend.addColumn("Fecha - Hora");
 					modeloJtComprasPend.addColumn("Items (prod|cant)");
+					tabla.setModel(modeloJtComprasPend);
 					for(Transaccion transac : listaTransac) {
 						Object [] fila = new Object[4];
 						fila[0] = transac.getNroTransac();
@@ -218,7 +222,7 @@ public class CtrlFrmMovimiento extends CtrlGenerico {
 								int fila = tabla.rowAtPoint(me.getPoint());
 								int cols = tabla.getModel().getColumnCount();
 								if (fila > -1 && cols > 1) {
-									Long nroTransac = (Long) tabla.getModel().getValueAt(fila, 0);
+									Integer nroTransac = (Integer) tabla.getModel().getValueAt(fila, 0);
 									cargarTransaccion(mgrTran.obtenerTransaccionPorId(nroTransac));
 									cargarJtCompraItems();
 								}
@@ -229,7 +233,7 @@ public class CtrlFrmMovimiento extends CtrlGenerico {
 					});
 //					packColumn(tabla, 4, 0); //FIXME ver este metodo para reorganizacion de cols
 				} else {
-					cargarJTableVacia(tabla, CnstPresGeneric.JTABLE_SIN_COMPRAS);
+					cargarJTableVacia(tabla, JTABLE_SIN_COMPRAS);
 				}
 			}
 		} catch(Exception e) {
@@ -250,6 +254,155 @@ public class CtrlFrmMovimiento extends CtrlGenerico {
 			manejarExcepcion(e);
 		}
 	}
+	
+	//VENTAS
+	
+	public void cargarJtVenta(List<Transaccion> listaTransac) {
+		try {
+			JTable tabla = getFrm().getJtVenta();
+			clearTable(tabla);
+			deleteModelTable(tabla);
+			if(listaTransac != null && !listaTransac.isEmpty()) {
+				DefaultTableModel modeloJtVenta = new DefaultTableModel() {
+					private static final long serialVersionUID = 1L;
+					@Override
+				    public boolean isCellEditable (int fila, int columna) {
+				        return false;
+				    }
+				};
+				modeloJtVenta.addColumn("Id Transac");
+				modeloJtVenta.addColumn("Cliente");
+				modeloJtVenta.addColumn("Fecha - Hora");
+				modeloJtVenta.addColumn("Items (prod|cant)");
+				modeloJtVenta.addColumn("SubTotal");
+				modeloJtVenta.addColumn("Iva");
+				modeloJtVenta.addColumn("Total");
+				tabla.setModel(modeloJtVenta);
+				for(Transaccion transac : listaTransac) {
+					Object [] fila = new Object[7];
+					String datoPersona = null;
+					if(transac.getPersona() instanceof PersonaFisica) {
+						PersonaFisica pf = (PersonaFisica) transac.getPersona();
+						datoPersona = "[CLI] " + pf.toString();
+					} else if(transac.getPersona() instanceof PersonaJuridica) {
+						PersonaJuridica pj = (PersonaJuridica) transac.getPersona();
+						datoPersona = "[EMP] " + pj.toString();
+					}
+					
+					fila[0] = transac.getNroTransac();
+					fila[1] = datoPersona;
+					fila[2] = transac.getFechaHora().toString(Fecha.AMDHMS);
+					fila[3] = transac.toStringLineas(); 
+					fila[4] = transac.getSubTotal(); 
+					fila[5] = transac.getIva(); 
+					fila[6] = transac.getTotal(); 
+					modeloJtVenta.addRow(fila);
+				}
+				tabla.addMouseListener(new MouseAdapter() {
+					@Override
+					public void mouseClicked(MouseEvent me) {
+						try {
+							int fila = tabla.rowAtPoint(me.getPoint());
+							int cols = tabla.getModel().getColumnCount();
+							if (fila > -1 && cols > 1) {
+								Integer nroTransac = (Integer) tabla.getModel().getValueAt(fila, 0);
+								Transaccion transac = mgrTran.obtenerTransaccionPorId(nroTransac);
+								cargarJtVentaItems(transac);
+							}
+						} catch (PresentacionException  e) {
+							enviarError(CnstPresExceptions.DB, e.getMessage());
+						}
+					}
+				});
+			} else {
+				cargarJTableVacia(tabla, JTABLE_SIN_COMPRAS);
+			}
+		} catch(Exception e) {
+			manejarExcepcion(e);
+		}
+	}
+	
+	public void cargarJtVentaItems(Transaccion transac) {
+		try {
+			JTable tabla = getFrm().getJtVentaLin();
+			clearTable(tabla);
+			deleteModelTable(tabla);
+			if(transac != null && transac.getListaTranLinea() != null && 
+					!transac.getListaTranLinea().isEmpty()) {
+				DefaultTableModel modeloJtVentaLin = new DefaultTableModel() {
+					private static final long serialVersionUID = 1L;
+					@Override
+				    public boolean isCellEditable (int fila, int columna) {
+				        return false;
+				    }
+				};
+				modeloJtVentaLin.addColumn("NroTx");
+				modeloJtVentaLin.addColumn("Producto");
+				modeloJtVentaLin.addColumn("Cantidad");
+				modeloJtVentaLin.addColumn("Iva");
+				modeloJtVentaLin.addColumn("Precio Unit");
+				tabla.setModel(modeloJtVentaLin);
+				for(TranLinea tl : transac.getListaTranLinea()) {
+					Object [] fila = new Object[5];
+					fila[0] = tl.getTransaccion().getNroTransac();
+					fila[1] = tl.getProducto();
+					fila[2] = tl.getCantidad();
+					fila[3] = tl.getIva();
+					fila[4] = tl.getPrecioUnit();
+					modeloJtVentaLin.addRow(fila);
+				}
+				tabla.addMouseListener(new MouseAdapter() {
+					@Override
+					public void mouseClicked(MouseEvent me) {
+						int fila = tabla.rowAtPoint(me.getPoint());
+						int cols = tabla.getModel().getColumnCount();
+						if (fila > -1 && cols > 1) {
+							Integer nroTransac = (Integer) tabla.getModel().getValueAt(fila, 0);
+							Producto prod = (Producto) tabla.getModel().getValueAt(fila, 1);
+							cargarJtVentaItemsLotes(nroTransac, prod.getIdProducto());
+						}
+					}
+				});
+			} else {
+				cargarJTableVacia(tabla, JTABLE_SIN_ITEMS);
+			}
+		} catch(Exception e) {
+			manejarExcepcion(e);
+		}
+	}
+	
+	public void cargarJtVentaItemsLotes(Integer nroTransac, Integer idProd) {
+		try {
+			JTable tabla = getFrm().getJtVentaLinLote();
+			clearTable(tabla);
+			deleteModelTable(tabla);
+			List<TranLineaLote> listaTll = mgrTran.obtenerListaTranLineaLote(nroTransac, idProd);
+			if(listaTll != null && !listaTll.isEmpty()) {
+				DefaultTableModel modeloJtVentaLinLote = new DefaultTableModel() {
+					private static final long serialVersionUID = 1L;
+					@Override
+					public boolean isCellEditable (int fila, int columna) {
+						return false;
+					}
+				};
+				modeloJtVentaLinLote.addColumn("Id Lote");
+				modeloJtVentaLinLote.addColumn("Cantidad Vta");
+				modeloJtVentaLinLote.addColumn("Cantidad Restante");
+				tabla.setModel(modeloJtVentaLinLote);
+				for(TranLineaLote tll : listaTll) {
+					Object [] fila = new Object[3];
+					fila[0] = tll.getLote().getIdLote();
+					fila[1] = tll.getCantidad();
+					fila[2] = tll.getLote().getStock();
+					modeloJtVentaLinLote.addRow(fila);
+				}
+			} else {
+				cargarJTableVacia(tabla, JTABLE_SIN_ITEMS);
+			}
+		} catch(Exception e) {
+			manejarExcepcion(e);
+		}
+	}
 
 	
 	/*****************************************************************************************************************************************************/
@@ -265,7 +418,7 @@ public class CtrlFrmMovimiento extends CtrlGenerico {
 	
 	public void limpiarCompra(FrmMovimiento frm, Boolean confirma) {
 		try {
-			if(confirma ? enviarConfirm(CnstPresGeneric.MOV, CnstPresGeneric.CONF_LIMPIAR) == CONFIRM_OK : true) {
+			if(confirma ? enviarConfirm(MOV, CONF_LIMPIAR) == CONFIRM_OK : true) {
 				setContainerEnabled(frm.getPnlCompraDatos(), false);
 				setContainerEnabled(frm.getPnlCompraProv(), false);
 				clearForm(frm.getContentPane());
@@ -300,10 +453,10 @@ public class CtrlFrmMovimiento extends CtrlGenerico {
 					//cargo tabla con lista de lineas
 					cargarJtCompraItems();
 				} else {
-					enviarWarning(CnstPresGeneric.MOV, CnstPresGeneric.COMPRA_PROD_YA_ING);
+					enviarWarning(MOV, COMPRA_PROD_YA_ING);
 				}
 			} else {
-				enviarWarning(CnstPresGeneric.MOV, CnstPresGeneric.DATOS_OBLIG);
+				enviarWarning(MOV, DATOS_OBLIG);
 			}
 		} catch(Exception e) {
 			manejarExcepcion(e);
@@ -313,7 +466,7 @@ public class CtrlFrmMovimiento extends CtrlGenerico {
 	private void nuevaTransaccion() {
 		setTransac(new Transaccion(TipoTran.C));
 		mapLineasTran = new HashMap<>();
-		//se HABILITA genrar compra ya que selecciona una existente
+		//se HABILITA generar compra ya que selecciona una existente
 		setContainerEnabled(getFrm().getPnlGenerarCompra(), true);
 	}
 	
@@ -342,12 +495,12 @@ public class CtrlFrmMovimiento extends CtrlGenerico {
 					getTransac().getListaTranLinea().addAll(mapLineasTran.values());
 					mgrTran.generarTransaccionCompra(getTransac());
 					limpiarCompra(getFrm(), false);
-					enviarInfo(CnstPresGeneric.MOV, CnstPresGeneric.COMPRA_CONFIRMADA);
+					enviarInfo(MOV, COMPRA_CONFIRMADA);
 				} else {
-					enviarWarning(CnstPresGeneric.MOV, CnstPresGeneric.COMPRA_SIN_LINEAS);
+					enviarWarning(MOV, COMPRA_SIN_LINEAS);
 				}
 			} else {
-				enviarWarning(CnstPresGeneric.MOV, CnstPresGeneric.COMPRA_SIN_TRANSAC);
+				enviarWarning(MOV, COMPRA_SIN_TRANSAC);
 			}
 		} catch(Exception e) {
 			manejarExcepcion(e);
@@ -359,13 +512,13 @@ public class CtrlFrmMovimiento extends CtrlGenerico {
 			GenCompType gct = new GenCompType();
 			gct.setComp(frmMov.getJtComprasPend());
 			if(controlDatosObl(gct) && getTransac() != null) {
-				mgrTran.anularTransaccion(getTransac());
+				mgrTran.anularTransaccionVenta(getTransac());
 				cargarJtComprasPend(getFrm().getCbxCompraProv());
 				clearPanel(getFrm().getPnlCompraDatos());
 				clearPanel(getFrm().getPnlCompraItems());
-				enviarInfo(CnstPresGeneric.MOV, CnstPresGeneric.COMPRA_ANULADA);
+				enviarInfo(MOV, COMPRA_ANULADA);
 			} else {
-				enviarWarning(CnstPresGeneric.MOV, CnstPresGeneric.DATOS_OBLIG);
+				enviarWarning(MOV, DATOS_OBLIG);
 			}
 		} catch(Exception e) {
 			manejarExcepcion(e);
@@ -390,7 +543,7 @@ public class CtrlFrmMovimiento extends CtrlGenerico {
 					tl.setPrecioUnit(new Double(ftxtCompraPu.getText()));
 					tl.setTransaccion(getTransac());
 				} else {
-					enviarWarning(CnstPresGeneric.MOV, CnstPresGeneric.COMPRA_NOMODIF_PROD);
+					enviarWarning(MOV, COMPRA_NOMODIF_PROD);
 				}
 				cargarJtCompraItems();
 			}
@@ -420,6 +573,44 @@ public class CtrlFrmMovimiento extends CtrlGenerico {
 		}
 	}
 
+	public void obtenerVentas(JDateChooser dchVtaIni, JDateChooser dchVtaFin) {
+		try {
+			GenCompType genComp = new GenCompType();
+			genComp.setComp(dchVtaIni);
+			genComp.setComp(dchVtaFin);
+			if(controlDatosObl(genComp)) {
+				Fecha fechaIni = new Fecha(dchVtaIni.getDate());
+				Fecha fechaFin = new Fecha(dchVtaFin.getDate());
+				List<Transaccion> listaTransac = mgrTran.obtenerListaTransaccionPorPeriodo(TipoTran.V, EstadoTran.C, fechaIni, fechaFin);
+				clearScrollPane(getFrm().getScrollPaneVentaLin());
+				cargarJtVenta(listaTransac);
+			}
+		} catch(Exception e) {
+			manejarExcepcion(e);
+		}
+	}
+	
+	public void anularVenta() {
+		try {
+			GenCompType gct = new GenCompType();
+			gct.setComp(frmMov.getJtVenta());
+			if(controlDatosObl(gct)) {
+				if(enviarConfirm(VTA, VTA_CONF_ANULA) == CONFIRM_OK) {
+					Integer nroTransac = (Integer) frmMov.getJtVenta().getModel().getValueAt(frmMov.getJtVenta().getSelectedRow(), 0);
+					Transaccion transac = (Transaccion) mgrTran.obtenerTransaccionPorId(nroTransac);
+					mgrTran.anularTransaccionVenta(transac);
+					limpiarVenta();
+					enviarInfo(VTA, VTA_ANULADA);
+				}
+			}
+		} catch(Exception e) {
+			manejarExcepcion(e);
+		}
+	}
+	
+	public void limpiarVenta() {
+		clearForm(getFrm().getContentPane());
+	}
 	
 	
 	/*****************************************************************************************************************************************************/
@@ -440,8 +631,6 @@ public class CtrlFrmMovimiento extends CtrlGenerico {
 	public void setTransac(Transaccion transac) {
 		this.transac = transac;
 	}
-
-	
 
 	
 }

@@ -73,7 +73,7 @@ public class PersistenciaPedido extends Conector implements IPersPedido, CnstQry
 				if(!rs.wasNull()) {
 					pedido.setUsuario(pu.obtenerUsuarioPorId(nomUsu));
 				}
-				Long nroTransac = rs.getLong("nro_transac");
+				Integer nroTransac = rs.getInt("nro_transac");
 				if(!rs.wasNull()) {
 					pedido.setTransaccion(pt.obtenerTransaccionPorId(nroTransac));
 				}
@@ -133,7 +133,7 @@ public class PersistenciaPedido extends Conector implements IPersPedido, CnstQry
 				if(!rs.wasNull()) {
 					pedido.setUsuario(pu.obtenerUsuarioPorId(nomUsu));
 				}
-				Long nroTransac = rs.getLong("nro_transac");
+				Integer nroTransac = rs.getInt("nro_transac");
 				if(!rs.wasNull()) {
 					pedido.setTransaccion(pt.obtenerTransaccionPorId(nroTransac));
 				}

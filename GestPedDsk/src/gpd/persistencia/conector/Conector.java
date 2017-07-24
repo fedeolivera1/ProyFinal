@@ -292,15 +292,15 @@ public abstract class Conector {
 	}
 	
 	
-	public static Long obtenerSecuencia(String nombreSec) throws ConectorException {
-		Long resultado = null;
+	public static Integer obtenerSecuencia(String nombreSec) throws ConectorException {
+		Integer resultado = null;
 		StringBuilder sb = new StringBuilder();
 		sb.append("select nextval('").append(nombreSec).append("') as seq");
 		GenSqlSelectType genType = new GenSqlSelectType(sb.toString());
 		ResultSet rs = selectGeneric(genType);
 		try {
 			if(rs.next()) {
-				resultado = rs.getLong("seq");
+				resultado = rs.getInt("seq");
 			}
 		} catch (SQLException e) {
 			logger.error(e.getMessage(), e);
@@ -310,6 +310,13 @@ public abstract class Conector {
 	}
 	
 	public static Connection devolverConnection() {
+		try {
+			if(conn != null && conn.isClosed()) {
+				getConn();
+			}
+		} catch (SQLException e) {
+			logger.fatal("ERROR - Conector al devolverConnection" + e.getMessage(), e);
+		}
 		return conn;
 	}
 	

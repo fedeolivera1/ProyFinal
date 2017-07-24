@@ -81,6 +81,7 @@ public class FrmProducto extends JFrame {
 	private JDateChooser dchLoteIni;
 	private JDateChooser dchLoteFin;
 	private JPanel pnlLoteDatos;
+	private JScrollPane scrollPaneProd;
 
 
 	public static FrmProducto getFrmProducto(UsuarioDsk usr) {
@@ -243,7 +244,7 @@ public class FrmProducto extends JFrame {
 		btnProLimpiar.setBounds(499, 161, 89, 23);
 		tpProd.add(btnProLimpiar);
 		
-		JScrollPane scrollPaneProd = new JScrollPane();
+		scrollPaneProd = new JScrollPane();
 		scrollPaneProd.setBounds(10, 303, 759, 223);
 		tpProd.add(scrollPaneProd);
 		
@@ -682,5 +683,12 @@ public class FrmProducto extends JFrame {
 	}
 	public void setPnlLoteDatos(JPanel pnlLoteDatos) {
 		this.pnlLoteDatos = pnlLoteDatos;
+	}
+	
+	public JScrollPane getScrollPaneProd() {
+		return scrollPaneProd;
+	}
+	public void setScrollPaneProd(JScrollPane scrollPaneProd) {
+		this.scrollPaneProd = scrollPaneProd;
 	}
 }
