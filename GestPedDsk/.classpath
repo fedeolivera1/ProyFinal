@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="/Shared/ext_jars/postgresql-42.1.1.jar"/>
 	<classpathentry kind="lib" path="/Shared/ext_jars/log4j-1.2.17.jar"/>

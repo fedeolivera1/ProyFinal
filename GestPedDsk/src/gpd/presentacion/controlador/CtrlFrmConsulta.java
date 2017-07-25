@@ -95,6 +95,7 @@ public class CtrlFrmConsulta extends CtrlGenerico implements CnstPresGeneric {
 				mapParamsJr.put("id_persona", idPersona);
 				mapParamsJr.put("fecha_ini", dateIni);
 				mapParamsJr.put("fecha_fin", dateFin);
+				mapParamsJr.put("SUBREPORT_DIR", System.getProperty("file.separator"));
 				GeneradorReportes.abrirReporte("rptTransacPorFecha", mapParamsJr);
 			}
 		} catch(Exception e) {

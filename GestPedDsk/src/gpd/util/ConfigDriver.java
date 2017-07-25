@@ -101,5 +101,16 @@ public class ConfigDriver extends PropManager {
 	public String getWsName() throws Exception {
 		return super.getPropertyValue(CnstProp.PROP_CONFIG, CnstProp.CFG_WS_NAME);
 	}
-
+	
+	/**
+	 * Internet test values
+	 * @throws Exception
+	 */
+	public String getInetTestUrl() throws Exception {
+		return super.getPropertyValue(CnstProp.PROP_CONFIG, CnstProp.CFG_INET_TEST_URL);
+	}
+	
+	public String getInetTestPort() throws Exception {
+		return super.getPropertyValue(CnstProp.PROP_CONFIG, CnstProp.CFG_INET_TEST_PORT);
+	}
 }

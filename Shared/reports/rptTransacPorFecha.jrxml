@@ -10,7 +10,7 @@
 	<parameter name="fecha_ini" class="java.util.Date"/>
 	<parameter name="fecha_fin" class="java.util.Date"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA["/"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA["\\"]]></defaultValueExpression>
 	</parameter>
 	<queryString>
 		<![CDATA[SELECT t.nro_transac, t.fecha_hora, p.id_persona,
