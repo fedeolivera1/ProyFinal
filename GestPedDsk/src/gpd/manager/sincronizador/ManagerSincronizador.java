@@ -69,9 +69,10 @@ public class ManagerSincronizador implements CnstService {
 			 * como primer paso se comprueba la conectividad con internet, sin esto la sincronizacion 
 			 * no puede continuar en ambiente de prod
 			 */
-			if(!ControlAccesoInternet.controlarConectividadInet()) {
-				sb.append("ERROR: No se pudo establecer conectividad con Internet. Compruebe su conexion. \n");
-			} else {
+			ControlAccesoInternet.controlarConectividadInet();
+//			if(ControlAccesoInternet.controlarConectividadInet()) {
+//				sb.append("ERROR: No se pudo establecer conectividad con Internet. Compruebe su conexion. \n");
+//			} else {
 				ServiceConsumer srvCns = new ServiceConsumer();
 				iGestPed = srvCns.consumirWebService();
 				logger.info(">> GPD >> Invocacion a webservice correcta.");
@@ -189,7 +190,7 @@ public class ManagerSincronizador implements CnstService {
 					logger.info("El sincronizador no ha devuelto personas a sincronizar.");
 					sb.append("El sincronizador no ha devuelto personas a sincronizar... \n");
 				}
-			}
+//			}
 			sb.append("### Gestor de pedidos: finaliza sincronización de personas. ###");
 		} catch (SincronizadorException | PersistenciaException e) {
 			logger.fatal("Excepcion en ManagerSincronizador > sincronizarPersona: " + e.getMessage(), e);

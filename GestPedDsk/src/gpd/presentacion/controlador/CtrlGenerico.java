@@ -32,6 +32,7 @@ import org.apache.log4j.Logger;
 
 import com.toedter.calendar.JDateChooser;
 
+import gpd.exceptions.NoInetConnectionException;
 import gpd.exceptions.PresentacionException;
 import gpd.presentacion.generic.CnstPresExceptions;
 import gpd.presentacion.generic.CnstPresGeneric;
@@ -68,6 +69,9 @@ public abstract class CtrlGenerico {
 	 */
 	protected void manejarExcepcion(Exception e) {
 		if(e instanceof PresentacionException) {
+			logger.error("Excepcion lanzada desde Controladores: " + e.getMessage(), e);
+			enviarError(CnstPresExceptions.DB, e.getMessage());
+		} else if(e instanceof NoInetConnectionException) {
 			logger.error("Excepcion lanzada desde Controladores: " + e.getMessage(), e);
 			enviarError(CnstPresExceptions.DB, e.getMessage());
 		} else {

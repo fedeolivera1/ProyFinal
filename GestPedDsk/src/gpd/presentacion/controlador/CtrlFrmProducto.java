@@ -516,14 +516,14 @@ public class CtrlFrmProducto extends CtrlGenerico implements CnstPresGeneric {
 		return null;
 	}
 	
-	public Integer eliminarProducto(JTextField id) {
+	public Integer desactivarProducto(JTextField id) {
 		try {
 			if(controlDatosObl(id)) {
 				Integer idInt = ctrlNumLong(id.getText()) ? new Integer(id.getText()) : null;
 				clearForm(frmProd.getContentPane());
 				Producto prod = new Producto();
 				prod.setIdProducto(idInt);
-				mgrProd.eliminarProducto(prod);
+				mgrProd.desactivarProducto(prod);
 			} else {
 				enviarWarning(PROD, DATOS_OBLIG);
 			}

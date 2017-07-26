@@ -451,7 +451,7 @@ public class FrmProducto extends JFrame {
 		//boton eliminar producto
 		btnProEli.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				ctrlProd.eliminarProducto(txtProId);
+				ctrlProd.desactivarProducto(txtProId);
 			}
 		});
 		btnTpAgregar.addActionListener(new ActionListener() {

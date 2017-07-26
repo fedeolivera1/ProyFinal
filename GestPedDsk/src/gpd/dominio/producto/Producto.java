@@ -20,6 +20,7 @@ public class Producto implements Serializable {
 	private Double precio;
 	private Sinc sinc;
 	private Fecha ultAct;
+	private EstadoProd estadoProd;
 	
 	
 	public Integer getIdProducto() {
@@ -106,10 +107,16 @@ public class Producto implements Serializable {
 		this.ultAct = ultAct;
 	}
 	
+	public EstadoProd getEstadoProd() {
+		return estadoProd;
+	}
+	public void setEstadoProd(EstadoProd estadoProd) {
+		this.estadoProd = estadoProd;
+	}
+	
 	@Override
 	public String toString() {
 		return codigo + " | " + nombre + " | iva: " + aplIva.getAplIvaDesc();
 	}
-	
 	
 }

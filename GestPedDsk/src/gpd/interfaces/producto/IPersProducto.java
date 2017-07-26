@@ -13,6 +13,6 @@ public interface IPersProducto {
 	public List<Producto> obtenerListaProductoPorTipo(TipoProd tipoProd) throws PersistenciaException;
 	public Integer guardarProducto(Producto producto) throws PersistenciaException;
 	public Integer modificarProducto(Producto producto) throws PersistenciaException;
-	public Integer eliminarProducto(Producto producto) throws PersistenciaException;
+	public Integer desactivarProducto(Producto producto) throws PersistenciaException;
 
 }

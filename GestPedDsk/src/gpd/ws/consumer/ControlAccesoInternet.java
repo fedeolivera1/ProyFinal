@@ -13,6 +13,7 @@ public class ControlAccesoInternet {
 
 	@SuppressWarnings("resource")
 	public static Boolean controlarConectividadInet() throws NoInetConnectionException {
+		logger.info("El sistema ingresa a comprobar conectividad... ");
 		String TEST_URL = null;
 		Integer TEST_PORT = null;
 		try {
@@ -31,6 +32,7 @@ public class ControlAccesoInternet {
 			}
 		} catch(Exception e) {
 			logger.warn("No se pudo establecer conectividad de prueba con Internet.");
+			throw new NoInetConnectionException("No se pudo establecer conectividad de prueba con Internet.");
 		}
 		return false;
 	}

@@ -12,6 +12,7 @@ import gpd.db.constantes.CnstQryProducto;
 import gpd.db.generic.GenSqlExecType;
 import gpd.db.generic.GenSqlSelectType;
 import gpd.dominio.producto.AplicaIva;
+import gpd.dominio.producto.EstadoProd;
 import gpd.dominio.producto.Producto;
 import gpd.dominio.producto.TipoProd;
 import gpd.dominio.util.Sinc;
@@ -62,6 +63,7 @@ public class PersistenciaProducto extends Conector implements IPersProducto, Cns
 				Sinc sinc = Sinc.getSincPorChar(tipoChar[0]);
 				producto.setSinc(sinc);
 				producto.setUltAct(new Fecha(rs.getTimestamp("ult_act")));
+				producto.setEstadoProd(EstadoProd.getEstadoProdPorInt(rs.getInt("activo")));
 				listaProd.add(producto);
 			}
 		} catch (ConectorException | SQLException | IOException e) {
@@ -103,6 +105,7 @@ public class PersistenciaProducto extends Conector implements IPersProducto, Cns
 				Sinc sinc = Sinc.getSincPorChar(tipoChar[0]);
 				producto.setSinc(sinc);
 				producto.setUltAct(new Fecha(rs.getTimestamp("ult_act")));
+				producto.setEstadoProd(EstadoProd.getEstadoProdPorInt(rs.getInt("activo")));
 			}
 		} catch (ConectorException | SQLException | IOException e) {
 			Conector.rollbackConn();
@@ -141,6 +144,7 @@ public class PersistenciaProducto extends Conector implements IPersProducto, Cns
 				Sinc sinc = Sinc.getSincPorChar(tipoChar[0]);
 				producto.setSinc(sinc);
 				producto.setUltAct(new Fecha(rs.getTimestamp("ult_act")));
+				producto.setEstadoProd(EstadoProd.getEstadoProdPorInt(rs.getInt("activo")));
 				listaProducto.add(producto);
 			}
 		} catch (ConectorException | SQLException | IOException e) {
@@ -168,6 +172,7 @@ public class PersistenciaProducto extends Conector implements IPersProducto, Cns
 		genExec.setParam(producto.getPrecio());
 		genExec.setParam(producto.getSinc().getAsChar());
 		genExec.setParam(producto.getUltAct());
+		genExec.setParam(producto.getEstadoProd().getAsInt());
 		try {
 			resultado = (Integer) runGeneric(genExec);
 		} catch (ConectorException e) {
@@ -205,15 +210,16 @@ public class PersistenciaProducto extends Conector implements IPersProducto, Cns
 	}
 
 	@Override
-	public Integer eliminarProducto(Producto producto) throws PersistenciaException {
+	public Integer desactivarProducto(Producto producto) throws PersistenciaException {
 		Integer resultado = null;
-		GenSqlExecType genExec = new GenSqlExecType(QRY_DELETE_PROD);
-		genExec.getExecuteDatosCond().put(1, producto.getIdProducto());
+		GenSqlExecType genExec = new GenSqlExecType(QRY_DESACT_PROD);
+		genExec.setParam(producto.getEstadoProd().getAsInt());
+		genExec.setParam(producto.getIdProducto());
 		try {
 			resultado = (Integer) runGeneric(genExec);
 		} catch (ConectorException e) {
 			Conector.rollbackConn();
-			logger.fatal("Excepcion al eliminarProducto: " + e.getMessage(), e);
+			logger.fatal("Excepcion al desactivarProducto: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		}
 		return resultado;

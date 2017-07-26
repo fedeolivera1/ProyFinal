@@ -187,12 +187,12 @@ public class ManagerProducto {
 		return resultado;
 	}
 	
-	public Integer eliminarProducto(Producto producto) throws PresentacionException {
+	public Integer desactivarProducto(Producto producto) throws PresentacionException {
 		logger.info("Se ingresa a eliminarProducto");
 		if(producto != null) {
 			try {
 				Conector.getConn();
-				resultado = getInterfaceProducto().eliminarProducto(producto);
+				resultado = getInterfaceProducto().desactivarProducto(producto);
 				Conector.closeConn("eliminarProducto");
 			} catch (PersistenciaException e) {
 				logger.fatal("Excepcion en ManagerProducto > eliminarProducto: " + e.getMessage(), e);
