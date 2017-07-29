@@ -1,5 +1,6 @@
 package gpd.persistencia.producto;
 
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -11,6 +12,8 @@ import gpd.db.constantes.CnstQryTipoProd;
 import gpd.db.generic.GenSqlExecType;
 import gpd.db.generic.GenSqlSelectType;
 import gpd.dominio.producto.TipoProd;
+import gpd.dominio.util.Estado;
+import gpd.dominio.util.Sinc;
 import gpd.exceptions.ConectorException;
 import gpd.exceptions.PersistenciaException;
 import gpd.interfaces.producto.IPersTipoProd;
@@ -33,8 +36,13 @@ public class PersistenciaTipoProd extends Conector implements IPersTipoProd, Cns
 				tipoProd = new TipoProd();
 				tipoProd.setIdTipoProd(rs.getInt("id_tipo_prod"));
 				tipoProd.setDescripcion(rs.getString("descripcion"));
+				char[] sincChar = new char[1];
+				rs.getCharacterStream("sinc").read(sincChar);
+				Sinc sinc = Sinc.getSincPorChar(sincChar[0]);
+				tipoProd.setSinc(sinc);
+				tipoProd.setEstado(Estado.getEstadoProdPorInt(rs.getInt("activo")));
 			}
-		} catch (ConectorException | SQLException e) {
+		} catch (ConectorException | SQLException | IOException e) {
 			Conector.rollbackConn();
 			logger.fatal("Excepcion al obtenerTipoProdPorId: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
@@ -54,9 +62,14 @@ public class PersistenciaTipoProd extends Conector implements IPersTipoProd, Cns
 				TipoProd tipoProd = new TipoProd();
 				tipoProd.setIdTipoProd(rs.getInt("id_tipo_prod"));
 				tipoProd.setDescripcion(rs.getString("descripcion"));
+				char[] sincChar = new char[1];
+				rs.getCharacterStream("sinc").read(sincChar);
+				Sinc sinc = Sinc.getSincPorChar(sincChar[0]);
+				tipoProd.setSinc(sinc);
+				tipoProd.setEstado(Estado.getEstadoProdPorInt(rs.getInt("activo")));
 				listaTipoProd.add(tipoProd);
 			}
-		} catch (ConectorException | SQLException e) {
+		} catch (ConectorException | SQLException | IOException e) {
 			Conector.rollbackConn();
 			logger.fatal("Excepcion al obtenerListaTipoProd: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
@@ -71,6 +84,8 @@ public class PersistenciaTipoProd extends Conector implements IPersTipoProd, Cns
 		Integer resultado = null;
 		GenSqlExecType genExec = new GenSqlExecType(QRY_INSERT_TIPOPROD);
 		genExec.setParam(tipoProd.getDescripcion());
+		genExec.setParam(tipoProd.getSinc().getAsChar());
+		genExec.setParam(tipoProd.getEstado().getAsInt());
 		try {
 			resultado = (Integer) runGeneric(genExec);
 		} catch (ConectorException e) {
@@ -96,11 +111,28 @@ public class PersistenciaTipoProd extends Conector implements IPersTipoProd, Cns
 		}
 		return resultado;
 	}
+	
+	@Override
+	public Integer modificarSincTipoProd(TipoProd tipoProd) throws PersistenciaException {
+		Integer resultado = null;
+		GenSqlExecType genExec = new GenSqlExecType(QRY_UPDATE_SINC_TIPOPROD);
+		genExec.setParam(tipoProd.getSinc().getAsChar());
+		genExec.setParam(tipoProd.getIdTipoProd());
+		try {
+			resultado = (Integer) runGeneric(genExec);
+		} catch (ConectorException e) {
+			Conector.rollbackConn();
+			logger.fatal("Excepcion al modificarTipoProd: " + e.getMessage(), e);
+			throw new PersistenciaException(e);
+		}
+		return resultado;
+	}
 
 	@Override
 	public Integer eliminarTipoProd(TipoProd tipoProd) throws PersistenciaException {
 		Integer resultado = null;
-		GenSqlExecType genExec = new GenSqlExecType(QRY_DELETE_TIPOPROD);
+		GenSqlExecType genExec = new GenSqlExecType(QRY_DISABLE_TIPOPROD);
+		genExec.setParam(tipoProd.getEstado().getAsInt());
 		genExec.setParam(tipoProd.getIdTipoProd());
 		try {
 			resultado = (Integer) runGeneric(genExec);

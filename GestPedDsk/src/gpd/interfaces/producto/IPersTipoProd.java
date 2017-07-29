@@ -11,6 +11,7 @@ public interface IPersTipoProd {
 	public List<TipoProd> obtenerListaTipoProd() throws PersistenciaException;
 	public Integer guardarTipoProd(TipoProd tipoProd) throws PersistenciaException;
 	public Integer modificarTipoProd(TipoProd  tipoProd) throws PersistenciaException;
+	public Integer modificarSincTipoProd(TipoProd tipoProd) throws PersistenciaException;
 	public Integer eliminarTipoProd(TipoProd tipoProd) throws PersistenciaException;
 	
 }

@@ -12,9 +12,9 @@ import gpd.db.constantes.CnstQryProducto;
 import gpd.db.generic.GenSqlExecType;
 import gpd.db.generic.GenSqlSelectType;
 import gpd.dominio.producto.AplicaIva;
-import gpd.dominio.producto.EstadoProd;
 import gpd.dominio.producto.Producto;
 import gpd.dominio.producto.TipoProd;
+import gpd.dominio.util.Estado;
 import gpd.dominio.util.Sinc;
 import gpd.exceptions.ConectorException;
 import gpd.exceptions.PersistenciaException;
@@ -58,12 +58,12 @@ public class PersistenciaProducto extends Conector implements IPersProducto, Cns
 				producto.setUnidad(pu.obtenerUnidadPorId(rs.getInt("id_unidad")));
 				producto.setCantUnidad(rs.getInt("cant_unidad"));
 				producto.setPrecio(rs.getDouble("precio"));
-				char[] tipoChar = new char[1];
-				rs.getCharacterStream("sinc").read(tipoChar);
-				Sinc sinc = Sinc.getSincPorChar(tipoChar[0]);
+				char[] sincChar = new char[1];
+				rs.getCharacterStream("sinc").read(sincChar);
+				Sinc sinc = Sinc.getSincPorChar(sincChar[0]);
 				producto.setSinc(sinc);
 				producto.setUltAct(new Fecha(rs.getTimestamp("ult_act")));
-				producto.setEstadoProd(EstadoProd.getEstadoProdPorInt(rs.getInt("activo")));
+				producto.setEstadoProd(Estado.getEstadoProdPorInt(rs.getInt("activo")));
 				listaProd.add(producto);
 			}
 		} catch (ConectorException | SQLException | IOException e) {
@@ -100,12 +100,12 @@ public class PersistenciaProducto extends Conector implements IPersProducto, Cns
 				producto.setUnidad(pu.obtenerUnidadPorId(rs.getInt("id_unidad")));
 				producto.setCantUnidad(rs.getInt("cant_unidad"));
 				producto.setPrecio(rs.getDouble("precio"));
-				char[] tipoChar = new char[1];
-				rs.getCharacterStream("sinc").read(tipoChar);
-				Sinc sinc = Sinc.getSincPorChar(tipoChar[0]);
+				char[] sincChar = new char[1];
+				rs.getCharacterStream("sinc").read(sincChar);
+				Sinc sinc = Sinc.getSincPorChar(sincChar[0]);
 				producto.setSinc(sinc);
 				producto.setUltAct(new Fecha(rs.getTimestamp("ult_act")));
-				producto.setEstadoProd(EstadoProd.getEstadoProdPorInt(rs.getInt("activo")));
+				producto.setEstadoProd(Estado.getEstadoProdPorInt(rs.getInt("activo")));
 			}
 		} catch (ConectorException | SQLException | IOException e) {
 			Conector.rollbackConn();
@@ -139,12 +139,12 @@ public class PersistenciaProducto extends Conector implements IPersProducto, Cns
 				producto.setUnidad(pu.obtenerUnidadPorId(rs.getInt("id_unidad")));
 				producto.setCantUnidad(rs.getInt("cant_unidad"));
 				producto.setPrecio(rs.getDouble("precio"));
-				char[] tipoChar = new char[1];
-				rs.getCharacterStream("sinc").read(tipoChar);
-				Sinc sinc = Sinc.getSincPorChar(tipoChar[0]);
+				char[] sincChar = new char[1];
+				rs.getCharacterStream("sinc").read(sincChar);
+				Sinc sinc = Sinc.getSincPorChar(sincChar[0]);
 				producto.setSinc(sinc);
 				producto.setUltAct(new Fecha(rs.getTimestamp("ult_act")));
-				producto.setEstadoProd(EstadoProd.getEstadoProdPorInt(rs.getInt("activo")));
+				producto.setEstadoProd(Estado.getEstadoProdPorInt(rs.getInt("activo")));
 				listaProducto.add(producto);
 			}
 		} catch (ConectorException | SQLException | IOException e) {

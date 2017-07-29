@@ -2,6 +2,7 @@ package gpd.dominio.producto;
 
 import java.io.Serializable;
 
+import gpd.dominio.util.Estado;
 import gpd.dominio.util.Sinc;
 import gpd.types.Fecha;
 
@@ -20,7 +21,7 @@ public class Producto implements Serializable {
 	private Double precio;
 	private Sinc sinc;
 	private Fecha ultAct;
-	private EstadoProd estadoProd;
+	private Estado estadoProd;
 	
 	
 	public Integer getIdProducto() {
@@ -107,10 +108,10 @@ public class Producto implements Serializable {
 		this.ultAct = ultAct;
 	}
 	
-	public EstadoProd getEstadoProd() {
+	public Estado getEstadoProd() {
 		return estadoProd;
 	}
-	public void setEstadoProd(EstadoProd estadoProd) {
+	public void setEstadoProd(Estado estadoProd) {
 		this.estadoProd = estadoProd;
 	}
 	

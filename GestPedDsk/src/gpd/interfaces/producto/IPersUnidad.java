@@ -11,6 +11,7 @@ public interface IPersUnidad {
 	public List<Unidad> obtenerListaUnidad() throws PersistenciaException;
 	public Integer guardarUnidad(Unidad unidad) throws PersistenciaException;
 	public Integer modificarUnidad(Unidad unidad) throws PersistenciaException;
+	public Integer modificarSincUnidad(Unidad unidad) throws PersistenciaException;
 	public Integer eliminarUnidad(Unidad unidad) throws PersistenciaException;
 	
 }
