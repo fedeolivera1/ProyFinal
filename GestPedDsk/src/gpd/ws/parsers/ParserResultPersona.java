@@ -23,7 +23,7 @@ import gpw.webservice.proxy.ResultObtPersonasNoSinc;
 import gpw.webservice.proxy.ResultPersonaFisica;
 import gpw.webservice.proxy.ResultPersonaJuridica;
 import gpw.webservice.proxy.ResultPersonaSinc;
-import gpw.webservice.proxy.ResultRecPersonasSinc;
+import gpw.webservice.proxy.ResultRecPersonasASinc;
 
 public class ParserResultPersona {
 	
@@ -115,7 +115,7 @@ public class ParserResultPersona {
 		return listaPersonasResult;
 	}
 	
-	public static Map<Long, Integer> parseResultRecPersonasSinc(ResultRecPersonasSinc result) throws SincronizadorException {
+	public static Map<Long, Integer> parseResultRecPersonasSinc(ResultRecPersonasASinc result) throws SincronizadorException {
 		Map<Long, Integer> hmResult = null;
 		if(result.getListaPersonaSinc() != null && !result.getListaPersonaSinc().isEmpty()) {
 			hmResult = new HashMap<>();

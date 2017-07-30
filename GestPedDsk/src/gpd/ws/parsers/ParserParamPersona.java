@@ -6,7 +6,7 @@ import gpd.exceptions.SincronizadorException;
 import gpd.types.Fecha;
 import gpw.webservice.proxy.ParamObtPersonasNoSinc;
 import gpw.webservice.proxy.ParamPersonaSinc;
-import gpw.webservice.proxy.ParamRecPersonasSinc;
+import gpw.webservice.proxy.ParamRecPersonasASinc;
 
 public class ParserParamPersona {
 
@@ -21,10 +21,10 @@ public class ParserParamPersona {
 		return param;
 	}
 	
-	public static ParamRecPersonasSinc parseParamRecPersonasSinc(List<Long> listaPersona) throws SincronizadorException {
-		ParamRecPersonasSinc param = null;
+	public static ParamRecPersonasASinc parseParamRecPersonasSinc(List<Long> listaPersona) throws SincronizadorException {
+		ParamRecPersonasASinc param = null;
 		if(listaPersona != null && !listaPersona.isEmpty()) {
-			param = new ParamRecPersonasSinc();
+			param = new ParamRecPersonasASinc();
 			for(Long idPers : listaPersona) {
 				ParamPersonaSinc paramPs = new ParamPersonaSinc();
 				paramPs.setIdPersona(idPers);

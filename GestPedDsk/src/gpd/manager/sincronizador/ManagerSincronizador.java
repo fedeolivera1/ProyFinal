@@ -26,9 +26,9 @@ import gpd.ws.consumer.ServiceConsumer;
 import gpd.ws.parsers.ParserParamPersona;
 import gpd.ws.parsers.ParserResultPersona;
 import gpw.webservice.proxy.ParamObtPersonasNoSinc;
-import gpw.webservice.proxy.ParamRecPersonasSinc;
+import gpw.webservice.proxy.ParamRecPersonasASinc;
 import gpw.webservice.proxy.ResultObtPersonasNoSinc;
-import gpw.webservice.proxy.ResultRecPersonasSinc;
+import gpw.webservice.proxy.ResultRecPersonasASinc;
 import gpw.webservice.proxy.WsGestPed;
 
 public class ManagerSincronizador implements CnstService {
@@ -131,9 +131,9 @@ public class ManagerSincronizador implements CnstService {
 						Fecha ultAct = new Fecha(Fecha.AMDHMS);
 						persSincDsk = listaIdPersonasSinc.size();
 						logger.info("#2 -- Inicia segunda parte de la sincronizacion de persona: confirmar las personas sincronizadas en dsk al sistema web.");
-						ParamRecPersonasSinc paramRps = ParserParamPersona.parseParamRecPersonasSinc(listaIdPersonasSinc);
+						ParamRecPersonasASinc paramRps = ParserParamPersona.parseParamRecPersonasSinc(listaIdPersonasSinc);
 						//llamo al webservice > operacion recibirPersonasSinc (recibe personas y confirma sincronizacion)
-						ResultRecPersonasSinc resultRps = iGestPed.recibirPersonasSinc(paramRps);
+						ResultRecPersonasASinc resultRps = iGestPed.recibirPersonasSinc(paramRps);
 						HashMap<Long, Integer> hmResultRps = (HashMap<Long, Integer>) ParserResultPersona.parseResultRecPersonasSinc(resultRps);
 						Boolean errorSincWeb = false;
 						Boolean errorSincDsk = false;
