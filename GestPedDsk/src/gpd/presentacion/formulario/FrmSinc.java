@@ -109,6 +109,11 @@ public class FrmSinc extends JFrame {
 				ctrlSinc.sincronizarPersona(dchSincIni, dchSincFin);
 			}
 		});
+		btnSincronizarProductos.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				ctrlSinc.sincronizarProducto(dchSincIni, dchSincFin);
+			}
+		});
 		
 	}
 

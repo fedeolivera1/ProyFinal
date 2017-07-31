@@ -153,6 +153,19 @@ public class FrmPrincipal extends JFrame {
 		});
 		mnProducto.add(mntmUtilidad);
 		
+		JMenuItem mntmUnidad = new JMenuItem("Unidad");
+		mntmUnidad.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				FrmProducto frmProd = FrmProducto.getFrmProducto(usr);
+				frmProd.setLocationRelativeTo(null);
+				JTabbedPane comp = (JTabbedPane) frmProd.getContentPane().getComponent(1);
+				comp.setSelectedIndex(0);
+				frmProd.setVisible(true);
+				frmProd.getCtrlProd().abrirIFrmUni();
+			}
+		});
+		mnProducto.add(mntmUnidad);
+		
 		JMenu mnMovimiento = new JMenu("Movimiento");
 		menuBar.add(mnMovimiento);
 		

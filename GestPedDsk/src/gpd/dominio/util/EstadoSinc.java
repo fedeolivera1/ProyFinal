@@ -20,4 +20,12 @@ public enum EstadoSinc {
 		return asInt;
 	}
 	
+	public static EstadoSinc getEstadoSincPorInt(final int nro) {
+        for (EstadoSinc estadoSinc : EstadoSinc.values()) {
+            if (estadoSinc.getAsInt() == nro)
+                return estadoSinc;
+    	}
+        return null;
+    }
+	
 }

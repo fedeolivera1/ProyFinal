@@ -41,6 +41,25 @@ public class CtrlFrmSinc extends CtrlGenerico implements CnstPresGeneric {
 		}
 	}
 	
+	public void sincronizarProducto(JDateChooser dchFechaIni, JDateChooser dchFechaFin) {
+		try {
+			GenCompType genComp = new GenCompType();
+			genComp.setComp(dchFechaIni);
+			genComp.setComp(dchFechaFin);
+			if(controlDatosObl(genComp)) {
+				Fecha fechaIni = new Fecha(dchFechaIni.getDate());
+				Fecha fechaFin = new Fecha(dchFechaFin.getDate());
+				String strResultSinc = mgrSinc.sincronizarProductos(fechaIni, fechaFin);
+				getFrm().getTxtSincInfo().setText(strResultSinc);
+			} else {
+				clearComponent(getFrm().getTxtSincInfo());
+				enviarWarning(SINC, DATOS_OBLIG);
+			}
+		} catch(Exception e) {
+			manejarExcepcion(e);
+		}
+	}
+	
 	/*****************************************************************************************************************************************************/
 	/* GET Y SET */
 	/*****************************************************************************************************************************************************/

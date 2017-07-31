@@ -394,6 +394,10 @@ public class FrmProducto extends JFrame {
 		ctrlProd.cargarCbxTipoProd(cbxTipoProd);
 		ctrlProd.cargarCbxUnidad(cbxProUni);
 		ctrlProd.cargarCbxAplicaIva(cbxProAplIva);
+		
+		JButton btnUniAgregar = new JButton("...");
+		btnUniAgregar.setBounds(279, 184, 32, 23);
+		tpProd.add(btnUniAgregar);
 		ctrlProd.cargarCbxDep(cbxLoteDep);
 		ctrlProd.cargarCbxUtil(cbxLoteUtil);
 		ctrlProd.cargarCbxFiltroLote(cbxFiltroLote);
@@ -454,6 +458,7 @@ public class FrmProducto extends JFrame {
 				ctrlProd.desactivarProducto(txtProId);
 			}
 		});
+		//boton abrir ifrm tipoProd
 		btnTpAgregar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ctrlProd.abrirIFrmTp();
@@ -491,6 +496,12 @@ public class FrmProducto extends JFrame {
 		btnCompraAct.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ctrlProd.actualizarCompra(cbxLoteCompras);
+			}
+		});
+		//boton abrir ifrm unidad
+		btnUniAgregar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				ctrlProd.abrirIFrmUni();
 			}
 		});
 	

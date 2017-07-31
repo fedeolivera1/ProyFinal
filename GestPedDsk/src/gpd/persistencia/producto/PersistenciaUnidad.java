@@ -85,6 +85,8 @@ public class PersistenciaUnidad extends Conector implements IPersUnidad, CnstQry
 		Integer resultado = null;
 		GenSqlExecType genExec = new GenSqlExecType(QRY_INSERT_UNI);
 		genExec.setParam(unidad.getNombre());
+		genExec.setParam(unidad.getSinc().getAsChar());
+		genExec.setParam(unidad.getEstado().getAsInt());
 		try {
 			resultado = (Integer) runGeneric(genExec);
 		} catch (ConectorException e) {
@@ -112,11 +114,11 @@ public class PersistenciaUnidad extends Conector implements IPersUnidad, CnstQry
 	}
 
 	@Override
-	public Integer modificarSincUnidad(Unidad unidad) throws PersistenciaException {
+	public Integer modificarSincUnidad(Integer idUnidad, Sinc sinc) throws PersistenciaException {
 		Integer resultado = null;
 		GenSqlExecType genExec = new GenSqlExecType(QRY_UPDATE_SINC_UNI);
-		genExec.setParam(unidad.getSinc().getAsChar());
-		genExec.setParam(unidad.getIdUnidad());
+		genExec.setParam(sinc.getAsChar());
+		genExec.setParam(idUnidad);
 		try {
 			resultado = (Integer) runGeneric(genExec);
 		} catch (ConectorException e) {
@@ -131,6 +133,7 @@ public class PersistenciaUnidad extends Conector implements IPersUnidad, CnstQry
 	public Integer eliminarUnidad(Unidad unidad) throws PersistenciaException {
 		Integer resultado = null;
 		GenSqlExecType genExec = new GenSqlExecType(QRY_DELETE_UNI);
+		genExec.setParam(unidad.getEstado().getAsInt());
 		genExec.setParam(unidad.getIdUnidad());
 		try {
 			resultado = (Integer) runGeneric(genExec);
@@ -140,6 +143,23 @@ public class PersistenciaUnidad extends Conector implements IPersUnidad, CnstQry
 			throw new PersistenciaException(e);
 		}
 		return resultado;
+	}
+
+	@Override
+	public Boolean controlUtilUnidad(Unidad unidad) throws PersistenciaException {
+		try {
+			GenSqlSelectType genType = new GenSqlSelectType(QRY_CTRL_UTIL_UNI);
+			genType.setParam(unidad.getIdUnidad());
+			rs = (ResultSet) runGeneric(genType);
+			if(rs.next()) {
+				return true;
+			}
+		} catch (ConectorException | SQLException e) {
+			Conector.rollbackConn();
+			logger.fatal("Excepcion al controlUtilUnidad: " + e.getMessage(), e);
+			throw new PersistenciaException(e);
+		}
+		return false;
 	}
 
 }

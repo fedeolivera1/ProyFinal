@@ -9,6 +9,7 @@ import java.awt.event.KeyEvent;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
@@ -16,12 +17,14 @@ import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 
+import org.apache.log4j.Logger;
+
 import gpd.presentacion.controlador.CtrlFrmLogin;
 
 public class FrmLogin extends JFrame {
 
 	private static final long serialVersionUID = 1L;
-//	private static Logger logger = Logger.getLogger(FrmLogin.class);
+	private static Logger logger = Logger.getLogger(FrmLogin.class);
 	private JPanel contentPane;
 	private JTextField txtUsr;
 	private CtrlFrmLogin ctrl;
@@ -40,7 +43,8 @@ public class FrmLogin extends JFrame {
 					frame.setLocationRelativeTo(null);
 					frame.setVisible(true);
 				} catch (Exception e) {
-					e.printStackTrace();
+					logger.error("Error al iniciar la aplicacion... consulte logs." + e.getMessage(), e);
+					JOptionPane.showMessageDialog(null, "Error al iniciar la aplicacion... consulte logs.", "GestPedDsk", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});

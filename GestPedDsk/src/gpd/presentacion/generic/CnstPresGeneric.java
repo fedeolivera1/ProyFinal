@@ -24,6 +24,14 @@ public interface CnstPresGeneric {
 	public static final String TP_ING_OK = "Se ha ingresado el tipo producto correctamente.";
 	public static final String TP_MOD_OK = "Se ha modificado el tipo producto correctamente.";
 	public static final String TP_ELI_OK = "Se ha eliminado el tipo producto correctamente.";
+	public static final String TP_ELI_CON_UTIL = "El tipo prod no se puede eliminar por tener utilización de productos. Verifique antes de eliminar.";
+
+	//unidad
+	public static final String UNI = "Unidad";
+	public static final String UNI_ING_OK = "Se ha ingresado la unidad correctamente.";
+	public static final String UNI_MOD_OK = "Se ha modificado la unidad correctamente.";
+	public static final String UNI_ELI_OK = "Se ha eliminado la unidad correctamente.";
+	public static final String UNI_ELI_CON_UTIL = "La unidad no se puede eliminar por tener utilización de productos. Verifique antes de eliminar.";
 	
 	//deposito
 	public static final String DEP = "Deposito";

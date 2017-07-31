@@ -269,21 +269,24 @@ public class ManagerProducto {
 		return resultado;
 	}
 	
-	public Integer eliminarTipoProd(TipoProd tipoProd) throws PresentacionException {
+	public Boolean eliminarTipoProd(TipoProd tipoProd) throws PresentacionException {
 		logger.info("Se ingresa a eliminarTipoProd");
 		if(tipoProd != null) {
 			try {
 				Conector.getConn();
-				tipoProd.setSinc(Sinc.N);
-				tipoProd.setEstado(Estado.E);
-				resultado = getInterfaceTipoProd().eliminarTipoProd(tipoProd);
-				Conector.closeConn("eliminarTipoProd");
+				if(!getInterfaceTipoProd().controlUtilTipoProd(tipoProd)) {
+					tipoProd.setSinc(Sinc.N);
+					tipoProd.setEstado(Estado.E);
+					resultado = getInterfaceTipoProd().eliminarTipoProd(tipoProd);
+					Conector.closeConn("eliminarTipoProd");
+					return true;
+				}
 			} catch (PersistenciaException e) {
 				logger.fatal("Excepcion en ManagerProducto > eliminarTipoProd: " + e.getMessage(), e);
 				throw new PresentacionException(e);
 			}
 		}
-		return resultado;
+		return false;
 	}
 	
 	/*****************************************************************************************************************************************************/
@@ -351,37 +354,38 @@ public class ManagerProducto {
 		return resultado;
 	}
 	
-	public Integer modificarSincUnidad(Unidad unidad, Sinc sinc) throws PresentacionException {
-		logger.info("Ingresa modificarSincUnidad");
-		if(unidad != null) {
-			try {
-				Conector.getConn();
-				unidad.setSinc(sinc);
-				resultado = getInterfaceUnidad().modificarSincUnidad(unidad);
-				Conector.closeConn("modificarSincUnidad");
-			} catch (PersistenciaException e) {
-				logger.fatal("Excepcion en ManagerProducto > modificarSincUnidad: " + e.getMessage(), e);
-				throw new PresentacionException(e);
-			}
-		}
-		return resultado;
-	}
+	//FIXME ver si este metodo es necesario
+//	public Integer modificarSincUnidad(Integer idUnidad, Sinc sinc) throws PresentacionException {
+//		logger.info("Ingresa modificarSincUnidad");
+//		try {
+//			Conector.getConn();
+//			resultado = getInterfaceUnidad().modificarSincUnidad(idUnidad, sinc);
+//			Conector.closeConn("modificarSincUnidad");
+//		} catch (PersistenciaException e) {
+//			logger.fatal("Excepcion en ManagerProducto > modificarSincUnidad: " + e.getMessage(), e);
+//			throw new PresentacionException(e);
+//		}
+//		return resultado;
+//	}
 	
-	public Integer eliminarUnidad(Unidad unidad) throws PresentacionException {
+	public Boolean eliminarUnidad(Unidad unidad) throws PresentacionException {
 		logger.info("Se ingresa a eliminarUnidad");
 		if(unidad != null) {
 			try {
 				Conector.getConn();
-				unidad.setSinc(Sinc.N);
-				unidad.setEstado(Estado.E);
-				resultado = getInterfaceUnidad().eliminarUnidad(unidad);
-				Conector.closeConn("eliminarUnidad");
+				if(!getInterfaceUnidad().controlUtilUnidad(unidad)) {
+					unidad.setSinc(Sinc.N);
+					unidad.setEstado(Estado.E);
+					resultado = getInterfaceUnidad().eliminarUnidad(unidad);
+					Conector.closeConn("eliminarUnidad");
+					return true;
+				} 
 			} catch (PersistenciaException e) {
 				logger.fatal("Excepcion en ManagerProducto > eliminarUnidad: " + e.getMessage(), e);
 				throw new PresentacionException(e);
 			}
 		}
-		return resultado;
+		return false;
 	}
 	
 	/*****************************************************************************************************************************************************/

@@ -113,11 +113,11 @@ public class PersistenciaTipoProd extends Conector implements IPersTipoProd, Cns
 	}
 	
 	@Override
-	public Integer modificarSincTipoProd(TipoProd tipoProd) throws PersistenciaException {
+	public Integer modificarSincTipoProd(Integer idTipoProd, Sinc sinc) throws PersistenciaException {
 		Integer resultado = null;
 		GenSqlExecType genExec = new GenSqlExecType(QRY_UPDATE_SINC_TIPOPROD);
-		genExec.setParam(tipoProd.getSinc().getAsChar());
-		genExec.setParam(tipoProd.getIdTipoProd());
+		genExec.setParam(sinc.getAsChar());
+		genExec.setParam(idTipoProd);
 		try {
 			resultado = (Integer) runGeneric(genExec);
 		} catch (ConectorException e) {
@@ -142,6 +142,23 @@ public class PersistenciaTipoProd extends Conector implements IPersTipoProd, Cns
 			throw new PersistenciaException(e);
 		}
 		return resultado;
+	}
+	
+	@Override
+	public Boolean controlUtilTipoProd(TipoProd tipoProd) throws PersistenciaException {
+		try {
+			GenSqlSelectType genType = new GenSqlSelectType(QRY_CTRL_UTIL_TIPOPROD);
+			genType.setParam(tipoProd.getIdTipoProd());
+			rs = (ResultSet) runGeneric(genType);
+			if(rs.next()) {
+				return true;
+			}
+		} catch (ConectorException | SQLException e) {
+			Conector.rollbackConn();
+			logger.fatal("Excepcion al controlUtilTipoProd: " + e.getMessage(), e);
+			throw new PersistenciaException(e);
+		}
+		return false;
 	}
 
 }

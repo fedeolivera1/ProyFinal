@@ -23,6 +23,12 @@ public interface CnstQryProducto {
 													+ "WHERE id_tipo_prod = ? "
 													+ "AND activo = 1";
 	
+	public static final String QRY_SELECT_PROD_NO_SINC = "SELECT id_producto, id_tipo_prod, codigo, nombre, descripcion, stock_min, "
+													+ "apl_iva, id_unidad, cant_unidad, precio, sinc, ult_act, activo "
+													+ "FROM producto "
+													+ "WHERE sinc = 'N' "
+													+ "AND ult_act::date BETWEEN ? AND ?";
+	
 	public static final String QRY_INSERT_PROD = "INSERT INTO producto "
 													+ "(id_tipo_prod, codigo, nombre, descripcion, stock_min, apl_iva, id_unidad, cant_unidad, precio, sinc, ult_act, activo) "
 													+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -33,4 +39,9 @@ public interface CnstQryProducto {
 	
 	public static final String QRY_DESACT_PROD = "UPDATE producto SET activo = ? WHERE id_producto = ?";
 	
+	public static final String QRY_ACT_SINC_PROD = "UPDATE producto "
+													+ "SET sinc = ? "
+													+ "WHERE id_producto = ? "
+													+ "AND activo = 1";
+
 }

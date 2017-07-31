@@ -154,8 +154,47 @@ public class PersistenciaProducto extends Conector implements IPersProducto, Cns
 		}
 		return listaProducto;
 	}
-
-
+	
+	@Override
+	public List<Producto> obtenerListaProductoNoSinc(Fecha fechaDesde, Fecha fechaHasta) throws PersistenciaException {
+		List<Producto> listaProducto = new ArrayList<>();
+		PersistenciaTipoProd ptp = new PersistenciaTipoProd();
+		PersistenciaUnidad pu = new PersistenciaUnidad();
+		try {
+			GenSqlSelectType genSel = new GenSqlSelectType(QRY_SELECT_PROD_NO_SINC);
+			genSel.setParam(fechaDesde);
+			genSel.setParam(fechaHasta);
+			rs = (ResultSet) runGeneric(genSel);
+			while(rs.next()) {
+				Producto producto = new Producto();
+				producto.setIdProducto(rs.getInt("id_producto"));
+				producto.setTipoProd(ptp.obtenerTipoProdPorId(rs.getInt("id_tipo_prod")));
+				producto.setCodigo(rs.getString("codigo"));
+				producto.setNombre(rs.getString("nombre"));
+				producto.setDescripcion(rs.getString("descripcion"));
+				producto.setStockMin(rs.getFloat("stock_min"));
+				char[] aplIvaChar = new char[1];
+				rs.getCharacterStream("apl_iva").read(aplIvaChar);
+				AplicaIva aplIva = AplicaIva.getAplicaIvaPorChar(aplIvaChar[0]);
+				producto.setAplIva(aplIva);
+				producto.setUnidad(pu.obtenerUnidadPorId(rs.getInt("id_unidad")));
+				producto.setCantUnidad(rs.getInt("cant_unidad"));
+				producto.setPrecio(rs.getDouble("precio"));
+				char[] sincChar = new char[1];
+				rs.getCharacterStream("sinc").read(sincChar);
+				Sinc sinc = Sinc.getSincPorChar(sincChar[0]);
+				producto.setSinc(sinc);
+				producto.setUltAct(new Fecha(rs.getTimestamp("ult_act")));
+				producto.setEstadoProd(Estado.getEstadoProdPorInt(rs.getInt("activo")));
+				listaProducto.add(producto);
+			}
+		} catch (ConectorException | SQLException | IOException e) {
+			Conector.rollbackConn();
+			logger.fatal("Excepcion al obtenerProductoPorId: " + e.getMessage(), e);
+			throw new PersistenciaException(e);
+		}
+		return listaProducto;
+	}
 
 	@Override
 	public Integer guardarProducto(Producto producto) throws PersistenciaException {
@@ -209,6 +248,22 @@ public class PersistenciaProducto extends Conector implements IPersProducto, Cns
 		return resultado;
 	}
 
+	@Override
+	public Integer modificarSincProducto(Integer idProd, Sinc sinc) throws PersistenciaException {
+		Integer resultado = null;
+		GenSqlExecType genExec = new GenSqlExecType(QRY_ACT_SINC_PROD);
+		genExec.setParam(sinc.getAsChar());
+		genExec.setParam(idProd);
+		try {
+			resultado = (Integer) runGeneric(genExec);
+		} catch (ConectorException e) {
+			Conector.rollbackConn();
+			logger.fatal("Excepcion al desactivarProducto: " + e.getMessage(), e);
+			throw new PersistenciaException(e);
+		}
+		return resultado;
+	}
+	
 	@Override
 	public Integer desactivarProducto(Producto producto) throws PersistenciaException {
 		Integer resultado = null;

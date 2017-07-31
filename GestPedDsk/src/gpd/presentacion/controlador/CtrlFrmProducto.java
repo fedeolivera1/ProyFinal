@@ -40,6 +40,7 @@ import gpd.presentacion.generic.CnstPresGeneric;
 import gpd.presentacion.generic.GenCompType;
 import gpd.presentacion.popup.IfrmDeposito;
 import gpd.presentacion.popup.IfrmTipoProd;
+import gpd.presentacion.popup.IfrmUnidad;
 import gpd.presentacion.popup.IfrmUtilidad;
 import gpd.types.Fecha;
 
@@ -51,6 +52,7 @@ public class CtrlFrmProducto extends CtrlGenerico implements CnstPresGeneric {
 	private IfrmTipoProd iFrmTp;
 	private IfrmDeposito iFrmDep;
 	private IfrmUtilidad iFrmUtil;
+	private IfrmUnidad iFrmUni;
 	private JDesktopPane deskPane;
 	private HashMap<Integer, Lote> hashLotes;
 	
@@ -133,11 +135,39 @@ public class CtrlFrmProducto extends CtrlGenerico implements CnstPresGeneric {
 		}
 	}
 	
+	public void cargarListUnidad(JList<Unidad> jlUnidad) {
+		try {
+			DefaultListModel<Unidad> dlm = new DefaultListModel<>();
+			dlm.clear();
+			ArrayList<Unidad> listaUnidad = (ArrayList<Unidad>) mgrProd.obtenerListaUnidad();
+			if(listaUnidad != null && !listaUnidad.isEmpty()) {
+				for(Unidad unidad : listaUnidad) {
+					dlm.addElement(unidad);
+				}
+				jlUnidad.setModel(dlm);
+				jlUnidad.setSelectedIndex(-1);
+			}
+		} catch(Exception e) {
+			manejarExcepcion(e);
+		}
+	}
+	
 	public void cargarControlesTipoProd(JTextField txtTpDesc, JList<TipoProd> jlTipoProd) {
 		try {
 			if(controlDatosObl(jlTipoProd)) {
 				TipoProd tp = (TipoProd) jlTipoProd.getSelectedValue();
 				txtTpDesc.setText(tp.getDescripcion());
+			}
+		} catch(Exception e) {
+			manejarExcepcion(e);
+		}
+	}
+	
+	public void cargarControlesUnidad(JTextField txtUniNom, JList<Unidad> jlUni) {
+		try {
+			if(controlDatosObl(jlUni)) {
+				Unidad uni = (Unidad) jlUni.getSelectedValue();
+				txtUniNom.setText(uni.getNombre());
 			}
 		} catch(Exception e) {
 			manejarExcepcion(e);
@@ -575,10 +605,14 @@ public class CtrlFrmProducto extends CtrlGenerico implements CnstPresGeneric {
 		try {
 			if(controlDatosObl(jlTp)) {
 				TipoProd tp = (TipoProd) jlTp.getSelectedValue();
-				mgrProd.eliminarTipoProd(tp);
-				clearForm(getiFrmTp().getContentPane());
-				cargarListTipoProd(jlTp);
-				enviarInfo(TP, TP_ELI_OK);
+				if(mgrProd.eliminarTipoProd(tp)) {
+					mgrProd.eliminarTipoProd(tp);
+					clearForm(getiFrmTp().getContentPane());
+					cargarListTipoProd(jlTp);
+					enviarInfo(TP, TP_ELI_OK);
+				} else {
+					enviarWarning(TP, TP_ELI_CON_UTIL);
+				}
 			} else {
 				enviarWarning(TP, DATOS_OBLIG);
 			}
@@ -605,6 +639,90 @@ public class CtrlFrmProducto extends CtrlGenerico implements CnstPresGeneric {
 	}
 	
 	public void cerrarIFrmTp() {
+		try {
+			Component comp = getFrm().getContentPane().getComponent(1);
+			getDeskPane().setBounds(0, 0, 0, 0);
+			comp.setVisible(true);
+		} catch(Exception e) {
+			manejarExcepcion(e);
+		}
+	}
+	
+	//unidad
+	
+	public Integer agregarUnidad(JTextField nombre, JList<Unidad> jlUni) {
+		try {
+			if(controlDatosObl(nombre)) {
+				Unidad unidad = new Unidad();
+				unidad.setNombre(nombre.getText());
+				mgrProd.guardarUnidad(unidad);
+				clearForm(getiFrmUni().getContentPane());
+				cargarListUnidad(jlUni);
+				enviarInfo(UNI, UNI_ING_OK);
+			} else {
+				enviarWarning(UNI, DATOS_OBLIG);
+			}
+		} catch(Exception e) {
+			manejarExcepcion(e);
+		}
+		return null;
+	}
+	
+	public Integer modificarUnidad(JTextField nombre, JList<Unidad> jlUni) {
+		try {
+			if(controlDatosObl(nombre, jlUni)) {
+				Unidad uni = (Unidad) jlUni.getSelectedValue();
+				uni.setNombre(nombre.getText());
+				mgrProd.modificarUnidad(uni);
+				clearForm(getiFrmUni().getContentPane());
+				cargarListUnidad(jlUni);
+				enviarInfo(UNI, UNI_MOD_OK);
+			} else {
+				enviarWarning(UNI, DATOS_OBLIG);
+			}
+		} catch(Exception e) {
+			manejarExcepcion(e);
+		}
+		return null;
+	}
+	
+	public Integer eliminarUnidad(JList<Unidad> jlUni) {
+		try {
+			if(controlDatosObl(jlUni)) {
+				Unidad uni = (Unidad) jlUni.getSelectedValue();
+				if(mgrProd.eliminarUnidad(uni)) {
+					clearForm(getiFrmUni().getContentPane());
+					cargarListUnidad(jlUni);
+					enviarInfo(UNI, UNI_ELI_OK);
+				} else {
+					enviarWarning(UNI, UNI_ELI_CON_UTIL);
+				}
+			} else {
+				enviarWarning(UNI, DATOS_OBLIG);
+			}
+		} catch(Exception e) {
+			manejarExcepcion(e);
+		}
+		return null;
+	}
+
+
+	public void abrirIFrmUni() {
+		try {
+			IfrmUnidad ifrmUni = new IfrmUnidad(this);
+			getDeskPane().setBounds(0, 0, 784, 565);
+			getDeskPane().add(ifrmUni);
+			//
+			Component comp = getFrm().getContentPane().getComponent(1);
+			comp.setVisible(false);//FIXME: ver si no existe solucion mejor
+			//
+			ifrmUni.show();
+		} catch(Exception e) {
+			manejarExcepcion(e);
+		}
+	}
+	
+	public void cerrarIFrmUni() {
 		try {
 			Component comp = getFrm().getContentPane().getComponent(1);
 			getDeskPane().setBounds(0, 0, 0, 0);
@@ -906,6 +1024,13 @@ public class CtrlFrmProducto extends CtrlGenerico implements CnstPresGeneric {
 	}
 	public void setiFrmUtil(IfrmUtilidad iFrmUtil) {
 		this.iFrmUtil = iFrmUtil;
+	}
+
+	public IfrmUnidad getiFrmUni() {
+		return iFrmUni;
+	}
+	public void setiFrmUni(IfrmUnidad iFrmUni) {
+		this.iFrmUni = iFrmUni;
 	}
 
 
