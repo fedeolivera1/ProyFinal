@@ -13,11 +13,11 @@ public interface CnstQryUnidad {
 	
 	public static final String QRY_INSERT_UNI = "INSERT INTO unidad (nombre, sinc, activo) VALUES (?, ?, ?)";
 	
-	public static final String QRY_UPDATE_UNI = "UPDATE unidad SET nombre = ? WHERE id_unidad = ?";
+	public static final String QRY_UPDATE_UNI = "UPDATE unidad SET nombre = ?, sinc = ? WHERE id_unidad = ?";
 
 	public static final String QRY_UPDATE_SINC_UNI = "UPDATE unidad SET sinc = ? WHERE id_unidad = ?";
 	
-	public static final String QRY_DELETE_UNI = "UPDATE unidad SET activo = ? WHERE id_unidad = ?";
+	public static final String QRY_DELETE_UNI = "UPDATE unidad SET activo = ?, sinc = ? WHERE id_unidad = ?";
 	
 	public static final String QRY_CTRL_UTIL_UNI = "SELECT (1) "
 												+ "FROM unidad u "

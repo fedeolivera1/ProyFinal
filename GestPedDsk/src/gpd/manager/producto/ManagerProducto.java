@@ -193,6 +193,8 @@ public class ManagerProducto {
 		if(producto != null) {
 			try {
 				Conector.getConn();
+				producto.setSinc(Sinc.N);
+				producto.setUltAct(new Fecha(Fecha.AMDHMS));
 				resultado = getInterfaceProducto().desactivarProducto(producto);
 				Conector.closeConn("eliminarProducto");
 			} catch (PersistenciaException e) {

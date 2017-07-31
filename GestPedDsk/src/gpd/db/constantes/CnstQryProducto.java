@@ -37,7 +37,7 @@ public interface CnstQryProducto {
 													+ "id_unidad = ?, cant_unidad = ?, precio = ?, sinc = ?, ult_act = ? "
 													+ "WHERE id_producto = ?";
 	
-	public static final String QRY_DESACT_PROD = "UPDATE producto SET activo = ? WHERE id_producto = ?";
+	public static final String QRY_DESACT_PROD = "UPDATE producto SET activo = ?, sinc = ? WHERE id_producto = ?";
 	
 	public static final String QRY_ACT_SINC_PROD = "UPDATE producto "
 													+ "SET sinc = ? "

@@ -606,7 +606,6 @@ public class CtrlFrmProducto extends CtrlGenerico implements CnstPresGeneric {
 			if(controlDatosObl(jlTp)) {
 				TipoProd tp = (TipoProd) jlTp.getSelectedValue();
 				if(mgrProd.eliminarTipoProd(tp)) {
-					mgrProd.eliminarTipoProd(tp);
 					clearForm(getiFrmTp().getContentPane());
 					cargarListTipoProd(jlTp);
 					enviarInfo(TP, TP_ELI_OK);

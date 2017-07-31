@@ -269,6 +269,7 @@ public class PersistenciaProducto extends Conector implements IPersProducto, Cns
 		Integer resultado = null;
 		GenSqlExecType genExec = new GenSqlExecType(QRY_DESACT_PROD);
 		genExec.setParam(producto.getEstadoProd().getAsInt());
+		genExec.setParam(producto.getSinc().getAsChar());
 		genExec.setParam(producto.getIdProducto());
 		try {
 			resultado = (Integer) runGeneric(genExec);

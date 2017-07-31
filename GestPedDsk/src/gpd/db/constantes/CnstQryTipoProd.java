@@ -14,11 +14,11 @@ public interface CnstQryTipoProd {
 	
 	public static final String QRY_INSERT_TIPOPROD = "INSERT INTO tipo_prod (descripcion, sinc, activo) VALUES (?, ?, ?)";
 	
-	public static final String QRY_UPDATE_TIPOPROD = "UPDATE tipo_prod SET descripcion = ? WHERE id_tipo_prod = ?";
+	public static final String QRY_UPDATE_TIPOPROD = "UPDATE tipo_prod SET descripcion = ?, sinc = ? WHERE id_tipo_prod = ?";
 	
 	public static final String QRY_UPDATE_SINC_TIPOPROD = "UPDATE tipo_prod SET sinc = ? WHERE id_tipo_prod = ?";
 	
-	public static final String QRY_DISABLE_TIPOPROD = "UPDATE tipo_prod SET activo = ? WHERE id_tipo_prod = ?";
+	public static final String QRY_DISABLE_TIPOPROD = "UPDATE tipo_prod SET activo = ?, sinc = ? WHERE id_tipo_prod = ?";
 	
 	public static final String QRY_CTRL_UTIL_TIPOPROD = "SELECT (1) "
 														+ "FROM tipo_prod tp "
