@@ -71,7 +71,7 @@ public class PersistenciaPedidoLinea extends Conector implements IPersPedidoLine
 			resultado = (Integer) runGeneric(genExec);
 		} catch (ConectorException e) {
 			Conector.rollbackConn();
-			logger.error("Excepcion al guardarTranLinea: " + e.getMessage(), e);
+			logger.error("Excepcion al guardarListaPedidoLinea: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		}
 		return resultado;
@@ -87,7 +87,7 @@ public class PersistenciaPedidoLinea extends Conector implements IPersPedidoLine
 			resultado = (Integer) runGeneric(genExec);
 		} catch (ConectorException e) {
 			Conector.rollbackConn();
-			logger.error("Excepcion al guardarTranLinea: " + e.getMessage(), e);
+			logger.error("Excepcion al eliminarListaPedidoLinea: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		}
 		return resultado;

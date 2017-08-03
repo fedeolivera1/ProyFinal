@@ -79,7 +79,7 @@ public class PersistenciaPersona extends Conector implements IPersPersona, CnstQ
 			}
 		} catch (ConectorException | SQLException | IOException e) {
 			Conector.rollbackConn();
-			logger.fatal("Excepcion al obtenerProductoPorId: " + e.getMessage(), e);
+			logger.fatal("Excepcion al obtenerPersFisicaPorId: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		} finally {
 			closeRs(rs);
@@ -132,7 +132,7 @@ public class PersistenciaPersona extends Conector implements IPersPersona, CnstQ
 			}
 		} catch (ConectorException | SQLException | IOException e) {
 			Conector.rollbackConn();
-			logger.fatal("Excepcion al obtenerProductoPorId: " + e.getMessage(), e);
+			logger.fatal("Excepcion al obtenerPersJuridicaPorId: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		} finally {
 			closeRs(rs);

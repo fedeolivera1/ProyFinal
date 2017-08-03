@@ -130,7 +130,7 @@ public class ManagerTransaccion {
 		Integer resultado = null;
 		try {
 			if(transaccion != null && TipoTran.V.equals(transaccion.getTipoTran())) {
-				Conector.getConn();
+//				Conector.getConn();//FIXME ver esto, no lo llamo porque la conexion está contenida arriba
 				Integer nroTransac = Conector.obtenerSecuencia(CnstQryTransaccion.SEC_TRANSAC);
 				transaccion.setNroTransac(nroTransac);
 				//se persiste la transaccion de tipo V (venta)

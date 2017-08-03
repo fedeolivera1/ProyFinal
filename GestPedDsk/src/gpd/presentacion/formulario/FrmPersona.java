@@ -34,6 +34,8 @@ import gpd.dominio.persona.TipoDoc;
 import gpd.dominio.usuario.UsuarioDsk;
 import gpd.presentacion.controlador.CtrlFrmPersona;
 import javax.swing.JCheckBox;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 
 public class FrmPersona extends JFrame {
 
@@ -573,9 +575,16 @@ public class FrmPersona extends JFrame {
 		ctrlPers.cargarCbxDep(cbxPfDep);
 		ctrlPers.cargarCbxDep(cbxPjDep);
 		
-		txtPfFnac.addKeyListener(new KeyAdapter() {
+		//TODO - sale de defecto, ver si esta solucion funcionaría
+//		txtPfFnac.addKeyListener(new KeyAdapter() {
+//			@Override
+//			public void keyReleased(KeyEvent e) {
+//				ctrlPers.formatoFechaEnTxt(txtPfFnac);
+//			}
+//		});
+		txtPfFnac.addFocusListener(new FocusAdapter() {
 			@Override
-			public void keyReleased(KeyEvent e) {
+			public void focusLost(FocusEvent arg0) {
 				ctrlPers.formatoFechaEnTxt(txtPfFnac);
 			}
 		});

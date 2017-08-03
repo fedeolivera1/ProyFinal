@@ -150,9 +150,10 @@ public abstract class CtrlGenerico {
 				formatter.setLenient(false); 
 				java.util.Date date = formatter.parse(datoStr);
 			}
-		} catch (ParseException ex) { 
+		} catch (ParseException ex) {
 			clearComponent(comp);
-			JOptionPane.showMessageDialog(null, "La fecha ingresada no es valida.", "Formato Fecha", JOptionPane.WARNING_MESSAGE); 
+			JOptionPane.showMessageDialog(null, "La fecha ingresada no es valida.", "Formato Fecha", JOptionPane.WARNING_MESSAGE);
+			comp.requestFocus();
 		}
 	}
 	
