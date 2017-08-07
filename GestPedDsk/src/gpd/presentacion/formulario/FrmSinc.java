@@ -89,6 +89,10 @@ public class FrmSinc extends JFrame {
 		btnSincronizarProductos.setBounds(10, 143, 147, 90);
 		contentPane.add(btnSincronizarProductos);
 		
+		JButton btnSincPedidos = new JButton("Sincronizar\r\n Pedidos");
+		btnSincPedidos.setBounds(10, 244, 147, 90);
+		contentPane.add(btnSincPedidos);
+		
 		
 		/***************************************************/
 		/* EVENTO CIERRE DEL FORM */
@@ -104,14 +108,22 @@ public class FrmSinc extends JFrame {
 		/*****************************************************************************************************************************************************/
 		/* ACCIONES CONTROLES */
 		/*****************************************************************************************************************************************************/
+		//sincronizador personas
 		btnSincPers.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				ctrlSinc.sincronizarPersona(dchSincIni, dchSincFin);
 			}
 		});
+		//sincronizador productos
 		btnSincronizarProductos.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				ctrlSinc.sincronizarProducto(dchSincIni, dchSincFin);
+			}
+		});
+		//sincronizador pedidos
+		btnSincPedidos.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ctrlSinc.sincronizarPedido(dchSincIni, dchSincFin);
 			}
 		});
 		

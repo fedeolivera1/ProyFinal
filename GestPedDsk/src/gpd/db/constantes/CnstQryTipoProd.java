@@ -20,7 +20,7 @@ public interface CnstQryTipoProd {
 	
 	public static final String QRY_DISABLE_TIPOPROD = "UPDATE tipo_prod SET activo = ?, sinc = ? WHERE id_tipo_prod = ?";
 	
-	public static final String QRY_CTRL_UTIL_TIPOPROD = "SELECT (1) "
+	public static final String QRY_CTRL_UTIL_TIPOPROD = "SELECT (1) AS existe "
 														+ "FROM tipo_prod tp "
 														+ "INNER JOIN producto p "
 														+ "ON tp.id_tipo_prod = p.id_tipo_prod "

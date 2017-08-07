@@ -9,7 +9,8 @@ import gpd.dominio.producto.Producto;
 import gpd.dominio.producto.TipoProd;
 import gpd.dominio.producto.Unidad;
 import gpd.dominio.util.Sinc;
-import gpd.exceptions.SincronizadorException;
+import gpd.exceptions.ParsersException;
+import gpd.types.Fecha;
 import gpw.webservice.proxy.ParamProductoASinc;
 import gpw.webservice.proxy.ParamRecProductosASinc;
 import gpw.webservice.proxy.ParamTipoProdASinc;
@@ -21,7 +22,7 @@ public class ParserParamProducto {
 	private static HashSet<Integer> setTp = new HashSet<>();
 	private static HashSet<Integer> setUni = new HashSet<>();
 	
-	public static ParamRecProductosASinc parse(List<Producto> listaProd) throws SincronizadorException {
+	public static ParamRecProductosASinc parseParamRecProductosASinc(List<Producto> listaProd) throws ParsersException {
 		ParamRecProductosASinc param = null;
 		try {
 			if(listaProd != null && !listaProd.isEmpty()) {
@@ -64,15 +65,15 @@ public class ParserParamProducto {
 					paramProdASinc.setAplIva(prod.getAplIva().getAplIvaDesc());
 					paramProdASinc.setPrecio(prod.getPrecio());
 					paramProdASinc.setSinc(prod.getSinc().getSinc());
-					paramProdASinc.setUltAct(prod.getUltAct().getAsXMLGregorianCalendar());
+					paramProdASinc.setUltAct(prod.getUltAct().getAsXMLGregorianCalendar(Fecha.AMDHMS));
 					paramProdASinc.setEstadoProd(prod.getEstadoProd().getAsInt());
 					
 					param.getListaProducto().add(paramProdASinc);
 				}
 			}
 		} catch(Exception e) {
-			logger.error("Error al parsear el Parametro ParamRecProductosASinc" + e.getMessage());
-			throw new SincronizadorException(e);
+			logger.error("Error al parsear el Parametro ParamRecProductosASinc: " + e.getMessage());
+			throw new ParsersException(e);
 		}
 		return param;
 		

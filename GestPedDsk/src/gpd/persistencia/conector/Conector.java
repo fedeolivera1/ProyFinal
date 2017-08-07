@@ -216,9 +216,9 @@ public abstract class Conector {
 					if(fecha.esTimeStamp()) {
 						ps.setObject(key, fecha.getTimestampSql(), java.sql.Types.TIMESTAMP);
 						logger.debug("seteo param en posi " + key + " del tipo java.sql.Types.TIMESTAMP: " + fecha.toString(Fecha.AMDHMS));
-					} else if(fecha.esHM()) {
+					} else if(fecha.esHM() || fecha.esHMS()) {
 						ps.setObject(key, fecha.getTimeSql(), java.sql.Types.TIME);
-						logger.debug("seteo param en posi " + key + " del tipo java.sql.Types.TIME: " + fecha.toString(Fecha.HM));
+						logger.debug("seteo param en posi " + key + " del tipo java.sql.Types.TIME: " + fecha.toString(Fecha.HMS));
 					} else {
 						ps.setObject(key, fecha.getDateSql(), java.sql.Types.DATE);
 						logger.debug("seteo param en posi " + key + " del tipo java.sql.Types.DATE: " + fecha.toString(Fecha.AMD));

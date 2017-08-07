@@ -15,8 +15,6 @@ import gpd.db.generic.GenSqlExecType;
 import gpd.db.generic.GenSqlSelectType;
 import gpd.dominio.pedido.EstadoPedido;
 import gpd.dominio.pedido.Pedido;
-import gpd.dominio.persona.PersonaFisica;
-import gpd.dominio.persona.PersonaJuridica;
 import gpd.dominio.util.Origen;
 import gpd.dominio.util.Sinc;
 import gpd.exceptions.ConectorException;
@@ -63,8 +61,8 @@ public class PersistenciaPedido extends Conector implements IPersPedido, CnstQry
 				}
 				char[] origenChar = new char[1];
 				rs.getCharacterStream("origen").read(origenChar);
-				Origen origen = Origen.getOrigenPorChar(origenChar[0]);
-				pedido.setOrigen(origen);
+				Origen origenPed = Origen.getOrigenPorChar(origenChar[0]);
+				pedido.setOrigen(origenPed);
 				pedido.setSubTotal(rs.getDouble("sub_total"));
 				pedido.setIva(rs.getDouble("iva"));
 				pedido.setTotal(rs.getDouble("total"));
@@ -76,7 +74,6 @@ public class PersistenciaPedido extends Conector implements IPersPedido, CnstQry
 				if(!rs.wasNull()) {
 					pedido.setTransaccion(pt.obtenerTransaccionPorId(nroTransac));
 				}
-				pedido.setTotal(rs.getDouble("total"));
 				char[] sincChar = new char[1];
 				rs.getCharacterStream("sinc").read(sincChar);
 				Sinc sinc = Sinc.getSincPorChar(sincChar[0]);
@@ -94,7 +91,7 @@ public class PersistenciaPedido extends Conector implements IPersPedido, CnstQry
 	}
 	
 	@Override
-	public List<Pedido> obtenerListaPedido(EstadoPedido ep, Long idPersona, Fecha fechaDesde, Fecha fechaHasta) throws PersistenciaException {
+	public List<Pedido> obtenerListaPedido(EstadoPedido ep, Long idPersona, Origen origen, Fecha fechaDesde, Fecha fechaHasta) throws PersistenciaException {
 		List<Pedido> listaPedido = new ArrayList<>();
 		PersistenciaPersona pp = new PersistenciaPersona();
 		PersistenciaUsuario pu = new PersistenciaUsuario();
@@ -104,6 +101,7 @@ public class PersistenciaPedido extends Conector implements IPersPedido, CnstQry
 			genType.setParamEmptyAsNumber(idPersona);
 			genType.setParamEmptyAsNumber(idPersona);
 			genType.setParamCharIfNull(ep.getAsChar());
+			genType.setParam(origen.getAsChar());
 			genType.setParam(fechaDesde);
 			genType.setParam(fechaHasta);
 			rs = (ResultSet) runGeneric(genType);
@@ -125,8 +123,10 @@ public class PersistenciaPedido extends Conector implements IPersPedido, CnstQry
 				}
 				char[] origenChar = new char[1];
 				rs.getCharacterStream("origen").read(origenChar);
-				Origen origen = Origen.getOrigenPorChar(origenChar[0]);
-				pedido.setOrigen(origen);
+				Origen origenPed = Origen.getOrigenPorChar(origenChar[0]);
+				pedido.setOrigen(origenPed);
+				pedido.setSubTotal(rs.getDouble("sub_total"));
+				pedido.setIva(rs.getDouble("iva"));
 				pedido.setTotal(rs.getDouble("total"));
 				String nomUsu = rs.getString("nom_usu");
 				if(!rs.wasNull()) {
@@ -136,7 +136,6 @@ public class PersistenciaPedido extends Conector implements IPersPedido, CnstQry
 				if(!rs.wasNull()) {
 					pedido.setTransaccion(pt.obtenerTransaccionPorId(nroTransac));
 				}
-				pedido.setTotal(rs.getDouble("total"));
 				char[] sincChar = new char[1];
 				rs.getCharacterStream("sinc").read(sincChar);
 				Sinc sinc = Sinc.getSincPorChar(sincChar[0]);
@@ -159,15 +158,15 @@ public class PersistenciaPedido extends Conector implements IPersPedido, CnstQry
 	public Integer guardarPedido(Pedido pedido) throws PersistenciaException {
 		Integer resultado = null;
 		GenSqlExecType genExec = new GenSqlExecType(QRY_INSERT_PEDIDO);
-		Long idPersona = null;
-		if(pedido.getPersona() instanceof PersonaFisica) {
-			PersonaFisica pf = (PersonaFisica) pedido.getPersona();
-			idPersona = pf.getDocumento();
-		} else if(pedido.getPersona() instanceof PersonaJuridica) {
-			PersonaJuridica pj = (PersonaJuridica) pedido.getPersona();
-			idPersona = pj.getRut();
-		}
-		genExec.setParam(idPersona);
+//		Long idPersona = null;
+//		if(pedido.getPersona() instanceof PersonaFisica) {
+//			PersonaFisica pf = (PersonaFisica) pedido.getPersona();
+//			idPersona = pf.getDocumento();
+//		} else if(pedido.getPersona() instanceof PersonaJuridica) {
+//			PersonaJuridica pj = (PersonaJuridica) pedido.getPersona();
+//			idPersona = pj.getRut();
+//		}
+		genExec.setParam(pedido.getPersona().getIdPersona());
 		genExec.setParam(pedido.getFechaHora());
 		genExec.setParam(pedido.getEstado().getAsChar());
 		genExec.setParam(pedido.getFechaProg());
@@ -176,15 +175,20 @@ public class PersistenciaPedido extends Conector implements IPersPedido, CnstQry
 		genExec.setParam(pedido.getSubTotal());
 		genExec.setParam(pedido.getIva());
 		genExec.setParam(pedido.getTotal());
-		genExec.setParam(pedido.getUsuario().getNomUsu());
-		genExec.setParam(pedido.getTransaccion().getNroTransac());
+		if(pedido.getOrigen().equals(Origen.D)) {
+			genExec.setParam(pedido.getUsuario().getNomUsu());
+			genExec.setParam(pedido.getTransaccion().getNroTransac());
+		} else {
+			genExec.setParam(null);
+			genExec.setParam(null);
+		}
 		genExec.setParam(pedido.getSinc().getAsChar());
 		genExec.setParam(pedido.getUltAct());
 		try {
 			resultado = (Integer) runGeneric(genExec);
 		} catch (ConectorException e) {
 			Conector.rollbackConn();
-			logger.error("Excepcion al guardarTransaccionVenta: " + e.getMessage(), e);
+			logger.error("Excepcion al guardarPedido: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		}
 		return resultado;
@@ -194,14 +198,14 @@ public class PersistenciaPedido extends Conector implements IPersPedido, CnstQry
 	public Integer modificarPedido(Pedido pedido) throws PersistenciaException  {
 		Integer resultado = null;
 		GenSqlExecType genExec = new GenSqlExecType(QRY_UPDATE_PEDIDO);
-		Long idPersona = null;
-		if(pedido.getPersona() instanceof PersonaFisica) {
-			PersonaFisica pf = (PersonaFisica) pedido.getPersona();
-			idPersona = pf.getDocumento();
-		} else if(pedido.getPersona() instanceof PersonaJuridica) {
-			PersonaJuridica pj = (PersonaJuridica) pedido.getPersona();
-			idPersona = pj.getRut();
-		}
+//		Long idPersona = null;
+//		if(pedido.getPersona() instanceof PersonaFisica) {
+//			PersonaFisica pf = (PersonaFisica) pedido.getPersona();
+//			idPersona = pf.getDocumento();
+//		} else if(pedido.getPersona() instanceof PersonaJuridica) {
+//			PersonaJuridica pj = (PersonaJuridica) pedido.getPersona();
+//			idPersona = pj.getRut();
+//		}
 		genExec.setParam(pedido.getEstado().getAsChar());
 		genExec.setParam(pedido.getFechaProg());
 		genExec.setParam(pedido.getHoraProg());
@@ -210,13 +214,13 @@ public class PersistenciaPedido extends Conector implements IPersPedido, CnstQry
 		genExec.setParam(pedido.getTotal());
 		genExec.setParam(pedido.getSinc().getAsChar());
 		genExec.setParam(pedido.getUltAct());
-		genExec.setParam(idPersona);
+		genExec.setParam(pedido.getPersona().getIdPersona());
 		genExec.setParam(pedido.getFechaHora());
 		try {
 			resultado = (Integer) runGeneric(genExec);
 		} catch (ConectorException e) {
 			Conector.rollbackConn();
-			logger.error("Excepcion al guardarTransaccionVenta: " + e.getMessage(), e);
+			logger.error("Excepcion al modificarPedido: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		}
 		return resultado;
@@ -226,21 +230,56 @@ public class PersistenciaPedido extends Conector implements IPersPedido, CnstQry
 	public Integer eliminarPedido(Pedido pedido) throws PersistenciaException  {
 		Integer resultado = null;
 		GenSqlExecType genExec = new GenSqlExecType(QRY_DELETE_PEDIDO);
-		Long idPersona = null;
-		if(pedido.getPersona() instanceof PersonaFisica) {
-			PersonaFisica pf = (PersonaFisica) pedido.getPersona();
-			idPersona = pf.getDocumento();
-		} else if(pedido.getPersona() instanceof PersonaJuridica) {
-			PersonaJuridica pj = (PersonaJuridica) pedido.getPersona();
-			idPersona = pj.getRut();
-		}
-		genExec.setParam(idPersona);
+//		Long idPersona = null;
+//		if(pedido.getPersona() instanceof PersonaFisica) {
+//			PersonaFisica pf = (PersonaFisica) pedido.getPersona();
+//			idPersona = pf.getDocumento();
+//		} else if(pedido.getPersona() instanceof PersonaJuridica) {
+//			PersonaJuridica pj = (PersonaJuridica) pedido.getPersona();
+//			idPersona = pj.getRut();
+//		}
+		genExec.setParam(pedido.getPersona().getIdPersona());
 		genExec.setParam(pedido.getFechaHora());
 		try {
 			resultado = (Integer) runGeneric(genExec);
 		} catch (ConectorException e) {
 			Conector.rollbackConn();
-			logger.error("Excepcion al guardarTransaccionVenta: " + e.getMessage(), e);
+			logger.error("Excepcion al eliminarPedido: " + e.getMessage(), e);
+			throw new PersistenciaException(e);
+		}
+		return resultado;
+	}
+	
+	@Override
+	public Boolean checkExistPedido(Pedido pedido) throws PersistenciaException  {
+		try {
+			GenSqlSelectType genType = new GenSqlSelectType(QRY_CHK_EXIST_PEDIDO);
+			genType.setParam(pedido.getPersona().getIdPersona());
+			genType.setParam(pedido.getFechaHora());
+			rs = (ResultSet) runGeneric(genType);
+			if(rs.next()) {
+				return true;
+			}
+		} catch (ConectorException | SQLException e) {
+			logger.error("Excepcion al checkExistePedido: " + e.getMessage(), e);
+			throw new PersistenciaException(e);
+		}
+		return false;
+	}
+
+	@Override
+	public Integer modificarSincUltActPedido(Pedido pedido) throws PersistenciaException {
+		Integer resultado = null;
+		GenSqlExecType genExec = new GenSqlExecType(QRY_ACT_SINC_ULTACT_PEDIDO);
+		genExec.setParam(pedido.getSinc().getAsChar());
+		genExec.setParam(pedido.getUltAct());
+		genExec.setParam(pedido.getPersona().getIdPersona());
+		genExec.setParam(pedido.getFechaHora());
+		try {
+			resultado = (Integer) runGeneric(genExec);
+		} catch (ConectorException e) {
+			Conector.rollbackConn();
+			logger.fatal("Excepcion al desactivarProducto: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		}
 		return resultado;

@@ -7,6 +7,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
@@ -115,7 +116,7 @@ public class Fecha extends GregorianCalendar {
 		if(time != null) {
 			super.setTimeInMillis(time.getTime());
 			complete();
-			setFormato(AMD);
+			setFormato(HMS);
 		}
 	}
 	
@@ -177,7 +178,7 @@ public class Fecha extends GregorianCalendar {
 	 * retorna la instancia en el formato de java.sql.Date
 	 */
 	public java.sql.Date getDateSql() {
-	    Fecha fec = new Fecha(get(1), get(2) + 1, get(5));
+		Fecha fec = new Fecha(getAnio(), getMes(), getDia());
 	    long tim = fec.getTimeInMillis();
 	    java.sql.Date dateSql = new java.sql.Date(tim);
 	    return dateSql;
@@ -189,7 +190,8 @@ public class Fecha extends GregorianCalendar {
 	 * retorna la instancia en el formato de java.sql.Time
 	 */
 	public java.sql.Time getTimeSql() {
-		Fecha fec = new Fecha(get(11), get(12), get(13));
+		Fecha fec = new Fecha(getHora(), getMinuto());
+		fec.set(SECOND, getSegundo());
 		long tim = fec.getTimeInMillis();
 		java.sql.Time timeSql = new java.sql.Time(tim);
 		return timeSql;
@@ -212,13 +214,39 @@ public class Fecha extends GregorianCalendar {
 	 * @return XMLGregorianCalendar
 	 * retorna la instancia en el formato XMLGregorianCalendar
 	 */
-	public XMLGregorianCalendar getAsXMLGregorianCalendar() {
-		Fecha fec = new Fecha(get(1), get(2) + 1, get(5));
+	public XMLGregorianCalendar getAsXMLGregorianCalendar(int formato) {
+		Fecha fec;
+		if(formato == Fecha.AMDHMS) {
+			fec = new Fecha(getAnio(), getMes(), getDia(), getHora(), getMinuto(), getSegundo());
+		} else {
+			fec = new Fecha(getAnio(), getMes(), getDia());
+		}
 		XMLGregorianCalendar xmlgc = null;
 		GregorianCalendar gc = new GregorianCalendar();
 		gc.setTime(fec.getTime());
 		try {
 			xmlgc = DatatypeFactory.newInstance().newXMLGregorianCalendar(gc);
+			xmlgc.setTimezone(DatatypeConstants.FIELD_UNDEFINED);
+		} catch (DatatypeConfigurationException e) {
+			e.printStackTrace();
+		}
+		return xmlgc;
+	}
+	
+	/**
+	 * 
+	 * @return XMLGregorianCalendar
+	 * retorna la instancia en el formato XMLGregorianCalendar
+	 */
+	public XMLGregorianCalendar getHoraAsXMLGregorianCalendar() {
+		Fecha fec = new Fecha(getHora(), getMinuto());
+		fec.set(SECOND, getSegundo());
+		XMLGregorianCalendar xmlgc = null;
+		GregorianCalendar gc = new GregorianCalendar();
+		gc.setTime(fec.getTime());
+		try {
+			xmlgc = DatatypeFactory.newInstance().newXMLGregorianCalendar(gc);
+			xmlgc.setTimezone(DatatypeConstants.FIELD_UNDEFINED);
 		} catch (DatatypeConfigurationException e) {
 			e.printStackTrace();
 		}

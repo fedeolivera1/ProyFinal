@@ -30,8 +30,10 @@ public class CtrlFrmSinc extends CtrlGenerico implements CnstPresGeneric {
 			if(controlDatosObl(genComp)) {
 				Fecha fechaIni = new Fecha(dchFechaIni.getDate());
 				Fecha fechaFin = new Fecha(dchFechaFin.getDate());
-				String strResultSinc = mgrSinc.sincronizarPersonas(fechaIni, fechaFin);
-				getFrm().getTxtSincInfo().setText(strResultSinc);
+				if(controlFechas(fechaIni, fechaFin)) {
+					String strResultSinc = mgrSinc.sincronizarPersonas(fechaIni, fechaFin);
+					getFrm().getTxtSincInfo().setText(strResultSinc);
+				}
 			} else {
 				clearComponent(getFrm().getTxtSincInfo());
 				enviarWarning(SINC, DATOS_OBLIG);
@@ -49,8 +51,31 @@ public class CtrlFrmSinc extends CtrlGenerico implements CnstPresGeneric {
 			if(controlDatosObl(genComp)) {
 				Fecha fechaIni = new Fecha(dchFechaIni.getDate());
 				Fecha fechaFin = new Fecha(dchFechaFin.getDate());
-				String strResultSinc = mgrSinc.sincronizarProductos(fechaIni, fechaFin);
-				getFrm().getTxtSincInfo().setText(strResultSinc);
+				if(controlFechas(fechaIni, fechaFin)) {
+					String strResultSinc = mgrSinc.sincronizarProductos(fechaIni, fechaFin);
+					getFrm().getTxtSincInfo().setText(strResultSinc);
+				}
+			} else {
+				clearComponent(getFrm().getTxtSincInfo());
+				enviarWarning(SINC, DATOS_OBLIG);
+			}
+		} catch(Exception e) {
+			manejarExcepcion(e);
+		}
+	}
+	
+	public void sincronizarPedido(JDateChooser dchFechaIni, JDateChooser dchFechaFin) {
+		try {
+			GenCompType genComp = new GenCompType();
+			genComp.setComp(dchFechaIni);
+			genComp.setComp(dchFechaFin);
+			if(controlDatosObl(genComp)) {
+				Fecha fechaIni = new Fecha(dchFechaIni.getDate());
+				Fecha fechaFin = new Fecha(dchFechaFin.getDate());
+				if(controlFechas(fechaIni, fechaFin)) {
+					String strResultSinc = mgrSinc.sincronizarPedidos(fechaIni, fechaFin);
+					getFrm().getTxtSincInfo().setText(strResultSinc);
+				}
 			} else {
 				clearComponent(getFrm().getTxtSincInfo());
 				enviarWarning(SINC, DATOS_OBLIG);

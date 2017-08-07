@@ -13,6 +13,7 @@ public interface CnstQryPedido {
 												+ "FROM pedido p "
 												+ "WHERE (p.id_persona = ? OR -1 = ?) "
 												+ "AND p.estado = ? "
+												+ "AND p.origen = ? "
 												+ "AND (p.fecha_hora::date BETWEEN ? AND ?) "
 												+ "ORDER BY p.fecha_hora DESC";
 	
@@ -26,5 +27,12 @@ public interface CnstQryPedido {
 												+ "AND fecha_hora = ? ";
 	
 	public static final String QRY_DELETE_PEDIDO = "DELETE FROM pedido WHERE id_persona = ? AND fecha_hora = ? ";
+	
+	public static final String QRY_CHK_EXIST_PEDIDO = "SELECT (1) AS existe FROM pedido where id_persona = ? AND fecha_hora = ?";
+	
+	public static final String QRY_ACT_SINC_ULTACT_PEDIDO = "UPDATE pedido "
+												+ "SET sinc = ?, ult_act = ? "
+												+ "WHERE id_persona = ? "
+												+ "AND fecha_hora = ?";
 
 }

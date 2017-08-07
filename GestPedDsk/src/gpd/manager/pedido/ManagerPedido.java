@@ -79,11 +79,11 @@ public class ManagerPedido {
 		return pedido;
 	}
 	
-	public List<Pedido> obtenerListaPedidoPorPeriodo(EstadoPedido ep, Long idPersona, Fecha fechaIni, Fecha fechaFin) throws PresentacionException {
+	public List<Pedido> obtenerListaPedidoPorPeriodo(EstadoPedido ep, Long idPersona, Origen origen, Fecha fechaIni, Fecha fechaFin) throws PresentacionException {
 		List<Pedido> listaPedido = null;
 		try {
 			Conector.getConn();
-			listaPedido = getInterfacePedido().obtenerListaPedido(ep, idPersona, fechaIni, fechaFin);
+			listaPedido = getInterfacePedido().obtenerListaPedido(ep, idPersona, origen, fechaIni, fechaFin);
 			if(listaPedido != null && !listaPedido.isEmpty()) {
 				for(Pedido pedido : listaPedido) {
 					List<PedidoLinea> listaPedidoLinea = getInterfacePedidoLinea().obtenerListaPedidoLinea(pedido);

@@ -30,6 +30,7 @@ import gpd.dominio.producto.Producto;
 import gpd.dominio.producto.TipoProd;
 import gpd.dominio.usuario.UsuarioDsk;
 import gpd.dominio.util.Converters;
+import gpd.dominio.util.Origen;
 import gpd.exceptions.PresentacionException;
 import gpd.manager.pedido.ManagerPedido;
 import gpd.manager.persona.ManagerPersona;
@@ -367,7 +368,7 @@ public class CtrlFrmPedido extends CtrlGenerico implements CnstPresGeneric {
 				if(controlFechas(fechaIni, fechaFin)) {
 					EstadoPedido ep = (EstadoPedido) cbxPedidoEstado.getSelectedItem();
 					Long idPersona = ctrlPb.getPersSel() != null ? mgrPers.obtenerIdPersonaGenerico(ctrlPb.getPersSel()) : null;
-					List<Pedido> listaPedido = mgrPed.obtenerListaPedidoPorPeriodo(ep, idPersona, fechaIni, fechaFin);
+					List<Pedido> listaPedido = mgrPed.obtenerListaPedidoPorPeriodo(ep, idPersona, Origen.D, fechaIni, fechaFin);
 					cargarJtPedido(listaPedido);
 				}
 			} else {

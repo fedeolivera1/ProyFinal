@@ -19,7 +19,7 @@ public interface CnstQryUnidad {
 	
 	public static final String QRY_DELETE_UNI = "UPDATE unidad SET activo = ?, sinc = ? WHERE id_unidad = ?";
 	
-	public static final String QRY_CTRL_UTIL_UNI = "SELECT (1) "
+	public static final String QRY_CTRL_UTIL_UNI = "SELECT (1) AS existe "
 												+ "FROM unidad u "
 												+ "INNER JOIN producto p "
 												+ "ON u.id_unidad = p.id_unidad "
