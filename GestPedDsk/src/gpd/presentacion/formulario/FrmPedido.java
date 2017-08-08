@@ -39,6 +39,7 @@ import gpd.dominio.pedido.EstadoPedido;
 import gpd.dominio.producto.Producto;
 import gpd.dominio.producto.TipoProd;
 import gpd.dominio.usuario.UsuarioDsk;
+import gpd.dominio.util.Origen;
 import gpd.presentacion.controlador.CtrlFrmPedido;
 
 public class FrmPedido extends JFrame {
@@ -55,6 +56,7 @@ public class FrmPedido extends JFrame {
 	private JTable jtPedido;
 	private JPanel pnlDatosPedido;
 	private JComboBox<EstadoPedido> cbxPedidoEstado;
+	private JComboBox<Origen> cbxPedidoOrig;
 	private JComboBox<TipoProd> cbxPedidoTp;
 	private JComboBox<Producto> cbxPedidoProd;
 	private JFormattedTextField ftxtPedCant;
@@ -261,7 +263,7 @@ public class FrmPedido extends JFrame {
 		pnlPedido.add(separator_2);
 		
 		pnlPedBus = new JPanel();
-		pnlPedBus.setBounds(10, 76, 566, 38);
+		pnlPedBus.setBounds(10, 76, 764, 38);
 		pnlPedido.add(pnlPedBus);
 		pnlPedBus.setLayout(null);
 		
@@ -289,8 +291,12 @@ public class FrmPedido extends JFrame {
 		pnlPedBus.add(dchPedidoFin);
 		dchPedidoFin.setCalendar(new GregorianCalendar());
 		
+		cbxPedidoOrig = new JComboBox<>();
+		cbxPedidoOrig.setBounds(533, 11, 122, 20);
+		pnlPedBus.add(cbxPedidoOrig);
+		
 		JButton btnPedObtener = new JButton("Obtener");
-		btnPedObtener.setBounds(467, 10, 89, 23);
+		btnPedObtener.setBounds(665, 10, 89, 23);
 		pnlPedBus.add(btnPedObtener);
 		
 		tglbtnPedNuevo = new JToggleButton("Pedido Nuevo");
@@ -313,6 +319,12 @@ public class FrmPedido extends JFrame {
 		/*****************************************************************************************************************************************************/
 		
 		ctrlPed.cargarCbxPedidoEstado(cbxPedidoEstado);
+		ctrlPed.cargarCbxPedidoOrigen(cbxPedidoOrig);
+		
+		JLabel lblOrigen = new JLabel("Origen");
+		lblOrigen.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblOrigen.setBounds(467, 14, 56, 14);
+		pnlPedBus.add(lblOrigen);
 		
 		//boton pedido nuevo
 		tglbtnPedNuevo.addActionListener(new ActionListener() {
@@ -323,7 +335,7 @@ public class FrmPedido extends JFrame {
 		//boton obtener pedido
 		btnPedObtener.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				ctrlPed.obtenerPedidos(cbxPedidoEstado, txtPersDesc, dchPedidoIni, dchPedidoFin);
+				ctrlPed.obtenerPedidos(cbxPedidoEstado, txtPersDesc, cbxPedidoOrig, dchPedidoIni, dchPedidoFin);
 			}
 		});
 		
@@ -445,6 +457,13 @@ public class FrmPedido extends JFrame {
 	public void setCbxPedidoEstado(JComboBox<EstadoPedido> cbxPedidoEstado) {
 		this.cbxPedidoEstado = cbxPedidoEstado;
 	}
+	
+	public JComboBox<Origen> getCbxPedidoOrig() {
+		return cbxPedidoOrig;
+	}
+	public void setCbxPedidoOrig(JComboBox<Origen> cbxPedidoOrig) {
+		this.cbxPedidoOrig = cbxPedidoOrig;
+	}
 
 	public JTable getJtPedido() {
 		return jtPedido;
@@ -544,4 +563,5 @@ public class FrmPedido extends JFrame {
 	public void setFtxtPedHora(JFormattedTextField ftxtPedHora) {
 		this.ftxtPedHora = ftxtPedHora;
 	}
+
 }

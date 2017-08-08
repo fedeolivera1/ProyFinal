@@ -14,7 +14,6 @@ import gpd.dominio.persona.PersonaFisica;
 import gpd.dominio.persona.PersonaJuridica;
 import gpd.dominio.producto.Producto;
 import gpd.dominio.util.EstadoSinc;
-import gpd.dominio.util.Origen;
 import gpd.dominio.util.Sinc;
 import gpd.exceptions.NoInetConnectionException;
 import gpd.exceptions.ParsersException;
@@ -111,6 +110,7 @@ public class ManagerSincronizador implements CnstService {
 	}
 	
 	/**
+	 * ****************************************************************************************************************************
 	 * metodo para sincronizar personas. genera varios pasos, logueando y generando un informe que luego se 
 	 * devuelve a presentacion para ver como resultó
 	 * > el primer paso consta en obtener el servicio, e ir a buscar las personas que no estan sincronizadas
@@ -123,6 +123,7 @@ public class ManagerSincronizador implements CnstService {
 	 * @param fechaHasta
 	 * @return
 	 * @throws PresentacionException
+	 * ****************************************************************************************************************************
 	 */
 	public String sincronizarPersonas(Fecha fechaDesde, Fecha fechaHasta) throws PresentacionException, NoInetConnectionException {
 		StringBuilder sb = new StringBuilder();
@@ -263,11 +264,12 @@ public class ManagerSincronizador implements CnstService {
 	}
 	
 	/**
-	 * 
+	 * ****************************************************************************************************************************
 	 * @param fechaDesde
 	 * @param fechaHasta
 	 * @return
 	 * @throws PresentacionException
+	 * ****************************************************************************************************************************
 	 */
 	public String sincronizarProductos(Fecha fechaDesde, Fecha fechaHasta) throws PresentacionException {
 		StringBuilder sb = new StringBuilder();
@@ -351,11 +353,16 @@ public class ManagerSincronizador implements CnstService {
 	}
 		
 	/**
-	 * 
+	 * ****************************************************************************************************************************
+	 * metodo para sincronizar los pedidos. genera logueos para presentacion y para system.out. Consta de 2 pasos, el primero es
+	 * ir a buscar los pedidos no SINC a la base web, y guardarlos en la base dsk. Luego se podrá modificar o generar la venta. Esto,
+	 * mediante el segundo paso de la sincronizacion, se reflejará en la base web, y el usuario podrá ver que se confirmó, ver que
+	 * se modificó o ver que se anuló
 	 * @param fechaDesde
 	 * @param fechaHasta
 	 * @return
 	 * @throws PresentacionException
+	 * ****************************************************************************************************************************
 	 */
 	public String sincronizarPedidos(Fecha fechaDesde, Fecha fechaHasta) throws PresentacionException {
 		StringBuilder sb = new StringBuilder();
@@ -406,9 +413,9 @@ public class ManagerSincronizador implements CnstService {
 			 * se realiza el envío de pedidos desde el dsk hacia la web
 			 * para esto, obtengo pedidos WEB en estado 'R' (revisados)
 			 */
-			List<Pedido> listaPedidosASinc = getInterfacePedido().obtenerListaPedido(EstadoPedido.R, null, Origen.W, fechaDesde, fechaHasta);
+			List<Pedido> listaPedidosASinc = getInterfacePedido().obtenerListaPedidoNoSincWeb(EstadoPedido.R, fechaDesde, fechaHasta);
 			if(listaPedidosASinc != null && !listaPedidosASinc.isEmpty()) {
-				sb.append("-Se proceden a sincronizar [" + listaPedidosASinc.size() + "] pedidos hacia el sistema WEB.");
+				sb.append("-Se proceden a sincronizar [" + listaPedidosASinc.size() + "] pedidos hacia el sistema WEB.").append(ESC);
 				ParamRecPedidosASinc paramRpas = ParserParamPedido.parseParamRecPedidosASinc(listaPedidosASinc);
 				ResultRecPedidosASinc resultRpas = iGestPed.recibirPedidosASinc(paramRpas);
 				if(resultRpas != null && (resultRpas.getErroresServ() == null || resultRpas.getErroresServ().isEmpty())) {
@@ -420,7 +427,9 @@ public class ManagerSincronizador implements CnstService {
 							Pedido pedSinc = getInterfacePedido().obtenerPedidoPorId(idPersona, fechaHora);
 							pedSinc.setSinc(Sinc.S);
 							pedSinc.setUltAct(ultAct);
-//							getInterfacePedido().m
+							getInterfacePedido().modificarSincUltActPedido(pedSinc);
+							sb.append("El pedido con el ID [" + idPersona + " | " + fechaHora.toString(Fecha.DMAHMS) + 
+										"] se ha sincronizado correctamente.").append(ESC);
 						} else {
 							ErrorServicio error = resultPas.getErrorServ();
 							sb.append("-El pedido sincronizado ha retornado error: " + error.getCodigo() 

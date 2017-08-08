@@ -15,6 +15,7 @@ import gpd.db.generic.GenSqlExecType;
 import gpd.db.generic.GenSqlSelectType;
 import gpd.dominio.pedido.EstadoPedido;
 import gpd.dominio.pedido.Pedido;
+import gpd.dominio.pedido.PedidoLinea;
 import gpd.dominio.util.Origen;
 import gpd.dominio.util.Sinc;
 import gpd.exceptions.ConectorException;
@@ -38,6 +39,7 @@ public class PersistenciaPedido extends Conector implements IPersPedido, CnstQry
 		PersistenciaPersona pp = new PersistenciaPersona();
 		PersistenciaUsuario pu = new PersistenciaUsuario();
 		PersistenciaTransaccion pt = new PersistenciaTransaccion();
+		PersistenciaPedidoLinea ppl = new PersistenciaPedidoLinea();
 		try {
 			GenSqlSelectType genType = new GenSqlSelectType(QRY_SELECT_PEDIDO_XID);
 			genType.setParam(idPersona);
@@ -79,6 +81,10 @@ public class PersistenciaPedido extends Conector implements IPersPedido, CnstQry
 				Sinc sinc = Sinc.getSincPorChar(sincChar[0]);
 				pedido.setSinc(sinc);
 				pedido.setUltAct(new Fecha(rs.getTimestamp("ult_act")));
+				//obtiene lista de lineas y asigna a pedido
+				List<PedidoLinea> listaLineas = ppl.obtenerListaPedidoLinea(pedido);
+				pedido.setListaPedidoLinea(listaLineas);
+				//
 			}
 		} catch (ConectorException | SQLException | IOException e) {
 			Conector.rollbackConn();
@@ -96,12 +102,14 @@ public class PersistenciaPedido extends Conector implements IPersPedido, CnstQry
 		PersistenciaPersona pp = new PersistenciaPersona();
 		PersistenciaUsuario pu = new PersistenciaUsuario();
 		PersistenciaTransaccion pt = new PersistenciaTransaccion();
+		PersistenciaPedidoLinea ppl = new PersistenciaPedidoLinea();
 		try {
 			GenSqlSelectType genType = new GenSqlSelectType(QRY_SELECT_PEDIDO);
 			genType.setParamEmptyAsNumber(idPersona);
 			genType.setParamEmptyAsNumber(idPersona);
-			genType.setParamCharIfNull(ep.getAsChar());
-			genType.setParam(origen.getAsChar());
+			genType.setParam(ep.getAsChar());
+			genType.setParamCharIfNull(origen != null ? origen.getAsChar() : null);
+			genType.setParamCharIfNull(origen != null ? origen.getAsChar() : null);
 			genType.setParam(fechaDesde);
 			genType.setParam(fechaHasta);
 			rs = (ResultSet) runGeneric(genType);
@@ -141,6 +149,67 @@ public class PersistenciaPedido extends Conector implements IPersPedido, CnstQry
 				Sinc sinc = Sinc.getSincPorChar(sincChar[0]);
 				pedido.setSinc(sinc);
 				pedido.setUltAct(new Fecha(rs.getTimestamp("ult_act")));
+				//obtiene lista de lineas y asigna a pedido
+				List<PedidoLinea> listaLineas = ppl.obtenerListaPedidoLinea(pedido);
+				pedido.setListaPedidoLinea(listaLineas);
+				//
+				listaPedido.add(pedido);
+			}
+		} catch (ConectorException | SQLException | IOException e) {
+			Conector.rollbackConn();
+			logger.fatal("Excepcion al obtenerListaTransaccionPorPersona: " + e.getMessage(), e);
+			throw new PersistenciaException(e);
+		} finally {
+			closeRs(rs);
+		}
+		return listaPedido;
+	}
+	
+	/**
+	 * metodo solamente para pedidos web, no levanta ni usuario ni transaccion!
+	 */
+	@Override
+	public List<Pedido> obtenerListaPedidoNoSincWeb(EstadoPedido ep, Fecha fechaDesde, Fecha fechaHasta) throws PersistenciaException {
+		List<Pedido> listaPedido = new ArrayList<>();
+		PersistenciaPersona pp = new PersistenciaPersona();
+		PersistenciaPedidoLinea ppl = new PersistenciaPedidoLinea();
+		try {
+			GenSqlSelectType genType = new GenSqlSelectType(QRY_SELECT_PEDIDO_NS_WEB);
+			genType.setParam(ep.getAsChar());
+			genType.setParam(fechaDesde);
+			genType.setParam(fechaHasta);
+			rs = (ResultSet) runGeneric(genType);
+			while(rs.next()) {
+				Pedido pedido = new Pedido();
+				pedido.setPersona(pp.obtenerPersGenerico(rs.getLong("id_persona")));
+				pedido.setFechaHora(new Fecha(rs.getTimestamp("fecha_hora")));
+				char[] estadoChar = new char[1];
+				rs.getCharacterStream("estado").read(estadoChar);
+				EstadoPedido estado = EstadoPedido.getEstadoPedidoPorChar(estadoChar[0]);
+				pedido.setEstado(estado);
+				Date fechaProg = rs.getDate("fecha_prog");
+				if(!rs.wasNull()) {
+					pedido.setFechaProg(new Fecha(fechaProg));
+				}
+				Time horaProg = rs.getTime("hora_prog");
+				if(!rs.wasNull()) {
+					pedido.setHoraProg(new Fecha(horaProg));
+				}
+				char[] origenChar = new char[1];
+				rs.getCharacterStream("origen").read(origenChar);
+				Origen origenPed = Origen.getOrigenPorChar(origenChar[0]);
+				pedido.setOrigen(origenPed);
+				pedido.setSubTotal(rs.getDouble("sub_total"));
+				pedido.setIva(rs.getDouble("iva"));
+				pedido.setTotal(rs.getDouble("total"));
+				char[] sincChar = new char[1];
+				rs.getCharacterStream("sinc").read(sincChar);
+				Sinc sinc = Sinc.getSincPorChar(sincChar[0]);
+				pedido.setSinc(sinc);
+				pedido.setUltAct(new Fecha(rs.getTimestamp("ult_act")));
+				//obtiene lista de lineas y asigna a pedido
+				List<PedidoLinea> listaLineas = ppl.obtenerListaPedidoLinea(pedido);
+				pedido.setListaPedidoLinea(listaLineas);
 				//
 				listaPedido.add(pedido);
 			}

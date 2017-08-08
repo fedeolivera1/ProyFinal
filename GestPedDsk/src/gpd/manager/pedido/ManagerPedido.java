@@ -65,12 +65,12 @@ public class ManagerPedido {
 		try {
 			Conector.getConn();
 			pedido = getInterfacePedido().obtenerPedidoPorId(idPersona, fechaHora);
-			if(pedido != null) {
-				List<PedidoLinea> listaPedidoLinea = getInterfacePedidoLinea().obtenerListaPedidoLinea(pedido);
-				if(listaPedidoLinea != null && !listaPedidoLinea.isEmpty()) {
-					pedido.setListaPedidoLinea(listaPedidoLinea);
-				}
-			}
+//			if(pedido != null) {
+//				List<PedidoLinea> listaPedidoLinea = getInterfacePedidoLinea().obtenerListaPedidoLinea(pedido);
+//				if(listaPedidoLinea != null && !listaPedidoLinea.isEmpty()) {
+//					pedido.setListaPedidoLinea(listaPedidoLinea);
+//				}
+//			}
 			Conector.closeConn("obtenerPedidoPorId");
 		} catch (PersistenciaException e) {
 			logger.fatal("Excepcion en ManagerTransaccion > obtenerPedidoPorId: " + e.getMessage(), e);
@@ -84,14 +84,14 @@ public class ManagerPedido {
 		try {
 			Conector.getConn();
 			listaPedido = getInterfacePedido().obtenerListaPedido(ep, idPersona, origen, fechaIni, fechaFin);
-			if(listaPedido != null && !listaPedido.isEmpty()) {
-				for(Pedido pedido : listaPedido) {
-					List<PedidoLinea> listaPedidoLinea = getInterfacePedidoLinea().obtenerListaPedidoLinea(pedido);
-					if(listaPedidoLinea != null && !listaPedidoLinea.isEmpty()) {
-						pedido.setListaPedidoLinea(listaPedidoLinea);
-					}
-				}
-			}
+//			if(listaPedido != null && !listaPedido.isEmpty()) {
+//				for(Pedido pedido : listaPedido) {
+//					List<PedidoLinea> listaPedidoLinea = getInterfacePedidoLinea().obtenerListaPedidoLinea(pedido);
+//					if(listaPedidoLinea != null && !listaPedidoLinea.isEmpty()) {
+//						pedido.setListaPedidoLinea(listaPedidoLinea);
+//					}
+//				}
+//			}
 			Conector.closeConn("obtenerListaPedidoPorPeriodo");
 		} catch (PersistenciaException e) {
 			logger.fatal("Excepcion en ManagerTransaccion > obtenerListaPedidoPorPeriodo: " + e.getMessage(), e);
@@ -193,10 +193,11 @@ public class ManagerPedido {
 				transac.setFechaHora(new Fecha(Fecha.AMDHMS));
 				getInterfaceTransaccion().guardarTranEstado(transac);
 				Conector.closeConn("actualizarPedido - venta");
-			} else if(pedido.getEstado().equals(EstadoPedido.P) && estadoPedido.equals(EstadoPedido.P)) {
+			} else if( (pedido.getEstado().equals(EstadoPedido.P) || pedido.getEstado().equals(EstadoPedido.R)) && estadoPedido.equals(EstadoPedido.R) ) {
 				Conector.getConn();
 				logger.info("<< Ingresa actualizacion de pedidos >> estado actual: " + pedido.getEstado().getEstadoPedido() + 
 						" - estado actualiza: " + estadoPedido.getEstadoPedido() + " [actualizacion de lineas de pedido en estado C]");
+				pedido.setEstado(EstadoPedido.R);
 				Double subTotal = new Double(0);
 				Double ivaTotal = new Double(0);
 				Double total = new Double(0);
@@ -211,6 +212,10 @@ public class ManagerPedido {
 				pedido.setSubTotal(subTotal);
 				pedido.setIva(ivaTotal);
 				pedido.setTotal(total);
+				//si es web lo marco como no sinc para que sea enviado en la sincronizacion
+				if(pedido.getOrigen().equals(Origen.W)) {
+					pedido.setSinc(Sinc.N);
+				}
 				getInterfacePedido().modificarPedido(pedido);
 				//* elimino lista de lineas de pedido
 				getInterfacePedidoLinea().eliminarListaPedidoLinea(pedido);
