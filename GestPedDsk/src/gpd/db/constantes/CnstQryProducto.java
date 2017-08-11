@@ -3,7 +3,7 @@ package gpd.db.constantes;
 public interface CnstQryProducto {
 
 	public static final String QRY_SEARCH_PROD = "SELECT p.id_producto, p.id_tipo_prod, p.codigo, p.nombre, p.descripcion, p.stock_min, "
-													+ "p.precio, p.apl_iva, p.id_unidad, p.cant_unidad, p.sinc, p.ult_act, activo "
+													+ "p.precio, p.apl_iva, p.id_unidad, p.cant_unidad, p.sinc, p.ult_act, p.activo "
 													+ "FROM producto p INNER JOIN tipo_prod tp "
 													+ "ON p.id_tipo_prod = tp.id_tipo_prod "
 													+ "WHERE (p.id_tipo_prod = ? OR -1 = ?) "
