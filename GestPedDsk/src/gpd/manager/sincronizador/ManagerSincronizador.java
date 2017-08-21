@@ -284,7 +284,11 @@ public class ManagerSincronizador implements CnstService {
 			logger.info(">> GPD >> Prueba WS: " + iGestPed.servicioFuncional());
 			
 			Conector.getConn();
+			/*
+			 * se obtienen productos a sicronizar
+			 */
 			List<Producto> listaProdNoSinc = getInterfaceProducto().obtenerListaProductoNoSinc(fechaDesde, fechaHasta);
+
 			if(listaProdNoSinc != null && !listaProdNoSinc.isEmpty()) {
 				sb.append("Se retornan " + listaProdNoSinc.size() + " productos a sincronizar...").append(ESC);
 				ParamRecProductosASinc param = ParserParamProducto.parseParamRecProductosASinc(listaProdNoSinc);
@@ -456,13 +460,4 @@ public class ManagerSincronizador implements CnstService {
 		return sb.toString();
 	}
 	
-	/**
-	 * 
-	 * @param listaPedido
-	 * @return
-	 * @throws PresentacionException
-	 */
-//	public String sincronizarPedidosHaciaWeb(List<Pedido> listaPedido) throws PresentacionException {
-//		return null;
-//	}
 }

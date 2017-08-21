@@ -604,7 +604,7 @@ public class ManagerProducto {
 	
 	/**
 	 * metodo que recibe un producto (el cual será seleccionado en presentacion), y va a obtener los lotes
-	 * que tengan stock y que cumplan con la condicion de el vencimiento (defierencia de dias seteado
+	 * que tengan stock y que cumplan con la condicion de el vencimiento (diferencia de dias seteado
 	 * en config.properties). Para cada uno, se calculará el stock total y se obtendrá el precio de compra 
 	 * mas alto (para casos remotos de diferencia de precios entre compras).
 	 * >> metodo de precio: se aplicará sobre el precio del producto, el porcentaje de utilidad de ganancia, y sobre este calculo, se

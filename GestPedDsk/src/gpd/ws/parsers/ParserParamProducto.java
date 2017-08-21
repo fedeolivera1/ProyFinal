@@ -5,11 +5,13 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import gpd.dominio.helper.HlpProducto;
 import gpd.dominio.producto.Producto;
 import gpd.dominio.producto.TipoProd;
 import gpd.dominio.producto.Unidad;
 import gpd.dominio.util.Sinc;
 import gpd.exceptions.ParsersException;
+import gpd.manager.producto.ManagerProducto;
 import gpd.types.Fecha;
 import gpw.webservice.proxy.ParamProductoASinc;
 import gpw.webservice.proxy.ParamRecProductosASinc;
@@ -59,11 +61,16 @@ public class ParserParamProducto {
 					paramProdASinc.setCodigo(prod.getCodigo());
 					paramProdASinc.setNombre(prod.getNombre());
 					paramProdASinc.setDescripcion(prod.getDescripcion());
-					paramProdASinc.setStockMin(prod.getStockMin());
 					paramProdASinc.setUnidad(uni.getIdUnidad());
 					paramProdASinc.setCantUnidad(prod.getCantUnidad());
 					paramProdASinc.setAplIva(prod.getAplIva().getAplIvaDesc());
-					paramProdASinc.setPrecio(prod.getPrecio());
+					/*
+					 * obtengo el precio actual de venta para el producto, ya que al web
+					 * le paso directamente el precio de venta.
+					 */
+					ManagerProducto mgrProd = new ManagerProducto();
+					HlpProducto hlpProd = mgrProd.obtenerStockPrecioLotePorProductoNoConn(prod.getIdProducto());
+					paramProdASinc.setPrecioVta(hlpProd != null ? hlpProd.getPrecioVta() : new Double(0));
 					paramProdASinc.setSinc(prod.getSinc().getSinc());
 					paramProdASinc.setUltAct(prod.getUltAct().getAsXMLGregorianCalendar(Fecha.AMDHMS));
 					paramProdASinc.setEstadoProd(prod.getEstadoProd().getAsInt());
