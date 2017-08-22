@@ -31,6 +31,7 @@ public class CtrlFrmSinc extends CtrlGenerico implements CnstPresGeneric {
 				Fecha fechaIni = new Fecha(dchFechaIni.getDate());
 				Fecha fechaFin = new Fecha(dchFechaFin.getDate());
 				if(controlFechas(fechaIni, fechaFin)) {
+					getFrm().getTxtSincInfo().setText(CtrlGenerico.STR_VACIO);
 					String strResultSinc = mgrSinc.sincronizarPersonas(fechaIni, fechaFin);
 					getFrm().getTxtSincInfo().setText(strResultSinc);
 				}
@@ -52,6 +53,7 @@ public class CtrlFrmSinc extends CtrlGenerico implements CnstPresGeneric {
 				Fecha fechaIni = new Fecha(dchFechaIni.getDate());
 				Fecha fechaFin = new Fecha(dchFechaFin.getDate());
 				if(controlFechas(fechaIni, fechaFin)) {
+					getFrm().getTxtSincInfo().setText(CtrlGenerico.STR_VACIO);
 					String strResultSinc = mgrSinc.sincronizarProductos(fechaIni, fechaFin);
 					getFrm().getTxtSincInfo().setText(strResultSinc);
 				}
@@ -73,6 +75,7 @@ public class CtrlFrmSinc extends CtrlGenerico implements CnstPresGeneric {
 				Fecha fechaIni = new Fecha(dchFechaIni.getDate());
 				Fecha fechaFin = new Fecha(dchFechaFin.getDate());
 				if(controlFechas(fechaIni, fechaFin)) {
+					getFrm().getTxtSincInfo().setText(CtrlGenerico.STR_VACIO);
 					String strResultSinc = mgrSinc.sincronizarPedidos(fechaIni, fechaFin);
 					getFrm().getTxtSincInfo().setText(strResultSinc);
 				}

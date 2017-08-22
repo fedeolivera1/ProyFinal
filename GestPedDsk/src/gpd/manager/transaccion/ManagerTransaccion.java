@@ -84,7 +84,7 @@ public class ManagerTransaccion {
 					//convierto numero divisor para el iva
 					Float ivaProdDivisor = Converters.convertirPorcAMult(ivaAplicaProd);
 					//calcula iva SUSTRAIDO del precio del producto
-					Double ivaProd = (ivaProdDivisor != 0 ? (prod.getPrecio() - (prod.getPrecio() / ivaProdDivisor)) : prod.getPrecio());
+					Double ivaProd = (ivaProdDivisor != 0 ? (Converters.obtenerIvaDePrecio(prod.getPrecio(), ivaProdDivisor)) : new Double(0));
 					ivaProd = Converters.redondearDosDec(ivaProd);
 					//setea a la linea de transaccion el iva correspondiente al producto
 					tl.setIva(ivaProd);
