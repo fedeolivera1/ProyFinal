@@ -675,13 +675,16 @@ public class ManagerProducto {
 	 */
 	public HlpProducto obtenerStockPrecioLotePorProductoNoConn(Connection conn, Integer idProducto) throws PresentacionException {
 		logger.info("Se ingresa a obtenerStockPrecioLotePorProductoNoConn");
-		HlpProducto hlpProd = null;
+		HlpProducto hlpProd = new HlpProducto();
 		try {
 			ConfigDriver cfgDrv = ConfigDriver.getConfigDriver();
 			Integer diasParaVenc = Integer.valueOf(cfgDrv.getDiasParaVenc());
 			List<Lote> listaLote = getInterfaceLote().obtenerListaLotePorProd(conn, idProducto, diasParaVenc);
 			Double precioFinal = new Double(0);
 			Long stock = new Long(0);
+			hlpProd.setIdProducto(idProducto);
+			hlpProd.setPrecioVta(precioFinal);
+			hlpProd.setStock(stock);
 			if(listaLote != null && !listaLote.isEmpty()) {
 				for(Lote lote : listaLote) {
 					Producto prod = lote.getTranLinea().getProducto();
@@ -697,7 +700,6 @@ public class ManagerProducto {
 						precioFinal = precioConUtil;
 					}
 				}
-				hlpProd = new HlpProducto();
 				hlpProd.setIdProducto(idProducto);
 				hlpProd.setStock(stock);
 				hlpProd.setPrecioVta(precioFinal);

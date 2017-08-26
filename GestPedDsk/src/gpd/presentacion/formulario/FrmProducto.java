@@ -57,6 +57,7 @@ public class FrmProducto extends JFrame {
 	private JTextField txtProNom;
 	private JTextField txtProDesc;
 	private JFormattedTextField ftxtProStockMin;
+	private JFormattedTextField ftxtProStockAct;
 	private JFormattedTextField ftxtProPrecio;
 	private JFormattedTextField ftxtProPres;
 	private JComboBox<TipoProd> cbxTipoProd;
@@ -175,6 +176,11 @@ public class FrmProducto extends JFrame {
 		label_4.setHorizontalAlignment(SwingConstants.RIGHT);
 		label_4.setBounds(10, 160, 59, 14);
 		tpProd.add(label_4);
+		
+		ftxtProStockAct = new JFormattedTextField();
+		ftxtProStockAct.setEditable(false);
+		ftxtProStockAct.setBounds(194, 157, 65, 20);
+		tpProd.add(ftxtProStockAct);
 		
 		ftxtProStockMin = new JFormattedTextField();
 		ftxtProStockMin.setBounds(72, 157, 65, 20);
@@ -398,6 +404,7 @@ public class FrmProducto extends JFrame {
 		JButton btnUniAgregar = new JButton("...");
 		btnUniAgregar.setBounds(279, 184, 32, 23);
 		tpProd.add(btnUniAgregar);
+		
 		ctrlProd.cargarCbxDep(cbxLoteDep);
 		ctrlProd.cargarCbxUtil(cbxLoteUtil);
 		ctrlProd.cargarCbxFiltroLote(cbxFiltroLote);
@@ -701,5 +708,12 @@ public class FrmProducto extends JFrame {
 	}
 	public void setScrollPaneProd(JScrollPane scrollPaneProd) {
 		this.scrollPaneProd = scrollPaneProd;
+	}
+
+	public JFormattedTextField getFtxtProStockAct() {
+		return ftxtProStockAct;
+	}
+	public void setFtxtProStockAct(JFormattedTextField ftxtProStockAct) {
+		this.ftxtProStockAct = ftxtProStockAct;
 	}
 }

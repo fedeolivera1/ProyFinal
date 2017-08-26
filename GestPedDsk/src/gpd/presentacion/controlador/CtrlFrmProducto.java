@@ -1,7 +1,9 @@
 package gpd.presentacion.controlador;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -21,6 +23,7 @@ import javax.swing.table.DefaultTableModel;
 
 import com.toedter.calendar.JDateChooser;
 
+import gpd.dominio.helper.HlpProducto;
 import gpd.dominio.producto.AplicaIva;
 import gpd.dominio.producto.Deposito;
 import gpd.dominio.producto.Lote;
@@ -359,6 +362,15 @@ public class CtrlFrmProducto extends CtrlGenerico implements CnstPresGeneric {
 			cbModelAi.setSelectedItem(prod.getAplIva());
 			frmProd.getCbxProAplIva().setSelectedItem(cbModelAi.getSelectedItem());
 			frmProd.getFtxtProPrecio().setText(String.valueOf(prod.getPrecio()));
+			//consulto manager para obtener stock actual
+			ManagerProducto mgrProd = new ManagerProducto();
+			HlpProducto hlpProd = mgrProd.obtenerStockPrecioLotePorProducto(prod.getIdProducto());
+			if(hlpProd.getStock().doubleValue() < prod.getStockMin().doubleValue()) {
+				frmProd.getFtxtProStockAct().setForeground(Color.RED);
+			} else {
+				frmProd.getFtxtProStockAct().setForeground(Color.BLACK);
+			}
+			frmProd.getFtxtProStockAct().setText(String.valueOf(hlpProd.getStock()));
 		} catch(Exception e) {
 			manejarExcepcion(e);
 		}
