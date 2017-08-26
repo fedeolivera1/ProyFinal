@@ -408,7 +408,12 @@ public class ManagerSincronizador implements CnstService {
 				Fecha ultAct = new Fecha(Fecha.AMDHMS);
 				if(listaPedidosNoSinc != null && !listaPedidosNoSinc.isEmpty()) {
 					for(Pedido pedido : listaPedidosNoSinc) {
+						/*
+						 * se marca el pedido como sincronizado ya que hasta que no sea modificado, este no volverá a viajar 
+						 * por el servico con cambios. 
+						 */
 						pedido.setUltAct(ultAct);
+						pedido.setSinc(Sinc.S);
 						if(getInterfacePedido().checkExistPedido(conn, pedido)) {
 							getInterfacePedido().modificarPedido(conn, pedido);
 							getInterfacePedidoLinea().eliminarListaPedidoLinea(conn, pedido);
@@ -434,7 +439,7 @@ public class ManagerSincronizador implements CnstService {
 			 * se realiza el envío de pedidos desde el dsk hacia la web
 			 * para esto, obtengo pedidos WEB en estado 'R' (revisados) o 'C' (confirmados)
 			 */
-			List<Pedido> listaPedidosASinc = getInterfacePedido().obtenerListaPedidoNoSincWeb(conn, EstadoPedido.R, fechaDesde, fechaHasta);
+			List<Pedido> listaPedidosASinc = getInterfacePedido().obtenerListaPedidoNoSincWeb(conn, fechaDesde, fechaHasta);
 			if(listaPedidosASinc != null && !listaPedidosASinc.isEmpty()) {
 				sb.append("-Se proceden a sincronizar [" + listaPedidosASinc.size() + "] pedidos hacia el sistema WEB.").append(ESC);
 				ParamRecPedidosASinc paramRpas = ParserParamPedido.parseParamRecPedidosASinc(listaPedidosASinc);

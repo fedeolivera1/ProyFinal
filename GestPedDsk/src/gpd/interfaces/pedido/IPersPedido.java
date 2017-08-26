@@ -13,7 +13,7 @@ public interface IPersPedido {
 
 	public Pedido obtenerPedidoPorId(Connection conn, Long idPersona, Fecha fechaHora) throws PersistenciaException;
 	public List<Pedido> obtenerListaPedido(Connection conn, EstadoPedido ep, Long idPersona, Origen origen, Fecha fechaDesde, Fecha fechaHasta) throws PersistenciaException;
-	public List<Pedido> obtenerListaPedidoNoSincWeb(Connection conn, EstadoPedido ep, Fecha fechaDesde, Fecha fechaHasta) throws PersistenciaException;
+	public List<Pedido> obtenerListaPedidoNoSincWeb(Connection conn, Fecha fechaDesde, Fecha fechaHasta) throws PersistenciaException;
 	public Integer guardarPedido(Connection conn, Pedido pedido) throws PersistenciaException;
 	public Integer modificarPedido(Connection conn, Pedido pedido) throws PersistenciaException;
 	public Integer eliminarPedido(Connection conn, Pedido pedido) throws PersistenciaException;

@@ -21,7 +21,8 @@ ON pd.id_persona = pf.documento
 LEFT OUTER JOIN pers_juridica pj
 ON pd.id_persona = pj.rut
 WHERE (p.id_persona = $P{id_persona} OR -1 = $P{id_persona})
-AND pd.estado = 'P' OR pd.estado = 'R']]>
+AND pd.estado IN ('P', 'R', 'C')
+AND pd.fecha_hora::date BETWEEN $P{fecha_ini} AND $P{fecha_fin}]]>
 	</queryString>
 	<field name="id_persona" class="java.lang.Long"/>
 	<field name="fecha_hora" class="java.sql.Timestamp"/>
@@ -193,8 +194,7 @@ AND pd.estado = 'P' OR pd.estado = 'R']]>
 				<textElement>
 					<font fontName="Arial"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($F{hora_prog} != null ? new SimpleDateFormat("HH:mm").format($F{hora_prog}) : "")
-]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{hora_prog} != null ? new SimpleDateFormat("HH:mm").format($F{hora_prog}) : "")]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="497" y="1" width="58" height="20" uuid="e9ae9dc3-ac0a-460e-bacd-3b3eed3cbe27"/>

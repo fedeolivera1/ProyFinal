@@ -175,13 +175,12 @@ public class PersistenciaPedido extends Conector implements IPersPedido, CnstQry
 	 * metodo solamente para pedidos web, no levanta ni usuario ni transaccion!
 	 */
 	@Override
-	public List<Pedido> obtenerListaPedidoNoSincWeb(Connection conn, EstadoPedido ep, Fecha fechaDesde, Fecha fechaHasta) throws PersistenciaException {
+	public List<Pedido> obtenerListaPedidoNoSincWeb(Connection conn, Fecha fechaDesde, Fecha fechaHasta) throws PersistenciaException {
 		List<Pedido> listaPedido = new ArrayList<>();
 		PersistenciaPersona pp = new PersistenciaPersona();
 		PersistenciaPedidoLinea ppl = new PersistenciaPedidoLinea();
 		try {
 			GenSqlSelectType genSel = new GenSqlSelectType(QRY_SELECT_PEDIDO_NS_WEB);
-			genSel.setParam(ep.getAsChar());
 			genSel.setParam(fechaDesde);
 			genSel.setParam(fechaHasta);
 			try (ResultSet rs = (ResultSet) runGeneric(conn, genSel)) {
