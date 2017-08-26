@@ -1,5 +1,7 @@
 package gpd.manager.pedido;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,17 +64,17 @@ public class ManagerPedido {
 	
 	public Pedido obtenerPedidoPorId(Long idPersona, Fecha fechaHora) throws PresentacionException {
 		Pedido pedido = null;
-		try {
+		try (Connection conn = Conector.getConn()) {
 			Conector.getConn();
-			pedido = getInterfacePedido().obtenerPedidoPorId(idPersona, fechaHora);
+			pedido = getInterfacePedido().obtenerPedidoPorId(conn, idPersona, fechaHora);
 //			if(pedido != null) {
 //				List<PedidoLinea> listaPedidoLinea = getInterfacePedidoLinea().obtenerListaPedidoLinea(pedido);
 //				if(listaPedidoLinea != null && !listaPedidoLinea.isEmpty()) {
 //					pedido.setListaPedidoLinea(listaPedidoLinea);
 //				}
 //			}
-			Conector.closeConn("obtenerPedidoPorId");
-		} catch (PersistenciaException e) {
+			Conector.commitConn(conn);
+		} catch (PersistenciaException | SQLException e) {
 			logger.fatal("Excepcion en ManagerTransaccion > obtenerPedidoPorId: " + e.getMessage(), e);
 			throw new PresentacionException(e);
 		}
@@ -81,9 +83,9 @@ public class ManagerPedido {
 	
 	public List<Pedido> obtenerListaPedidoPorPeriodo(EstadoPedido ep, Long idPersona, Origen origen, Fecha fechaIni, Fecha fechaFin) throws PresentacionException {
 		List<Pedido> listaPedido = null;
-		try {
+		try (Connection conn = Conector.getConn()) {
 			Conector.getConn();
-			listaPedido = getInterfacePedido().obtenerListaPedido(ep, idPersona, origen, fechaIni, fechaFin);
+			listaPedido = getInterfacePedido().obtenerListaPedido(conn, ep, idPersona, origen, fechaIni, fechaFin);
 //			if(listaPedido != null && !listaPedido.isEmpty()) {
 //				for(Pedido pedido : listaPedido) {
 //					List<PedidoLinea> listaPedidoLinea = getInterfacePedidoLinea().obtenerListaPedidoLinea(pedido);
@@ -92,8 +94,8 @@ public class ManagerPedido {
 //					}
 //				}
 //			}
-			Conector.closeConn("obtenerListaPedidoPorPeriodo");
-		} catch (PersistenciaException e) {
+			Conector.commitConn(conn);
+		} catch (PersistenciaException | SQLException e) {
 			logger.fatal("Excepcion en ManagerTransaccion > obtenerListaPedidoPorPeriodo: " + e.getMessage(), e);
 			throw new PresentacionException(e);
 		}
@@ -101,7 +103,7 @@ public class ManagerPedido {
 	}
 	
 	public Integer generarNuevoPedido(Pedido pedido) throws PresentacionException {
-		try {
+		try (Connection conn = Conector.getConn()) {
 			if(pedido != null && pedido.getListaPedidoLinea() != null &&
 					!pedido.getListaPedidoLinea().isEmpty()) {
 				//se genera nueva transaccion de VENTA con estado P
@@ -146,14 +148,14 @@ public class ManagerPedido {
 				pedido.setUltAct(ultAct);
 				transac.setListaTranLinea(listaTransacLinea);
 				//generar trnsaccion de venta
-				mgrTransac.generarTransaccionVenta(transac);
+				mgrTransac.generarTransaccionVenta(conn, transac);
 				//persisto el pedido en base
-				getInterfacePedido().guardarPedido(pedido);
+				getInterfacePedido().guardarPedido(conn, pedido);
 				//persisto lineas de pedido en base
-				getInterfacePedidoLinea().guardarListaPedidoLinea(pedido.getListaPedidoLinea());
+				getInterfacePedidoLinea().guardarListaPedidoLinea(conn, pedido.getListaPedidoLinea());
 			}
-			Conector.closeConn("generarNuevoPedido");
-		} catch (PersistenciaException e) {
+			Conector.commitConn(conn);
+		} catch (PersistenciaException | SQLException e) {
 			logger.fatal("Excepcion en ManagerTransaccion > generarNuevoPedido: " + e.getMessage(), e);
 			throw new PresentacionException(e);
 		}
@@ -170,7 +172,7 @@ public class ManagerPedido {
 	 * @throws ProductoSinStockException
 	 */
 	public Integer actualizarPedido(Pedido pedido, EstadoPedido estadoPedido) throws PresentacionException, ProductoSinStockException {
-		try {
+		try (Connection conn = Conector.getConn()) {
 			if(pedido.getEstado().equals(EstadoPedido.P) && estadoPedido.equals(EstadoPedido.C)) {
 				logger.info("<< Ingresa actualizacion de pedidos >> estado actual: " + pedido.getEstado().getEstadoPedido() + 
 						" - estado actualiza: " + estadoPedido.getEstadoPedido() + " [actualizacion a venta]");
@@ -183,18 +185,17 @@ public class ManagerPedido {
 				 */
 				Transaccion transac = pedido.getTransaccion();
 				for(PedidoLinea pl : pedido.getListaPedidoLinea()) {
-					mgrProd.manejarStockLotePorProductoNoConn(transac.getNroTransac(), pl.getProducto().getIdProducto(), pl.getCantidad());
+					mgrProd.manejarStockLotePorProductoNoConn(conn, transac.getNroTransac(), pl.getProducto().getIdProducto(), pl.getCantidad());
 				}
-				getInterfacePedido().modificarPedido(pedido);
+				getInterfacePedido().modificarPedido(conn, pedido);
 				//* modifico estado de transaccion a confirmado (seteo aca mismo el estado tran a C)
 				transac.setEstadoTran(EstadoTran.C);
-				getInterfaceTransaccion().modificarEstadoTransaccion(transac);
+				getInterfaceTransaccion().modificarEstadoTransaccion(conn, transac);
 				//* guardo nuevo estado en tabla de estados (seteo fecha-hora temporalmente para estado_tran)
 				transac.setFechaHora(new Fecha(Fecha.AMDHMS));
-				getInterfaceTransaccion().guardarTranEstado(transac);
-				Conector.closeConn("actualizarPedido - venta");
+				getInterfaceTransaccion().guardarTranEstado(conn, transac);
+				Conector.commitConn(conn);
 			} else if( (pedido.getEstado().equals(EstadoPedido.P) || pedido.getEstado().equals(EstadoPedido.R)) && estadoPedido.equals(EstadoPedido.R) ) {
-				Conector.getConn();
 				logger.info("<< Ingresa actualizacion de pedidos >> estado actual: " + pedido.getEstado().getEstadoPedido() + 
 						" - estado actualiza: " + estadoPedido.getEstadoPedido() + " [actualizacion de lineas de pedido en estado C]");
 				pedido.setEstado(EstadoPedido.R);
@@ -216,12 +217,12 @@ public class ManagerPedido {
 				if(pedido.getOrigen().equals(Origen.W)) {
 					pedido.setSinc(Sinc.N);
 				}
-				getInterfacePedido().modificarPedido(pedido);
+				getInterfacePedido().modificarPedido(conn, pedido);
 				//* elimino lista de lineas de pedido
-				getInterfacePedidoLinea().eliminarListaPedidoLinea(pedido);
+				getInterfacePedidoLinea().eliminarListaPedidoLinea(conn, pedido);
 				//* agrego nueva lista de lineas de pedido
-				getInterfacePedidoLinea().guardarListaPedidoLinea(pedido.getListaPedidoLinea());
-				Conector.closeConn("actualizarPedido - actualizacion");
+				getInterfacePedidoLinea().guardarListaPedidoLinea(conn, pedido.getListaPedidoLinea());
+				Conector.commitConn(conn);
 			} else {
 				throw new PresentacionException("actualizaPedido mal implementado!!!");
 			}
@@ -241,17 +242,16 @@ public class ManagerPedido {
 	
 	public Pedido obtenerPedidoLinPorId(Long idPersona, Fecha fechaHora, Integer idProducto) throws PresentacionException {
 		Pedido pedido = null;
-		try {
-			Conector.getConn();
-			pedido = getInterfacePedido().obtenerPedidoPorId(idPersona, fechaHora);
+		try (Connection conn = Conector.getConn()) {
+			pedido = getInterfacePedido().obtenerPedidoPorId(conn, idPersona, fechaHora);
 			if(pedido != null) {
-				List<PedidoLinea> listaPedidoLinea = getInterfacePedidoLinea().obtenerListaPedidoLinea(pedido);
+				List<PedidoLinea> listaPedidoLinea = getInterfacePedidoLinea().obtenerListaPedidoLinea(conn, pedido);
 				if(listaPedidoLinea != null && !listaPedidoLinea.isEmpty()) {
 					pedido.setListaPedidoLinea(listaPedidoLinea);
 				}
 			}
-			Conector.closeConn("obtenerPedidoPorId");
-		} catch (PersistenciaException e) {
+			Conector.commitConn(conn);
+		} catch (PersistenciaException | SQLException e) {
 			logger.fatal("Excepcion en ManagerTransaccion > obtenerPedidoPorId: " + e.getMessage(), e);
 			throw new PresentacionException(e);
 		}

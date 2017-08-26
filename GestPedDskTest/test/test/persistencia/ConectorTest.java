@@ -1,5 +1,6 @@
 package test.persistencia;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -24,7 +25,7 @@ public class ConectorTest extends Conector {
 	public void testSelectGeneric() {
 		ConfigDriver cfg = new ConfigDriver();
 		cfg.logConfig();
-		Conector.getConn();
+		Connection conn = Conector.getConn();
 //		HashMap<Integer, Object> hashDatos = new HashMap<>();
 //		hashDatos.put(new Integer(1), 1);
 //		hashDatos.put(new Integer(2), "desc");
@@ -35,29 +36,27 @@ public class ConectorTest extends Conector {
 //		GenSqlSelectType genSelect = new GenSqlSelectType(statement, hashDatos);
 		ResultSet rs = null;
 		try {
-			rs = Conector.selectGeneric(genSelect);
-			// TODO Auto-generated catch block
+			rs = Conector.selectGeneric(conn, genSelect);
 			while(rs.next()) {
 				System.out.println("id: " + rs.getInt(1) + " descripcion: " + rs.getString(2));
 			}
+			rs.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} catch (ConectorException e1) {
 			e1.printStackTrace();
-		} finally {
-			Conector.closeConn("testSelectGeneric");
 		}
 	}
 	
 	@Test
 	public void testRunGeneric1() {
-		Conector.getConn();
+		Connection conn = Conector.getConn();
 //		String statement = "select * from PRUEBA p where p.CODIGO=?";
 		String statement = "select * from PRUEBA p";
 		GenSqlSelectType genSelect = new GenSqlSelectType(statement);
 //		genSelect.getSelectDatosCond().put(1, 4);
 		try {
-			ResultSet rs = (ResultSet) Conector.runGeneric(genSelect);
+			ResultSet rs = (ResultSet) Conector.runGeneric(conn, genSelect);
 			while(rs.next()) {
 				System.out.println("id: " + rs.getInt(1) + " descripcion: " + rs.getString(2) + " numero: " + rs.getFloat(3));
 			}
@@ -70,14 +69,14 @@ public class ConectorTest extends Conector {
 	
 	@Test
 	public void testRunGeneric2() {
-		Conector.getConn();
+		Connection conn = Conector.getConn();
 		String statement = "insert into PRUEBA (CODIGO, DESCRIPCION, NUMERO) values (?,?,?)";
 		GenSqlExecType genExec = new GenSqlExecType(statement);
 		genExec.getExecuteDatosCond().put(1, 4);
 		genExec.getExecuteDatosCond().put(2, "xyz");
 		genExec.getExecuteDatosCond().put(3, 0);
 		try {
-			Integer rs = (Integer) Conector.runGeneric(genExec);
+			Integer rs = (Integer) Conector.runGeneric(conn, genExec);
 			System.out.println("nro: " + rs);
 			
 		} catch (ConectorException e) {
@@ -88,7 +87,7 @@ public class ConectorTest extends Conector {
 	@Test
 	@After
 	public void testExecuteNonQuery() {
-		Conector.getConn();
+		Connection conn = Conector.getConn();
 		String statement = "insert into PRUEBA (CODIGO, DESCRIPCION, NUMERO) values (?,?,?)";
 //		HashMap<Integer, Object> hashDatos = new HashMap<>();
 //		hashDatos.put(new Integer(1), 10);
@@ -101,7 +100,7 @@ public class ConectorTest extends Conector {
 		genExec.getExecuteDatosCond().put(3, null);
 		Integer resultado = 0;
 		try {
-			resultado = Conector.executeNonQuery(genExec);
+			resultado = Conector.executeNonQuery(conn, genExec);
 		} catch (ConectorException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -114,18 +113,18 @@ public class ConectorTest extends Conector {
 		genExec.getExecuteDatosCond().put(2, "");
 		genExec.getExecuteDatosCond().put(3, null);
 		try {
-			resultado = Conector.executeNonQuery(genExec);
+			resultado = Conector.executeNonQuery(conn, genExec);
 		} catch (ConectorException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Conector.closeConn("testExecuteNonQuery");
+		Conector.commitConn(conn);
 	}
 	
 	@Test
 	@After
 	public void testExecuteNonQueryLista() {
-		Conector.getConn();
+		Connection conn = Conector.getConn();
 		String statement = "insert into PRUEBA (CODIGO, DESCRIPCION, NUMERO) values (?,?,?)";
 		GenSqlExecType genExec = new GenSqlExecType(statement);
 		HashMap<Integer, Object> hashDatos = new HashMap<>();
@@ -141,19 +140,13 @@ public class ConectorTest extends Conector {
 
 		Integer resultado = 0;
 		try {
-			resultado = Conector.executeNonQueryList(genExec);
+			resultado = Conector.executeNonQueryList(conn, genExec);
 		} catch (ConectorException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		System.out.println("cantidad ejecutados: " + resultado);
-		Conector.closeConn("testExecuteNonQueryLista");
+		Conector.commitConn(conn);
 	}
 	
-	
-	@Test
-	public void testCloseConnection() {
-		Conector.closeConn("testExecuteNonQueryLista");
-	}
 
 }

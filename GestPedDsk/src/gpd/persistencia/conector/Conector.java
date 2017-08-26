@@ -19,24 +19,24 @@ import gpd.util.ConfigDriver;
 public abstract class Conector {
 	
 	private static final Logger logger = Logger.getLogger(Conector.class);
-	protected static Connection conn = null;
 	
 	protected static final Character EMPTY_CHAR = ' ';
 	protected static final Character S_CHAR = 'S';
 	protected static final Character N_CHAR = 'N';
 
+	
+	
 	/**
 	 * obtiene la conexion con info de la base de datos
 	 */
-	public static void getConn() {
+	public static Connection getConn() {
+		Connection conn = null;
 		try {
-			if(conn == null || conn.isClosed()) {
-				ConfigDriver cfgDrv = ConfigDriver.getConfigDriver();
-				Class.forName(cfgDrv.getDbDriver());
-				conn = DriverManager.getConnection(cfgDrv.getDbUrl()+cfgDrv.getDbName(), cfgDrv.getDbUser(), cfgDrv.getDbPass());
-				conn.setAutoCommit(false);
-				logger.debug("Se abre conexion db... Thread: " + Thread.currentThread().getId());
-			}
+			ConfigDriver cfgDrv = ConfigDriver.getConfigDriver();
+			Class.forName(cfgDrv.getDbDriver());
+			conn = DriverManager.getConnection(cfgDrv.getDbUrl()+cfgDrv.getDbName(), cfgDrv.getDbUser(), cfgDrv.getDbPass());
+			conn.setAutoCommit(false);
+			logger.debug("Se abre conexion db... Thread: " + Thread.currentThread().getId());
 		} catch (SQLException | ClassNotFoundException e) {
 			try {
 				conn.rollback();
@@ -44,13 +44,14 @@ public abstract class Conector {
 				logger.error("Error al hacer rollback: " + e.getMessage(), e);
 			}
 			logger.fatal("Error al conectar a la base de datos: " + e.getMessage(), e);
-		    System.err.println(e.getClass().getName()+": "+e.getMessage());
+		    System.err.println(e.getClass().getName() + ": " + e.getMessage());
 		} catch (Exception e) {
 			logger.fatal("Error excepcion generica: " + e.getMessage(), e);
-			System.err.println(e.getClass().getName()+": "+e.getMessage());
+			System.err.println(e.getClass().getName() + ": " + e.getMessage());
 		} finally {
-			logger.info("Conector instanciado correctamente...");
+			logger.info("Conector instanciado...");
 		}
+		return conn;
 	}
 	
 	
@@ -58,7 +59,7 @@ public abstract class Conector {
 	 * Hace commit de la conexion activa
 	 *
 	 */
-	protected static void commitConn() {
+	public static void commitConn(Connection conn) {
 		try {
 			if(conn != null && !conn.isClosed()) {
 				conn.commit();
@@ -71,9 +72,12 @@ public abstract class Conector {
 	/**
 	 * Hace rollback de la conexion activa
 	 */
-	public static void rollbackConn() {
+	public static void rollbackConn(Connection conn) {
 		try {
-			conn.rollback();
+			if(conn != null && !conn.isClosed()) {
+				conn.rollback();
+				closeConn(conn);
+			}
 		} catch (SQLException e) {
 			logger.error(e.getMessage(), e);
 		}
@@ -83,15 +87,14 @@ public abstract class Conector {
 	 * @param nameOp
 	 * cierra la conexion activa, y hace commit de la misma
 	 */
-	public static void closeConn(String nameOp) {
+	public static void closeConn(Connection conn) {
 		try {
 			if(conn != null && !conn.isClosed()) {
-				commitConn();
 				conn.close();
 			}
-			logger.debug("Se cierra la conexion en el metodo - " + nameOp + ". Thread: " + Thread.currentThread().getId());
+			logger.debug("Se cierra la conexion. Thread: " + Thread.currentThread().getId());
 		} catch (SQLException e) {
-			logger.fatal("ERROR - Conector al cerrar conexion en el metodo - " + nameOp + ". Error al cerrar las conexiones a BD." + e.getMessage(), e);
+			logger.fatal("ERROR - Conector al cerrar conexion. Error al cerrar las conexiones a BD." + e.getMessage(), e);
 		}
 	}
 	
@@ -99,16 +102,16 @@ public abstract class Conector {
 	 * @param ResultSet
 	 * cierra el resultset de consulta
 	 */
-	public static void closeRs(ResultSet rs) {
-		try {
-			if(rs != null && !rs.isClosed()) {
-				rs.close();
-			}
-			logger.debug("Se cierra ResultSet. Thread: " + Thread.currentThread().getId());
-		} catch (SQLException e) {
-			logger.fatal("ERROR - Conector al cerrar resultset." + e.getMessage(), e);
-		}
-	}
+//	public static void closeRs(ResultSet rs) {
+//		try {
+//			if(rs != null && !rs.isClosed()) {
+//				rs.close();
+//			}
+//			logger.debug("Se cierra ResultSet. Thread: " + Thread.currentThread().getId());
+//		} catch (SQLException e) {
+//			logger.fatal("ERROR - Conector al cerrar resultset." + e.getMessage(), e);
+//		}
+//	}
 	
 	/**
 	 * @param GenSqlSelectType
@@ -117,7 +120,7 @@ public abstract class Conector {
 	 * @return ResultSet con resultado de consulta
 	 * @throws ConectorException 
 	 */
-	protected static ResultSet selectGeneric(GenSqlSelectType genType) throws ConectorException {
+	protected static ResultSet selectGeneric(Connection conn, GenSqlSelectType genType) throws ConectorException {
 		logger.debug("Ejecucion selectGeneric");
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -146,7 +149,7 @@ public abstract class Conector {
 	 * @return Integer con la cantidad de tuplas afectadas
 	 * @throws ConectorException 
 	 */
-	protected static Integer executeNonQuery(GenSqlExecType genType) throws ConectorException {
+	protected static Integer executeNonQuery(Connection conn, GenSqlExecType genType) throws ConectorException {
 		logger.debug("Ejecucion executeNonQuery");
 		Integer retorno = null;
 		PreparedStatement ps = null;
@@ -178,14 +181,14 @@ public abstract class Conector {
 	 * @return Integer con la cantidad de tuplas afectadas
 	 * @throws ConectorException 
 	 */
-	protected static Integer executeNonQueryList(GenSqlExecType genType) throws ConectorException {
+	protected static Integer executeNonQueryList(Connection conn, GenSqlExecType genType) throws ConectorException {
 		logger.debug("Ejecucion executeNonQueryList");
 		Integer retorno = 0;
 		if(genType.getListaExecuteDatosCond() != null &&
 				!genType.getListaExecuteDatosCond().isEmpty()) {
 			for(HashMap<Integer, Object> hashDatos : genType.getListaExecuteDatosCond()) {
 				GenSqlExecType genTypeAux = new GenSqlExecType(genType.getStatement(), hashDatos);
-				retorno += executeNonQuery(genTypeAux);
+				retorno += executeNonQuery(conn, genTypeAux);
 			}
 		}
 		return retorno;
@@ -267,20 +270,19 @@ public abstract class Conector {
 	 * @throws GenericException
 	 * @throws ConectorException 
 	 */
-	protected static <T> Object runGeneric(T genType) throws ConectorException {
+	protected static <T> Object runGeneric(Connection conn, T genType) throws ConectorException {
 		Object resultado;
 		try {
 			if(genType instanceof GenSqlSelectType) {
-				resultado = (ResultSet) selectGeneric((GenSqlSelectType) genType);
+				resultado = (ResultSet) selectGeneric(conn, (GenSqlSelectType) genType);
 			} else if(genType instanceof GenSqlExecType) {
 				GenSqlExecType genExec = (GenSqlExecType) genType;
 				if(!genExec.getListaExecuteDatosCond().isEmpty()) {
-					resultado = (Integer) executeNonQueryList(genExec);
+					resultado = (Integer) executeNonQueryList(conn, genExec);
 				} else {
-					resultado = (Integer) executeNonQuery(genExec);
+					resultado = (Integer) executeNonQuery(conn, genExec);
 				}
 			} else {
-				rollbackConn();
 				throw new ConectorException("'runGeneric' ha sido mal implementado!");
 			}
 		} catch (ConectorException e) {
@@ -292,12 +294,12 @@ public abstract class Conector {
 	}
 	
 	
-	public static Integer obtenerSecuencia(String nombreSec) throws ConectorException {
+	public static Integer obtenerSecuencia(Connection conn, String nombreSec) throws ConectorException {
 		Integer resultado = null;
 		StringBuilder sb = new StringBuilder();
 		sb.append("select nextval('").append(nombreSec).append("') as seq");
 		GenSqlSelectType genType = new GenSqlSelectType(sb.toString());
-		ResultSet rs = selectGeneric(genType);
+		ResultSet rs = selectGeneric(conn, genType);
 		try {
 			if(rs.next()) {
 				resultado = rs.getInt("seq");
@@ -307,17 +309,6 @@ public abstract class Conector {
 			throw new ConectorException(e);
 		}
 		return resultado;
-	}
-	
-	public static Connection devolverConnection() {
-		try {
-			if(conn != null && conn.isClosed()) {
-				getConn();
-			}
-		} catch (SQLException e) {
-			logger.fatal("ERROR - Conector al devolverConnection" + e.getMessage(), e);
-		}
-		return conn;
 	}
 	
 }

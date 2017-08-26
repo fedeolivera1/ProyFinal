@@ -1,5 +1,7 @@
 package gpd.manager.transaccion;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -7,6 +9,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.log4j.Logger;
 
 import gpd.db.constantes.CnstQryTransaccion;
+import gpd.dominio.helper.HlpProducto;
 import gpd.dominio.producto.Lote;
 import gpd.dominio.producto.Producto;
 import gpd.dominio.transaccion.EstadoTran;
@@ -15,15 +18,18 @@ import gpd.dominio.transaccion.TranLinea;
 import gpd.dominio.transaccion.TranLineaLote;
 import gpd.dominio.transaccion.Transaccion;
 import gpd.dominio.util.Converters;
+import gpd.dominio.util.Sinc;
 import gpd.exceptions.ConectorException;
 import gpd.exceptions.PersistenciaException;
 import gpd.exceptions.PresentacionException;
 import gpd.interfaces.producto.IPersLote;
+import gpd.interfaces.producto.IPersProducto;
 import gpd.interfaces.transaccion.IPersTranLinea;
 import gpd.interfaces.transaccion.IPersTransaccion;
 import gpd.manager.producto.ManagerProducto;
 import gpd.persistencia.conector.Conector;
 import gpd.persistencia.producto.PersistenciaLote;
+import gpd.persistencia.producto.PersistenciaProducto;
 import gpd.persistencia.transaccion.PersistenciaTranLinea;
 import gpd.persistencia.transaccion.PersistenciaTransaccion;
 import gpd.types.ErrorLogico;
@@ -36,6 +42,7 @@ public class ManagerTransaccion {
 	private static IPersTransaccion interfaceTransaccion;
 	private static IPersTranLinea interfaceTranLinea;
 	private static IPersLote interfaceLote;
+	private static IPersProducto interfaceProducto;
 	
 	private static IPersTransaccion getInterfaceTransaccion() {
 		if(interfaceTransaccion == null) {
@@ -55,18 +62,24 @@ public class ManagerTransaccion {
 		}
 		return interfaceLote;
 	}
+	private static IPersProducto getInterfaceProducto() {
+		if(interfaceProducto == null) {
+			interfaceProducto = new PersistenciaProducto();
+		}
+		return interfaceProducto;
+	}
 	
 	
 	/*****************************************************************************************************************************************************/
 	/** TRANSACCION */
 	/*****************************************************************************************************************************************************/
 	
+	
 	public Integer generarTransaccionCompra(Transaccion transaccion) throws PresentacionException {
 		logger.info("Ingresa generarTransaccionCompra");
 		Integer resultado = null;
-		try {
+		try (Connection conn = Conector.getConn()) {
 			if(transaccion != null && TipoTran.C.equals(transaccion.getTipoTran())) {
-				Conector.getConn();
 				ConfigDriver cfgDrv = ConfigDriver.getConfigDriver();
 				Double subTotal = new Double(0);
 //				Double ivaSt = new Double(0);
@@ -96,7 +109,7 @@ public class ManagerTransaccion {
 				//se sustrae el ivaTotal al total ya que se manejan directamente precios con iva en la compra
 				subTotal = Converters.redondearDosDec(total - ivaTotal);
 				total = Converters.redondearDosDec(total);
-				Integer nroTransac = Conector.obtenerSecuencia(CnstQryTransaccion.SEC_TRANSAC);
+				Integer nroTransac = Conector.obtenerSecuencia(conn, CnstQryTransaccion.SEC_TRANSAC);
 				transaccion.setNroTransac(nroTransac);
 				transaccion.setEstadoTran(EstadoTran.P);
 				transaccion.setFechaHora(new Fecha(Fecha.AMDHMS));
@@ -104,14 +117,14 @@ public class ManagerTransaccion {
 				transaccion.setIva(ivaTotal);
 				transaccion.setTotal(total);
 				//se persiste la transaccion de tipo C (compra)
-				resultado = getInterfaceTransaccion().guardarTransaccionCompra(transaccion);
+				resultado = getInterfaceTransaccion().guardarTransaccionCompra(conn, transaccion);
 				//se persiste el estado de la transaccion con estado 'P'
-				getInterfaceTransaccion().guardarTranEstado(transaccion);
+				getInterfaceTransaccion().guardarTranEstado(conn, transaccion);
 				//se persisten las lineas de la transaccion
-				getInterfaceTranLinea().guardarListaTranLinea(transaccion.getListaTranLinea());
+				getInterfaceTranLinea().guardarListaTranLinea(conn, transaccion.getListaTranLinea());
 				//se periste el lote para cada producto de las lineas
-				getInterfaceLote().guardarListaLote(listaLote);
-				Conector.closeConn("generarTransaccionCompra");
+				getInterfaceLote().guardarListaLote(conn, listaLote);
+				Conector.commitConn(conn);
 			} else {
 				throw new PresentacionException("generarTransaccionCompra ha sido mal implementado!");
 			}
@@ -125,22 +138,33 @@ public class ManagerTransaccion {
 		return resultado;
 	}
 	
-	public Integer generarTransaccionVenta(Transaccion transaccion) throws PresentacionException {
+	/**
+	 * recibe conexion y no comitea, por ser llamado desde otro manager
+	 * @param conn RECIBE CONEXION por ser llamado desde otro manager
+	 * @param transaccion
+	 * @return
+	 * @throws PresentacionException
+	 * 
+	 * <<<<< RECIBE CONNECTION - NO AUTOGENERA >>>>>
+	 * 
+	 */
+	public Integer generarTransaccionVenta(Connection conn, Transaccion transaccion) throws PresentacionException {
 		logger.info("Ingresa generarTransaccionVenta");
 		Integer resultado = null;
 		try {
 			if(transaccion != null && TipoTran.V.equals(transaccion.getTipoTran())) {
-//				Conector.getConn();//FIXME ver esto, no lo llamo porque la conexion está contenida arriba
-				Integer nroTransac = Conector.obtenerSecuencia(CnstQryTransaccion.SEC_TRANSAC);
+				Integer nroTransac = Conector.obtenerSecuencia(conn, CnstQryTransaccion.SEC_TRANSAC);
 				transaccion.setNroTransac(nroTransac);
 				//se persiste la transaccion de tipo V (venta)
-				resultado = getInterfaceTransaccion().guardarTransaccionVenta(transaccion);
+				resultado = getInterfaceTransaccion().guardarTransaccionVenta(conn, transaccion);
 				//se persisten las lineas de la transaccion
-				getInterfaceTranLinea().guardarListaTranLinea(transaccion.getListaTranLinea());
+				getInterfaceTranLinea().guardarListaTranLinea(conn, transaccion.getListaTranLinea());
 				//se persiste el estado de la transaccion con estado 'P'
 				transaccion.setFechaHora(new Fecha(Fecha.AMDHMS));
-				getInterfaceTransaccion().guardarTranEstado(transaccion);
-//				Conector.closeConn("generarTransaccionVenta");//FIXME ver esto, no lo llamo porque la conexion está contenida arriba
+				getInterfaceTransaccion().guardarTranEstado(conn, transaccion);
+				/*
+				 * NO COMITEA POR SER METODO QUE ES LLAMADO DESDE OTROS MANAGERS
+				 */
 			} else {
 				throw new PresentacionException("generarTransaccionVenta ha sido mal implementado!");
 			}
@@ -156,17 +180,17 @@ public class ManagerTransaccion {
 	
 	public Transaccion obtenerTransaccionPorId(Integer idTransac) throws PresentacionException {
 		Transaccion transac = null;
-		try {
+		try (Connection conn = Conector.getConn()) {
 			Conector.getConn();
-			transac = getInterfaceTransaccion().obtenerTransaccionPorId(idTransac);
+			transac = getInterfaceTransaccion().obtenerTransaccionPorId(conn, idTransac);
 			if(transac != null) {
-				List<TranLinea> listaTranLinea = getInterfaceTranLinea().obtenerListaTranLinea(transac);
+				List<TranLinea> listaTranLinea = getInterfaceTranLinea().obtenerListaTranLinea(conn, transac);
 				if(listaTranLinea != null && !listaTranLinea.isEmpty()) {
 					transac.setListaTranLinea(listaTranLinea);
 				}
 			}
-			Conector.closeConn("obtenerTransaccionPorId");
-		} catch (PersistenciaException e) {
+			Conector.commitConn(conn);
+		} catch (PersistenciaException | SQLException e) {
 			logger.fatal("Excepcion en ManagerTransaccion > obtenerTransaccionPorId: " + e.getMessage(), e);
 			throw new PresentacionException(e);
 		}
@@ -176,19 +200,18 @@ public class ManagerTransaccion {
 	public List<Transaccion> obtenerListaTransaccionPorPersona(Long idPersona, TipoTran tipoTran, EstadoTran estadoTran) 
 			throws PresentacionException {
 		List<Transaccion> listaTransac = null;
-		try {
-			Conector.getConn();
-			listaTransac = getInterfaceTransaccion().obtenerListaTransaccionPorPersona(idPersona, tipoTran, estadoTran);
+		try (Connection conn = Conector.getConn()) {
+			listaTransac = getInterfaceTransaccion().obtenerListaTransaccionPorPersona(conn, idPersona, tipoTran, estadoTran);
 			if(listaTransac != null && !listaTransac.isEmpty()) {
 				for(Transaccion transac : listaTransac) {
-					List<TranLinea> listaTranLinea = getInterfaceTranLinea().obtenerListaTranLinea(transac);
+					List<TranLinea> listaTranLinea = getInterfaceTranLinea().obtenerListaTranLinea(conn, transac);
 					if(listaTranLinea != null && !listaTranLinea.isEmpty()) {
 						transac.setListaTranLinea(listaTranLinea);
 					}
 				}
 			}
-			Conector.closeConn("obtenerListaTransaccionPorPersona");
-		} catch (PersistenciaException e) {
+			Conector.commitConn(conn);
+		} catch (PersistenciaException | SQLException e) {
 			logger.fatal("Excepcion en ManagerTransaccion > obtenerListaTransaccionPorPersona: " + e.getMessage(), e);
 			throw new PresentacionException(e);
 		}
@@ -198,19 +221,18 @@ public class ManagerTransaccion {
 	public List<Transaccion> obtenerListaTransaccionPorPeriodo(TipoTran tipoTran, EstadoTran estadoTran, Fecha fechaIni, Fecha fechaFin) 
 			 throws PresentacionException {
 		List<Transaccion> listaTransac = null;
-		try {
-			Conector.getConn();
-			listaTransac = getInterfaceTransaccion().obtenerListaTransaccionPorPeriodo(tipoTran, estadoTran, fechaIni, fechaFin);
+		try (Connection conn = Conector.getConn()) {
+			listaTransac = getInterfaceTransaccion().obtenerListaTransaccionPorPeriodo(conn, tipoTran, estadoTran, fechaIni, fechaFin);
 			if(listaTransac != null && !listaTransac.isEmpty()) {
 				for(Transaccion transac : listaTransac) {
-					List<TranLinea> listaTranLinea = getInterfaceTranLinea().obtenerListaTranLinea(transac);
+					List<TranLinea> listaTranLinea = getInterfaceTranLinea().obtenerListaTranLinea(conn, transac);
 					if(listaTranLinea != null && !listaTranLinea.isEmpty()) {
 						transac.setListaTranLinea(listaTranLinea);
 					}
 				}
 			}
-			Conector.closeConn("obtenerListaTransaccionPorPeriodo");
-		} catch (PersistenciaException e) {
+			Conector.commitConn(conn);
+		} catch (PersistenciaException | SQLException e) {
 			logger.fatal("Excepcion en ManagerTransaccion > obtenerListaTransaccionPorPeriodo: " + e.getMessage(), e);
 			throw new PresentacionException(e);
 		}
@@ -221,17 +243,34 @@ public class ManagerTransaccion {
 		if(transaccion != null) {
 			//transaccion de tipo "compra"
 			if(transaccion.getTipoTran().equals(TipoTran.C)) {
-				try {
-					Conector.getConn();
+				try (Connection conn = Conector.getConn()) {
+					Fecha ultAct = new Fecha(Fecha.AMDHMS);
 					//seteo estado a "confirmado"
 					transaccion.setEstadoTran(EstadoTran.C);
-					getInterfaceTransaccion().guardarTranEstado(transaccion);
-					getInterfaceTransaccion().modificarEstadoTransaccion(transaccion);
+					getInterfaceTransaccion().guardarTranEstado(conn, transaccion);
+					getInterfaceTransaccion().modificarEstadoTransaccion(conn, transaccion);
 					for(Lote lote : listaLote) {
-						getInterfaceLote().actualizarLote(lote);
+						/*
+						 * aparte de actualizar el lote, verifica el precio actual que va a tener el lote contra
+						 * el precio de esta compra, en caso de diferir, se va a marcar el producto en 'N' para 
+						 * ser sincronizado hacia el sistema web
+						 */
+						Producto prod = lote.getTranLinea().getProducto();
+						ManagerProducto mgrProd = new ManagerProducto();
+						HlpProducto hlpProdAnt = mgrProd.obtenerStockPrecioLotePorProductoNoConn(conn, prod.getIdProducto());
+						getInterfaceLote().actualizarLote(conn, lote);
+						/*
+						 * vuelvo a obtener el precio del stock actual del lote, para ver si hubieron cambios de precio 
+						 * con respecto al anterior, en caso positivo, actualiza el producto para ser sincronizado
+						 */
+						HlpProducto hlpProdAct = mgrProd.obtenerStockPrecioLotePorProductoNoConn(conn, prod.getIdProducto());
+						if(hlpProdAnt.getPrecioVta().doubleValue() != hlpProdAct.getPrecioVta().doubleValue()) {
+							//modifico el producto para dejarlo sinc = 'N' y que pueda ser tomado por el sincronizador
+							getInterfaceProducto().modificarSincProducto(conn, prod.getIdProducto(), Sinc.N, ultAct);
+						}
 					}
-					Conector.closeConn("modificarTransaccionCompra");
-				} catch (PersistenciaException e) {
+					Conector.commitConn(conn);
+				} catch (PersistenciaException | SQLException e) {
 					logger.fatal("Excepcion en ManagerTransaccion > modificarTransaccionCompra: " + e.getMessage(), e);
 					throw new PresentacionException(e);
 				}
@@ -266,11 +305,10 @@ public class ManagerTransaccion {
 	public List<TranLineaLote> obtenerListaTranLineaLote(Integer nroTransac, Integer idProducto) throws PresentacionException {
 		logger.info("Se ingresa a obtenerListaTranLineaLote");
 		List<TranLineaLote> listaTll = null;
-		try {
-			Conector.getConn();
-			listaTll = getInterfaceTransaccion().obtenerListaTranLineaLote(nroTransac, idProducto);
-			Conector.closeConn("obtenerListaLotePorTransac");
-		} catch (PersistenciaException e) {
+		try (Connection conn = Conector.getConn()) {
+			listaTll = getInterfaceTransaccion().obtenerListaTranLineaLote(conn, nroTransac, idProducto);
+			Conector.commitConn(conn);
+		} catch (PersistenciaException | SQLException e) {
 			logger.fatal("Excepcion en ManagerTransaccion > obtenerListaTranLineaLote: " + e.getMessage(), e);
 			throw new PresentacionException(e);
 		}
@@ -281,8 +319,7 @@ public class ManagerTransaccion {
 	
 	public ErrorLogico anularTransaccionVenta(Transaccion transaccion) throws PresentacionException {
 		ErrorLogico error = null;
-		try {
-			Conector.getConn();
+		try (Connection conn = Conector.getConn()) {
 			if(transaccion != null) {
 				transaccion.setEstadoTran(EstadoTran.A);
 				transaccion.setFechaHora(new Fecha(Fecha.AMDHMS));
@@ -293,7 +330,7 @@ public class ManagerTransaccion {
 				} else {
 					List<TranLineaLote> listaTll = new ArrayList<>();
 					for(TranLinea tl : transaccion.getListaTranLinea()) {
-						listaTll.addAll(getInterfaceTransaccion().obtenerListaTranLineaLote(tl.getTransaccion().getNroTransac(), 
+						listaTll.addAll(getInterfaceTransaccion().obtenerListaTranLineaLote(conn, tl.getTransaccion().getNroTransac(), 
 														tl.getProducto().getIdProducto()));
 					}
 					for(TranLineaLote tll : listaTll) {
@@ -301,34 +338,33 @@ public class ManagerTransaccion {
 						 * obtengo lote acutal de base, y le sumo la cantidad restada en la venta
 						 * para la transaccion que se esta manejando
 						 */
-						Lote loteActual = getInterfaceLote().obtenerLotePorId(tll.getLote().getIdLote());
+						Lote loteActual = getInterfaceLote().obtenerLotePorId(conn, tll.getLote().getIdLote());
 						Integer stock = loteActual.getStock() + tll.getCantidad();
 						//actualizo en base
-						getInterfaceLote().actualizarStockLote(loteActual.getIdLote(), stock);
+						getInterfaceLote().actualizarStockLote(conn, loteActual.getIdLote(), stock);
 					}
 				}
-				getInterfaceTransaccion().guardarTranEstado(transaccion);
-				getInterfaceTransaccion().modificarEstadoTransaccion(transaccion);
+				getInterfaceTransaccion().guardarTranEstado(conn, transaccion);
+				getInterfaceTransaccion().modificarEstadoTransaccion(conn, transaccion);
 				//elimino tran_vta_lote para la transaccion que se anula
-				getInterfaceTransaccion().eliminarTranLineaLote(transaccion.getNroTransac());
+				getInterfaceTransaccion().eliminarTranLineaLote(conn, transaccion.getNroTransac());
 			}
-			Conector.closeConn("anularTransaccionVenta");
-		} catch (PersistenciaException e) {
+			Conector.commitConn(conn);
+		} catch (PersistenciaException | SQLException e) {
 			logger.fatal("Excepcion en ManagerTransaccion > anularTransaccionVenta: " + e.getMessage(), e);
 			throw new PresentacionException(e);
 		}
 		return error;
 	}
 	
-	//FIXME chequear este metodo
 	private ErrorLogico validarAnulacionVto(Transaccion transaccion) throws PresentacionException {
 		ErrorLogico error = null;
-		try {
+		try (Connection conn = Conector.getConn()) {
 			ManagerProducto mgrProd = new ManagerProducto();
 			ConfigDriver cfgDrv = ConfigDriver.getConfigDriver();
 			Integer diasTol = Integer.valueOf(cfgDrv.getVencTolerableAnul());
 			for(TranLinea tl : transaccion.getListaTranLinea()) {
-				Lote lote = mgrProd.obtenerLoteVtaPorTransacProdNoConn(tl.getTransaccion().getNroTransac(), tl.getProducto().getIdProducto());
+				Lote lote = mgrProd.obtenerLoteVtaPorTransacProdNoConn(conn, tl.getTransaccion().getNroTransac(), tl.getProducto().getIdProducto());
 				Fecha fechaAnulacion = new Fecha(Fecha.AMD);
 				Fecha fechaVto = lote.getVenc();
 				long diff = fechaVto.getTimeInMillis() - fechaAnulacion.getTimeInMillis(); 
@@ -344,11 +380,11 @@ public class ManagerTransaccion {
 					return error;
 				}
 			}
-		} catch (PersistenciaException e) {
+		} catch (PersistenciaException | SQLException e) {
 			logger.fatal("Excepcion en ManagerTransaccion > validarAnulacionVto: " + e.getMessage(), e);
 			throw new PresentacionException(e);
 		} catch (Exception e) {
-			logger.fatal("Excepcion no controlada en ManagerTransaccion > validarAnulacionVto: " + e.getMessage(), e);
+			logger.fatal("Excepcion generica en ManagerTransaccion > validarAnulacionVto: " + e.getMessage(), e);
 			throw new PresentacionException(e);
 		}
 		return error;

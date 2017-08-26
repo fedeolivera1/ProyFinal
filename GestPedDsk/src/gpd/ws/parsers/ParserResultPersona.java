@@ -1,5 +1,6 @@
 package gpd.ws.parsers;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,7 +31,7 @@ public class ParserResultPersona {
 	
 	private static final Logger logger = Logger.getLogger(ParserResultPersona.class);
 
-	public static List<Persona> parseResultObtPersNoSinc(ResultObtPersonasNoSinc result) throws ParsersException {
+	public static List<Persona> parseResultObtPersNoSinc(Connection conn, ResultObtPersonasNoSinc result) throws ParsersException {
 		List<Persona> listaPersonasResult = null;
 		try {
 			if(result != null) {
@@ -64,7 +65,7 @@ public class ParserResultPersona {
 						pf.setFechaReg(new Fecha(rpf.getFechaReg(), Fecha.AMD));
 						pf.setTipoPers(TipoPersona.getTipoPersonaPorChar(rpf.getTipoPers().charAt(0)));
 						try {
-							pf.setLocalidad(pdl.obtenerLocalidadPorId(rpf.getLocalidad()));
+							pf.setLocalidad(pdl.obtenerLocalidadPorId(conn, rpf.getLocalidad()));
 						} catch (PersistenciaException e) {
 							logger.fatal("Excepcion en ParserResultPersona > parseResultObtPersNoSinc (pf): " + e.getMessage(), e);
 							throw new SincronizadorException(e.getMessage(), e);
@@ -99,7 +100,7 @@ public class ParserResultPersona {
 						pj.setFechaReg(new Fecha(rpj.getFechaReg(), Fecha.AMD));
 						pj.setTipoPers(TipoPersona.getTipoPersonaPorChar(rpj.getTipoPers().charAt(0)));
 						try {
-							pj.setLocalidad(pdl.obtenerLocalidadPorId(rpj.getLocalidad()));
+							pj.setLocalidad(pdl.obtenerLocalidadPorId(conn, rpj.getLocalidad()));
 						} catch (PersistenciaException e) {
 							logger.fatal("Excepcion en ParserResultPersona > parseResultObtPersNoSinc (pj): " + e.getMessage(), e);
 							throw new SincronizadorException(e.getMessage(), e);

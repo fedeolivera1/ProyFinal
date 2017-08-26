@@ -1,5 +1,6 @@
 package gpd.interfaces.pedido;
 
+import java.sql.Connection;
 import java.util.List;
 
 import gpd.dominio.pedido.Pedido;
@@ -8,8 +9,8 @@ import gpd.exceptions.PersistenciaException;
 
 public interface IPersPedidoLinea {
 
-	public List<PedidoLinea> obtenerListaPedidoLinea(Pedido pedido) throws PersistenciaException;
-	public Integer guardarListaPedidoLinea(List<PedidoLinea> listaPedidoLinea) throws PersistenciaException;
-	public Integer eliminarListaPedidoLinea(Pedido pedido) throws PersistenciaException;
+	public List<PedidoLinea> obtenerListaPedidoLinea(Connection conn, Pedido pedido) throws PersistenciaException;
+	public Integer guardarListaPedidoLinea(Connection conn, List<PedidoLinea> listaPedidoLinea) throws PersistenciaException;
+	public Integer eliminarListaPedidoLinea(Connection conn, Pedido pedido) throws PersistenciaException;
 	
 }

@@ -1,6 +1,7 @@
 package gpd.persistencia.usuario;
 
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -26,91 +27,99 @@ import gpd.persistencia.conector.Conector;
 public class PersistenciaUsuario extends Conector implements IPersUsuario, CnstQryUsuario {
 
 	private static final Logger logger = Logger.getLogger(PersistenciaUsuario.class);
-	private ResultSet rs;
 	
 	
 	@Override
-	public UsuarioDsk obtenerUsuario(String nombreUsuario, String passwd) throws PersistenciaException {
+	public UsuarioDsk obtenerUsuario(Connection conn, String nombreUsuario, String passwd) throws PersistenciaException {
 		logger.info("Ejecucion de obtenerUsuario para: " + nombreUsuario);
 		UsuarioDsk usuario = null;
 		try {
 			PreparedStatement ps = conn.prepareStatement(QRY_LOGIN);
 			ps.setString(1, nombreUsuario);
 			ps.setString(2, passwd);
-			rs = ps.executeQuery();
-			if(rs.next()) {
-				usuario = new UsuarioDsk();
-				usuario.setNomUsu(nombreUsuario);
-				usuario.setPass(passwd);
-				char[] tipoChar = new char[1];
-				rs.getCharacterStream("tipo").read(tipoChar);
-				TipoUsr tipo = TipoUsr.getTipoUsrPorChar(tipoChar[0]);
-				usuario.setTipoUsr(tipo);
+			try (ResultSet rs = ps.executeQuery()) {
+				if(rs.next()) {
+					usuario = new UsuarioDsk();
+					usuario.setNomUsu(nombreUsuario);
+					usuario.setPass(passwd);
+					char[] tipoChar = new char[1];
+					rs.getCharacterStream("tipo").read(tipoChar);
+					TipoUsr tipo = TipoUsr.getTipoUsrPorChar(tipoChar[0]);
+					usuario.setTipoUsr(tipo);
+				}
 			}
 		} catch (SQLException | IOException e) {
-			Conector.rollbackConn();
+			Conector.rollbackConn(conn);
 			logger.fatal("Excepcion al obtenerUsuario: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
-		} finally {
-			closeRs(rs);
+		} catch (Exception e) {
+			Conector.rollbackConn(conn);
+			logger.fatal("Excepcion GENERICA al obtenerUsuario: " + e.getMessage(), e);
+			throw new PersistenciaException(e);
 		}
 		return usuario;
 	}
 	
 	@Override
-	public UsuarioDsk obtenerUsuarioPorId(String nombreUsuario) throws PersistenciaException {
+	public UsuarioDsk obtenerUsuarioPorId(Connection conn, String nombreUsuario) throws PersistenciaException {
 		logger.info("Ejecucion de obtenerUsuario para: " + nombreUsuario);
 		UsuarioDsk usuario = null;
 		try {
 			GenSqlSelectType genType = new GenSqlSelectType(QRY_SELECT_USR_XID);
 			genType.setParam(nombreUsuario);
-			rs = (ResultSet) runGeneric(genType);
-			if(rs.next()) {
-				usuario = new UsuarioDsk();
-				usuario.setNomUsu(nombreUsuario);
-				char[] tipoChar = new char[1];
-				rs.getCharacterStream("tipo").read(tipoChar);
-				TipoUsr tipo = TipoUsr.getTipoUsrPorChar(tipoChar[0]);
-				usuario.setTipoUsr(tipo);
+			try (ResultSet rs = (ResultSet) runGeneric(conn, genType)) {
+				if(rs.next()) {
+					usuario = new UsuarioDsk();
+					usuario.setNomUsu(nombreUsuario);
+					char[] tipoChar = new char[1];
+					rs.getCharacterStream("tipo").read(tipoChar);
+					TipoUsr tipo = TipoUsr.getTipoUsrPorChar(tipoChar[0]);
+					usuario.setTipoUsr(tipo);
+				}
 			}
 		} catch (SQLException | IOException | ConectorException e) {
-			Conector.rollbackConn();
-			logger.fatal("Excepcion al obtenerUsuario: " + e.getMessage(), e);
+			Conector.rollbackConn(conn);
+			logger.fatal("Excepcion al obtenerUsuarioPorId: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
-		} finally {
-			closeRs(rs);
+		} catch (Exception e) {
+			Conector.rollbackConn(conn);
+			logger.fatal("Excepcion GENERICA al obtenerUsuarioPorId: " + e.getMessage(), e);
+			throw new PersistenciaException(e);
 		}
 		return usuario;
 	}
 	
 	@Override
-	public List<UsuarioDsk> obtenerListaUsuario() throws PersistenciaException {
+	public List<UsuarioDsk> obtenerListaUsuario(Connection conn) throws PersistenciaException {
 		ArrayList<UsuarioDsk> listaUsuario = null;
-		ResultSet resultado;
-		GenSqlSelectType genSel = new GenSqlSelectType(CnstQryUsuario.QRY_SELECT_USR);
-		
 		try {
-			resultado = (ResultSet) Conector.runGeneric(genSel);
-			listaUsuario = new ArrayList<UsuarioDsk>();
-			while(resultado.next()) {
-				UsuarioDsk usuario= new UsuarioDsk();
-				usuario.setNomUsu(resultado.getString(1));
-				char[] tipoChar = new char[1];
-				resultado.getCharacterStream("tipo").read(tipoChar);
-				TipoUsr tipo = TipoUsr.getTipoUsrPorChar(tipoChar[0]);
-				usuario.setTipoUsr(tipo);
-				listaUsuario.add(usuario);
+			GenSqlSelectType genSel = new GenSqlSelectType(CnstQryUsuario.QRY_SELECT_USR);
+			try (ResultSet rs = (ResultSet) runGeneric(conn, genSel)) {
+				listaUsuario = new ArrayList<UsuarioDsk>();
+				while(rs.next()) {
+					UsuarioDsk usuario= new UsuarioDsk();
+					usuario.setNomUsu(rs.getString(1));
+					char[] tipoChar = new char[1];
+					rs.getCharacterStream("tipo").read(tipoChar);
+					TipoUsr tipo = TipoUsr.getTipoUsrPorChar(tipoChar[0]);
+					usuario.setTipoUsr(tipo);
+					listaUsuario.add(usuario);
+				}
 			}
 		} catch (ConectorException | SQLException | IOException e) {
-			Conector.rollbackConn();
+			Conector.rollbackConn(conn);
 			logger.fatal("Excepcion al obtenerListaUsuario: " + e.getMessage(), e);
+			throw new PersistenciaException(e);
+		} catch (Exception e) {
+			Conector.rollbackConn(conn);
+			logger.fatal("Excepcion GENERICA al obtenerListaUsuario: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		}
 		return listaUsuario;
 	}
 
 	@Override
-	public Integer guardarUsuario(UsuarioDsk usuario) throws PersistenciaException {
+	public Integer guardarUsuario(Connection conn, UsuarioDsk usuario) throws PersistenciaException {
 		logger.info("Ejecucion de guardarUsuario para: " + usuario.getNomUsu());
 		Integer resultado = null;
 		try {
@@ -120,15 +129,19 @@ public class PersistenciaUsuario extends Conector implements IPersUsuario, CnstQ
 			ps.setObject(3, usuario.getTipoUsr().getAsChar(), java.sql.Types.CHAR);
 			resultado = ps.executeUpdate();
 		} catch (SQLException e) {
-			Conector.rollbackConn();
+			Conector.rollbackConn(conn);
 			logger.fatal("Excepcion al guardarUsuario: " + e.getMessage(), e);
+			throw new PersistenciaException(e);
+		} catch (Exception e) {
+			Conector.rollbackConn(conn);
+			logger.fatal("Excepcion GENERICA al guardarUsuario: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		}
 		return resultado;
 	}
 
 	@Override
-	public Integer modificarUsuario(UsuarioDsk usuario) throws PersistenciaException {
+	public Integer modificarUsuario(Connection conn, UsuarioDsk usuario) throws PersistenciaException {
 		logger.info("Ejecucion de modificarUsuario para: " + usuario.getNomUsu());
 		Integer resultado = null;
 		try {
@@ -138,15 +151,19 @@ public class PersistenciaUsuario extends Conector implements IPersUsuario, CnstQ
 			ps.setString(3, usuario.getNomUsu());
 			resultado = ps.executeUpdate();
 		} catch (SQLException e) {
-			Conector.rollbackConn();
+			Conector.rollbackConn(conn);
 			logger.fatal("Excepcion al modificarUsuario: " + e.getMessage(), e);
+			throw new PersistenciaException(e);
+		} catch (Exception e) {
+			Conector.rollbackConn(conn);
+			logger.fatal("Excepcion GENERICA al modificarUsuario: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		}
 		return resultado;
 	}
 
 	@Override
-	public Integer eliminarUsuario(UsuarioDsk usuario) throws PersistenciaException {
+	public Integer eliminarUsuario(Connection conn, UsuarioDsk usuario) throws PersistenciaException {
 		logger.info("Ejecucion de eliminarUsuario para: " + usuario.getNomUsu());
 		Integer resultado = null;
 		try {
@@ -154,8 +171,12 @@ public class PersistenciaUsuario extends Conector implements IPersUsuario, CnstQ
 			ps.setString(1, usuario.getNomUsu());
 			resultado = ps.executeUpdate();
 		} catch (SQLException e) {
-			Conector.rollbackConn();
+			Conector.rollbackConn(conn);
 			logger.fatal("Excepcion al eliminarUsuario: " + e.getMessage(), e);
+			throw new PersistenciaException(e);
+		} catch (Exception e) {
+			Conector.rollbackConn(conn);
+			logger.fatal("Excepcion GENERICA al eliminarUsuario: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		}
 		return resultado;

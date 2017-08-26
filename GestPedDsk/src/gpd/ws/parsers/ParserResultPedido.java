@@ -1,5 +1,6 @@
 package gpd.ws.parsers;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,7 +44,7 @@ public class ParserResultPedido {
 		return interfaceProducto;
 	}
 	
-	public static List<Pedido> parseResultPedidosNoSinc(ResultObtPedidosNoSinc result) throws ParsersException {
+	public static List<Pedido> parseResultPedidosNoSinc(Connection conn, ResultObtPedidosNoSinc result) throws ParsersException {
 		List<Pedido> listaPedidosNoSinc = null;
 		try {
 			if( result != null && (result.getErroresServ() == null || result.getErroresServ().isEmpty()) ) {
@@ -51,7 +52,7 @@ public class ParserResultPedido {
 				listaPedidosNoSinc = new ArrayList<>();
 				for(ResultPedidoNoSinc resultPns : result.getListaPedidoNoSinc()) {
 					Pedido pedido = new Pedido();
-					Persona pers = getInterfacePersona().obtenerPersGenerico(resultPns.getIdPersona());
+					Persona pers = getInterfacePersona().obtenerPersGenerico(conn, resultPns.getIdPersona());
 					pedido.setPersona(pers);
 					pedido.setFechaHora(new Fecha(resultPns.getFechaHora(), Fecha.AMDHMS));
 					pedido.setEstado(EstadoPedido.getEstadoPedidoPorChar(resultPns.getEstado().charAt(0)));
@@ -62,7 +63,7 @@ public class ParserResultPedido {
 					Double ivaSubTotal = new Double(0);
 					for(ResultPedidoLinea resultPl : resultPns.getListaPedidoLinea()) {
 						PedidoLinea pl = new PedidoLinea(pedido);
-						Producto prod = getInterfaceProducto().obtenerProductoPorId(resultPl.getIdProducto()); 
+						Producto prod = getInterfaceProducto().obtenerProductoPorId(conn, resultPl.getIdProducto()); 
 						pl.setProducto(prod);
 						pl.setCantidad(resultPl.getCantidad());
 						//obtengo iva para la linea partir del producto

@@ -1,5 +1,7 @@
 package gpd.manager.producto;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -111,15 +113,16 @@ public class ManagerProducto {
 	/** PRODUCTO */
 	/*****************************************************************************************************************************************************/
 	
+
 	public List<Producto> obtenerBusquedaProducto(TipoProd tipoProd, String codigo, String nombre, String descripcion) throws PresentacionException {
 		logger.info("Ingresa obtenerBusquedaProducto");
 		List<Producto> listaProd = null;
-		try {
+		try (Connection conn = Conector.getConn()) {
 			Conector.getConn();
 			Integer idTipoProd = (tipoProd != null ? tipoProd.getIdTipoProd() : CnstQryGeneric.NUMBER_INVALID);
-			listaProd = getInterfaceProducto().obtenerBusquedaProducto(idTipoProd, codigo, nombre, descripcion);
-			Conector.closeConn("obtenerBusquedaProducto");
-		} catch (PersistenciaException e) {
+			listaProd = getInterfaceProducto().obtenerBusquedaProducto(conn, idTipoProd, codigo, nombre, descripcion);
+			Conector.commitConn(conn);
+		} catch (PersistenciaException | SQLException e) {
 			logger.fatal("Excepcion en ManagerProducto > obtenerBusquedaProducto: " + e.getMessage(), e);
 			throw new PresentacionException(e);
 		}
@@ -129,11 +132,10 @@ public class ManagerProducto {
 	public Producto obtenerProductoPorId(Integer id) throws PresentacionException {
 		logger.info("Se ingresa a obtenerProductoPorId");
 		Producto producto = null;
-		try {
-			Conector.getConn();
-			producto = getInterfaceProducto().obtenerProductoPorId(id);
-			Conector.closeConn("obtenerUsuario");
-		} catch (PersistenciaException e) {
+		try (Connection conn = Conector.getConn()) {
+			producto = getInterfaceProducto().obtenerProductoPorId(conn, id);
+			Conector.commitConn(conn);
+		} catch (PersistenciaException | SQLException e) {
 			logger.fatal("Excepcion en ManagerProducto > obtenerProductoPorId: " + e.getMessage(), e);
 			throw new PresentacionException(e);
 		}
@@ -143,11 +145,10 @@ public class ManagerProducto {
 	public List<Producto> obtenerListaProductoPorTipoProd(TipoProd tipoProd) throws PresentacionException {
 		logger.info("Se ingresa a obtenerListaProductoPorTipoProd");
 		List<Producto> listaProducto = null;
-		try {
-			Conector.getConn();
-			listaProducto = getInterfaceProducto().obtenerListaProductoPorTipo(tipoProd);
-			Conector.closeConn("obtenerListaProductoPorTipoProd");
-		} catch (PersistenciaException e) {
+		try (Connection conn = Conector.getConn()) {
+			listaProducto = getInterfaceProducto().obtenerListaProductoPorTipo(conn, tipoProd);
+			Conector.commitConn(conn);
+		} catch (PersistenciaException | SQLException e) {
 			logger.fatal("Excepcion en ManagerProducto > obtenerListaProductoPorTipoProd: " + e.getMessage(), e);
 			throw new PresentacionException(e);
 		}
@@ -157,13 +158,12 @@ public class ManagerProducto {
 	public Integer guardarProducto(Producto producto) throws PresentacionException {
 		logger.info("Se ingresa a guardarProducto");
 		if(producto != null) {
-			try {
+			try (Connection conn = Conector.getConn()) {
 				producto.setSinc(Sinc.N);
 				producto.setUltAct(new Fecha(Fecha.AMDHMS));
-				Conector.getConn();
-				resultado = getInterfaceProducto().guardarProducto(producto);
-				Conector.closeConn("guardarProducto");
-			} catch (PersistenciaException e) {
+				resultado = getInterfaceProducto().guardarProducto(conn, producto);
+				Conector.commitConn(conn);
+			} catch (PersistenciaException | SQLException e) {
 				logger.fatal("Excepcion en ManagerProducto > guardarProducto: " + e.getMessage(), e);
 				throw new PresentacionException(e);
 			}
@@ -174,13 +174,12 @@ public class ManagerProducto {
 	public Integer modificarProducto(Producto producto) throws PresentacionException {
 		logger.info("Se ingresa a modificarProducto");
 		if(producto != null) {
-			try {
+			try (Connection conn = Conector.getConn()) {
 				producto.setSinc(Sinc.N);
 				producto.setUltAct(new Fecha(Fecha.AMDHMS));
-				Conector.getConn();
-				resultado = getInterfaceProducto().modificarProducto(producto);
-				Conector.closeConn("modificarProducto");
-			} catch (PersistenciaException e) {
+				resultado = getInterfaceProducto().modificarProducto(conn, producto);
+				Conector.commitConn(conn);
+			} catch (PersistenciaException | SQLException e) {
 				logger.fatal("Excepcion en ManagerProducto > modificarProducto: " + e.getMessage(), e);
 				throw new PresentacionException(e);
 			}
@@ -191,13 +190,12 @@ public class ManagerProducto {
 	public Integer desactivarProducto(Producto producto) throws PresentacionException {
 		logger.info("Se ingresa a eliminarProducto");
 		if(producto != null) {
-			try {
-				Conector.getConn();
+			try (Connection conn = Conector.getConn()) {
 				producto.setSinc(Sinc.N);
 				producto.setUltAct(new Fecha(Fecha.AMDHMS));
-				resultado = getInterfaceProducto().desactivarProducto(producto);
-				Conector.closeConn("eliminarProducto");
-			} catch (PersistenciaException e) {
+				resultado = getInterfaceProducto().desactivarProducto(conn, producto);
+				Conector.commitConn(conn);
+			} catch (PersistenciaException | SQLException e) {
 				logger.fatal("Excepcion en ManagerProducto > eliminarProducto: " + e.getMessage(), e);
 				throw new PresentacionException(e);
 			}
@@ -213,11 +211,10 @@ public class ManagerProducto {
 	public TipoProd obtenerTipoProdPorId(Integer id) throws PresentacionException {
 		logger.info("Se ingresa a obtenerTipoProdPorId");
 		TipoProd tipoProd = null;
-		try {
-			Conector.getConn();
-			tipoProd = getInterfaceTipoProd().obtenerTipoProdPorId(id);
-			Conector.closeConn("obtenerTipoProdPorId");
-		} catch (PersistenciaException e) {
+		try (Connection conn = Conector.getConn()) {
+			tipoProd = getInterfaceTipoProd().obtenerTipoProdPorId(conn, id);
+			Conector.commitConn(conn);
+		} catch (PersistenciaException | SQLException e) {
 			logger.fatal("Excepcion en ManagerProducto > obtenerTipoProdPorId: " + e.getMessage(), e);
 			throw new PresentacionException(e);
 		}
@@ -227,11 +224,10 @@ public class ManagerProducto {
 	public List<TipoProd> obtenerListaTipoProd() throws PresentacionException {
 		logger.info("Se ingresa a obtenerListaTipoProd");
 		List<TipoProd> listaTipoProd = null;
-		try {
-			Conector.getConn();
-			listaTipoProd = getInterfaceTipoProd().obtenerListaTipoProd();
-			Conector.closeConn("obtenerListaTipoProd");
-		} catch (PersistenciaException e) {
+		try (Connection conn = Conector.getConn()) {
+			listaTipoProd = getInterfaceTipoProd().obtenerListaTipoProd(conn);
+			Conector.commitConn(conn);
+		} catch (PersistenciaException | SQLException e) {
 			logger.fatal("Excepcion en ManagerProducto > obtenerListaTipoProd: " + e.getMessage(), e);
 			throw new PresentacionException(e);
 		}
@@ -241,13 +237,12 @@ public class ManagerProducto {
 	public Integer guardarTipoProd(TipoProd tipoProd) throws PresentacionException {
 		logger.info("Se ingresa a guardarTipoProd");
 		if(tipoProd != null) {
-			try {
-				Conector.getConn();
+			try (Connection conn = Conector.getConn()) {
 				tipoProd.setSinc(Sinc.N);
 				tipoProd.setEstado(Estado.A);
-				resultado = getInterfaceTipoProd().guardarTipoProd(tipoProd);
-				Conector.closeConn("guardarTipoProd");
-			} catch (PersistenciaException e) {
+				resultado = getInterfaceTipoProd().guardarTipoProd(conn, tipoProd);
+				Conector.commitConn(conn);
+			} catch (PersistenciaException | SQLException e) {
 				logger.fatal("Excepcion en ManagerProducto > guardarTipoProd: " + e.getMessage(), e);
 				throw new PresentacionException(e);
 			}
@@ -258,12 +253,11 @@ public class ManagerProducto {
 	public Integer modificarTipoProd(TipoProd tipoProd) throws PresentacionException {
 		logger.info("Ingresa modificarTipoProd");
 		if(tipoProd != null) {
-			try {
-				Conector.getConn();
+			try (Connection conn = Conector.getConn()) {
 				tipoProd.setSinc(Sinc.N);
-				resultado = getInterfaceTipoProd().modificarTipoProd(tipoProd);
-				Conector.closeConn("modificarTipoProd");
-			} catch (PersistenciaException e) {
+				resultado = getInterfaceTipoProd().modificarTipoProd(conn, tipoProd);
+				Conector.commitConn(conn);
+			} catch (PersistenciaException | SQLException e) {
 				logger.fatal("Excepcion en ManagerProducto > modificarTipoProd: " + e.getMessage(), e);
 				throw new PresentacionException(e);
 			}
@@ -274,16 +268,17 @@ public class ManagerProducto {
 	public Boolean eliminarTipoProd(TipoProd tipoProd) throws PresentacionException {
 		logger.info("Se ingresa a eliminarTipoProd");
 		if(tipoProd != null) {
-			try {
-				Conector.getConn();
-				if(!getInterfaceTipoProd().controlUtilTipoProd(tipoProd)) {
+			try (Connection conn = Conector.getConn()) {
+				if(!getInterfaceTipoProd().controlUtilTipoProd(conn, tipoProd)) {
 					tipoProd.setSinc(Sinc.N);
 					tipoProd.setEstado(Estado.E);
-					resultado = getInterfaceTipoProd().eliminarTipoProd(tipoProd);
-					Conector.closeConn("eliminarTipoProd");
-					return true;
+					resultado = getInterfaceTipoProd().eliminarTipoProd(conn, tipoProd);
+					Conector.commitConn(conn);
+					if(resultado > 0) {
+						return true;
+					}
 				}
-			} catch (PersistenciaException e) {
+			} catch (PersistenciaException | SQLException e) {
 				logger.fatal("Excepcion en ManagerProducto > eliminarTipoProd: " + e.getMessage(), e);
 				throw new PresentacionException(e);
 			}
@@ -298,11 +293,10 @@ public class ManagerProducto {
 	public Unidad obtenerUnidadPorId(Integer id) throws PresentacionException {
 		logger.info("Se ingresa a obtenerUnidadPorId");
 		Unidad unidad = null;
-		try {
-			Conector.getConn();
-			unidad = getInterfaceUnidad().obtenerUnidadPorId(id);
-			Conector.closeConn("obtenerUnidadPorId");
-		} catch (PersistenciaException e) {
+		try (Connection conn = Conector.getConn()) {
+			unidad = getInterfaceUnidad().obtenerUnidadPorId(conn, id);
+			Conector.commitConn(conn);
+		} catch (PersistenciaException | SQLException e) {
 			logger.fatal("Excepcion en ManagerProducto > obtenerUnidadPorId: " + e.getMessage(), e);
 			throw new PresentacionException(e);
 		}
@@ -312,11 +306,10 @@ public class ManagerProducto {
 	public List<Unidad> obtenerListaUnidad() throws PresentacionException {
 		logger.info("Se ingresa a obtenerListaUnidad");
 		List<Unidad> listaUnidad = null;
-		try {
-			Conector.getConn();
-			listaUnidad = getInterfaceUnidad().obtenerListaUnidad();
-			Conector.closeConn("obtenerListaUnidad");
-		} catch (PersistenciaException e) {
+		try (Connection conn = Conector.getConn()) {
+			listaUnidad = getInterfaceUnidad().obtenerListaUnidad(conn);
+			Conector.commitConn(conn);
+		} catch (PersistenciaException | SQLException e) {
 			logger.fatal("Excepcion en ManagerProducto > obtenerListaUnidad: " + e.getMessage(), e);
 			throw new PresentacionException(e);
 		}
@@ -326,13 +319,12 @@ public class ManagerProducto {
 	public Integer guardarUnidad(Unidad unidad) throws PresentacionException {
 		logger.info("Se ingresa a guardarUnidad");
 		if(unidad != null) {
-			try {
-				Conector.getConn();
+			try (Connection conn = Conector.getConn()) {
 				unidad.setSinc(Sinc.N);
 				unidad.setEstado(Estado.A);
-				resultado = getInterfaceUnidad().guardarUnidad(unidad);
-				Conector.closeConn("guardarUnidad");
-			} catch (PersistenciaException e) {
+				resultado = getInterfaceUnidad().guardarUnidad(conn, unidad);
+				Conector.commitConn(conn);
+			} catch (PersistenciaException | SQLException e) {
 				logger.fatal("Excepcion en ManagerProducto > guardarUnidad: " + e.getMessage(), e);
 				throw new PresentacionException(e);
 			}
@@ -343,12 +335,12 @@ public class ManagerProducto {
 	public Integer modificarUnidad(Unidad unidad) throws PresentacionException {
 		logger.info("Ingresa modificarUnidad");
 		if(unidad != null) {
-			try {
+			try (Connection conn = Conector.getConn()) {
 				Conector.getConn();
 				unidad.setSinc(Sinc.N);
-				resultado = getInterfaceUnidad().modificarUnidad(unidad);
-				Conector.closeConn("modificarUnidad");
-			} catch (PersistenciaException e) {
+				resultado = getInterfaceUnidad().modificarUnidad(conn, unidad);
+				Conector.commitConn(conn);
+			} catch (PersistenciaException | SQLException e) {
 				logger.fatal("Excepcion en ManagerProducto > modificarUnidad: " + e.getMessage(), e);
 				throw new PresentacionException(e);
 			}
@@ -373,16 +365,17 @@ public class ManagerProducto {
 	public Boolean eliminarUnidad(Unidad unidad) throws PresentacionException {
 		logger.info("Se ingresa a eliminarUnidad");
 		if(unidad != null) {
-			try {
-				Conector.getConn();
-				if(!getInterfaceUnidad().controlUtilUnidad(unidad)) {
+			try (Connection conn = Conector.getConn()) {
+				if(!getInterfaceUnidad().controlUtilUnidad(conn, unidad)) {
 					unidad.setSinc(Sinc.N);
 					unidad.setEstado(Estado.E);
-					resultado = getInterfaceUnidad().eliminarUnidad(unidad);
-					Conector.closeConn("eliminarUnidad");
-					return true;
+					resultado = getInterfaceUnidad().eliminarUnidad(conn, unidad);
+					Conector.commitConn(conn);
+					if(resultado > 0) {
+						return true;
+					}
 				} 
-			} catch (PersistenciaException e) {
+			} catch (PersistenciaException | SQLException e) {
 				logger.fatal("Excepcion en ManagerProducto > eliminarUnidad: " + e.getMessage(), e);
 				throw new PresentacionException(e);
 			}
@@ -397,11 +390,10 @@ public class ManagerProducto {
 	public Deposito obtenerDepositoPorId(Integer id) throws PresentacionException {
 		logger.info("Se ingresa a obtenerDepositoPorId");
 		Deposito deposito = null;
-		try {
-			Conector.getConn();
-			deposito = getInterfaceDeposito().obtenerDepositoPorId(id);
-			Conector.closeConn("obtenerDepositoPorId");
-		} catch (PersistenciaException e) {
+		try (Connection conn = Conector.getConn()) {
+			deposito = getInterfaceDeposito().obtenerDepositoPorId(conn, id);
+			Conector.commitConn(conn);
+		} catch (PersistenciaException | SQLException e) {
 			logger.fatal("Excepcion en ManagerProducto > obtenerDepositoPorId: " + e.getMessage(), e);
 			throw new PresentacionException(e);
 		}
@@ -411,11 +403,10 @@ public class ManagerProducto {
 	public List<Deposito> obtenerListaDeposito() throws PresentacionException {
 		logger.info("Se ingresa a obtenerListaDeposito");
 		List<Deposito> listaDeposito = null;
-		try {
-			Conector.getConn();
-			listaDeposito = getInterfaceDeposito().obtenerListaDeposito();
-			Conector.closeConn("obtenerListaDeposito");
-		} catch (PersistenciaException e) {
+		try (Connection conn = Conector.getConn()) {
+			listaDeposito = getInterfaceDeposito().obtenerListaDeposito(conn);
+			Conector.commitConn(conn);
+		} catch (PersistenciaException | SQLException e) {
 			logger.fatal("Excepcion en ManagerProducto > obtenerListaDeposito: " + e.getMessage(), e);
 			throw new PresentacionException(e);
 		}
@@ -425,11 +416,10 @@ public class ManagerProducto {
 	public Integer guardarDeposito(Deposito deposito) throws PresentacionException {
 		logger.info("Se ingresa a guardarDeposito");
 		if(deposito != null) {
-			try {
-				Conector.getConn();
-				resultado = getInterfaceDeposito().guardarDeposito(deposito);
-				Conector.closeConn("guardarDeposito");
-			} catch (PersistenciaException e) {
+			try (Connection conn = Conector.getConn()) {
+				resultado = getInterfaceDeposito().guardarDeposito(conn, deposito);
+				Conector.commitConn(conn);
+			} catch (PersistenciaException | SQLException e) {
 				logger.fatal("Excepcion en ManagerProducto > guardarDeposito: " + e.getMessage(), e);
 				throw new PresentacionException(e);
 			}
@@ -440,11 +430,10 @@ public class ManagerProducto {
 	public Integer modificarDeposito(Deposito deposito) throws PresentacionException {
 		logger.info("Ingresa modificarDeposito");
 		if(deposito != null) {
-			try {
-				Conector.getConn();
-				resultado = getInterfaceDeposito().modificarDeposito(deposito);
-				Conector.closeConn("modificarDeposito");
-			} catch (PersistenciaException e) {
+			try (Connection conn = Conector.getConn()) {
+				resultado = getInterfaceDeposito().modificarDeposito(conn, deposito);
+				Conector.commitConn(conn);
+			} catch (PersistenciaException | SQLException e) {
 				logger.fatal("Excepcion en ManagerProducto > modificarDeposito: " + e.getMessage(), e);
 				throw new PresentacionException(e);
 			}
@@ -455,11 +444,10 @@ public class ManagerProducto {
 	public Integer eliminarDeposito(Deposito deposito) throws PresentacionException {
 		logger.info("Se ingresa a eliminarDeposito");
 		if(deposito != null) {
-			try {
-				Conector.getConn();
-				resultado = getInterfaceDeposito().eliminarDeposito(deposito);
-				Conector.closeConn("eliminarDeposito");
-			} catch (PersistenciaException e) {
+			try (Connection conn = Conector.getConn()) {
+				resultado = getInterfaceDeposito().eliminarDeposito(conn, deposito);
+				Conector.commitConn(conn);
+			} catch (PersistenciaException | SQLException e) {
 				logger.fatal("Excepcion en ManagerProducto > eliminarDeposito: " + e.getMessage(), e);
 				throw new PresentacionException(e);
 			}
@@ -474,11 +462,10 @@ public class ManagerProducto {
 	public Utilidad obtenerUtilidadPorId(Integer id) throws PresentacionException {
 		logger.info("Se ingresa a obtenerUtilidadPorId");
 		Utilidad utilidad = null;
-		try {
-			Conector.getConn();
-			utilidad = getInterfaceUtilidad().obtenerUtilidadPorId(id);
-			Conector.closeConn("obtenerUtilidadPorId");
-		} catch (PersistenciaException e) {
+		try (Connection conn = Conector.getConn()) {
+			utilidad = getInterfaceUtilidad().obtenerUtilidadPorId(conn, id);
+			Conector.commitConn(conn);
+		} catch (PersistenciaException | SQLException e) {
 			logger.fatal("Excepcion en ManagerProducto > obtenerUtilidadPorId: " + e.getMessage(), e);
 			throw new PresentacionException(e);
 		}
@@ -488,11 +475,10 @@ public class ManagerProducto {
 	public List<Utilidad> obtenerListaUtilidad() throws PresentacionException {
 		logger.info("Se ingresa a obtenerListaUtilidad");
 		List<Utilidad> listaUtilidad = null;
-		try {
-			Conector.getConn();
-			listaUtilidad = getInterfaceUtilidad().obtenerListaUtilidad();
-			Conector.closeConn("obtenerListaUtilidad");
-		} catch (PersistenciaException e) {
+		try (Connection conn = Conector.getConn()) {
+			listaUtilidad = getInterfaceUtilidad().obtenerListaUtilidad(conn);
+			Conector.commitConn(conn);
+		} catch (PersistenciaException | SQLException e) {
 			logger.fatal("Excepcion en ManagerProducto > obtenerListaUtilidad: " + e.getMessage(), e);
 			throw new PresentacionException(e);
 		}
@@ -502,11 +488,10 @@ public class ManagerProducto {
 	public Integer guardarUtilidad(Utilidad utilidad) throws PresentacionException {
 		logger.info("Se ingresa a guardarUtilidad");
 		if(utilidad != null) {
-			try {
-				Conector.getConn();
-				resultado = getInterfaceUtilidad().guardarUtilidad(utilidad);
-				Conector.closeConn("guardarUtilidad");
-			} catch (PersistenciaException e) {
+			try (Connection conn = Conector.getConn()) {
+				resultado = getInterfaceUtilidad().guardarUtilidad(conn, utilidad);
+				Conector.commitConn(conn);
+			} catch (PersistenciaException | SQLException e) {
 				logger.fatal("Excepcion en ManagerProducto > guardarUtilidad: " + e.getMessage(), e);
 				throw new PresentacionException(e);
 			}
@@ -517,11 +502,10 @@ public class ManagerProducto {
 	public Integer modificarUtilidad(Utilidad utilidad) throws PresentacionException {
 		logger.info("Ingresa modificarUtilidad");
 		if(utilidad != null) {
-			try {
-				Conector.getConn();
-				resultado = getInterfaceUtilidad().modificarUtilidad(utilidad);
-				Conector.closeConn("modificarUtilidad");
-			} catch (PersistenciaException e) {
+			try (Connection conn = Conector.getConn()) {
+				resultado = getInterfaceUtilidad().modificarUtilidad(conn, utilidad);
+				Conector.commitConn(conn);
+			} catch (PersistenciaException | SQLException e) {
 				logger.fatal("Excepcion en ManagerProducto > modificarUtilidad: " + e.getMessage(), e);
 				throw new PresentacionException(e);
 			}
@@ -532,11 +516,10 @@ public class ManagerProducto {
 	public Integer eliminarUtilidad(Utilidad utilidad) throws PresentacionException {
 		logger.info("Se ingresa a eliminarUtilidad");
 		if(utilidad != null) {
-			try {
-				Conector.getConn();
-				resultado = getInterfaceUtilidad().eliminarUtilidad(utilidad);
-				Conector.closeConn("eliminarTipoProd");
-			} catch (PersistenciaException e) {
+			try (Connection conn = Conector.getConn()) {
+				resultado = getInterfaceUtilidad().eliminarUtilidad(conn, utilidad);
+				Conector.commitConn(conn);
+			} catch (PersistenciaException | SQLException e) {
 				logger.fatal("Excepcion en ManagerProducto > eliminarUtilidad: " + e.getMessage(), e);
 				throw new PresentacionException(e);
 			}
@@ -550,18 +533,20 @@ public class ManagerProducto {
 	
 	/**
 	 * metodo que a partir de una transaccion y un producto devuelve el lote asociado a dicha transaccion 
+	 * @param conn
 	 * @param nroTransac
 	 * @param idProducto
 	 * @param diasTol
 	 * @return
 	 * @throws PresentacionException
-	 * METODO NO CONN: NO ABRE NI CIERRA CONEXIONES, DEBE SER LLAMADO DESDE METODO CONTENEDOR DE CONEXION
+	 * 
+	 * <<<<< RECIBE CONNECTION - NO AUTOGENERA >>>>>
 	 */
-	public Lote obtenerLoteVtaPorTransacProdNoConn(Integer nroTransac, Integer idProducto) throws PersistenciaException {
+	public Lote obtenerLoteVtaPorTransacProdNoConn(Connection conn, Integer nroTransac, Integer idProducto) throws PersistenciaException {
 		logger.info("Se ingresa a obtenerLotePorTransacProd");
 		Lote lote = null;
 		try {
-			lote = getInterfaceLote().obtenerLoteVtaPorTransacProd(nroTransac, idProducto);
+			lote = getInterfaceLote().obtenerLoteVtaPorTransacProd(conn, nroTransac, idProducto);
 		} catch (PersistenciaException e) {
 			logger.fatal("Excepcion en ManagerProducto > obtenerListaLotePorTransac: " + e.getMessage(), e);
 			throw e;
@@ -572,11 +557,10 @@ public class ManagerProducto {
 	public List<Lote> obtenerListaLotePorTransac(Integer nroTransac) throws PresentacionException {
 		logger.info("Se ingresa a obtenerListaLotePorTransac");
 		List<Lote> listaLote = null;
-		try {
-			Conector.getConn();
-			listaLote = getInterfaceLote().obtenerListaLotePorTransac(nroTransac);
-			Conector.closeConn("obtenerListaLotePorTransac");
-		} catch (PersistenciaException e) {
+		try (Connection conn = Conector.getConn()) {
+			listaLote = getInterfaceLote().obtenerListaLotePorTransac(conn, nroTransac);
+			Conector.commitConn(conn);
+		} catch (PersistenciaException | SQLException e) {
 			logger.fatal("Excepcion en ManagerProducto > obtenerListaLotePorTransac: " + e.getMessage(), e);
 			throw new PresentacionException(e);
 		}
@@ -592,12 +576,11 @@ public class ManagerProducto {
 	 */
 	public HlpProducto obtenerStockPrecioLotePorProducto(Integer idProducto) throws PresentacionException {
 		HlpProducto hlpProd = null;
-		try {
-			Conector.getConn();
-			hlpProd = obtenerStockPrecioLotePorProductoNoConn(idProducto);
-			Conector.closeConn("obtenerStockPrecioLotePorProducto");
-		} catch (PresentacionException e) {
-			throw e;
+		try (Connection conn = Conector.getConn()) {
+			hlpProd = obtenerStockPrecioLotePorProductoNoConn(conn, idProducto);
+			Conector.commitConn(conn);
+		} catch (PresentacionException | SQLException e) {
+			throw new PresentacionException(e);
 		}
 		return hlpProd;
 	}
@@ -609,18 +592,19 @@ public class ManagerProducto {
 	 * mas alto (para casos remotos de diferencia de precios entre compras).
 	 * >> metodo de precio: se aplicará sobre el precio del producto, el porcentaje de utilidad de ganancia, y sobre este calculo, se
 	 * le adicionará el iva que corresponda.
-	 * METODO NO CONN: NO ABRE NI CIERRA CONEXIONES, DEBE SER LLAMADO DESDE METODO CONTENEDOR DE CONEXION
 	 * @param idProducto
 	 * @return HlpProducto
 	 * @throws PresentacionException
+	 * 
+	 * <<<<< RECIBE CONNECTION - NO AUTOGENERA >>>>>
 	 */
-	public HlpProducto obtenerStockPrecioLotePorProductoNoConn(Integer idProducto) throws PresentacionException {
+	public HlpProducto obtenerStockPrecioLotePorProductoNoConn(Connection conn, Integer idProducto) throws PresentacionException {
 		logger.info("Se ingresa a obtenerStockPrecioLotePorProductoNoConn");
 		HlpProducto hlpProd = null;
 		try {
 			ConfigDriver cfgDrv = ConfigDriver.getConfigDriver();
 			Integer diasParaVenc = Integer.valueOf(cfgDrv.getDiasParaVenc());
-			List<Lote> listaLote = getInterfaceLote().obtenerListaLotePorProd(idProducto, diasParaVenc);
+			List<Lote> listaLote = getInterfaceLote().obtenerListaLotePorProd(conn, idProducto, diasParaVenc);
 			Double precioFinal = new Double(0);
 			Long stock = new Long(0);
 			if(listaLote != null && !listaLote.isEmpty()) {
@@ -660,8 +644,10 @@ public class ManagerProducto {
 	 * @param idProducto
 	 * @param cantidad
 	 * @throws PresentacionException
+	 * 
+	 * <<<<< RECIBE CONNECTION - NO AUTOGENERA >>>>>
 	 */
-	public void manejarStockLotePorProductoNoConn(Integer nroTransac, Integer idProducto, Integer cantidad) throws PresentacionException, ProductoSinStockException {
+	public void manejarStockLotePorProductoNoConn(Connection conn, Integer nroTransac, Integer idProducto, Integer cantidad) throws PresentacionException, ProductoSinStockException {
 		logger.info("Se ingresa a manejarStockLotePorProducto: cantidad inicial del pedido: " + cantidad);
 		List<Lote> listaLote = null;
 		try {
@@ -671,11 +657,11 @@ public class ManagerProducto {
 			 * vuelvo a comprobar cantidad de stock para el producto, en caso de no haber suficientes, corto la ejecucion
 			 * con una excepcion del tipo ProductoSinStockException
 			 */
-			HlpProducto hlpProd = obtenerStockPrecioLotePorProductoNoConn(idProducto);
+			HlpProducto hlpProd = obtenerStockPrecioLotePorProductoNoConn(conn, idProducto);
 			if(hlpProd == null || hlpProd.getStock() < cantidad) {
 				throw new ProductoSinStockException("--Stock insuficiente para el producto: " + idProducto + " !!!");
 			}
-			listaLote = getInterfaceLote().obtenerListaLotePorProd(idProducto, diasParaVenc);
+			listaLote = getInterfaceLote().obtenerListaLotePorProd(conn, idProducto, diasParaVenc);
 			logger.info("# Cantidad de lotes para el producto: " + listaLote.size());
 			HashMap<Long, List<Lote>> mapLotes = new HashMap<>();
 			for(Lote lote : listaLote) {
@@ -700,7 +686,7 @@ public class ManagerProducto {
 				//recorro cada uno de los lotes [COMPRADOS] con misma fecha de vencimiento
 				for(Lote lote : listaPorVenc) {
 					//obtengo la linea de VENTA
-					TranLinea tl = getInterfaceTranLinea().obtenerTranLineaPorId(nroTransac, idProducto);
+					TranLinea tl = getInterfaceTranLinea().obtenerTranLineaPorId(conn, nroTransac, idProducto);
 					TranLineaLote tll = new TranLineaLote(tl, lote, 0);
 					if(lote.getStock() > restanteActStock) {
 						logger.info(" >> El lote: " + lote.getIdLote() + " tiene stock suficiente para el producto: " + idProducto);
@@ -713,7 +699,7 @@ public class ManagerProducto {
 						listaTll.add(tll);
 						Integer nuevoStockLote = lote.getStock() - restanteActStock;
 						restanteActStock = 0;
-						getInterfaceLote().actualizarStockLote(lote.getIdLote(), nuevoStockLote);
+						getInterfaceLote().actualizarStockLote(conn, lote.getIdLote(), nuevoStockLote);
 						break;
 					} else {
 						logger.info(" >> El lote: " + lote.getIdLote() + " utlizará su stock restante [" + lote.getStock() + " unidades] para "
@@ -730,14 +716,14 @@ public class ManagerProducto {
 						 * actualizo lote pasando stock de lote a 0 
 						 * y busco en siguiente lote
 						 */
-						getInterfaceLote().actualizarStockLote(lote.getIdLote(), 0);
+						getInterfaceLote().actualizarStockLote(conn, lote.getIdLote(), 0);
 					}
 				}
 				//corto si ya no hay restante a actualizar (finalizo la actualizacion de lote para el prod)
 				if(restanteActStock == 0) break;
 			}
 			//se manda a persistir lista con datos de stock por lotes
-			getInterfaceTransac().guardarListaTranLineaLote(listaTll);
+			getInterfaceTransac().guardarListaTranLineaLote(conn, listaTll);
 		} catch (PersistenciaException e) {
 			logger.fatal("Excepcion en ManagerProducto > manejarStockLotePorProducto: " + e.getMessage(), e);
 			throw new PresentacionException(e);
@@ -745,7 +731,6 @@ public class ManagerProducto {
 			logger.fatal("Excepcion no controlada en ManagerProducto > manejarStockLotePorProducto: " + e.getMessage(), e);
 			throw new PresentacionException(e);
 		}
-//		return mapLotes;
 	}
 	
 //	public Lote obtenerLotePorId(Integer idLote) {

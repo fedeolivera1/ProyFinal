@@ -1,5 +1,6 @@
 package gpd.interfaces.transaccion;
 
+import java.sql.Connection;
 import java.util.List;
 
 import gpd.dominio.transaccion.EstadoTran;
@@ -11,19 +12,19 @@ import gpd.types.Fecha;
 
 public interface IPersTransaccion {
 
-	public Integer guardarTransaccionCompra(Transaccion transaccion) throws PersistenciaException;
-	public Integer guardarTransaccionVenta(Transaccion transaccion) throws PersistenciaException;
-	public Integer modificarEstadoTransaccion(Transaccion transaccion) throws PersistenciaException;
+	public Integer guardarTransaccionCompra(Connection conn, Transaccion transaccion) throws PersistenciaException;
+	public Integer guardarTransaccionVenta(Connection conn, Transaccion transaccion) throws PersistenciaException;
+	public Integer modificarEstadoTransaccion(Connection conn, Transaccion transaccion) throws PersistenciaException;
 	
-	public Transaccion obtenerTransaccionPorId(Integer idTransac) throws PersistenciaException;
-	public List<Transaccion> obtenerListaTransaccionPorPersona(Long idPersona, TipoTran tipoTran, EstadoTran estadoTran) throws PersistenciaException;
-	public List<Transaccion> obtenerListaTransaccionPorPeriodo(TipoTran tipoTran, EstadoTran estadoTran, Fecha fechaIni, Fecha fechaFin) throws PersistenciaException;
+	public Transaccion obtenerTransaccionPorId(Connection conn, Integer idTransac) throws PersistenciaException;
+	public List<Transaccion> obtenerListaTransaccionPorPersona(Connection conn, Long idPersona, TipoTran tipoTran, EstadoTran estadoTran) throws PersistenciaException;
+	public List<Transaccion> obtenerListaTransaccionPorPeriodo(Connection conn, TipoTran tipoTran, EstadoTran estadoTran, Fecha fechaIni, Fecha fechaFin) throws PersistenciaException;
 	
-	public Integer guardarTranEstado(Transaccion transaccion) throws PersistenciaException;
-	public EstadoTran obtenerUltTranEstadoPorId(Integer idTransac) throws PersistenciaException;
+	public Integer guardarTranEstado(Connection conn, Transaccion transaccion) throws PersistenciaException;
+	public EstadoTran obtenerUltTranEstadoPorId(Connection conn, Integer idTransac) throws PersistenciaException;
 
-	public List<TranLineaLote> obtenerListaTranLineaLote(Integer nroTransac, Integer idProducto) throws PersistenciaException;
-	public Integer guardarListaTranLineaLote(List<TranLineaLote> listaTll) throws PersistenciaException;
-	public Integer eliminarTranLineaLote(Integer nroTransac) throws PersistenciaException;
+	public List<TranLineaLote> obtenerListaTranLineaLote(Connection conn, Integer nroTransac, Integer idProducto) throws PersistenciaException;
+	public Integer guardarListaTranLineaLote(Connection conn, List<TranLineaLote> listaTll) throws PersistenciaException;
+	public Integer eliminarTranLineaLote(Connection conn, Integer nroTransac) throws PersistenciaException;
 	
 }

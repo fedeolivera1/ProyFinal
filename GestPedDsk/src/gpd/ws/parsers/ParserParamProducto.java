@@ -1,5 +1,6 @@
 package gpd.ws.parsers;
 
+import java.sql.Connection;
 import java.util.HashSet;
 import java.util.List;
 
@@ -24,7 +25,7 @@ public class ParserParamProducto {
 	private static HashSet<Integer> setTp = new HashSet<>();
 	private static HashSet<Integer> setUni = new HashSet<>();
 	
-	public static ParamRecProductosASinc parseParamRecProductosASinc(List<Producto> listaProd) throws ParsersException {
+	public static ParamRecProductosASinc parseParamRecProductosASinc(Connection conn, List<Producto> listaProd) throws ParsersException {
 		ParamRecProductosASinc param = null;
 		try {
 			if(listaProd != null && !listaProd.isEmpty()) {
@@ -69,7 +70,7 @@ public class ParserParamProducto {
 					 * le paso directamente el precio de venta.
 					 */
 					ManagerProducto mgrProd = new ManagerProducto();
-					HlpProducto hlpProd = mgrProd.obtenerStockPrecioLotePorProductoNoConn(prod.getIdProducto());
+					HlpProducto hlpProd = mgrProd.obtenerStockPrecioLotePorProductoNoConn(conn, prod.getIdProducto());
 					paramProdASinc.setPrecioVta(hlpProd != null ? hlpProd.getPrecioVta() : new Double(0));
 					paramProdASinc.setSinc(prod.getSinc().getSinc());
 					paramProdASinc.setUltAct(prod.getUltAct().getAsXMLGregorianCalendar(Fecha.AMDHMS));

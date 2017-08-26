@@ -11,7 +11,7 @@ public interface CnstQryProducto {
 													+ "AND (p.nombre ILIKE ? OR '' = ?) "
 													+ "AND (p.descripcion ILIKE ? OR '' = ?) "
 													+ "AND p.activo = 1";
-			
+	
 	public static final String QRY_SELECT_PROD_XID = "SELECT id_producto, id_tipo_prod, codigo, nombre, descripcion, stock_min, apl_iva, id_unidad, cant_unidad, precio, sinc, ult_act, activo "
 													+ "FROM producto p "
 													+ "WHERE p.id_producto = ? "
@@ -39,8 +39,7 @@ public interface CnstQryProducto {
 	
 	public static final String QRY_DESACT_PROD = "UPDATE producto SET activo = ?, sinc = ? WHERE id_producto = ?";
 	
-	public static final String QRY_ACT_SINC_PROD = "UPDATE producto "
-													+ "SET sinc = ? "
+	public static final String QRY_UPDATE_SINC_PROD = "UPDATE producto SET sinc = ?, ult_act = ? "
 													+ "WHERE id_producto = ? "
 													+ "AND activo = 1";
 

@@ -1,5 +1,6 @@
 package gpd.interfaces.persona;
 
+import java.sql.Connection;
 import java.util.List;
 
 import gpd.dominio.persona.Departamento;
@@ -8,9 +9,9 @@ import gpd.exceptions.PersistenciaException;
 
 public interface IPersDepLoc {
 
-	public List<Departamento> obtenerListaDepartamentos() throws PersistenciaException;
-	public Departamento obtenerDepartamentoPorId(Integer id) throws PersistenciaException;
-	public List<Localidad> obtenerListaLocPorDep(Integer idDep) throws PersistenciaException;
-	public Localidad obtenerLocalidadPorId(Integer idLoc) throws PersistenciaException;
+	public List<Departamento> obtenerListaDepartamentos(Connection conn) throws PersistenciaException;
+	public Departamento obtenerDepartamentoPorId(Connection conn, Integer id) throws PersistenciaException;
+	public List<Localidad> obtenerListaLocPorDep(Connection conn, Integer idDep) throws PersistenciaException;
+	public Localidad obtenerLocalidadPorId(Connection conn, Integer idLoc) throws PersistenciaException;
 	
 }

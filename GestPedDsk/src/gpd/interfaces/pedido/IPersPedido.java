@@ -1,5 +1,6 @@
 package gpd.interfaces.pedido;
 
+import java.sql.Connection;
 import java.util.List;
 
 import gpd.dominio.pedido.EstadoPedido;
@@ -10,13 +11,13 @@ import gpd.types.Fecha;
 
 public interface IPersPedido {
 
-	public Pedido obtenerPedidoPorId(Long idPersona, Fecha fechaHora) throws PersistenciaException;
-	public List<Pedido> obtenerListaPedido(EstadoPedido ep, Long idPersona, Origen origen, Fecha fechaDesde, Fecha fechaHasta) throws PersistenciaException;
-	public List<Pedido> obtenerListaPedidoNoSincWeb(EstadoPedido ep, Fecha fechaDesde, Fecha fechaHasta) throws PersistenciaException;
-	public Integer guardarPedido(Pedido pedido) throws PersistenciaException;
-	public Integer modificarPedido(Pedido pedido) throws PersistenciaException;
-	public Integer eliminarPedido(Pedido pedido) throws PersistenciaException;
-	public Boolean checkExistPedido(Pedido pedido) throws PersistenciaException;
-	public Integer modificarSincUltActPedido(Pedido pedido) throws PersistenciaException;
+	public Pedido obtenerPedidoPorId(Connection conn, Long idPersona, Fecha fechaHora) throws PersistenciaException;
+	public List<Pedido> obtenerListaPedido(Connection conn, EstadoPedido ep, Long idPersona, Origen origen, Fecha fechaDesde, Fecha fechaHasta) throws PersistenciaException;
+	public List<Pedido> obtenerListaPedidoNoSincWeb(Connection conn, EstadoPedido ep, Fecha fechaDesde, Fecha fechaHasta) throws PersistenciaException;
+	public Integer guardarPedido(Connection conn, Pedido pedido) throws PersistenciaException;
+	public Integer modificarPedido(Connection conn, Pedido pedido) throws PersistenciaException;
+	public Integer eliminarPedido(Connection conn, Pedido pedido) throws PersistenciaException;
+	public Boolean checkExistPedido(Connection conn, Pedido pedido) throws PersistenciaException;
+	public Integer modificarSincUltActPedido(Connection conn, Pedido pedido) throws PersistenciaException;
 
 }

@@ -21,7 +21,7 @@ public class ControlAccesoInternet {
 			TEST_URL = String.valueOf(cfgDrv.getInetTestUrl());
 			TEST_PORT = Integer.valueOf(cfgDrv.getInetTestPort());
 		} catch(Exception e) {
-			logger.fatal("Excepcion en ControlAccesoInternet > consumirWebService: " + e.getMessage(), e);
+			logger.fatal("Excepcion en ControlAccesoInternet > controlarConectividadInet: " + e.getMessage(), e);
 			throw new NoInetConnectionException(e);
 		}
 		try {
