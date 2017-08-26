@@ -65,17 +65,12 @@ public class ManagerPedido {
 	public Pedido obtenerPedidoPorId(Long idPersona, Fecha fechaHora) throws PresentacionException {
 		Pedido pedido = null;
 		try (Connection conn = Conector.getConn()) {
-			Conector.getConn();
 			pedido = getInterfacePedido().obtenerPedidoPorId(conn, idPersona, fechaHora);
-//			if(pedido != null) {
-//				List<PedidoLinea> listaPedidoLinea = getInterfacePedidoLinea().obtenerListaPedidoLinea(pedido);
-//				if(listaPedidoLinea != null && !listaPedidoLinea.isEmpty()) {
-//					pedido.setListaPedidoLinea(listaPedidoLinea);
-//				}
-//			}
-			Conector.commitConn(conn);
 		} catch (PersistenciaException | SQLException e) {
-			logger.fatal("Excepcion en ManagerTransaccion > obtenerPedidoPorId: " + e.getMessage(), e);
+			logger.fatal("Excepcion en ManagerPedido > obtenerPedidoPorId: " + e.getMessage(), e);
+			throw new PresentacionException(e);
+		} catch (Exception e) {
+			logger.fatal("Excepcion GENERICA en ManagerPedido > obtenerPedidoPorId: " + e.getMessage(), e);
 			throw new PresentacionException(e);
 		}
 		return pedido;
@@ -84,19 +79,12 @@ public class ManagerPedido {
 	public List<Pedido> obtenerListaPedidoPorPeriodo(EstadoPedido ep, Long idPersona, Origen origen, Fecha fechaIni, Fecha fechaFin) throws PresentacionException {
 		List<Pedido> listaPedido = null;
 		try (Connection conn = Conector.getConn()) {
-			Conector.getConn();
 			listaPedido = getInterfacePedido().obtenerListaPedido(conn, ep, idPersona, origen, fechaIni, fechaFin);
-//			if(listaPedido != null && !listaPedido.isEmpty()) {
-//				for(Pedido pedido : listaPedido) {
-//					List<PedidoLinea> listaPedidoLinea = getInterfacePedidoLinea().obtenerListaPedidoLinea(pedido);
-//					if(listaPedidoLinea != null && !listaPedidoLinea.isEmpty()) {
-//						pedido.setListaPedidoLinea(listaPedidoLinea);
-//					}
-//				}
-//			}
-			Conector.commitConn(conn);
 		} catch (PersistenciaException | SQLException e) {
-			logger.fatal("Excepcion en ManagerTransaccion > obtenerListaPedidoPorPeriodo: " + e.getMessage(), e);
+			logger.fatal("Excepcion en ManagerPedido > obtenerListaPedidoPorPeriodo: " + e.getMessage(), e);
+			throw new PresentacionException(e);
+		} catch (Exception e) {
+			logger.fatal("Excepcion GENERICA en ManagerPedido > obtenerListaPedidoPorPeriodo: " + e.getMessage(), e);
 			throw new PresentacionException(e);
 		}
 		return listaPedido;
@@ -107,7 +95,6 @@ public class ManagerPedido {
 			if(pedido != null && pedido.getListaPedidoLinea() != null &&
 					!pedido.getListaPedidoLinea().isEmpty()) {
 				//se genera nueva transaccion de VENTA con estado P
-				Conector.getConn();
 				ManagerTransaccion mgrTransac = new ManagerTransaccion();
 				//transaccion
 				Sinc sinc = Sinc.N;
@@ -156,7 +143,10 @@ public class ManagerPedido {
 			}
 			Conector.commitConn(conn);
 		} catch (PersistenciaException | SQLException e) {
-			logger.fatal("Excepcion en ManagerTransaccion > generarNuevoPedido: " + e.getMessage(), e);
+			logger.fatal("Excepcion en ManagerPedido > generarNuevoPedido: " + e.getMessage(), e);
+			throw new PresentacionException(e);
+		} catch (Exception e) {
+			logger.fatal("Excepcion GENERICA en ManagerPedido > manejarStockLotePorProducto: " + e.getMessage(), e);
 			throw new PresentacionException(e);
 		}
 		return null;
@@ -176,7 +166,6 @@ public class ManagerPedido {
 			if(pedido.getEstado().equals(EstadoPedido.P) && estadoPedido.equals(EstadoPedido.C)) {
 				logger.info("<< Ingresa actualizacion de pedidos >> estado actual: " + pedido.getEstado().getEstadoPedido() + 
 						" - estado actualiza: " + estadoPedido.getEstadoPedido() + " [actualizacion a venta]");
-				Conector.getConn();
 				ManagerProducto mgrProd = new ManagerProducto();
 				pedido.setEstado(estadoPedido);
 				/*
@@ -226,11 +215,10 @@ public class ManagerPedido {
 			} else {
 				throw new PresentacionException("actualizaPedido mal implementado!!!");
 			}
-		} catch (PresentacionException pe) {
-			throw pe;
 		} catch (ProductoSinStockException psse) {
 			throw psse;
 		} catch (Exception e) {
+			logger.fatal("Excepcion GENERICA en ManagerPedido > manejarStockLotePorProducto: " + e.getMessage(), e);
 			throw new PresentacionException(e);
 		}
 		return null;
@@ -250,9 +238,11 @@ public class ManagerPedido {
 					pedido.setListaPedidoLinea(listaPedidoLinea);
 				}
 			}
-			Conector.commitConn(conn);
 		} catch (PersistenciaException | SQLException e) {
-			logger.fatal("Excepcion en ManagerTransaccion > obtenerPedidoPorId: " + e.getMessage(), e);
+			logger.fatal("Excepcion en ManagerPedido > obtenerPedidoLinPorId: " + e.getMessage(), e);
+			throw new PresentacionException(e);
+		} catch (Exception e) {
+			logger.fatal("Excepcion GENERICA en ManagerPedido > obtenerPedidoLinPorId: " + e.getMessage(), e);
 			throw new PresentacionException(e);
 		}
 		return pedido;

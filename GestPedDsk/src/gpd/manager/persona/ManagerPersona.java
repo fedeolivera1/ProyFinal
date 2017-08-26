@@ -66,7 +66,6 @@ public class ManagerPersona {
 		List<TipoDoc> listaTipoDoc = null;
 		try (Connection conn = Conector.getConn()) {
 			listaTipoDoc = getInterfaceTipoDoc().obtenerListaTipoDoc(conn);
-			Conector.commitConn(conn);
 		} catch (PersistenciaException e) {
 			logger.fatal("Excepcion en ManagerPersona > obtenerListaTipoDoc: " + e.getMessage(), e);
 			throw new PresentacionException(e);
@@ -92,6 +91,9 @@ public class ManagerPersona {
 		} catch (PersistenciaException | SQLException e) {
 			logger.fatal("Excepcion en ManagerPersona > obtenerBusquedaPersFisica: " + e.getMessage(), e);
 			throw new PresentacionException(e);
+		} catch (Exception e) {
+			logger.fatal("Excepcion GENERICA en ManagerPersona > obtenerBusquedaPersFisica: " + e.getMessage(), e);
+			throw new PresentacionException(e);
 		}
 		return listaPf;
 	}
@@ -104,6 +106,9 @@ public class ManagerPersona {
 		} catch (PersistenciaException | SQLException e) {
 			logger.fatal("Excepcion en ManagerPersona > obtenerPersFisicaPorId: " + e.getMessage(), e);
 			throw new PresentacionException(e);
+		} catch (Exception e) {
+			logger.fatal("Excepcion GENERICA en ManagerPersona > obtenerPersFisicaPorId: " + e.getMessage(), e);
+			throw new PresentacionException(e);
 		}
 		return persFisica;
 	}
@@ -111,15 +116,19 @@ public class ManagerPersona {
 	public Integer guardarPersFisica(PersonaFisica persFisica) throws PresentacionException {
 		logger.info("Ingresa guardarPersFisica");
 		Integer resultado = null;
-		if(persFisica != null) {
-			try (Connection conn = Conector.getConn()) {
+		try (Connection conn = Conector.getConn()) {
+			if(persFisica != null) {
 				persFisica.setSinc(Sinc.N);
 				persFisica.setUltAct(new Fecha(Fecha.AMDHMS));
 				resultado = getInterfacePersona().guardarPersFisica(conn, persFisica);
-			} catch (PersistenciaException | SQLException e) {
-				logger.fatal("Excepcion en ManagerPersona > guardarPersFisica: " + e.getMessage(), e);
-				throw new PresentacionException(e);
+				Conector.commitConn(conn);
 			}
+		} catch (PersistenciaException | SQLException e) {
+			logger.fatal("Excepcion en ManagerPersona > guardarPersFisica: " + e.getMessage(), e);
+			throw new PresentacionException(e);
+		} catch (Exception e) {
+			logger.fatal("Excepcion GENERICA en ManagerPersona > guardarPersFisica: " + e.getMessage(), e);
+			throw new PresentacionException(e);
 		}
 		return resultado;
 	}
@@ -127,15 +136,19 @@ public class ManagerPersona {
 	public Integer modificarPersFisica(PersonaFisica persFisica) throws PresentacionException {
 		logger.info("Se ingresa a modificarPersFisica");
 		Integer resultado = null;
-		if(persFisica != null) {
-			try (Connection conn = Conector.getConn()) {
+		try (Connection conn = Conector.getConn()) {
+			if(persFisica != null) {
 				persFisica.setSinc(Sinc.N);
 				persFisica.setUltAct(new Fecha(Fecha.AMDHMS));
 				resultado = getInterfacePersona().modificarPersFisica(conn, persFisica);
-			} catch (PersistenciaException | SQLException e) {
-				logger.fatal("Excepcion en ManagerPersona > modificarPersFisica: " + e.getMessage(), e);
-				throw new PresentacionException(e);
+				Conector.commitConn(conn);
 			}
+		} catch (PersistenciaException | SQLException e) {
+			logger.fatal("Excepcion en ManagerPersona > modificarPersFisica: " + e.getMessage(), e);
+			throw new PresentacionException(e);
+		} catch (Exception e) {
+			logger.fatal("Excepcion GENERICA en ManagerPersona > modificarPersFisica: " + e.getMessage(), e);
+			throw new PresentacionException(e);
 		}
 		return resultado;
 	}
@@ -146,8 +159,12 @@ public class ManagerPersona {
 		if(persFisica != null) {
 			try (Connection conn = Conector.getConn()) {
 				resultado = getInterfacePersona().eliminarPersFisica(conn, persFisica);
+				Conector.commitConn(conn);
 			} catch (PersistenciaException | SQLException e) {
 				logger.fatal("Excepcion en ManagerPersona > eliminarPersFisica: " + e.getMessage(), e);
+				throw new PresentacionException(e);
+			} catch (Exception e) {
+				logger.fatal("Excepcion GENERICA en ManagerPersona > eliminarPersFisica: " + e.getMessage(), e);
 				throw new PresentacionException(e);
 			}
 		}
@@ -168,6 +185,9 @@ public class ManagerPersona {
 		} catch (PersistenciaException | SQLException e) {
 			logger.fatal("Excepcion en ManagerPersona > obtenerBusquedaPersJuridica: " + e.getMessage(), e);
 			throw new PresentacionException(e);
+		} catch (Exception e) {
+			logger.fatal("Excepcion GENERICA en ManagerPersona > obtenerBusquedaPersJuridica: " + e.getMessage(), e);
+			throw new PresentacionException(e);
 		}
 		return listaPj;
 	}
@@ -180,17 +200,23 @@ public class ManagerPersona {
 		} catch (PersistenciaException | SQLException e) {
 			logger.fatal("Excepcion en ManagerPersona > obtenerListaProveedor: " + e.getMessage(), e);
 			throw new PresentacionException(e);
+		} catch (Exception e) {
+			logger.fatal("Excepcion GENERICA en ManagerPersona > obtenerListaProveedor: " + e.getMessage(), e);
+			throw new PresentacionException(e);
 		}
 		return listaPj;
 	}
 	
 	public List<PersonaJuridica> obtenerListaEmpresas() throws PresentacionException {
-		logger.info("Ingresa obtenerListaProveedor");
+		logger.info("Ingresa obtenerListaEmpresas");
 		List<PersonaJuridica> listaPj = null;
 		try (Connection conn = Conector.getConn()) {
 			listaPj = getInterfacePersona().obtenerListaEmpresasPorTipo(conn, null);
 		} catch (PersistenciaException | SQLException e) {
 			logger.fatal("Excepcion en ManagerPersona > obtenerListaEmpresas: " + e.getMessage(), e);
+			throw new PresentacionException(e);
+		} catch (Exception e) {
+			logger.fatal("Excepcion GENERICA en ManagerPersona > obtenerListaEmpresas: " + e.getMessage(), e);
 			throw new PresentacionException(e);
 		}
 		return listaPj;
@@ -204,6 +230,9 @@ public class ManagerPersona {
 		} catch (PersistenciaException | SQLException e) {
 			logger.fatal("Excepcion en ManagerPersona > obtenerPersJuridicaPorId: " + e.getMessage(), e);
 			throw new PresentacionException(e);
+		} catch (Exception e) {
+			logger.fatal("Excepcion GENERICA en ManagerPersona > obtenerPersJuridicaPorId: " + e.getMessage(), e);
+			throw new PresentacionException(e);
 		}
 		return persJuridica;
 	}
@@ -211,15 +240,19 @@ public class ManagerPersona {
 	public Integer guardarPersJuridica(PersonaJuridica persJuridica) throws PresentacionException {
 		logger.info("Ingresa guardarPersJuridica");
 		Integer resultado = null;
-		if(persJuridica != null) {
-			try (Connection conn = Conector.getConn()) {
+		try (Connection conn = Conector.getConn()) {
+			if(persJuridica != null) {
 				persJuridica.setSinc(Sinc.N);
 				persJuridica.setUltAct(new Fecha(Fecha.AMDHMS));
 				resultado = getInterfacePersona().guardarPersJuridica(conn, persJuridica);
-			} catch (PersistenciaException | SQLException e) {
-				logger.fatal("Excepcion en ManagerPersona > guardarPersJuridica: " + e.getMessage(), e);
-				throw new PresentacionException(e);
+				Conector.commitConn(conn);
 			}
+		} catch (PersistenciaException | SQLException e) {
+			logger.fatal("Excepcion en ManagerPersona > guardarPersJuridica: " + e.getMessage(), e);
+			throw new PresentacionException(e);
+		} catch (Exception e) {
+			logger.fatal("Excepcion GENERICA en ManagerPersona > guardarPersJuridica: " + e.getMessage(), e);
+			throw new PresentacionException(e);
 		}
 		return resultado;
 	}
@@ -227,15 +260,19 @@ public class ManagerPersona {
 	public Integer modificarPersJuridica(PersonaJuridica persJuridica) throws PresentacionException {
 		logger.info("Se ingresa a modificarPersJuridica");
 		Integer resultado = null;
-		if(persJuridica != null) {
-			try (Connection conn = Conector.getConn()) {
+		try (Connection conn = Conector.getConn()) {
+			if(persJuridica != null) {
 				persJuridica.setSinc(Sinc.N);
 				persJuridica.setUltAct(new Fecha(Fecha.AMDHMS));
 				resultado = getInterfacePersona().modificarPersJuridica(conn, persJuridica);
-			} catch (PersistenciaException | SQLException e) {
-				logger.fatal("Excepcion en ManagerPersona > modificarPersJuridica: " + e.getMessage(), e);
-				throw new PresentacionException(e);
+				Conector.commitConn(conn);
 			}
+		} catch (PersistenciaException | SQLException e) {
+			logger.fatal("Excepcion en ManagerPersona > modificarPersJuridica: " + e.getMessage(), e);
+			throw new PresentacionException(e);
+		} catch (Exception e) {
+			logger.fatal("Excepcion GENERICA en ManagerPersona > modificarPersJuridica: " + e.getMessage(), e);
+			throw new PresentacionException(e);
 		}
 		return resultado;
 	}
@@ -243,13 +280,17 @@ public class ManagerPersona {
 	public Integer eliminarPersJuridica(PersonaJuridica persJuridica) throws PresentacionException {
 		logger.info("Se ingresa a eliminarPersFisica");
 		Integer resultado = null;
-		if(persJuridica != null) {
-			try (Connection conn = Conector.getConn()) {
+		try (Connection conn = Conector.getConn()) {
+			if(persJuridica != null) {
 				resultado = getInterfacePersona().eliminarPersJuridica(conn, persJuridica);
-			} catch (PersistenciaException | SQLException e) {
-				logger.fatal("Excepcion en ManagerPersona > eliminarPersJuridica: " + e.getMessage(), e);
-				throw new PresentacionException(e);
+				Conector.commitConn(conn);
 			}
+		} catch (PersistenciaException | SQLException e) {
+			logger.fatal("Excepcion en ManagerPersona > eliminarPersJuridica: " + e.getMessage(), e);
+			throw new PresentacionException(e);
+		} catch (Exception e) {
+			logger.fatal("Excepcion GENERICA en ManagerPersona > eliminarPersJuridica: " + e.getMessage(), e);
+			throw new PresentacionException(e);
 		}
 		return resultado;
 	}
@@ -275,6 +316,9 @@ public class ManagerPersona {
 			}
 		} catch (PersistenciaException | SQLException e) {
 			logger.fatal("Excepcion en ManagerPersona > obtenerBusquedaPersona: " + e.getMessage(), e);
+			throw new PresentacionException(e);
+		} catch (Exception e) {
+			logger.fatal("Excepcion GENERICA en ManagerPersona > obtenerBusquedaPersona: " + e.getMessage(), e);
 			throw new PresentacionException(e);
 		}
 		return listaPersona;
@@ -308,6 +352,9 @@ public class ManagerPersona {
 		} catch (PersistenciaException | SQLException e) {
 			logger.fatal("Excepcion en ManagerPersona > obtenerListaDepartamento: " + e.getMessage(), e);
 			throw new PresentacionException(e);
+		} catch (Exception e) {
+			logger.fatal("Excepcion GENERICA en ManagerPersona > obtenerListaDepartamento: " + e.getMessage(), e);
+			throw new PresentacionException(e);
 		}
 		return listaDep;
 	}
@@ -319,6 +366,9 @@ public class ManagerPersona {
 			listaLoc = getInterfaceDepLoc().obtenerListaLocPorDep(conn, idDep);
 		} catch (PersistenciaException | SQLException e) {
 			logger.fatal("Excepcion en ManagerPersona > obtenerListaLocalidadPorDep: " + e.getMessage(), e);
+			throw new PresentacionException(e);
+		} catch (Exception e) {
+			logger.fatal("Excepcion GENERICA en ManagerPersona > obtenerListaLocalidadPorDep: " + e.getMessage(), e);
 			throw new PresentacionException(e);
 		}
 		return listaLoc;

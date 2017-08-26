@@ -8,7 +8,6 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-import gpd.dominio.pedido.EstadoPedido;
 import gpd.dominio.pedido.Pedido;
 import gpd.dominio.persona.Persona;
 import gpd.dominio.persona.PersonaFisica;

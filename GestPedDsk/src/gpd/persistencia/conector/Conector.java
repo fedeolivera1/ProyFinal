@@ -255,7 +255,7 @@ public abstract class Conector {
 			logger.fatal("Excepcion en fillPreparedStatement : " + e.getMessage(), e);
 			throw new ConectorException(e.getMessage(), e);
 		} catch (Exception e) {
-			logger.fatal("Excepcion no controlada en fillPreparedStatement: " + e.getMessage(), e);
+			logger.fatal("Excepcion GENERICA en fillPreparedStatement: " + e.getMessage(), e);
 			throw new ConectorException(e.getMessage(), e);
 		}
 	}

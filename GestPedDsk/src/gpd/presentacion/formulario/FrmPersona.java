@@ -654,7 +654,7 @@ public class FrmPersona extends JFrame {
 		});
 		btnPjEli.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-//				ctrlPers.eliminarPersJuridica(txtPjRut);
+				ctrlPers.eliminarPersJuridica(txtPjRut);
 			}
 		});
 		btnPjLimpiar.addActionListener(new ActionListener() {

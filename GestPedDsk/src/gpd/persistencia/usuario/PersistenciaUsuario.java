@@ -65,9 +65,9 @@ public class PersistenciaUsuario extends Conector implements IPersUsuario, CnstQ
 		logger.info("Ejecucion de obtenerUsuario para: " + nombreUsuario);
 		UsuarioDsk usuario = null;
 		try {
-			GenSqlSelectType genType = new GenSqlSelectType(QRY_SELECT_USR_XID);
-			genType.setParam(nombreUsuario);
-			try (ResultSet rs = (ResultSet) runGeneric(conn, genType)) {
+			GenSqlSelectType genSel = new GenSqlSelectType(QRY_SELECT_USR_XID);
+			genSel.setParam(nombreUsuario);
+			try (ResultSet rs = (ResultSet) runGeneric(conn, genSel)) {
 				if(rs.next()) {
 					usuario = new UsuarioDsk();
 					usuario.setNomUsu(nombreUsuario);

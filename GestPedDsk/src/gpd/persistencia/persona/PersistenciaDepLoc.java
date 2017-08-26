@@ -25,8 +25,8 @@ public class PersistenciaDepLoc extends Conector implements IPersDepLoc, CnstQry
 	public List<Departamento> obtenerListaDepartamentos(Connection conn) throws PersistenciaException {
 		List<Departamento> listaDep = new ArrayList<>();
 		try {
-			GenSqlSelectType genType = new GenSqlSelectType(QRY_SELECT_DEP);
-			try (ResultSet rs = (ResultSet) runGeneric(conn, genType)) {
+			GenSqlSelectType genSel = new GenSqlSelectType(QRY_SELECT_DEP);
+			try (ResultSet rs = (ResultSet) runGeneric(conn, genSel)) {
 				while(rs.next()) {
 					Departamento departamento = new Departamento();
 					departamento.setIdDepartamento(rs.getInt("id_dep"));
@@ -50,9 +50,9 @@ public class PersistenciaDepLoc extends Conector implements IPersDepLoc, CnstQry
 	public Departamento obtenerDepartamentoPorId(Connection conn, Integer idDep) throws PersistenciaException {
 		Departamento departamento = null;
 		try {
-			GenSqlSelectType genType = new GenSqlSelectType(QRY_SELECT_DEP_XID);
-			genType.setParam(idDep);
-			try (ResultSet rs = (ResultSet) runGeneric(conn, genType)) {
+			GenSqlSelectType genSel = new GenSqlSelectType(QRY_SELECT_DEP_XID);
+			genSel.setParam(idDep);
+			try (ResultSet rs = (ResultSet) runGeneric(conn, genSel)) {
 				if(rs.next()) {
 					departamento = new Departamento();
 					departamento.setIdDepartamento(rs.getInt("id_dep"));
@@ -75,9 +75,9 @@ public class PersistenciaDepLoc extends Conector implements IPersDepLoc, CnstQry
 	public List<Localidad> obtenerListaLocPorDep(Connection conn, Integer idDep) throws PersistenciaException {
 		List<Localidad> listaLoc = new ArrayList<>();
 		try {
-			GenSqlSelectType genType = new GenSqlSelectType(QRY_SELECT_LOC_XDEP);
-			genType.setParam(idDep);
-			try (ResultSet rs = (ResultSet) runGeneric(conn, genType)) {
+			GenSqlSelectType genSel = new GenSqlSelectType(QRY_SELECT_LOC_XDEP);
+			genSel.setParam(idDep);
+			try (ResultSet rs = (ResultSet) runGeneric(conn, genSel)) {
 				while(rs.next()) {
 					Localidad localidad = new Localidad();
 					localidad.setIdLocalidad(rs.getInt("id_loc"));
@@ -102,9 +102,9 @@ public class PersistenciaDepLoc extends Conector implements IPersDepLoc, CnstQry
 	public Localidad obtenerLocalidadPorId(Connection conn, Integer idLoc) throws PersistenciaException {
 		Localidad localidad = null;
 		try {
-			GenSqlSelectType genType = new GenSqlSelectType(QRY_SELECT_LOC_XID);
-			genType.setParam(idLoc);
-			try (ResultSet rs = (ResultSet) runGeneric(conn, genType)) {
+			GenSqlSelectType genSel = new GenSqlSelectType(QRY_SELECT_LOC_XID);
+			genSel.setParam(idLoc);
+			try (ResultSet rs = (ResultSet) runGeneric(conn, genSel)) {
 				if(rs.next()) {
 					localidad = new Localidad();
 					localidad.setIdLocalidad(rs.getInt("id_loc"));
