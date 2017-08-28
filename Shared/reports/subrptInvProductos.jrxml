@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subrptInvProductos" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="4103aff9-936d-4f87-b166-291daab49505">
+	<property name="ireport.zoom" value="1.610510000000001"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="id_producto" class="java.lang.Integer"/>
+	<parameter name="dias_venc" class="java.lang.Integer"/>
+	<queryString>
+		<![CDATA[SELECT l.id_lote, l.venc, d.nombre as deposito, (ut.descripcion || ' [' || ut.porc || '%]') as utilidad, l.stock
+FROM lote l
+INNER JOIN producto p
+ON l.id_producto = p.id_producto
+INNER JOIN utilidad ut
+ON l.id_util = ut.id_util
+INNER JOIN deposito d
+ON l.nro_dep = d.nro_dep
+WHERE p.activo = 1
+AND l.id_producto = $P{id_producto}
+AND l.stock > 0
+AND DATE_PART('day', l.venc - now()) > $P{dias_venc}
+ORDER BY l.venc ASC]]>
+	</queryString>
+	<field name="id_lote" class="java.lang.Integer"/>
+	<field name="venc" class="java.sql.Date"/>
+	<field name="deposito" class="java.lang.String"/>
+	<field name="utilidad" class="java.lang.String"/>
+	<field name="stock" class="java.lang.Integer"/>
+	<variable name="stock_total" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{stock}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="17" splitType="Stretch">
+			<staticText>
+				<reportElement x="146" y="1" width="34" height="16" uuid="572aa61a-603c-480e-b2b1-70a9e0516a2e"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Lote]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="180" y="1" width="100" height="16" uuid="c2e15d7f-02cf-4094-ad96-e5361e83de7f"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Deposito]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="280" y="1" width="100" height="16" uuid="63fa1db4-a261-44f9-8928-8f77c7483cd5"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Utilidad]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="487" y="0" width="68" height="16" uuid="d0e219c7-ba27-429e-a619-4908914a3496"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Stock]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="380" y="1" width="107" height="16" uuid="a11d9fc4-de04-4261-999a-88f03eb0f854"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Vencimiento]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="17" splitType="Stretch">
+			<textField>
+				<reportElement x="146" y="0" width="34" height="16" uuid="3ce793ae-fac7-4003-a5e1-572d1804139b"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{id_lote}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="180" y="0" width="100" height="16" uuid="ad828111-0b97-4c8b-8721-adae9c4bd49c"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{deposito}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="280" y="0" width="100" height="16" uuid="28031080-eb46-4d92-ad87-f04ed03f8abd"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{utilidad}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="487" y="0" width="68" height="16" uuid="530e358f-d3ff-44df-bb38-116a94be1b29"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{stock}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="380" y="0" width="107" height="16" uuid="59b11e17-7e0f-4f1a-b8ec-a009b0cd6dc1"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new SimpleDateFormat("dd/MM/yyyy").format($F{venc})]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="25" splitType="Stretch">
+			<line>
+				<reportElement x="487" y="1" width="68" height="1" uuid="adec25d4-abbd-40a0-8148-4d0d3fb80ba2"/>
+			</line>
+			<staticText>
+				<reportElement x="422" y="3" width="65" height="20" uuid="8567a312-0802-480e-b058-79343b251ff7"/>
+				<textElement>
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<text><![CDATA[Total stock:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="487" y="3" width="68" height="20" uuid="c65aa687-b4c9-4964-b51b-4e416b938f72"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{stock_total}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

@@ -99,21 +99,6 @@ public abstract class Conector {
 	}
 	
 	/**
-	 * @param ResultSet
-	 * cierra el resultset de consulta
-	 */
-//	public static void closeRs(ResultSet rs) {
-//		try {
-//			if(rs != null && !rs.isClosed()) {
-//				rs.close();
-//			}
-//			logger.debug("Se cierra ResultSet. Thread: " + Thread.currentThread().getId());
-//		} catch (SQLException e) {
-//			logger.fatal("ERROR - Conector al cerrar resultset." + e.getMessage(), e);
-//		}
-//	}
-	
-	/**
 	 * @param GenSqlSelectType
 	 * 	recibe un tipo de dato GenSqlSelectType, para obtener el statement y los datos de 
 	 * 	la condicion

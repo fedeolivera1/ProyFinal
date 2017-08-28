@@ -49,6 +49,7 @@ public class ParserResultPersona {
 						pf.setApellido1(rpf.getApellido1());
 						pf.setApellido2(rpf.getApellido2());
 						pf.setNombre1(rpf.getNombre1());
+						pf.setNombre2(rpf.getNombre2());
 						pf.setFechaNac(new Fecha(rpf.getFechaNac(), Fecha.AMD));
 						pf.setSexo(Sexo.getSexoPorChar(rpf.getSexo().charAt(0)));
 						pf.setDocumentoAnt(null);

@@ -40,6 +40,7 @@ public class FrmConsulta extends JFrame {
 	private JComboBox<TipoReporte> cbxConsFiltro;
 	private JDateChooser dchConsIni;
 	private JDateChooser dchConsFin;
+	private JButton btnConsBp;
 
 	public static FrmConsulta getFrmConsulta(UsuarioDsk usr) {
 		if(instance == null) {
@@ -115,7 +116,7 @@ public class FrmConsulta extends JFrame {
 		txtConsPersona.setBounds(111, 71, 340, 20);
 		panel.add(txtConsPersona);
 		
-		JButton btnConsBp = new JButton("...");
+		btnConsBp = new JButton("...");
 		btnConsBp.setBounds(461, 70, 32, 22);
 		panel.add(btnConsBp);
 		
@@ -127,6 +128,7 @@ public class FrmConsulta extends JFrame {
 		
 		cbxConsFiltro.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent arg0) {
+				ctrlInterno.manejarControles(cbxConsFiltro);
 			}
 		});
 		//boton buscar personas
@@ -190,5 +192,12 @@ public class FrmConsulta extends JFrame {
 	}
 	public void setDesktopPane(JDesktopPane desktopPane) {
 		this.desktopPane = desktopPane;
+	}
+
+	public JButton getBtnConsBp() {
+		return btnConsBp;
+	}
+	public void setBtnConsBp(JButton btnConsBp) {
+		this.btnConsBp = btnConsBp;
 	}
 }

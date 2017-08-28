@@ -18,6 +18,7 @@ import gpd.presentacion.generic.CnstPresGeneric;
 import gpd.presentacion.generic.GenCompType;
 import gpd.reports.GeneradorReportes;
 import gpd.reports.TipoReporte;
+import gpd.util.ConfigDriver;
 
 public class CtrlFrmConsulta extends CtrlGenerico implements CnstPresGeneric {
 
@@ -48,6 +49,20 @@ public class CtrlFrmConsulta extends CtrlGenerico implements CnstPresGeneric {
 			cbxConsFiltro.setSelectedIndex(-1);
 		} catch(Exception e) {
 			manejarExcepcion(e);
+		}
+	}
+	
+	public void manejarControles(JComboBox<TipoReporte> cbxConsFiltro) {
+		if(cbxConsFiltro.getSelectedItem().equals(TipoReporte.PR)) {
+			getFrm().getDchConsIni().setEnabled(false);
+			getFrm().getDchConsFin().setEnabled(false);
+			getFrm().getTxtConsPersona().setText(STR_VACIO);
+			getFrm().getBtnConsBp().setEnabled(false);
+		} else {
+			getFrm().getDchConsIni().setEnabled(true);
+			getFrm().getDchConsFin().setEnabled(true);
+			getFrm().getBtnConsBp().setEnabled(true);
+			
 		}
 	}
 	
@@ -124,7 +139,16 @@ public class CtrlFrmConsulta extends CtrlGenerico implements CnstPresGeneric {
 	}
 	
 	public void generarReporteProducto() {
-		
+		try {
+			ConfigDriver cfgDrv = ConfigDriver.getConfigDriver();
+			Integer tolVenc = Integer.valueOf(cfgDrv.getDiasParaVenc());
+			mapParamsJr = new HashMap<>();
+			mapParamsJr.put("tol_venc", tolVenc);
+			mapParamsJr.put("SUBREPORT_DIR", System.getProperty("file.separator"));
+			GeneradorReportes.abrirReporte("rptInvProductos", mapParamsJr);
+		} catch(Exception e) {
+			manejarExcepcion(e);
+		}
 	}
 	
 	public void generarReportePersona() {

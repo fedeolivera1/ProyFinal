@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptInvProductos" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="ff353959-1300-441a-8b5c-296f6b38bddf">
+	<property name="ireport.zoom" value="1.9487171000000014"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="dias_venc" class="java.lang.Integer"/>
+	<queryString>
+		<![CDATA[SELECT p.id_producto, p.codigo, p.descripcion, tp.descripcion as tipoProd, p.nombre, p.descripcion, p.stock_min, p.cant_unidad, u.nombre as unidad, p.apl_iva, p.precio
+FROM producto p
+INNER JOIN tipo_prod tp
+ON p.id_tipo_prod = tp.id_tipo_prod
+INNER JOIN unidad u
+ON p.id_unidad = u.id_unidad
+WHERE p.activo = 1
+ORDER BY tp.id_tipo_prod, p.id_producto]]>
+	</queryString>
+	<field name="id_producto" class="java.lang.Integer"/>
+	<field name="codigo" class="java.lang.String"/>
+	<field name="descripcion" class="java.lang.String"/>
+	<field name="tipoprod" class="java.lang.String"/>
+	<field name="nombre" class="java.lang.String"/>
+	<field name="stock_min" class="java.math.BigDecimal"/>
+	<field name="cant_unidad" class="java.lang.Integer"/>
+	<field name="unidad" class="java.lang.String"/>
+	<field name="apl_iva" class="java.lang.String"/>
+	<field name="precio" class="java.math.BigDecimal"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="31" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="555" height="31" uuid="f942e7d4-187b-4810-a137-ed3d597fa0e5"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="16"/>
+				</textElement>
+				<text><![CDATA[Inventario de productos]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="28" splitType="Stretch">
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="false">
+				<reportElement key="textField" x="477" y="0" width="78" height="19" forecolor="#000000" backcolor="#FFFFFF" uuid="0c2a9fad-ed55-455b-9a32-dba0011c84f2"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="20" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="37" height="20" uuid="6b3749ef-78fa-411f-91e6-2a1d6b97e588"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[ID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="37" y="0" width="254" height="20" uuid="f77efa48-9821-44da-8cd5-4de00bde7ef4"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[Producto]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="291" y="0" width="93" height="20" uuid="8dcfba4d-ec65-4255-a2de-cabb8d3e07c6"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[Presentacion]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="490" y="0" width="65" height="20" uuid="032b3c4f-a185-48ee-ab11-abb4398a293a"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[Precio lista]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="441" y="0" width="49" height="20" uuid="39a9ae96-220e-4562-97bd-867bb2fcdd9d"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[IVA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="384" y="0" width="57" height="20" uuid="0c4ee0b4-bbab-4032-913e-76ddeb3d3360"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[Stock Min.]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="65" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="3" width="37" height="20" uuid="148b7bc9-9022-4897-b3c4-5878fbb133d1"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{id_producto}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="37" y="3" width="254" height="20" uuid="9a0ddac9-15cb-45d2-b85d-a232c1688bda"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{codigo} + " | " + $F{nombre} + " | " + $F{descripcion}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="291" y="3" width="93" height="20" uuid="980ca849-2319-4484-9c9a-8b8015c6778e"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cant_unidad} + " " + $F{unidad}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="490" y="3" width="65" height="20" uuid="a9fac008-f20e-45bd-9861-22e4f8c52b7b"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{precio}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="441" y="3" width="49" height="20" uuid="be8df31a-a52e-48a1-9a4d-0e80e80b4802"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{apl_iva}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="384" y="3" width="57" height="20" uuid="678c6a66-8f8a-4fe3-97d9-52ba252b7720"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{stock_min}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="163" y="25" width="392" height="1" uuid="d4b6c47c-a724-4ff6-97a9-b29a86488747"/>
+			</line>
+			<subreport>
+				<reportElement x="0" y="28" width="554" height="36" uuid="b5e00d35-4ba5-413c-9266-20a28b556d08"/>
+				<subreportParameter name="dias_venc">
+					<subreportParameterExpression><![CDATA[$P{dias_venc}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="id_producto">
+					<subreportParameterExpression><![CDATA[$F{id_producto}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "subrptInvProductos.jasper"]]></subreportExpression>
+			</subreport>
+			<line>
+				<reportElement x="0" y="1" width="555" height="1" uuid="646cc915-d056-472a-a81e-6ca15416c431"/>
+			</line>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="30" splitType="Stretch">
+			<textField evaluationTime="Report" pattern="" isBlankWhenNull="false">
+				<reportElement key="textField" x="518" y="11" width="36" height="19" forecolor="#000000" backcolor="#FFFFFF" uuid="90641a9a-3fb4-4301-b504-37fd93bd4e64"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA["" + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement key="textField" x="455" y="11" width="63" height="19" forecolor="#000000" backcolor="#FFFFFF" uuid="2d1601a0-b48c-4e2e-b8d1-9e41096c2b08"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Hoja " + $V{PAGE_NUMBER} + " de "]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>
