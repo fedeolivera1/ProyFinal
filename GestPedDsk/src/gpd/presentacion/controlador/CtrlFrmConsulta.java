@@ -141,9 +141,9 @@ public class CtrlFrmConsulta extends CtrlGenerico implements CnstPresGeneric {
 	public void generarReporteProducto() {
 		try {
 			ConfigDriver cfgDrv = ConfigDriver.getConfigDriver();
-			Integer tolVenc = Integer.valueOf(cfgDrv.getDiasParaVenc());
+			Integer diasVenc = Integer.valueOf(cfgDrv.getDiasParaVenc());
 			mapParamsJr = new HashMap<>();
-			mapParamsJr.put("tol_venc", tolVenc);
+			mapParamsJr.put("dias_venc", diasVenc);
 			mapParamsJr.put("SUBREPORT_DIR", System.getProperty("file.separator"));
 			GeneradorReportes.abrirReporte("rptInvProductos", mapParamsJr);
 		} catch(Exception e) {

@@ -73,7 +73,7 @@ public abstract class CtrlGenerico {
 			enviarError(CnstPresExceptions.DB, e.getMessage());
 		} else if(e instanceof NoInetConnectionException) {
 			logger.error("Excepcion lanzada desde Controladores: " + e.getMessage(), e);
-			enviarError(CnstPresExceptions.DB, e.getMessage());
+			enviarError(CnstPresExceptions.CONN, e.getMessage());
 		} else {
 			logger.error("Excepcion generica lanzada desde Controladores: " + e.getMessage(), e);
 			enviarError(CnstPresExceptions.GEN, CnstPresExceptions.ENC + e.getMessage());

@@ -201,6 +201,6 @@ ORDER BY tp.id_tipo_prod, p.id_producto]]>
 		</band>
 	</pageFooter>
 	<summary>
-		<band height="42" splitType="Stretch"/>
+		<band height="34" splitType="Stretch"/>
 	</summary>
 </jasperReport>

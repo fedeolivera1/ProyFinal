@@ -612,38 +612,7 @@ public class PersistenciaPersona extends Conector implements IPersPersona, CnstQ
 		return listaPj;
 	}
 
-	@Override
-	public Persona obtenerPersGenerico(Connection conn, Long idPersona) throws PersistenciaException {
-		Persona persona = null;
-		try {
-			GenSqlSelectType genSel = new GenSqlSelectType(QRY_SELECT_PERS_GENERIC);
-			genSel.setParam(idPersona);
-			try (ResultSet rs = (ResultSet) runGeneric(conn, genSel)) {
-				if(rs.next()) {
-					char[] tipoChar = new char[1];
-					rs.getCharacterStream("tipo").read(tipoChar);
-					TipoPersona tp = TipoPersona.getTipoPersonaPorChar(tipoChar[0]);
-					if(tp.equals(TipoPersona.F)) {
-						persona = obtenerPersFisicaPorId(conn, idPersona);
-					} else if(tp.equals(TipoPersona.J)) {
-						persona = obtenerPersJuridicaPorId(conn, idPersona);
-					} else {
-						throw new PersistenciaException("Tipo de Persona no soportado...");
-					}
-				}
-			}
-		} catch (ConectorException | SQLException | IOException e) {
-			Conector.rollbackConn(conn);
-			logger.fatal("Excepcion al obtenerPersGenerico: " + e.getMessage(), e);
-			throw new PersistenciaException(e);
-		} catch (Exception e) {
-			Conector.rollbackConn(conn);
-			logger.fatal("Excepcion GENERICA al obtenerPersGenerico: " + e.getMessage(), e);
-			throw new PersistenciaException(e);
-		}
-		return persona;
-	}
-
+	
 	/***************************************************/
 	/* METODOS GENERICOS */
 	/***************************************************/
@@ -768,6 +737,38 @@ public class PersistenciaPersona extends Conector implements IPersPersona, CnstQ
 			throw new PersistenciaException(e);
 		}
 		return listaPj;
+	}
+	
+	@Override
+	public Persona obtenerPersGenerico(Connection conn, Long idPersona) throws PersistenciaException {
+		Persona persona = null;
+		try {
+			GenSqlSelectType genSel = new GenSqlSelectType(QRY_SELECT_PERS_GENERIC);
+			genSel.setParam(idPersona);
+			try (ResultSet rs = (ResultSet) runGeneric(conn, genSel)) {
+				if(rs.next()) {
+					char[] tipoChar = new char[1];
+					rs.getCharacterStream("tipo").read(tipoChar);
+					TipoPersona tp = TipoPersona.getTipoPersonaPorChar(tipoChar[0]);
+					if(tp.equals(TipoPersona.F)) {
+						persona = obtenerPersFisicaPorId(conn, idPersona);
+					} else if(tp.equals(TipoPersona.J)) {
+						persona = obtenerPersJuridicaPorId(conn, idPersona);
+					} else {
+						throw new PersistenciaException("Tipo de Persona no soportado...");
+					}
+				}
+			}
+		} catch (ConectorException | SQLException | IOException e) {
+			Conector.rollbackConn(conn);
+			logger.fatal("Excepcion al obtenerPersGenerico: " + e.getMessage(), e);
+			throw new PersistenciaException(e);
+		} catch (Exception e) {
+			Conector.rollbackConn(conn);
+			logger.fatal("Excepcion GENERICA al obtenerPersGenerico: " + e.getMessage(), e);
+			throw new PersistenciaException(e);
+		}
+		return persona;
 	}
 
 	@Override

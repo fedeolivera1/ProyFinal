@@ -1,15 +1,18 @@
 package gpd.ws.parsers;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
 import gpd.dominio.pedido.Pedido;
 import gpd.dominio.pedido.PedidoLinea;
+import gpd.dominio.util.EstadoSinc;
 import gpd.exceptions.ParsersException;
 import gpd.types.Fecha;
 import gpw.webservice.proxy.ParamObtPedidosNoSinc;
 import gpw.webservice.proxy.ParamPedidoASinc;
+import gpw.webservice.proxy.ParamPedidoConfirmado;
 import gpw.webservice.proxy.ParamPedidoLinea;
 import gpw.webservice.proxy.ParamRecPedidosASinc;
 
@@ -33,9 +36,22 @@ public class ParserParamPedido {
 		return param;
 	}
 	
-	public static ParamRecPedidosASinc parseParamRecPedidosASinc(List<Pedido> listaPedidosNoSinc) throws ParsersException {
+	public static ParamRecPedidosASinc parseParamRecPedidosASinc(Map<Pedido, EstadoSinc> listaPedidosAConf, List<Pedido> listaPedidosNoSinc) throws ParsersException {
 		ParamRecPedidosASinc param = new ParamRecPedidosASinc();
 		try {
+			//seteo lista de pedidos confirmados desde dsk a web (a sinc en web con S)
+			if(listaPedidosAConf != null && !listaPedidosAConf.isEmpty()) {
+				for(Map.Entry<Pedido, EstadoSinc> entry : listaPedidosAConf.entrySet()) {
+					Pedido pedido = entry.getKey();
+					EstadoSinc estSinc = entry.getValue();
+					ParamPedidoConfirmado paramPc = new ParamPedidoConfirmado();
+					paramPc.setIdPersona(pedido.getPersona().getIdPersona());
+					paramPc.setFechaHora(pedido.getFechaHora().getAsXMLGregorianCalendar(Fecha.AMDHMS));
+					paramPc.setEstadoSinc(estSinc.getAsInt());
+					param.getListaPedidoConfirmado().add(paramPc);
+				}
+			}
+			//seteo lista de pedidos no sinc desde dsk a web
 			if(listaPedidosNoSinc != null && !listaPedidosNoSinc.isEmpty()) {
 				for(Pedido pedido : listaPedidosNoSinc) {
 					ParamPedidoASinc paramPas = new ParamPedidoASinc();

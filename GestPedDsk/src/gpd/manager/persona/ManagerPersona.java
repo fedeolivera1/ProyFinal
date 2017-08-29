@@ -339,6 +339,21 @@ public class ManagerPersona {
 		}
 		return idPersona;
 	}
+
+	public Boolean checkExistPersona(Long idPersona) throws PresentacionException {
+		try (Connection conn = Conector.getConn()) {
+			if(idPersona != null) {
+				return getInterfacePersona().checkExistPersona(conn, idPersona);
+			}
+		} catch (PersistenciaException | SQLException e) {
+			logger.fatal("Excepcion en ManagerPersona > obtenerBusquedaPersona: " + e.getMessage(), e);
+			throw new PresentacionException(e);
+		} catch (Exception e) {
+			logger.fatal("Excepcion GENERICA en ManagerPersona > obtenerBusquedaPersona: " + e.getMessage(), e);
+			throw new PresentacionException(e);
+		}
+		return false;
+	}
 	
 	/*****************************************************************************************************************************************************/
 	/** DEP - LOC */

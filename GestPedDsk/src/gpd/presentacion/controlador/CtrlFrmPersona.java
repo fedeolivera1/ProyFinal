@@ -311,39 +311,43 @@ public class CtrlFrmPersona extends CtrlGenerico {
 			genComp.setComp(txtPfDir);
 			genComp.setComp(cbxPfSexo);
 			genComp.setComp(cbxPersLoc);
-			
 			if(controlDatosObl(genComp)) {
-				PersonaFisica pf = new PersonaFisica();
-				TipoDoc tipoDoc = (TipoDoc) cbxPfTipoDoc.getSelectedItem();
-				pf.setTipoDoc(tipoDoc);
-				//datos pf
-				pf.setDocumento(new Long(txtPfDoc.getText()));
-				pf.setApellido1(txtPfApe1.getText());
-				pf.setApellido2(txtPfApe2.getText());
-				pf.setNombre1(txtPfNom1.getText());
-				pf.setNombre2(txtPfNom2.getText());
-				pf.setFechaNac(convertirFechaDesdeTxt(txtPfFnac.getText()));
-				pf.setSexo((Sexo) cbxPfSexo.getSelectedItem());
-				//datos persona
-				pf.setDireccion(txtPfDir.getText());
-				pf.setPuerta(txtPfPue.getText());
-				pf.setSolar(txtPfSol.getText());
-				pf.setManzana(txtPfMan.getText());
-				pf.setKm(ctrlNumDec(txtPfKm.getText()) ? new Float(txtPfKm.getText()) : null);
-				pf.setComplemento(txtPfComp.getText());
-				pf.setTelefono(txtPfTel.getText());
-				pf.setCelular(txtPfCel.getText());
-				pf.setEmail(txtPfEml.getText());
-				pf.setFechaReg(new Fecha(Fecha.AMD));
-				pf.setTipoPers(TipoPersona.F);
-				Localidad loc = (Localidad) cbxPersLoc.getSelectedItem();
-				pf.setLocalidad(loc);
-				pf.setOrigen(Origen.D);
-				mgrPers.guardarPersFisica(pf);
-				clearPanel(frmPers.getContentPane());
-				List<PersonaFisica> lst = new ArrayList<>();
-				lst.add(pf);
-				cargarJtPersFisica(lst);
+				Long documento = new Long(txtPfDoc.getText());
+				if(!mgrPers.checkExistPersona(documento)) {
+					PersonaFisica pf = new PersonaFisica();
+					TipoDoc tipoDoc = (TipoDoc) cbxPfTipoDoc.getSelectedItem();
+					pf.setTipoDoc(tipoDoc);
+					//datos pf
+					pf.setDocumento(documento);
+					pf.setApellido1(txtPfApe1.getText());
+					pf.setApellido2(txtPfApe2.getText());
+					pf.setNombre1(txtPfNom1.getText());
+					pf.setNombre2(txtPfNom2.getText());
+					pf.setFechaNac(convertirFechaDesdeTxt(txtPfFnac.getText()));
+					pf.setSexo((Sexo) cbxPfSexo.getSelectedItem());
+					//datos persona
+					pf.setDireccion(txtPfDir.getText());
+					pf.setPuerta(txtPfPue.getText());
+					pf.setSolar(txtPfSol.getText());
+					pf.setManzana(txtPfMan.getText());
+					pf.setKm(ctrlNumDec(txtPfKm.getText()) ? new Float(txtPfKm.getText()) : null);
+					pf.setComplemento(txtPfComp.getText());
+					pf.setTelefono(txtPfTel.getText());
+					pf.setCelular(txtPfCel.getText());
+					pf.setEmail(txtPfEml.getText());
+					pf.setFechaReg(new Fecha(Fecha.AMD));
+					pf.setTipoPers(TipoPersona.F);
+					Localidad loc = (Localidad) cbxPersLoc.getSelectedItem();
+					pf.setLocalidad(loc);
+					pf.setOrigen(Origen.D);
+					mgrPers.guardarPersFisica(pf);
+					clearPanel(frmPers.getContentPane());
+					List<PersonaFisica> lst = new ArrayList<>();
+					lst.add(pf);
+					cargarJtPersFisica(lst);
+				} else {
+					enviarWarning(CnstPresGeneric.PERS, CnstPresGeneric.PERS_F_ING_EXIST);
+				}
 			} else {
 				enviarWarning(CnstPresGeneric.PERS, CnstPresGeneric.DATOS_OBLIG);
 			}
@@ -366,44 +370,47 @@ public class CtrlFrmPersona extends CtrlGenerico {
 			genComp.setComp(cbxPfSexo);
 			genComp.setComp(cbxPersLoc);
 			genComp.setComp(jtPersFisica);
-			
 			if(controlDatosObl(genComp)) {
-				Long docFpActual = (Long) jtPersFisica.getModel().getValueAt(jtPersFisica.getSelectedRow(), 0);
-				PersonaFisica pf = (PersonaFisica) mgrPers.obtenerPersFisicaPorId(docFpActual);
 				Long docPresentacion = new Long(txtPfDoc.getText());
-				TipoDoc tipoDoc = (TipoDoc) cbxPfTipoDpc.getSelectedItem();
-				pf.setTipoDoc(tipoDoc);
-				//datos pf
-				if(!pf.getDocumento().equals(docPresentacion)) {
-					pf.setDocumentoAnt(pf.getDocumento());
+				if(mgrPers.checkExistPersona(docPresentacion)) {
+					Long docFpActual = (Long) jtPersFisica.getModel().getValueAt(jtPersFisica.getSelectedRow(), 0);
+					PersonaFisica pf = (PersonaFisica) mgrPers.obtenerPersFisicaPorId(docFpActual);
+					TipoDoc tipoDoc = (TipoDoc) cbxPfTipoDpc.getSelectedItem();
+					pf.setTipoDoc(tipoDoc);
+					//datos pf
+					if(!pf.getDocumento().equals(docPresentacion)) {
+						pf.setDocumentoAnt(pf.getDocumento());
+					}
+					pf.setDocumento(docPresentacion);
+					pf.setApellido1(txtPfApe1.getText());
+					pf.setApellido2(txtPfApe2.getText());
+					pf.setNombre1(txtPfNom1.getText());
+					pf.setNombre2(txtPfNom2.getText());
+					pf.setFechaNac(convertirFechaDesdeTxt(txtPfFnac.getText()));
+					pf.setSexo((Sexo) cbxPfSexo.getSelectedItem());
+					//datos persona
+					pf.setDireccion(txtPfDir.getText());
+					pf.setPuerta(txtPfPue.getText());
+					pf.setSolar(txtPfSol.getText());
+					pf.setManzana(txtPfMan.getText());
+					pf.setKm(ctrlNumDec(txtPfKm.getText()) ? new Float(txtPfKm.getText()) : null);
+					pf.setComplemento(txtPfComp.getText());
+					pf.setTelefono(txtPfTel.getText());
+					pf.setCelular(txtPfCel.getText());
+					pf.setEmail(txtPfEml.getText());
+					pf.setFechaReg(new Fecha(Fecha.AMD));
+					pf.setTipoPers(TipoPersona.F);
+					Localidad loc = (Localidad) cbxPersLoc.getSelectedItem();
+					pf.setLocalidad(loc);
+					pf.setOrigen(Origen.D);
+					mgrPers.modificarPersFisica(pf);
+					clearPanel(frmPers.getContentPane());
+					List<PersonaFisica> lst = new ArrayList<>();
+					lst.add(pf);
+					cargarJtPersFisica(lst);
+				} else {
+					enviarWarning(CnstPresGeneric.PERS, CnstPresGeneric.PERS_F_ING_NOEXIST);
 				}
-				pf.setDocumento(docPresentacion);
-				pf.setApellido1(txtPfApe1.getText());
-				pf.setApellido2(txtPfApe2.getText());
-				pf.setNombre1(txtPfNom1.getText());
-				pf.setNombre2(txtPfNom2.getText());
-				pf.setFechaNac(convertirFechaDesdeTxt(txtPfFnac.getText()));
-				pf.setSexo((Sexo) cbxPfSexo.getSelectedItem());
-				//datos persona
-				pf.setDireccion(txtPfDir.getText());
-				pf.setPuerta(txtPfPue.getText());
-				pf.setSolar(txtPfSol.getText());
-				pf.setManzana(txtPfMan.getText());
-				pf.setKm(ctrlNumDec(txtPfKm.getText()) ? new Float(txtPfKm.getText()) : null);
-				pf.setComplemento(txtPfComp.getText());
-				pf.setTelefono(txtPfTel.getText());
-				pf.setCelular(txtPfCel.getText());
-				pf.setEmail(txtPfEml.getText());
-				pf.setFechaReg(new Fecha(Fecha.AMD));
-				pf.setTipoPers(TipoPersona.F);
-				Localidad loc = (Localidad) cbxPersLoc.getSelectedItem();
-				pf.setLocalidad(loc);
-				pf.setOrigen(Origen.D);
-				mgrPers.modificarPersFisica(pf);
-				clearPanel(frmPers.getContentPane());
-				List<PersonaFisica> lst = new ArrayList<>();
-				lst.add(pf);
-				cargarJtPersFisica(lst);
 			} else {
 				enviarWarning(CnstPresGeneric.PERS, CnstPresGeneric.DATOS_OBLIG);
 			}
@@ -452,34 +459,39 @@ public class CtrlFrmPersona extends CtrlGenerico {
 			genComp.setComp(txtPfDir);
 			genComp.setComp(cbxPersLoc);
 			if(controlDatosObl(genComp)) {
-				PersonaJuridica pj = new PersonaJuridica();
-				//datos pj
-				pj.setRut(new Long(txtPjRut.getText()));
-				pj.setNombre(txtPjNom.getText());
-				pj.setRazonSocial(txtPjRs.getText());
-				pj.setBps(txtPjBps.getText());
-				pj.setBse(txtPjBse.getText());
-				pj.setEsProv(chkPjProv.isSelected());
-				//datos persona
-				pj.setDireccion(txtPfDir.getText());
-				pj.setPuerta(txtPfPue.getText());
-				pj.setSolar(txtPfSol.getText());
-				pj.setManzana(txtPfMan.getText());
-				pj.setKm(ctrlNumDec(txtPfKm.getText()) ? new Float(txtPfKm.getText()) : null);
-				pj.setComplemento(txtPfComp.getText());
-				pj.setTelefono(txtPfTel.getText());
-				pj.setCelular(txtPfCel.getText());
-				pj.setEmail(txtPfEml.getText());
-				pj.setFechaReg(new Fecha(Fecha.AMD));
-				pj.setTipoPers(TipoPersona.J);
-				Localidad loc = (Localidad) cbxPersLoc.getSelectedItem();
-				pj.setLocalidad(loc);
-				pj.setOrigen(Origen.D);
-				mgrPers.guardarPersJuridica(pj);
-				clearPanel(frmPers.getContentPane());
-				List<PersonaJuridica> lst = new ArrayList<>();
-				lst.add(pj);
-				cargarJtPersJuridica(lst);
+				Long rut = new Long(txtPjRut.getText());
+				if(!mgrPers.checkExistPersona(rut)) {
+					PersonaJuridica pj = new PersonaJuridica();
+					//datos pj
+					pj.setRut(rut);
+					pj.setNombre(txtPjNom.getText());
+					pj.setRazonSocial(txtPjRs.getText());
+					pj.setBps(txtPjBps.getText());
+					pj.setBse(txtPjBse.getText());
+					pj.setEsProv(chkPjProv.isSelected());
+					//datos persona
+					pj.setDireccion(txtPfDir.getText());
+					pj.setPuerta(txtPfPue.getText());
+					pj.setSolar(txtPfSol.getText());
+					pj.setManzana(txtPfMan.getText());
+					pj.setKm(ctrlNumDec(txtPfKm.getText()) ? new Float(txtPfKm.getText()) : null);
+					pj.setComplemento(txtPfComp.getText());
+					pj.setTelefono(txtPfTel.getText());
+					pj.setCelular(txtPfCel.getText());
+					pj.setEmail(txtPfEml.getText());
+					pj.setFechaReg(new Fecha(Fecha.AMD));
+					pj.setTipoPers(TipoPersona.J);
+					Localidad loc = (Localidad) cbxPersLoc.getSelectedItem();
+					pj.setLocalidad(loc);
+					pj.setOrigen(Origen.D);
+					mgrPers.guardarPersJuridica(pj);
+					clearPanel(frmPers.getContentPane());
+					List<PersonaJuridica> lst = new ArrayList<>();
+					lst.add(pj);
+					cargarJtPersJuridica(lst);
+				} else {
+					enviarWarning(CnstPresGeneric.PERS, CnstPresGeneric.PERS_J_ING_EXIST);
+				}
 			} else {
 				enviarWarning(CnstPresGeneric.PERS, CnstPresGeneric.DATOS_OBLIG);
 			}
@@ -499,39 +511,43 @@ public class CtrlFrmPersona extends CtrlGenerico {
 			genComp.setComp(cbxPersLoc);
 			genComp.setComp(jtPersJuridica);
 			if(controlDatosObl(genComp)) {
-				Long rutPjActual = (Long) jtPersJuridica.getModel().getValueAt(jtPersJuridica.getSelectedRow(), 0);
-				PersonaJuridica pj = (PersonaJuridica) mgrPers.obtenerPersJuridicaPorId(rutPjActual);
 				Long rutPresentacion = new Long(txtPjRut.getText());
-				//datos pj
-				if(!pj.getRut().equals(rutPresentacion)) {
-					pj.setRutAnt(pj.getRut());
+				if(mgrPers.checkExistPersona(rutPresentacion)) {
+					Long rutPjActual = (Long) jtPersJuridica.getModel().getValueAt(jtPersJuridica.getSelectedRow(), 0);
+					PersonaJuridica pj = (PersonaJuridica) mgrPers.obtenerPersJuridicaPorId(rutPjActual);
+					//datos pj
+					if(!pj.getRut().equals(rutPresentacion)) {
+						pj.setRutAnt(pj.getRut());
+					}
+					pj.setRut(rutPresentacion);
+					pj.setNombre(txtPjNom.getText());
+					pj.setRazonSocial(txtPjRs.getText());
+					pj.setBps(txtPjBps.getText());
+					pj.setBse(txtPjBse.getText());
+					pj.setEsProv(chkPjProv.isSelected());
+					//datos persona
+					pj.setDireccion(txtPfDir.getText());
+					pj.setPuerta(txtPfPue.getText());
+					pj.setSolar(txtPfSol.getText());
+					pj.setManzana(txtPfMan.getText());
+					pj.setKm(ctrlNumDec(txtPfKm.getText()) ? new Float(txtPfKm.getText()) : null);
+					pj.setComplemento(txtPfComp.getText());
+					pj.setTelefono(txtPfTel.getText());
+					pj.setCelular(txtPfCel.getText());
+					pj.setEmail(txtPfEml.getText());
+					pj.setFechaReg(new Fecha(Fecha.AMD));
+					pj.setTipoPers(TipoPersona.J);
+					Localidad loc = (Localidad) cbxPersLoc.getSelectedItem();
+					pj.setLocalidad(loc);
+					pj.setOrigen(Origen.D);
+					mgrPers.modificarPersJuridica(pj);
+					clearPanel(frmPers.getContentPane());
+					List<PersonaJuridica> lst = new ArrayList<>();
+					lst.add(pj);
+					cargarJtPersJuridica(lst);
+				} else {
+					enviarWarning(CnstPresGeneric.PERS, CnstPresGeneric.PERS_J_ING_NOEXIST);
 				}
-				pj.setRut(rutPresentacion);
-				pj.setNombre(txtPjNom.getText());
-				pj.setRazonSocial(txtPjRs.getText());
-				pj.setBps(txtPjBps.getText());
-				pj.setBse(txtPjBse.getText());
-				pj.setEsProv(chkPjProv.isSelected());
-				//datos persona
-				pj.setDireccion(txtPfDir.getText());
-				pj.setPuerta(txtPfPue.getText());
-				pj.setSolar(txtPfSol.getText());
-				pj.setManzana(txtPfMan.getText());
-				pj.setKm(ctrlNumDec(txtPfKm.getText()) ? new Float(txtPfKm.getText()) : null);
-				pj.setComplemento(txtPfComp.getText());
-				pj.setTelefono(txtPfTel.getText());
-				pj.setCelular(txtPfCel.getText());
-				pj.setEmail(txtPfEml.getText());
-				pj.setFechaReg(new Fecha(Fecha.AMD));
-				pj.setTipoPers(TipoPersona.J);
-				Localidad loc = (Localidad) cbxPersLoc.getSelectedItem();
-				pj.setLocalidad(loc);
-				pj.setOrigen(Origen.D);
-				mgrPers.modificarPersJuridica(pj);
-				clearPanel(frmPers.getContentPane());
-				List<PersonaJuridica> lst = new ArrayList<>();
-				lst.add(pj);
-				cargarJtPersJuridica(lst);
 			} else {
 				enviarWarning(CnstPresGeneric.PERS, CnstPresGeneric.DATOS_OBLIG);
 			}
