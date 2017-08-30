@@ -16,7 +16,7 @@ public class Producto implements Serializable {
 	private String descripcion;
 	private Float stockMin;
 	private Unidad unidad;
-	private Integer cantUnidad;
+	private Float cantUnidad;
 	private AplicaIva aplIva;
 	private Double precio;
 	private Sinc sinc;
@@ -73,10 +73,10 @@ public class Producto implements Serializable {
 		this.unidad = unidad;
 	}
 	
-	public Integer getCantUnidad() {
+	public Float getCantUnidad() {
 		return cantUnidad;
 	}
-	public void setCantUnidad(Integer cantUnidad) {
+	public void setCantUnidad(Float cantUnidad) {
 		this.cantUnidad = cantUnidad;
 	}
 	

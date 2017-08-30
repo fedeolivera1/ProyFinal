@@ -96,6 +96,23 @@ public class ManagerUsuario {
 		}
 		return resultado;
 	}
+	
+	public Integer modificarUsuarioSinPass(UsuarioDsk usuario) throws PresentacionException {
+		logger.info("Ingresa modificarUsuario");
+		try (Connection conn = Conector.getConn()) {
+			if(usuario != null) {
+				resultado = getInterfaceUsuario().modificarUsuarioSinPass(conn, usuario);
+				Conector.commitConn(conn);
+			}
+		} catch (PersistenciaException | SQLException e) {
+			logger.fatal("Excepcion en ManagerUsuario > modificarUsuario: " + e.getMessage(), e);
+			throw new PresentacionException(e);
+		} catch (Exception e) {
+			logger.fatal("Excepcion GENERICA en ManagerUsuario > modificarUsuario: " + e.getMessage(), e);
+			throw new PresentacionException(e);
+		}
+		return resultado;
+	}
 
 	public Integer eliminarUsuario(UsuarioDsk usuario) throws PresentacionException {
 		logger.info("Ingresa eliminarUsuario");

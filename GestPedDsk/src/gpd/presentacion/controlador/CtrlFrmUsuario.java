@@ -119,7 +119,7 @@ public class CtrlFrmUsuario extends CtrlGenerico implements CnstPresGeneric {
 			if(controlDatosObl(genComp)) {
 				UsuarioDsk usr = (UsuarioDsk) jlUsuario.getSelectedValue();
 				usr.setTipoUsr((TipoUsr) cbxTipoUsr.getSelectedItem());
-				mgrUsr.modificarUsuario(usr);
+				mgrUsr.modificarUsuarioSinPass(usr);
 				setContainerEnabled(getIfrmUsr().getPwfUsuPass1(), true);
 				setContainerEnabled(getIfrmUsr().getPwfUsuPass2(), true);
 				clearControlsInJPanel(getIfrmUsr().getPnlDatosUsu());

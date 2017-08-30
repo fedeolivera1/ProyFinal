@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
@@ -42,6 +43,7 @@ import gpd.dominio.transaccion.EstadoTran;
 import gpd.dominio.transaccion.Transaccion;
 import gpd.dominio.usuario.UsuarioDsk;
 import gpd.presentacion.controlador.CtrlFrmProducto;
+import java.awt.event.FocusAdapter;
 
 public class FrmProducto extends JFrame {
 
@@ -405,6 +407,11 @@ public class FrmProducto extends JFrame {
 		btnUniAgregar.setBounds(279, 184, 32, 23);
 		tpProd.add(btnUniAgregar);
 		
+		JLabel lblStock = new JLabel("Stock");
+		lblStock.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblStock.setBounds(138, 160, 46, 14);
+		tpProd.add(lblStock);
+		
 		ctrlProd.cargarCbxDep(cbxLoteDep);
 		ctrlProd.cargarCbxUtil(cbxLoteUtil);
 		ctrlProd.cargarCbxFiltroLote(cbxFiltroLote);
@@ -421,25 +428,46 @@ public class FrmProducto extends JFrame {
 				ctrlProd.abrirIFrmDep();
 			}
 		});
-		//
+		//stock min
+		ftxtProStockMin.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusLost(FocusEvent arg0) {
+				ctrlProd.isNumericFlt(ftxtProStockMin);
+			}
+		});
 		ftxtProStockMin.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyTyped(KeyEvent e) {
-				ctrlProd.controlInputNum(e);
+				ctrlProd.keyTypedDec(e);
+			}
+		});
+		//presentacion unidad (cant_unidad)
+		ftxtProPres.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusLost(FocusEvent arg0) {
+				ctrlProd.isNumericDbl(ftxtProPres);
 			}
 		});
 		ftxtProPres.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyTyped(KeyEvent e) {
-				ctrlProd.controlInputNum(e);
+				ctrlProd.keyTypedDec(e);
+			}
+		});
+		//precio
+		ftxtProPrecio.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusLost(FocusEvent arg0) {
+				ctrlProd.isNumericDbl(ftxtProPrecio);
 			}
 		});
 		ftxtProPrecio.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyTyped(KeyEvent e) {
-				ctrlProd.controlInputNum(e);
+				ctrlProd.keyTypedDec(e);
 			}
 		});
+		//boton obtener lote
 		btnLoteObtener.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				ctrlProd.obtenerTransac(cbxFiltroLote, dchLoteIni, dchLoteFin);

@@ -5,6 +5,8 @@ import java.awt.Font;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
@@ -404,7 +406,13 @@ public class FrmPedido extends JFrame {
 		ftxtPedCant.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyTyped(KeyEvent e) {
-				ctrlPed.controlInputNum(e);
+				ctrlPed.keyTypedNum(e);
+			}
+		});
+		ftxtPedCant.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusLost(FocusEvent arg0) {
+				ctrlPed.isNumericInt(ftxtPedCant);
 			}
 		});
 		

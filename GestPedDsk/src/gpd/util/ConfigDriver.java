@@ -102,6 +102,14 @@ public class ConfigDriver extends PropManager {
 		return super.getPropertyValue(CnstProp.PROP_CONFIG, CnstProp.CFG_WS_NAME);
 	}
 	
+	public String getWsUsrName() throws Exception {
+		return super.getPropertyValue(CnstProp.PROP_CONFIG, CnstProp.CFG_WS_USRNAME);
+	}
+	
+	public String getWsPassWd() throws Exception {
+		return super.getPropertyValue(CnstProp.PROP_CONFIG, CnstProp.CFG_WS_PASSWD);
+	}
+	
 	/**
 	 * Internet test values
 	 * @throws Exception

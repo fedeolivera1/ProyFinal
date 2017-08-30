@@ -22,6 +22,8 @@ public interface CnstProp {
 	public static final String CFG_WS_URL = "ws_url";
 	public static final String CFG_WS_TN = "ws_target_ns";
 	public static final String CFG_WS_NAME = "ws_name";
+	public static final String CFG_WS_USRNAME = "ws_usrname";
+	public static final String CFG_WS_PASSWD = "ws_passwd";
 	
 	//datos properties url de conexion de prueba
 	public static final String CFG_INET_TEST_URL = "inet_test_url";

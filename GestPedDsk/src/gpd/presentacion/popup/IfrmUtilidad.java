@@ -2,6 +2,8 @@ package gpd.presentacion.popup;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
@@ -125,7 +127,13 @@ public class IfrmUtilidad extends JInternalFrame {
 		txtUtilPorc.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyTyped(KeyEvent e) {
-				ctrl.controlInputNum(e);
+				ctrl.keyTypedDec(e);
+			}
+		});
+		txtUtilPorc.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusLost(FocusEvent arg0) {
+				ctrl.isNumericFlt(txtUtilPorc);
 			}
 		});
 		/***************************************************/

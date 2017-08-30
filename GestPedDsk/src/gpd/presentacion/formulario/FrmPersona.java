@@ -45,7 +45,7 @@ public class FrmPersona extends JFrame {
 	private CtrlFrmPersona ctrlPers;
 	private JPanel contentPane;
 	//pf
-	private JTextField txtPfDoc;
+	private JFormattedTextField txtPfDoc;
 	private JTextField txtPfApe1;
 	private JTextField txtPfApe2;
 	private JTextField txtPfNom1;
@@ -67,7 +67,7 @@ public class FrmPersona extends JFrame {
 	private JTable jtPersFisica;
 
 	//pj
-	private JTextField txtPjRut;
+	private JFormattedTextField txtPjRut;
 	private JTextField txtPjNom;
 	private JTextField txtPjRs;
 	private JTextField txtPjBps;
@@ -129,7 +129,7 @@ public class FrmPersona extends JFrame {
 		lblDocumento.setBounds(10, 45, 64, 14);
 		pnlPersF.add(lblDocumento);
 		
-		txtPfDoc = new JTextField();
+		txtPfDoc = new JFormattedTextField();
 		txtPfDoc.setColumns(10);
 		txtPfDoc.setBounds(84, 42, 151, 20);
 		pnlPersF.add(txtPfDoc);
@@ -357,7 +357,7 @@ public class FrmPersona extends JFrame {
 		lblRut.setBounds(10, 14, 64, 14);
 		pnlPersJ.add(lblRut);
 		
-		txtPjRut = new JTextField();
+		txtPjRut = new JFormattedTextField();
 		txtPjRut.setColumns(10);
 		txtPjRut.setBounds(84, 11, 151, 20);
 		pnlPersJ.add(txtPjRut);
@@ -575,17 +575,34 @@ public class FrmPersona extends JFrame {
 		ctrlPers.cargarCbxDep(cbxPfDep);
 		ctrlPers.cargarCbxDep(cbxPjDep);
 		
-		//TODO - sale de defecto, ver si esta solucion funcionaría
-//		txtPfFnac.addKeyListener(new KeyAdapter() {
-//			@Override
-//			public void keyReleased(KeyEvent e) {
-//				ctrlPers.formatoFechaEnTxt(txtPfFnac);
-//			}
-//		});
+		txtPfDoc.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusLost(FocusEvent arg0) {
+				ctrlPers.isNumericLong(txtPfDoc);
+			}
+		});
+		txtPfDoc.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				ctrlPers.keyTypedNum(e);
+			}
+		});
 		txtPfFnac.addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusLost(FocusEvent arg0) {
 				ctrlPers.formatoFechaEnTxt(txtPfFnac);
+			}
+		});
+		txtPfKm.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusLost(FocusEvent arg0) {
+				ctrlPers.isNumericFlt(txtPfKm);
+			}
+		});
+		txtPfKm.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				ctrlPers.keyTypedDec(e);
 			}
 		});
 		cbxPfDep.addItemListener(new ItemListener() {
@@ -598,17 +615,16 @@ public class FrmPersona extends JFrame {
 				ctrlPers.cargarCbxLoc(cbxPjDep, cbxPjLoc);
 			}
 		});
-		
-		txtPfDoc.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyTyped(KeyEvent e) {
-				ctrlPers.controlInputNum(e);
-			}
-		});
 		txtPjRut.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyTyped(KeyEvent e) {
-				ctrlPers.controlInputNum(e);
+				ctrlPers.keyTypedNum(e);
+			}
+		});
+		txtPjRut.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusLost(FocusEvent arg0) {
+				ctrlPers.isNumericLong(txtPjRut);
 			}
 		});
 		
@@ -686,10 +702,10 @@ public class FrmPersona extends JFrame {
 	/*****************************************************************************************************************************************************/
 	
 	//pf
-	public JTextField getTxtPfDoc() {
+	public JFormattedTextField getTxtPfDoc() {
 		return txtPfDoc;
 	}
-	public void setTxtPfDoc(JTextField txtPfDoc) {
+	public void setTxtPfDoc(JFormattedTextField txtPfDoc) {
 		this.txtPfDoc = txtPfDoc;
 	}
 
@@ -827,10 +843,10 @@ public class FrmPersona extends JFrame {
 	}
 
 	//pj
-	public JTextField getTxtPjRut() {
+	public JFormattedTextField getTxtPjRut() {
 		return txtPjRut;
 	}
-	public void setTxtPjRut(JTextField txtPjRut) {
+	public void setTxtPjRut(JFormattedTextField txtPjRut) {
 		this.txtPjRut = txtPjRut;
 	}
 

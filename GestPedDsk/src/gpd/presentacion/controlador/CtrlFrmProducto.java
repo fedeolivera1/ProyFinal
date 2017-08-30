@@ -3,7 +3,6 @@ package gpd.presentacion.controlador;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
-import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -502,7 +501,7 @@ public class CtrlFrmProducto extends CtrlGenerico implements CnstPresGeneric {
 				prod.setNombre(nombre.getText());
 				prod.setDescripcion(descripcion.getText());
 				prod.setStockMin(new Float(stockMin.getText()));
-				prod.setCantUnidad(new Integer(ftxtProPres.getText()));
+				prod.setCantUnidad(new Float(ftxtProPres.getText()));
 				prod.setUnidad((Unidad) cbxProUni.getSelectedItem()); 
 				prod.setAplIva((AplicaIva) cbxProAplIva.getSelectedItem()); 
 				prod.setPrecio(new Double(precio.getText()));
@@ -541,7 +540,7 @@ public class CtrlFrmProducto extends CtrlGenerico implements CnstPresGeneric {
 				prod.setNombre(nombre.getText());
 				prod.setDescripcion(descripcion.getText());
 				prod.setStockMin(new Float(stockMin.getText()));
-				prod.setCantUnidad(new Integer(ftxtProPres.getText()));
+				prod.setCantUnidad(new Float(ftxtProPres.getText()));
 				prod.setUnidad((Unidad) cbxProUni.getSelectedItem()); 
 				prod.setAplIva((AplicaIva) cbxProAplIva.getSelectedItem()); 
 				prod.setPrecio(new Double(precio.getText()));

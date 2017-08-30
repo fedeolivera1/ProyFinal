@@ -161,6 +161,27 @@ public class PersistenciaUsuario extends Conector implements IPersUsuario, CnstQ
 		}
 		return resultado;
 	}
+	
+	@Override
+	public Integer modificarUsuarioSinPass(Connection conn, UsuarioDsk usuario) throws PersistenciaException {
+		logger.info("Ejecucion de modificarUsuario para: " + usuario.getNomUsu());
+		Integer resultado = null;
+		try {
+			PreparedStatement ps = conn.prepareStatement(QRY_UPDATE_USR_SINPASS);
+			ps.setObject(1, usuario.getTipoUsr().getAsChar(), java.sql.Types.CHAR);
+			ps.setString(2, usuario.getNomUsu());
+			resultado = ps.executeUpdate();
+		} catch (SQLException e) {
+			Conector.rollbackConn(conn);
+			logger.fatal("Excepcion al modificarUsuario: " + e.getMessage(), e);
+			throw new PersistenciaException(e);
+		} catch (Exception e) {
+			Conector.rollbackConn(conn);
+			logger.fatal("Excepcion GENERICA al modificarUsuario: " + e.getMessage(), e);
+			throw new PersistenciaException(e);
+		}
+		return resultado;
+	}
 
 	@Override
 	public Integer eliminarUsuario(Connection conn, UsuarioDsk usuario) throws PersistenciaException {

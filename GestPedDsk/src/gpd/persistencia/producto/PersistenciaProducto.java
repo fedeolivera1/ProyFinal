@@ -57,7 +57,7 @@ public class PersistenciaProducto extends Conector implements IPersProducto, Cns
 					AplicaIva aplIva = AplicaIva.getAplicaIvaPorChar(aplIvaChar[0]);
 					producto.setAplIva(aplIva);
 					producto.setUnidad(pu.obtenerUnidadPorId(conn, rs.getInt("id_unidad")));
-					producto.setCantUnidad(rs.getInt("cant_unidad"));
+					producto.setCantUnidad(rs.getFloat("cant_unidad"));
 					producto.setPrecio(rs.getDouble("precio"));
 					char[] sincChar = new char[1];
 					rs.getCharacterStream("sinc").read(sincChar);
@@ -102,7 +102,7 @@ public class PersistenciaProducto extends Conector implements IPersProducto, Cns
 					AplicaIva aplIva = AplicaIva.getAplicaIvaPorChar(aplIvaChar[0]);
 					producto.setAplIva(aplIva);
 					producto.setUnidad(pu.obtenerUnidadPorId(conn, rs.getInt("id_unidad")));
-					producto.setCantUnidad(rs.getInt("cant_unidad"));
+					producto.setCantUnidad(rs.getFloat("cant_unidad"));
 					producto.setPrecio(rs.getDouble("precio"));
 					char[] sincChar = new char[1];
 					rs.getCharacterStream("sinc").read(sincChar);
@@ -146,7 +146,7 @@ public class PersistenciaProducto extends Conector implements IPersProducto, Cns
 					AplicaIva aplIva = AplicaIva.getAplicaIvaPorChar(aplIvaChar[0]);
 					producto.setAplIva(aplIva);
 					producto.setUnidad(pu.obtenerUnidadPorId(conn, rs.getInt("id_unidad")));
-					producto.setCantUnidad(rs.getInt("cant_unidad"));
+					producto.setCantUnidad(rs.getFloat("cant_unidad"));
 					producto.setPrecio(rs.getDouble("precio"));
 					char[] sincChar = new char[1];
 					rs.getCharacterStream("sinc").read(sincChar);
@@ -192,7 +192,7 @@ public class PersistenciaProducto extends Conector implements IPersProducto, Cns
 					AplicaIva aplIva = AplicaIva.getAplicaIvaPorChar(aplIvaChar[0]);
 					producto.setAplIva(aplIva);
 					producto.setUnidad(pu.obtenerUnidadPorId(conn, rs.getInt("id_unidad")));
-					producto.setCantUnidad(rs.getInt("cant_unidad"));
+					producto.setCantUnidad(rs.getFloat("cant_unidad"));
 					producto.setPrecio(rs.getDouble("precio"));
 					char[] sincChar = new char[1];
 					rs.getCharacterStream("sinc").read(sincChar);

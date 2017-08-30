@@ -27,6 +27,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.text.MaskFormatter;
+import javax.xml.ws.WebServiceException;
 
 import org.apache.log4j.Logger;
 
@@ -74,8 +75,11 @@ public abstract class CtrlGenerico {
 		} else if(e instanceof NoInetConnectionException) {
 			logger.error("Excepcion lanzada desde Controladores: " + e.getMessage(), e);
 			enviarError(CnstPresExceptions.CONN, e.getMessage());
+		} else if(e instanceof WebServiceException) {
+			logger.error("Excepcion lanzada desde Controladores: " + e.getMessage(), e);
+			enviarError(CnstPresExceptions.CONN, CnstPresExceptions.WS_UNAVAILABLE);
 		} else {
-			logger.error("Excepcion generica lanzada desde Controladores: " + e.getMessage(), e);
+			logger.error("Excepcion NO CONTROLADA lanzada desde Controladores: " + e.getMessage(), e);
 			enviarError(CnstPresExceptions.GEN, CnstPresExceptions.ENC + e.getMessage());
 		}
 	}
@@ -217,6 +221,77 @@ public abstract class CtrlGenerico {
 		}
 		return fechaRet;
 	}
+	
+	/**
+	 * metodos para control de fields que admitan solo numeros (input y salida)
+	 * @param e
+	 */
+	public void keyTypedNum(KeyEvent e) {
+		char caracter = e.getKeyChar();
+		// Verificar si la tecla pulsada no es un digito ni bckspc
+		if( ((caracter < '0') || (caracter > '9')) && (caracter != '\b') ) {
+			e.consume();
+		}
+	}
+	public void keyTypedDec(KeyEvent e) {
+		char caracter = e.getKeyChar();
+		// Verificar si la tecla pulsada no es un digito ni bckspc
+		if( ((caracter < '0') || (caracter > '9')) && (caracter != '.' && caracter != '\b') ) {
+			e.consume();
+		}
+	}
+	@SuppressWarnings("unused")
+	public void isNumericInt(Component comp) {
+		try {
+			JTextField num = (JTextField) comp;
+			if(num != null && !num.getText().equals("")) {
+				int i = Integer.parseInt(num.getText());
+			}
+		} catch(NumberFormatException nfe) {  
+			clearComponent(comp);
+			enviarWarning("Formato Numerico", "Este campo admite solo valores numericos.");
+			comp.requestFocus();
+		}
+	}
+	@SuppressWarnings("unused")
+	public void isNumericLong(Component comp) {
+		try {
+			JTextField num = (JTextField) comp;
+			if(num != null && !num.getText().equals("")) {
+				long l = Long.parseLong(num.getText());
+			}
+		} catch(NumberFormatException nfe) {  
+			clearComponent(comp);
+			enviarWarning("Formato Numerico", "Este campo admite solo valores numericos.");
+			comp.requestFocus();
+		}
+	}
+	@SuppressWarnings("unused")
+	public void isNumericFlt(Component comp) {
+		try {
+			JTextField num = (JTextField) comp;
+			if(num != null && !num.getText().equals("")) {
+				float f = Float.parseFloat(num.getText());
+			}
+		} catch(NumberFormatException nfe) {  
+			clearComponent(comp);
+			enviarWarning("Formato Numerico", "Este campo admite solo valores numericos.");
+			comp.requestFocus();
+		}
+	}
+	@SuppressWarnings("unused")
+	public void isNumericDbl(Component comp) {
+	    try {
+	    	JTextField num = (JTextField) comp;
+	    	if(num != null && !num.getText().equals("")) {
+	    		double d = Double.parseDouble(num.getText());
+	    	}
+	    } catch(NumberFormatException nfe) {  
+	    	clearComponent(comp);
+	    	enviarWarning("Formato Numerico", "Este campo admite solo valores numericos.");
+	    	comp.requestFocus();
+	    }
+	}
 
 	
 	/**
@@ -320,7 +395,7 @@ public abstract class CtrlGenerico {
 	 * 
 	 * @param obj
 	 * @return boolean si valida numerico
-	 * metodo generico para validar tipos nuericos Integer
+	 * metodo generico para validar tipos numericos Integer
 	 */
 	protected Boolean ctrlNumInt(Object obj) {
 		try {
@@ -368,19 +443,6 @@ public abstract class CtrlGenerico {
 			return false;
 		}
 		return false;
-	}
-	
-	/**
-	 * 
-	 * @param obj
-	 * metodo generico para controlar inputs para tipos numericos
-	 */
-	public void controlInputNum(KeyEvent e) {
-		char caracter = e.getKeyChar();
-		if(((caracter < '0') || (caracter > '9')) &&
-				(caracter != '\b' && caracter != '.')) {
-			e.consume();  // ignorar el evento de teclado
-		}
 	}
 	
 	/**

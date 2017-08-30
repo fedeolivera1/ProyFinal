@@ -1,10 +1,18 @@
 package gpd.presentacion.formulario;
 
 import java.awt.Color;
+import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.GregorianCalendar;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -14,6 +22,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
@@ -22,20 +31,13 @@ import javax.swing.border.LineBorder;
 
 import org.apache.log4j.Logger;
 
+import com.toedter.calendar.JDateChooser;
+
 import gpd.dominio.persona.PersonaJuridica;
 import gpd.dominio.producto.Producto;
 import gpd.dominio.producto.TipoProd;
 import gpd.dominio.usuario.UsuarioDsk;
 import gpd.presentacion.controlador.CtrlFrmMovimiento;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.util.GregorianCalendar;
-
-import javax.swing.JSeparator;
-import java.awt.SystemColor;
-import com.toedter.calendar.JDateChooser;
 
 public class FrmMovimiento extends JFrame {
 
@@ -150,7 +152,13 @@ public class FrmMovimiento extends JFrame {
 		ftxtCompraCant.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyTyped(KeyEvent e) {
-				ctrlMov.controlInputNum(e);
+				ctrlMov.keyTypedNum(e);
+			}
+		});
+		ftxtCompraCant.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusLost(FocusEvent arg0) {
+				ctrlMov.isNumericInt(ftxtCompraCant);
 			}
 		});
 		ftxtCompraCant.setBounds(72, 73, 65, 20);
@@ -165,7 +173,13 @@ public class FrmMovimiento extends JFrame {
 		ftxtCompraPu.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyTyped(KeyEvent e) {
-				ctrlMov.controlInputNum(e);
+				ctrlMov.keyTypedDec(e);
+			}
+		});
+		ftxtCompraPu.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusLost(FocusEvent arg0) {
+				ctrlMov.isNumericDbl(ftxtCompraPu);
 			}
 		});
 		ftxtCompraPu.setBounds(72, 104, 65, 20);

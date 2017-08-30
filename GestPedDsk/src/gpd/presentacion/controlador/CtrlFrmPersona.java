@@ -372,8 +372,8 @@ public class CtrlFrmPersona extends CtrlGenerico {
 			genComp.setComp(jtPersFisica);
 			if(controlDatosObl(genComp)) {
 				Long docPresentacion = new Long(txtPfDoc.getText());
-				if(mgrPers.checkExistPersona(docPresentacion)) {
-					Long docFpActual = (Long) jtPersFisica.getModel().getValueAt(jtPersFisica.getSelectedRow(), 0);
+				Long docFpActual = (Long) jtPersFisica.getModel().getValueAt(jtPersFisica.getSelectedRow(), 0);
+				if(mgrPers.checkExistPersona(docFpActual)) {
 					PersonaFisica pf = (PersonaFisica) mgrPers.obtenerPersFisicaPorId(docFpActual);
 					TipoDoc tipoDoc = (TipoDoc) cbxPfTipoDpc.getSelectedItem();
 					pf.setTipoDoc(tipoDoc);
@@ -512,8 +512,8 @@ public class CtrlFrmPersona extends CtrlGenerico {
 			genComp.setComp(jtPersJuridica);
 			if(controlDatosObl(genComp)) {
 				Long rutPresentacion = new Long(txtPjRut.getText());
-				if(mgrPers.checkExistPersona(rutPresentacion)) {
-					Long rutPjActual = (Long) jtPersJuridica.getModel().getValueAt(jtPersJuridica.getSelectedRow(), 0);
+				Long rutPjActual = (Long) jtPersJuridica.getModel().getValueAt(jtPersJuridica.getSelectedRow(), 0);
+				if(mgrPers.checkExistPersona(rutPjActual)) {
 					PersonaJuridica pj = (PersonaJuridica) mgrPers.obtenerPersJuridicaPorId(rutPjActual);
 					//datos pj
 					if(!pj.getRut().equals(rutPresentacion)) {

@@ -13,6 +13,7 @@ public interface IPersUsuario {
 	public List <UsuarioDsk> obtenerListaUsuario(Connection conn) throws PersistenciaException;
 	public Integer guardarUsuario(Connection conn, UsuarioDsk usuario) throws PersistenciaException;
 	public Integer modificarUsuario(Connection conn, UsuarioDsk usuario) throws PersistenciaException;
+	public Integer modificarUsuarioSinPass(Connection conn, UsuarioDsk usuario) throws PersistenciaException;
 	public Integer eliminarUsuario(Connection conn, UsuarioDsk usuario) throws PersistenciaException;
 	
 }
