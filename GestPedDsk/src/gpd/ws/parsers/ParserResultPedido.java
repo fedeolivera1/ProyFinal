@@ -68,8 +68,9 @@ public class ParserResultPedido {
 						pl.setCantidad(resultPl.getCantidad());
 						//obtengo iva para la linea partir del producto
 						Float ivaAplicaProd = Float.valueOf(cfgDrv.getIva(prod.getAplIva().getAplIvaProp()));
-						Float ivaProdDivisor = Converters.convertirPorcAMult(ivaAplicaProd);
-						Double ivaProd = Converters.obtenerIvaDePrecio(prod.getPrecio(), ivaProdDivisor);
+						//FIXME esto no deberia ir ya que hace este calculo dentro de obtenerIvaDePrecio
+//						Float ivaProdDivisor = Converters.convertirPorcAMult(ivaAplicaProd);
+						Double ivaProd = Converters.obtenerIvaDePrecio(prod.getPrecio(), ivaAplicaProd);
 						pl.setIva(ivaProd);
 						pl.setPrecioUnit(resultPl.getPrecioUnit());
 						pedido.getListaPedidoLinea().add(pl);

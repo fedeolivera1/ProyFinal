@@ -73,8 +73,8 @@ public class ParserParamPedido {
 					}
 					param.getListaPedidosASinc().add(paramPas);
 				}
-			} else {
-				throw new ParsersException("Los datos del tipo 'ParamRecPedidoSinc' son obligatorios.");
+//			} else {
+//				throw new ParsersException("Los datos del tipo 'ParamRecPedidoSinc' son obligatorios.");
 			}
 		} catch (Exception e) {
 			logger.error("Excepcion al parsear en parseParam: ", e);

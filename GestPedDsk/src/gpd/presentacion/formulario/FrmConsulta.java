@@ -26,6 +26,7 @@ import com.toedter.calendar.JDateChooser;
 import gpd.dominio.usuario.UsuarioDsk;
 import gpd.presentacion.controlador.CtrlFrmConsulta;
 import gpd.reports.TipoReporte;
+import javax.swing.JCheckBox;
 
 public class FrmConsulta extends JFrame {
 
@@ -40,6 +41,7 @@ public class FrmConsulta extends JFrame {
 	private JComboBox<TipoReporte> cbxConsFiltro;
 	private JDateChooser dchConsIni;
 	private JDateChooser dchConsFin;
+	private JCheckBox chkConsTodo;
 	private JButton btnConsBp;
 
 	public static FrmConsulta getFrmConsulta(UsuarioDsk usr) {
@@ -73,7 +75,7 @@ public class FrmConsulta extends JFrame {
 		ctrlInterno.setDeskPane(desktopPane);
 		
 		JPanel panel = new JPanel();
-		panel.setBounds(10, 11, 764, 211);
+		panel.setBounds(10, 11, 764, 146);
 		contentPane.add(panel);
 		panel.setLayout(null);
 		
@@ -91,9 +93,14 @@ public class FrmConsulta extends JFrame {
 		dchConsFin.setBounds(211, 42, 87, 20);
 		panel.add(dchConsFin);
 		dchConsFin.setCalendar(new GregorianCalendar());
+
+		chkConsTodo = new JCheckBox("Todo");
+		chkConsTodo.setVisible(false);
+		chkConsTodo.setBounds(304, 41, 97, 23);
+		panel.add(chkConsTodo);
 		
 		JButton btnReporte = new JButton("Mostrar");
-		btnReporte.setBounds(362, 102, 89, 23);
+		btnReporte.setBounds(503, 112, 89, 23);
 		panel.add(btnReporte);
 		
 		cbxConsFiltro = new JComboBox<>();
@@ -125,6 +132,16 @@ public class FrmConsulta extends JFrame {
 		/*****************************************************************************************************************************************************/
 		
 		ctrlInterno.cargarTipoRep(cbxConsFiltro);
+		
+		JButton btnConsLimpiar = new JButton("Limpiar");
+		btnConsLimpiar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				ctrlInterno.limpiar();
+			}
+		});
+		btnConsLimpiar.setBounds(503, 70, 89, 23);
+		panel.add(btnConsLimpiar);
+		
 		
 		cbxConsFiltro.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent arg0) {
@@ -185,6 +202,13 @@ public class FrmConsulta extends JFrame {
 	}
 	public void setDchConsFin(JDateChooser dchConsFin) {
 		this.dchConsFin = dchConsFin;
+	}
+	
+	public JCheckBox getChkConsTodo() {
+		return chkConsTodo;
+	}
+	public void setChkConsTodo(JCheckBox chkConsTodo) {
+		this.chkConsTodo = chkConsTodo;
 	}
 	
 	public JDesktopPane getDesktopPane() {

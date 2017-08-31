@@ -11,6 +11,7 @@ import javax.swing.JTextField;
 
 import com.toedter.calendar.JDateChooser;
 
+import gpd.dominio.persona.TipoPersona;
 import gpd.dominio.transaccion.TipoTran;
 import gpd.dominio.usuario.UsuarioDsk;
 import gpd.presentacion.formulario.FrmConsulta;
@@ -58,11 +59,15 @@ public class CtrlFrmConsulta extends CtrlGenerico implements CnstPresGeneric {
 			getFrm().getDchConsFin().setEnabled(false);
 			getFrm().getTxtConsPersona().setText(STR_VACIO);
 			getFrm().getBtnConsBp().setEnabled(false);
+			getFrm().getChkConsTodo().setVisible(false);
+		} else if( cbxConsFiltro.getSelectedItem().equals(TipoReporte.PF) || 
+				cbxConsFiltro.getSelectedItem().equals(TipoReporte.PJ) ) {
+			getFrm().getChkConsTodo().setVisible(true);
 		} else {
 			getFrm().getDchConsIni().setEnabled(true);
 			getFrm().getDchConsFin().setEnabled(true);
 			getFrm().getBtnConsBp().setEnabled(true);
-			
+			getFrm().getChkConsTodo().setVisible(false);
 		}
 	}
 	
@@ -73,6 +78,7 @@ public class CtrlFrmConsulta extends CtrlGenerico implements CnstPresGeneric {
 			if(controlDatosObl(genComp)) {
 				TipoReporte tr = (TipoReporte) cbxTipoRep.getSelectedItem();
 				Long idPersona;
+				Integer noFechas;
 				switch(tr) {
 					case C: case V:
 						idPersona = ctrlPb.getPersSel() != null ? ctrlPb.getPersSel().getIdPersona() : -1;
@@ -84,8 +90,13 @@ public class CtrlFrmConsulta extends CtrlGenerico implements CnstPresGeneric {
 					case PR:
 						generarReporteProducto();
 						break;
-					case PE:
-						generarReportePersona();
+					case PF:
+						noFechas = getFrm().getChkConsTodo().isSelected() ? 1 : 0; 
+						generarReportePersona(getFrm().getDchConsIni(), getFrm().getDchConsFin(), noFechas, TipoPersona.F);
+						break;
+					case PJ:
+						noFechas = getFrm().getChkConsTodo().isSelected() ? 1 : 0; 
+						generarReportePersona(getFrm().getDchConsIni(), getFrm().getDchConsFin(), noFechas, TipoPersona.J);
 						break;
 				default:
 					break;
@@ -151,8 +162,48 @@ public class CtrlFrmConsulta extends CtrlGenerico implements CnstPresGeneric {
 		}
 	}
 	
-	public void generarReportePersona() {
-		
+	public void generarReportePersona(JDateChooser dchConsIni, JDateChooser dchConsFin, Integer noFechas, TipoPersona tp) {
+		try {
+			Boolean valido = true;
+			if(noFechas > 0) {
+				GenCompType genComp = new GenCompType();
+				genComp.setComp(dchConsIni);
+				genComp.setComp(dchConsFin);
+				if(!controlDatosObl(genComp)) {
+					valido = false;
+				}
+			}
+			if(valido) {
+				Date dateIni = dchConsIni.getDate();
+				Date dateFin = dchConsFin.getDate();
+				mapParamsJr = new HashMap<>();
+				mapParamsJr.put("fecha_ini", dateIni);
+				mapParamsJr.put("fecha_fin", dateFin);
+				mapParamsJr.put("no_fechas", noFechas);
+				String reporte = "";
+				if(TipoPersona.F.equals(tp)) {
+					reporte = "rptPersFisicas";
+				} else if(TipoPersona.J.equals(tp)) {
+					reporte = "rptPersJuridicas";
+				}
+				GeneradorReportes.abrirReporte(reporte, mapParamsJr);
+			}
+		} catch(Exception e) {
+			manejarExcepcion(e);
+		}
+	}
+	
+	public void generarReportePersonaJuridica(JDateChooser dchConsIni, JDateChooser dchConsFin, Integer noFechas) {
+		try {
+			
+		} catch(Exception e) {
+			manejarExcepcion(e);
+		}
+	}
+	
+	public void limpiar() {
+		clearForm(getFrm().getContentPane());
+		ctrlPb.setPersSel(null);
 	}
 	
 

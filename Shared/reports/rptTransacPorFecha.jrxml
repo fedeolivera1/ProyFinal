@@ -72,7 +72,7 @@ AND t.operacion = $P{tipo_transac}]]>
 			<textField>
 				<reportElement x="0" y="0" width="381" height="19" uuid="88da6654-09d0-4e55-9d0e-a333243a6623"/>
 				<textElement textAlignment="Left">
-					<font fontName="Arial" size="10"/>
+					<font fontName="Arial" size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Período: " + new SimpleDateFormat("dd/MM/yyyy").format($P{fecha_ini}) +
 " al " + new SimpleDateFormat("dd/MM/yyyy").format($P{fecha_fin})]]></textFieldExpression>
@@ -86,7 +86,7 @@ AND t.operacion = $P{tipo_transac}]]>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement>
-					<font fontName="Arial" size="10"/>
+					<font fontName="Arial" size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[new Date()]]></textFieldExpression>
 			</textField>
@@ -97,49 +97,49 @@ AND t.operacion = $P{tipo_transac}]]>
 			<staticText>
 				<reportElement x="0" y="0" width="38" height="20" uuid="c52397da-6722-4a46-8278-b9c63073a2e4"/>
 				<textElement>
-					<font fontName="Arial"/>
+					<font fontName="Arial" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Nro]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="38" y="0" width="99" height="20" uuid="2da8efc7-4cf8-4df2-8637-ad9053b9a1f8"/>
 				<textElement>
-					<font fontName="Arial"/>
+					<font fontName="Arial" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Fecha-Hora]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="497" y="0" width="58" height="20" uuid="ecf41ce3-b5df-4a96-8bfc-ef988c4ddbc3"/>
 				<textElement textAlignment="Right">
-					<font fontName="Arial"/>
+					<font fontName="Arial" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Total]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="439" y="0" width="58" height="20" uuid="d906d61d-2b28-4aa6-a533-f3b744caa984"/>
 				<textElement textAlignment="Right">
-					<font fontName="Arial"/>
+					<font fontName="Arial" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Iva]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="381" y="0" width="58" height="20" uuid="696f827e-b1d0-4b06-a6ff-22f5dc847f79"/>
 				<textElement textAlignment="Right">
-					<font fontName="Arial"/>
+					<font fontName="Arial" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Sub-total]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="226" y="0" width="155" height="20" uuid="46527ca4-a8b6-4089-8644-0d70fa09de3b"/>
 				<textElement>
-					<font fontName="Arial"/>
+					<font fontName="Arial" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Nombre Persona]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="137" y="0" width="89" height="20" uuid="9b1477f1-9f87-488b-95f9-f72767e0e2f0"/>
 				<textElement>
-					<font fontName="Arial"/>
+					<font fontName="Arial" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Id Pers]]></text>
 			</staticText>
@@ -240,7 +240,7 @@ AND t.operacion = $P{tipo_transac}]]>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement>
-					<font fontName="Arial" size="10"/>
+					<font fontName="Arial" size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["" + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
@@ -253,7 +253,7 @@ AND t.operacion = $P{tipo_transac}]]>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right">
-					<font fontName="Arial" size="10"/>
+					<font fontName="Arial" size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Hoja " + $V{PAGE_NUMBER} + " de "]]></textFieldExpression>
 			</textField>

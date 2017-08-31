@@ -38,37 +38,37 @@ ORDER BY l.venc ASC]]>
 		<band splitType="Stretch"/>
 	</pageHeader>
 	<columnHeader>
-		<band height="17" splitType="Stretch">
+		<band height="16" splitType="Stretch">
 			<staticText>
-				<reportElement x="146" y="1" width="34" height="16" uuid="572aa61a-603c-480e-b2b1-70a9e0516a2e"/>
+				<reportElement x="146" y="1" width="34" height="14" uuid="572aa61a-603c-480e-b2b1-70a9e0516a2e"/>
 				<textElement>
 					<font fontName="Arial" size="8"/>
 				</textElement>
 				<text><![CDATA[Lote]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="180" y="1" width="100" height="16" uuid="c2e15d7f-02cf-4094-ad96-e5361e83de7f"/>
+				<reportElement x="180" y="1" width="100" height="14" uuid="c2e15d7f-02cf-4094-ad96-e5361e83de7f"/>
 				<textElement>
 					<font fontName="Arial" size="8"/>
 				</textElement>
 				<text><![CDATA[Deposito]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="280" y="1" width="100" height="16" uuid="63fa1db4-a261-44f9-8928-8f77c7483cd5"/>
+				<reportElement x="280" y="1" width="100" height="14" uuid="63fa1db4-a261-44f9-8928-8f77c7483cd5"/>
 				<textElement>
 					<font fontName="Arial" size="8"/>
 				</textElement>
 				<text><![CDATA[Utilidad]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="487" y="0" width="68" height="16" uuid="d0e219c7-ba27-429e-a619-4908914a3496"/>
+				<reportElement x="487" y="0" width="68" height="14" uuid="d0e219c7-ba27-429e-a619-4908914a3496"/>
 				<textElement textAlignment="Right">
 					<font fontName="Arial" size="8"/>
 				</textElement>
 				<text><![CDATA[Stock]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="380" y="1" width="107" height="16" uuid="a11d9fc4-de04-4261-999a-88f03eb0f854"/>
+				<reportElement x="380" y="1" width="107" height="14" uuid="a11d9fc4-de04-4261-999a-88f03eb0f854"/>
 				<textElement>
 					<font fontName="Arial" size="8"/>
 				</textElement>
@@ -77,37 +77,37 @@ ORDER BY l.venc ASC]]>
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="17" splitType="Stretch">
+		<band height="15" splitType="Stretch">
 			<textField>
-				<reportElement x="146" y="0" width="34" height="16" uuid="3ce793ae-fac7-4003-a5e1-572d1804139b"/>
+				<reportElement x="146" y="0" width="34" height="14" uuid="3ce793ae-fac7-4003-a5e1-572d1804139b"/>
 				<textElement>
 					<font fontName="Arial" size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{id_lote}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="180" y="0" width="100" height="16" uuid="ad828111-0b97-4c8b-8721-adae9c4bd49c"/>
+				<reportElement x="180" y="0" width="100" height="14" uuid="ad828111-0b97-4c8b-8721-adae9c4bd49c"/>
 				<textElement>
 					<font fontName="Arial" size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{deposito}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="280" y="0" width="100" height="16" uuid="28031080-eb46-4d92-ad87-f04ed03f8abd"/>
+				<reportElement x="280" y="0" width="100" height="14" uuid="28031080-eb46-4d92-ad87-f04ed03f8abd"/>
 				<textElement>
 					<font fontName="Arial" size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{utilidad}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="487" y="0" width="68" height="16" uuid="530e358f-d3ff-44df-bb38-116a94be1b29"/>
+				<reportElement x="487" y="0" width="68" height="14" uuid="530e358f-d3ff-44df-bb38-116a94be1b29"/>
 				<textElement textAlignment="Right">
 					<font fontName="Arial" size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{stock}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="380" y="0" width="107" height="16" uuid="59b11e17-7e0f-4f1a-b8ec-a009b0cd6dc1"/>
+				<reportElement x="380" y="0" width="107" height="14" uuid="59b11e17-7e0f-4f1a-b8ec-a009b0cd6dc1"/>
 				<textElement>
 					<font fontName="Arial" size="8"/>
 				</textElement>

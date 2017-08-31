@@ -35,7 +35,7 @@ ORDER BY tp.id_tipo_prod, p.id_producto]]>
 			<staticText>
 				<reportElement x="0" y="0" width="555" height="31" uuid="f942e7d4-187b-4810-a137-ed3d597fa0e5"/>
 				<textElement textAlignment="Center">
-					<font fontName="Arial" size="16"/>
+					<font fontName="Arial" size="16" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Inventario de productos]]></text>
 			</staticText>
@@ -52,7 +52,7 @@ ORDER BY tp.id_tipo_prod, p.id_producto]]>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement>
-					<font fontName="Arial" size="10"/>
+					<font fontName="Arial" size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[new Date()]]></textFieldExpression>
 			</textField>
@@ -63,96 +63,96 @@ ORDER BY tp.id_tipo_prod, p.id_producto]]>
 			<staticText>
 				<reportElement x="0" y="0" width="37" height="20" uuid="6b3749ef-78fa-411f-91e6-2a1d6b97e588"/>
 				<textElement>
-					<font fontName="Arial"/>
+					<font fontName="Arial" isBold="true"/>
 				</textElement>
 				<text><![CDATA[ID]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="37" y="0" width="254" height="20" uuid="f77efa48-9821-44da-8cd5-4de00bde7ef4"/>
 				<textElement>
-					<font fontName="Arial"/>
+					<font fontName="Arial" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Producto]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="291" y="0" width="93" height="20" uuid="8dcfba4d-ec65-4255-a2de-cabb8d3e07c6"/>
 				<textElement>
-					<font fontName="Arial"/>
+					<font fontName="Arial" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Presentacion]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="490" y="0" width="65" height="20" uuid="032b3c4f-a185-48ee-ab11-abb4398a293a"/>
 				<textElement>
-					<font fontName="Arial"/>
+					<font fontName="Arial" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Precio lista]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="441" y="0" width="49" height="20" uuid="39a9ae96-220e-4562-97bd-867bb2fcdd9d"/>
 				<textElement>
-					<font fontName="Arial"/>
+					<font fontName="Arial" isBold="true"/>
 				</textElement>
 				<text><![CDATA[IVA]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="384" y="0" width="57" height="20" uuid="0c4ee0b4-bbab-4032-913e-76ddeb3d3360"/>
 				<textElement>
-					<font fontName="Arial"/>
+					<font fontName="Arial" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Stock Min.]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="65" splitType="Stretch">
+		<band height="58" splitType="Stretch">
 			<textField>
-				<reportElement x="0" y="3" width="37" height="20" uuid="148b7bc9-9022-4897-b3c4-5878fbb133d1"/>
+				<reportElement x="0" y="3" width="37" height="16" uuid="148b7bc9-9022-4897-b3c4-5878fbb133d1"/>
 				<textElement>
-					<font fontName="Arial"/>
+					<font fontName="Arial" size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{id_producto}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="37" y="3" width="254" height="20" uuid="9a0ddac9-15cb-45d2-b85d-a232c1688bda"/>
+				<reportElement x="37" y="3" width="254" height="16" uuid="9a0ddac9-15cb-45d2-b85d-a232c1688bda"/>
 				<textElement>
-					<font fontName="Arial"/>
+					<font fontName="Arial" size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{codigo} + " | " + $F{nombre} + " | " + $F{descripcion}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="291" y="3" width="93" height="20" uuid="980ca849-2319-4484-9c9a-8b8015c6778e"/>
+				<reportElement x="291" y="3" width="93" height="16" uuid="980ca849-2319-4484-9c9a-8b8015c6778e"/>
 				<textElement>
-					<font fontName="Arial"/>
+					<font fontName="Arial" size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{cant_unidad} + " " + $F{unidad}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="490" y="3" width="65" height="20" uuid="a9fac008-f20e-45bd-9861-22e4f8c52b7b"/>
+				<reportElement x="490" y="3" width="65" height="16" uuid="a9fac008-f20e-45bd-9861-22e4f8c52b7b"/>
 				<textElement>
-					<font fontName="Arial"/>
+					<font fontName="Arial" size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{precio}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="441" y="3" width="49" height="20" uuid="be8df31a-a52e-48a1-9a4d-0e80e80b4802"/>
+				<reportElement x="441" y="3" width="49" height="16" uuid="be8df31a-a52e-48a1-9a4d-0e80e80b4802"/>
 				<textElement>
-					<font fontName="Arial"/>
+					<font fontName="Arial" size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{apl_iva}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="384" y="3" width="57" height="20" uuid="678c6a66-8f8a-4fe3-97d9-52ba252b7720"/>
+				<reportElement x="384" y="3" width="57" height="16" uuid="678c6a66-8f8a-4fe3-97d9-52ba252b7720"/>
 				<textElement>
-					<font fontName="Arial"/>
+					<font fontName="Arial" size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{stock_min}]]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement x="163" y="25" width="392" height="1" uuid="d4b6c47c-a724-4ff6-97a9-b29a86488747"/>
+				<reportElement x="115" y="20" width="440" height="1" uuid="d4b6c47c-a724-4ff6-97a9-b29a86488747"/>
 			</line>
 			<subreport>
-				<reportElement x="0" y="28" width="554" height="36" uuid="b5e00d35-4ba5-413c-9266-20a28b556d08"/>
+				<reportElement x="0" y="22" width="554" height="36" uuid="b5e00d35-4ba5-413c-9266-20a28b556d08"/>
 				<subreportParameter name="dias_venc">
 					<subreportParameterExpression><![CDATA[$P{dias_venc}]]></subreportParameterExpression>
 				</subreportParameter>

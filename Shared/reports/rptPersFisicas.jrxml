@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptPersFisicas" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="bcbccc25-4541-4167-a6d1-0413b83b339f">
+	<property name="ireport.zoom" value="1.771561000000001"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="fecha_ini" class="java.util.Date"/>
+	<parameter name="fecha_fin" class="java.util.Date"/>
+	<parameter name="no_fechas" class="java.lang.Integer"/>
+	<queryString>
+		<![CDATA[SELECT td.nombre AS tipo_doc, pf.documento, pf.nombre1, pf.apellido1, pf.fecha_nac, pf.sexo,
+	p.direccion, p.puerta, p.solar, p.manzana, p.km, p.complemento,
+	p.telefono, p.celular, p.email, l.nombre AS loc, d.nombre AS dep
+FROM pers_fisica pf
+INNER JOIN persona p
+ON pf.documento = p.id_persona
+INNER JOIN tipo_doc td
+ON pf.id_tipo_doc = td.id_tipo_doc
+INNER JOIN localidad l
+ON p.id_loc = l.id_loc
+INNER JOIN departamento d
+ON l.id_dep = d.id_dep
+WHERE ( ((p.fecha_reg BETWEEN $P{fecha_ini} AND $P{fecha_fin}) AND $P{no_fechas} = 0)
+	OR $P{no_fechas} = 1 );]]>
+	</queryString>
+	<field name="tipo_doc" class="java.lang.String"/>
+	<field name="documento" class="java.lang.Long"/>
+	<field name="nombre1" class="java.lang.String"/>
+	<field name="apellido1" class="java.lang.String"/>
+	<field name="fecha_nac" class="java.sql.Date"/>
+	<field name="sexo" class="java.lang.String"/>
+	<field name="direccion" class="java.lang.String"/>
+	<field name="puerta" class="java.lang.String"/>
+	<field name="solar" class="java.lang.String"/>
+	<field name="manzana" class="java.lang.String"/>
+	<field name="km" class="java.math.BigDecimal"/>
+	<field name="complemento" class="java.lang.String"/>
+	<field name="telefono" class="java.lang.String"/>
+	<field name="celular" class="java.lang.String"/>
+	<field name="email" class="java.lang.String"/>
+	<field name="loc" class="java.lang.String"/>
+	<field name="dep" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="31" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="555" height="31" uuid="0d896efd-4098-4ed1-936c-8f91fb81a2e9"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Listado de clientes]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="32" splitType="Stretch">
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="false">
+				<reportElement key="textField" x="477" y="0" width="78" height="19" forecolor="#000000" backcolor="#FFFFFF" uuid="f7409907-92c2-4c91-b304-05f3b7aa7d60"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="20" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="64" height="20" uuid="c9d4997c-ad10-4ce2-b3df-e527a40a5570"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Documento]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="64" y="0" width="76" height="20" uuid="1585ed84-8273-45ca-b678-2d58d41e84a9"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nombre]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="233" y="0" width="53" height="20" uuid="c8a96e79-73eb-474e-827c-598aaadeb483"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha Nac]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="289" y="0" width="26" height="20" uuid="e37cc7cc-3b31-40be-b619-9ed84eb44f37"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Sexo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="321" y="0" width="90" height="20" uuid="135809f0-83fe-457c-bd69-a0c93e50374a"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Direccion]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="425" y="0" width="129" height="20" uuid="cdb59228-afb7-4e06-a1b7-6206a7c67cac"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Localidad]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="36" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement x="0" y="3" width="64" height="16" uuid="e69f4bec-a9d0-4465-a73d-00a9444f3dac"/>
+				<textElement>
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tipo_doc} + "-" + $F{documento}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="64" y="3" width="169" height="16" uuid="abb42f73-f79f-4c3b-b107-0553e7b6e031"/>
+				<textElement>
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombre1} + " " + $F{apellido1}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="233" y="3" width="53" height="16" uuid="f82231b4-d305-4270-906a-67c173b6a3a4"/>
+				<textElement>
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new SimpleDateFormat("dd/MM/yyyy").format($F{fecha_nac})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="290" y="4" width="23" height="16" uuid="6ae6b263-542e-486d-a0e7-9f9cf68a1b32"/>
+				<textElement>
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{sexo}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="321" y="3" width="234" height="16" uuid="75e805f1-6da3-4822-b53c-2e50da428ce8"/>
+				<textElement>
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{direccion} +
+($F{puerta} != null && !$F{puerta}.equals("") ? " " + $F{puerta} : "") +
+($F{solar} != null && !$F{solar}.equals("") ? " Sol:" + $F{solar} : "") +
+($F{manzana} != null && !$F{manzana}.equals("") ? " Mz:" + $F{manzana} : "") +
+($F{km} != null && !$F{km}.equals(0.00) ? " Km:" + $F{km} : "") +
+($F{complemento} != null && !$F{complemento}.equals("") ? " " + $F{complemento} : "")]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="181" y="20" width="244" height="16" uuid="21b7c68d-b3a4-4ab5-9ad0-e7f9080ac306"/>
+				<textElement>
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{telefono}!=null && $F{telefono}.equals("") ? $F{telefono} : "")  +
+($F{celular} != null && !$F{celular}.equals("") ? (" " + $F{celular}) : "") +
+($F{email} != null && $F{email}.equals("") ? (" " + $F{email}) : "")]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="111" y="20" width="70" height="16" uuid="3dfa9d7e-2f9f-4ce4-9b10-0ef19c2fe65c"/>
+				<textElement>
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Comunicacion:]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="425" y="20" width="129" height="16" uuid="4d27fcc2-12c7-442f-8f61-382bdf347807"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{loc} + " - " + $F{dep}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="1" width="555" height="1" uuid="aab971ee-d114-42f7-babc-a144510b14be"/>
+			</line>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="19" splitType="Stretch">
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement key="textField" x="454" y="0" width="63" height="19" forecolor="#000000" backcolor="#FFFFFF" uuid="3e3ff0a7-8fa0-453b-b132-3526b8cd6937"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Hoja " + $V{PAGE_NUMBER} + " de "]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="" isBlankWhenNull="false">
+				<reportElement key="textField" x="517" y="0" width="36" height="19" forecolor="#000000" backcolor="#FFFFFF" uuid="4ef293cf-b502-414b-9e03-9b8936736868"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["" + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>
