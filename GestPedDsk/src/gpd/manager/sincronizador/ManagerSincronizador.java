@@ -530,6 +530,7 @@ public class ManagerSincronizador implements CnstService {
 				List<Pedido> listaPedidosASinc = getInterfacePedido().obtenerListaPedidoNoSincWeb(conn, fechaDesde, fechaHasta);
 				if( (mapPedidosAConf != null && !mapPedidosAConf.isEmpty()) || (listaPedidosASinc != null && !listaPedidosASinc.isEmpty()) ) {
 					sb.append("-Se proceden a sincronizar [" + listaPedidosASinc.size() + "] pedidos hacia el sistema WEB.").append(ESC);
+					sb.append("-Se proceden a confirmar [" + mapPedidosAConf.size() + "] pedidos recibidos hacia el sistema WEB.").append(ESC);
 					ParamRecPedidosASinc paramRpas = ParserParamPedido.parseParamRecPedidosASinc(mapPedidosAConf, listaPedidosASinc);
 					ResultRecPedidosASinc resultRpas = iGestPed.recibirPedidosASinc(paramRpas);
 					if(resultRpas != null && (resultRpas.getErroresServ() == null || resultRpas.getErroresServ().isEmpty())) {

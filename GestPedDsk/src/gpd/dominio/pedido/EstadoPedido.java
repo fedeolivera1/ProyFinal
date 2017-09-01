@@ -3,10 +3,10 @@ package gpd.dominio.pedido;
 public enum EstadoPedido {
 	P("Pendiente", 'P'),
 	R("Revision", 'R'),
+	F("PreConfirmado", 'F'),
 	C("Confirmado", 'C'),
 	A("Anulado", 'A'),
-	X("Rechazado", 'X'),
-	V("Vendido", 'V');
+	X("Rechazado", 'X');
 	
 	private final String estadoPedido;
 	private final char asChar;

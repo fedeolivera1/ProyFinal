@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import gpd.dominio.helper.HlpProducto;
 import gpd.dominio.pedido.EstadoPedido;
 import gpd.dominio.pedido.Pedido;
 import gpd.dominio.pedido.PedidoLinea;
@@ -38,6 +39,7 @@ public class ManagerPedido {
 	private static IPersPedido interfacePedido;
 	private static IPersPedidoLinea interfacePedidoLinea;
 	private static IPersTransaccion interfaceTransac;
+	private static final String ESC = "\n";
 	
 	private static IPersPedido getInterfacePedido() {
 		if(interfacePedido == null) {
@@ -156,37 +158,89 @@ public class ManagerPedido {
 	 * metodo para actualizar pedidos tanto para ventas (a estado confirmado), como para pedidos pendientes que
 	 * se cambian sus lineas o actualizan desde el sistema web
 	 * @param pedido
-	 * @param estadoPedido
+	 * @param estPedCambio
 	 * @return
 	 * @throws PresentacionException
 	 * @throws ProductoSinStockException
 	 */
-	public Integer actualizarPedido(Pedido pedido, EstadoPedido estadoPedido) throws PresentacionException, ProductoSinStockException {
+	public String actualizarPedido(Pedido pedido, EstadoPedido estPedCambio) throws PresentacionException, ProductoSinStockException {
 		try (Connection conn = Conector.getConn()) {
-			if(pedido.getEstado().equals(EstadoPedido.P) && estadoPedido.equals(EstadoPedido.C)) {
+			if( (EstadoPedido.P.equals(pedido.getEstado()) && EstadoPedido.C.equals(estPedCambio)) || 
+					(EstadoPedido.F.equals(pedido.getEstado()) && EstadoPedido.C.equals(estPedCambio))) {
+				//ESTADOS: Pendiente[P] > Confirmado[C] (dsk o web) | PreConfirmado[F] > Confirmado[C] (web)
 				logger.info("<< Ingresa actualizacion de pedidos >> estado actual: " + pedido.getEstado().getEstadoPedido() + 
-						" - estado actualiza: " + estadoPedido.getEstadoPedido() + " [actualizacion a venta]");
-				ManagerProducto mgrProd = new ManagerProducto();
-				pedido.setEstado(estadoPedido);
-				/*
-				 * en caso de que alcance Y que el estadoPedido sea C (confirmado)... 
-				 * comienzo a bajar stock por producto con fecha de vencimiento mas cercana a hoy
-				 */
-				Transaccion transac = pedido.getTransaccion();
-				for(PedidoLinea pl : pedido.getListaPedidoLinea()) {
-					mgrProd.manejarStockLotePorProductoNoConn(conn, transac.getNroTransac(), pl.getProducto().getIdProducto(), pl.getCantidad());
+						" - estado actualiza: " + estPedCambio.getEstadoPedido() + " [actualizacion a venta]");
+				String controlStock = controlarStocksPedido(conn, pedido);
+				if(null == controlStock) {
+					ManagerProducto mgrProd = new ManagerProducto();
+					pedido.setEstado(estPedCambio);
+					/*
+					 * en caso de que alcance Y que el estadoPedido sea C (confirmado)... 
+					 * comienzo a bajar stock por producto con fecha de vencimiento mas cercana a hoy
+					 */
+					Transaccion transac;
+					if(Origen.D.equals(pedido.getOrigen())) {
+						//si el pedido fue hecho en sist DSK, la transaccion ya existe
+						transac = pedido.getTransaccion();
+						//marco como confirmada la transaccion
+						transac.setEstadoTran(EstadoTran.C);
+						transac.setFechaHora(new Fecha(Fecha.AMDHMS));
+						getInterfaceTransaccion().modificarEstadoTransaccion(conn, transac);
+						getInterfaceTransaccion().guardarTranEstado(conn, transac);
+					} else {
+						//si el pedido fue hecho en sist WEB, se genera la nueva transaccion
+						transac = new Transaccion(TipoTran.V);
+						List<TranLinea> listaTransacLinea = new ArrayList<>();
+						Double subTotal = new Double(0);
+						Double ivaTotal = new Double(0);
+						Double total = new Double(0);
+						for(PedidoLinea pl : pedido.getListaPedidoLinea()) {
+							TranLinea tl = new TranLinea(transac);
+							Producto prod = pl.getProducto();
+							tl.setProducto(prod);
+							tl.setCantidad(pl.getCantidad());
+							tl.setIva(pl.getIva());
+							tl.setPrecioUnit(pl.getPrecioUnit());
+							listaTransacLinea.add(tl);
+							total += pl.getPrecioUnit() * pl.getCantidad();
+							ivaTotal += pl.getIva() * pl.getCantidad();
+						}
+						subTotal = total - ivaTotal;
+						subTotal = Converters.redondearDosDec(subTotal);
+						ivaTotal = Converters.redondearDosDec(ivaTotal);
+						total = Converters.redondearDosDec(total);
+						pedido.setSubTotal(subTotal);
+						pedido.setIva(ivaTotal);
+						pedido.setTotal(total);
+						transac.setPersona(pedido.getPersona());
+						transac.setFechaHora(pedido.getFechaHora());
+						transac.setSubTotal(pedido.getSubTotal());
+						transac.setIva(pedido.getIva());
+						transac.setTotal(pedido.getTotal());
+						transac.setListaTranLinea(listaTransacLinea);
+						//marco como confirmada la transaccion
+						transac.setEstadoTran(EstadoTran.C);
+						transac.setFechaHora(new Fecha(Fecha.AMDHMS));
+						ManagerTransaccion mgrTransac = new ManagerTransaccion();
+						mgrTransac.generarTransaccionVenta(conn, transac);
+					}
+					
+					for(PedidoLinea pl : pedido.getListaPedidoLinea()) {
+						mgrProd.manejarStockLotePorProductoNoConn(conn, transac.getNroTransac(), pl.getProducto().getIdProducto(), pl.getCantidad());
+					}
+					pedido.setEstado(EstadoPedido.C);
+					pedido.setSinc(Sinc.N);
+					getInterfacePedido().modificarPedido(conn, pedido);
+					//* guardo nuevo estado en tabla de estados (seteo fecha-hora temporalmente para estado_tran)
+					Conector.commitConn(conn);
+				} else {
+					return controlStock;
 				}
-				getInterfacePedido().modificarPedido(conn, pedido);
-				//* modifico estado de transaccion a confirmado (seteo aca mismo el estado tran a C)
-				transac.setEstadoTran(EstadoTran.C);
-				getInterfaceTransaccion().modificarEstadoTransaccion(conn, transac);
-				//* guardo nuevo estado en tabla de estados (seteo fecha-hora temporalmente para estado_tran)
-				transac.setFechaHora(new Fecha(Fecha.AMDHMS));
-				getInterfaceTransaccion().guardarTranEstado(conn, transac);
-				Conector.commitConn(conn);
-			} else if( (pedido.getEstado().equals(EstadoPedido.P) || pedido.getEstado().equals(EstadoPedido.R)) && estadoPedido.equals(EstadoPedido.R) ) {
+			} else if( (EstadoPedido.P.equals(pedido.getEstado()) && EstadoPedido.R.equals(estPedCambio)) || 
+					((EstadoPedido.R.equals(pedido.getEstado()) && Sinc.N.equals(pedido.getSinc())) && EstadoPedido.R.equals(estPedCambio)) ) {
+				//ESTADOS: Pendiente[P] > Revision[R] | Revision[R] > Revision[R] (sin haber sido sincronizado - pedido web)
 				logger.info("<< Ingresa actualizacion de pedidos >> estado actual: " + pedido.getEstado().getEstadoPedido() + 
-						" - estado actualiza: " + estadoPedido.getEstadoPedido() + " [actualizacion de lineas de pedido en estado C]");
+						" - estado actualiza: " + estPedCambio.getEstadoPedido() + " [actualizacion de lineas de pedido en estado C]");
 				pedido.setEstado(EstadoPedido.R);
 				Double subTotal = new Double(0);
 				Double ivaTotal = new Double(0);
@@ -211,9 +265,23 @@ public class ManagerPedido {
 				getInterfacePedidoLinea().eliminarListaPedidoLinea(conn, pedido);
 				//* agrego nueva lista de lineas de pedido
 				getInterfacePedidoLinea().guardarListaPedidoLinea(conn, pedido.getListaPedidoLinea());
+
+				Conector.commitConn(conn);
+			} else if(  (EstadoPedido.P.equals(pedido.getEstado()) || 
+					( EstadoPedido.R.equals(pedido.getEstado()) && 
+							(Sinc.N.equals(pedido.getSinc()) && Origen.W.equals(pedido.getOrigen())) 
+									|| Origen.D.equals(pedido.getOrigen()) ) ||
+					EstadoPedido.F.equals(pedido.getEstado())) 
+					&& EstadoPedido.A.equals(estPedCambio)  ) {
+				//ESTADOS: Pendiente[P] > Anulado[A] (dsk o web) | Revision[R] (no sinc) > Anulado[A] | PreConfirmado[F] > Anulado[A]
+				pedido.setEstado(estPedCambio);
+				if(pedido.getOrigen().equals(Origen.W)) {
+					pedido.setSinc(Sinc.N);
+				}
+				getInterfacePedido().modificarPedido(conn, pedido);
 				Conector.commitConn(conn);
 			} else {
-				throw new PresentacionException("actualizaPedido mal implementado!!!");
+				throw new PresentacionException("El estado del pedido no permite actualizacion! Verifique.");
 			}
 		} catch (ProductoSinStockException psse) {
 			throw psse;
@@ -222,6 +290,30 @@ public class ManagerPedido {
 			throw new PresentacionException(e);
 		}
 		return null;
+	}
+	
+	/**
+	 * metodo para controlar el stock de cada linea del pedido.
+	 * en caso de todo ok, devuelve null, si a algun prod no le alcanza el stock, retorna el mensaje correpondiente.
+	 * @param conn
+	 * @param pedido
+	 * @return
+	 * @throws PresentacionException
+	 */
+	public String controlarStocksPedido(Connection conn, Pedido pedido) throws PresentacionException {
+		StringBuilder sb = new StringBuilder();
+		if(pedido != null && pedido.getListaPedidoLinea() != null && !pedido.getListaPedidoLinea().isEmpty()) {
+			ManagerProducto mgrProd = new ManagerProducto();
+			for(PedidoLinea pl : pedido.getListaPedidoLinea()) {
+				Producto prod = pl.getProducto();
+				HlpProducto hlpProd = mgrProd.obtenerStockPrecioLotePorProductoNoConn(conn, prod.getIdProducto());
+				if(hlpProd.getStock().longValue() < pl.getCantidad().longValue()) {
+					sb.append("Atencion: El producto [" + prod.getIdProducto() + "-" + prod.getNombre() + "] no tiene stock suficiente: "
+							+ "se requieren " + pl.getCantidad() + " unidades, el stock es " + hlpProd.getStock() + " unidades.").append(ESC);
+				}
+			}
+		}
+		return !sb.toString().equals("") ? sb.toString() : null;
 	}
 	
 	/*****************************************************************************************************************************************************/

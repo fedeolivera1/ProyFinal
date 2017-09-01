@@ -3,6 +3,8 @@ package gpd.types;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
@@ -11,9 +13,13 @@ import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import org.apache.log4j.Logger;
+
 public class Fecha extends GregorianCalendar {
 
 	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(Fecha.class);
+	
 	public static final int AMD = 1;
 	public static final int DMA = 2;
 	public static final int AMDHM = 3; 
@@ -21,6 +27,7 @@ public class Fecha extends GregorianCalendar {
 	public static final int HM = 5;
 	public static final int HMS = 6;
 	public static final int DMAHMS = 7;
+	public static final int DMAHM = 8;
 
 	private static final String BARRA = "/";
 	private static final String DP = ":";
@@ -173,6 +180,29 @@ public class Fecha extends GregorianCalendar {
 	}
 	
 	/**
+	 * metodo utilizado para parsear datos de fechas de presentacion
+	 * a este tipo particular
+	 * @param String con la fecha
+	 * setea una fecha a partir de un String
+	 */
+	public Fecha(String fechaStr, int formato) {
+		SimpleDateFormat sdf = new SimpleDateFormat();
+		if(formato == DMA) {
+			sdf = new SimpleDateFormat("dd/MM/yyyy");
+		} else if(formato == DMAHM || formato == HM) {
+			sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+		} else if(formato == AMDHMS) {
+			sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+		}
+		try {
+			super.setTime(sdf.parse(fechaStr));
+			setFormato(formato);
+		} catch (ParseException e) {
+			logger.fatal("Error fatal al parsear la fecha en constructor con String de fecha [" + fechaStr + "] y formato [" + formato + "].", e);
+		}
+	}
+	
+	/**
 	 * 
 	 * @return java.sql.Date
 	 * retorna la instancia en el formato de java.sql.Date
@@ -228,7 +258,7 @@ public class Fecha extends GregorianCalendar {
 			xmlgc = DatatypeFactory.newInstance().newXMLGregorianCalendar(gc);
 			xmlgc.setTimezone(DatatypeConstants.FIELD_UNDEFINED);
 		} catch (DatatypeConfigurationException e) {
-			e.printStackTrace();
+			logger.fatal("Error fatal al parsear la fecha en metodo: getHoraAsXMLGregorianCalendar.", e);
 		}
 		return xmlgc;
 	}
@@ -248,7 +278,7 @@ public class Fecha extends GregorianCalendar {
 			xmlgc = DatatypeFactory.newInstance().newXMLGregorianCalendar(gc);
 			xmlgc.setTimezone(DatatypeConstants.FIELD_UNDEFINED);
 		} catch (DatatypeConfigurationException e) {
-			e.printStackTrace();
+			logger.fatal("Error fatal al parsear la fecha en metodo: getHoraAsXMLGregorianCalendar", e);
 		}
 		return xmlgc;
 	}

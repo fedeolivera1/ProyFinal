@@ -56,8 +56,8 @@ public class ParserResultPedido {
 					pedido.setPersona(pers);
 					pedido.setFechaHora(new Fecha(resultPns.getFechaHora(), Fecha.AMDHMS));
 					pedido.setEstado(EstadoPedido.getEstadoPedidoPorChar(resultPns.getEstado().charAt(0)));
-					pedido.setFechaProg(new Fecha(resultPns.getFechaProg(), Fecha.AMD));
-					pedido.setHoraProg(new Fecha(resultPns.getHoraProg(), Fecha.HMS));
+					pedido.setFechaProg(resultPns.getFechaProg() != null ? new Fecha(resultPns.getFechaProg(), Fecha.AMD) : null);
+					pedido.setHoraProg(resultPns.getHoraProg() != null ? new Fecha(resultPns.getHoraProg(), Fecha.HMS) : null);
 					pedido.setOrigen(Origen.getOrigenPorChar(resultPns.getOrigen().charAt(0)));
 					Double subTotal = new Double(0);
 					Double ivaSubTotal = new Double(0);
@@ -66,13 +66,12 @@ public class ParserResultPedido {
 						Producto prod = getInterfaceProducto().obtenerProductoPorId(conn, resultPl.getIdProducto()); 
 						pl.setProducto(prod);
 						pl.setCantidad(resultPl.getCantidad());
+						pl.setPrecioUnit(resultPl.getPrecioUnit());
 						//obtengo iva para la linea partir del producto
 						Float ivaAplicaProd = Float.valueOf(cfgDrv.getIva(prod.getAplIva().getAplIvaProp()));
-						//FIXME esto no deberia ir ya que hace este calculo dentro de obtenerIvaDePrecio
-//						Float ivaProdDivisor = Converters.convertirPorcAMult(ivaAplicaProd);
-						Double ivaProd = Converters.obtenerIvaDePrecio(prod.getPrecio(), ivaAplicaProd);
+						//obtengo iva de LINEA (no de pedido) ya que la misma contiene el precio de venta.
+						Double ivaProd = Converters.obtenerIvaDePrecio(pl.getPrecioUnit(), ivaAplicaProd);
 						pl.setIva(ivaProd);
-						pl.setPrecioUnit(resultPl.getPrecioUnit());
 						pedido.getListaPedidoLinea().add(pl);
 						//calculo valores para el pedido
 						subTotal += (pl.getPrecioUnit() * pl.getCantidad());

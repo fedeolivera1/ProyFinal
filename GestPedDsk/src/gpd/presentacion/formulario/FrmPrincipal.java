@@ -77,7 +77,7 @@ public class FrmPrincipal extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				FrmPersona frmPers = FrmPersona.getFrmPersona(usr);
 				frmPers.setLocationRelativeTo(null);
-				//panel.pestaña("Empresa");
+				//panel.pestaña("Cliente");
 				JTabbedPane comp = (JTabbedPane) frmPers.getContentPane().getComponent(0);
 				comp.setSelectedIndex(0);
 				frmPers.setVisible(true);

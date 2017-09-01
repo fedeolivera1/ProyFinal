@@ -386,14 +386,16 @@ public class CtrlFrmMovimiento extends CtrlGenerico implements CnstPresGeneric {
 					}
 				};
 				modeloJtVentaLinLote.addColumn("Id Lote");
-				modeloJtVentaLinLote.addColumn("Cantidad Vta");
-				modeloJtVentaLinLote.addColumn("Cantidad Restante");
+				modeloJtVentaLinLote.addColumn("Deposito");
+				modeloJtVentaLinLote.addColumn("Cnt. Vta");
+				modeloJtVentaLinLote.addColumn("Cnt. Stock");
 				tabla.setModel(modeloJtVentaLinLote);
 				for(TranLineaLote tll : listaTll) {
-					Object [] fila = new Object[3];
+					Object [] fila = new Object[4];
 					fila[0] = tll.getLote().getIdLote();
-					fila[1] = tll.getCantidad();
-					fila[2] = tll.getLote().getStock();
+					fila[1] = tll.getLote().getDeposito();
+					fila[2] = tll.getCantidad();
+					fila[3] = tll.getLote().getStock();
 					modeloJtVentaLinLote.addRow(fila);
 				}
 			} else {

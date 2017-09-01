@@ -198,7 +198,7 @@ public class FrmMovimiento extends JFrame {
 		scrollPaneVenta.setViewportView(jtVenta);
 		
 		scrollPaneVentaLin = new JScrollPane();
-		scrollPaneVentaLin.setBounds(10, 284, 537, 200);
+		scrollPaneVentaLin.setBounds(10, 284, 472, 200);
 		tpVenta.add(scrollPaneVentaLin);
 		
 		jtVentaLin = new JTable();
@@ -239,7 +239,7 @@ public class FrmMovimiento extends JFrame {
 		tpVenta.add(btnVtaLimpiar);
 		
 		scrollPaneVentaLinLote = new JScrollPane();
-		scrollPaneVentaLinLote.setBounds(557, 284, 212, 200);
+		scrollPaneVentaLinLote.setBounds(492, 284, 277, 200);
 		tpVenta.add(scrollPaneVentaLinLote);
 		
 		jtVentaLinLote = new JTable();
@@ -253,7 +253,7 @@ public class FrmMovimiento extends JFrame {
 		
 		JLabel lblLotesStock = new JLabel("Lotes stock");
 		lblLotesStock.setHorizontalAlignment(SwingConstants.LEFT);
-		lblLotesStock.setBounds(557, 270, 80, 14);
+		lblLotesStock.setBounds(492, 270, 80, 14);
 		tpVenta.add(lblLotesStock);
 		
 		JButton btnComLimpiar = new JButton("Limpiar");

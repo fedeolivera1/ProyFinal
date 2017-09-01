@@ -82,6 +82,7 @@ public interface CnstPresGeneric {
 	public static final String PEDIDO_INEXISTENTE = "No existe pedido abierto, genere nuevo pedido.";
 	public static final String PEDIDO_GEN_OK = "El pedido se ha generado correctamente.";
 	public static final String PEDIDO_ACT_OK = "El pedido se ha actualizado correctamente.";
+	public static final String PEDIDO_ANU_OK = "El pedido se ha anulado correctamente.";
 	public static final String PEDIDO_SIN_PERS = "Debe seleccionar una persona para el pedido.";
 	public static final String NUEVO_PEDIDO_CONF = "Si genera un nuevo pedido perdera los datos que no haya guardado, continuar?";
 	public static final String JTABLE_SIN_PEDIDOS = "No hay pedidos para mostrar...";

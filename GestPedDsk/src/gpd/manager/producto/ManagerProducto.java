@@ -165,6 +165,7 @@ public class ManagerProducto {
 		logger.info("Se ingresa a guardarProducto");
 		try (Connection conn = Conector.getConn()) {
 			if(producto != null) {
+				producto.setEstadoProd(Estado.A);
 				producto.setSinc(Sinc.N);
 				producto.setUltAct(new Fecha(Fecha.AMDHMS));
 				resultado = getInterfaceProducto().guardarProducto(conn, producto);
@@ -203,6 +204,7 @@ public class ManagerProducto {
 		logger.info("Se ingresa a eliminarProducto");
 		try (Connection conn = Conector.getConn()) {
 			if(producto != null) {
+				producto.setEstadoProd(Estado.E);
 				producto.setSinc(Sinc.N);
 				producto.setUltAct(new Fecha(Fecha.AMDHMS));
 				resultado = getInterfaceProducto().desactivarProducto(conn, producto);

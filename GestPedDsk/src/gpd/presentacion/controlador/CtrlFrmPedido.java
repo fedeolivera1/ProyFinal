@@ -1,6 +1,5 @@
 package gpd.presentacion.controlador;
 
-import java.awt.Color;
 import java.awt.Container;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -8,15 +7,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.swing.BorderFactory;
 import javax.swing.ComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JDesktopPane;
 import javax.swing.JFormattedTextField;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.JToggleButton;
-import javax.swing.border.Border;
 import javax.swing.table.DefaultTableModel;
 
 import com.toedter.calendar.JDateChooser;
@@ -169,6 +165,7 @@ public class CtrlFrmPedido extends CtrlGenerico implements CnstPresGeneric {
 								cargarMapDesdePedido(pedido);
 								cargarJtPedidoLin();
 								setearInfoPedido();
+								manejarControlesPorEstado(pedido);
 							} catch (PresentacionException e) {
 								manejarExcepcion(e);
 							}
@@ -255,31 +252,29 @@ public class CtrlFrmPedido extends CtrlGenerico implements CnstPresGeneric {
 	/* ACCIONES */
 	/*****************************************************************************************************************************************************/
 	
-	public void controlarPedido(JToggleButton tglBtnPedido) { 
-		Border line;
+	public void controlarPedido() {
 		try {
-			if(tglBtnPedido.isSelected()) {
+			if(getFrm().getTglbtnPedNuevo().isSelected()) {
 				esNuevo = true;
-				line = BorderFactory.createLineBorder(Color.BLUE, 1);
 				activarControlesPedNuevo();
 				//ingresa a nuevo pedido
 				Pedido pedido = new Pedido();
 				pedido.setFechaHora(new Fecha(Fecha.AMDHMS));
 				pedido.setPersona(ctrlPb.getPersSel());
 				pedido.setEstado(EstadoPedido.P);
+				pedido.setSinc(Sinc.S);//seteo sinc en 'S' ya que será un pedido dsk que no tendra necesidad de sinc.
 				setPedidoInt(pedido);
 				mapLineasPedido = null;
 				setearInfoPedido();
+				manejarControlesPorEstado(pedido);
 			} else {
 				esNuevo = false;
-				line = BorderFactory.createLineBorder(Color.lightGray, 1);
 				activarControlesPedExistente();
 				setPedidoInt(null);
 				mapLineasPedido = null;
 				setearInfoPedido();
 			}
 			mapLineasPedido = new HashMap<>();
-			getFrm().getTglbtnPedNuevo().setBorder(line);
 		} catch(Exception e) {
 			manejarExcepcion(e);
 		}
@@ -295,9 +290,53 @@ public class CtrlFrmPedido extends CtrlGenerico implements CnstPresGeneric {
 	private void activarControlesPedExistente() {
 		clearForm(getFrm().getContentPane());
 		//
-//		ctrlPb.cargarPersonaSeleccionada(getFrm().getTxtPersDesc());
 		ctrlPb.setPersSel(null);
 		setContainerEnabled(getFrm().getPnlPedBus(), true);
+	}
+	
+	private void manejarControlesPorEstado(Pedido pedido) {
+		if(pedido != null) {
+			if( EstadoPedido.R.equals(pedido.getEstado()) ||
+					EstadoPedido.A.equals(pedido.getEstado()) || 
+					EstadoPedido.C.equals(pedido.getEstado())) {
+				//estado Revision[R] | Anulado[A] | Confirmado[C]
+				getFrm().getBtnPedGenVenta().setEnabled(false);
+				getFrm().getBtnPedGenPedido().setEnabled(false);
+				if( (EstadoPedido.R.equals(pedido.getEstado()) && 
+						Origen.W.equals(pedido.getOrigen()) && 
+						Sinc.S.equals(pedido.getSinc())) ||
+						Origen.D.equals(pedido.getOrigen()) ) {
+					getFrm().getBtnPedActPedido().setEnabled(true);
+				} else {
+					getFrm().getBtnPedActPedido().setEnabled(false);
+				}
+				getFrm().getBtnPedAnuPedido().setEnabled(false);
+				setContainerEnabled(getFrm().getPnlDatosPedido(), false);
+				getFrm().getJtPedidoLin().setEnabled(false);
+			} else if(EstadoPedido.F.equals(pedido.getEstado())) {
+				//estado PreConfirmado[F] (permite solo generar la venta o anularlo)
+				getFrm().getBtnPedGenVenta().setEnabled(true);
+				getFrm().getBtnPedGenPedido().setEnabled(false);
+				getFrm().getBtnPedAnuPedido().setEnabled(true);
+				getFrm().getBtnPedActPedido().setEnabled(false);
+				setContainerEnabled(getFrm().getPnlDatosPedido(), false);
+				getFrm().getJtPedidoLin().setEnabled(false);
+			} else {
+				getFrm().getBtnPedGenVenta().setEnabled(true);
+				getFrm().getBtnPedGenPedido().setEnabled(true);
+				getFrm().getBtnPedAnuPedido().setEnabled(true);
+				getFrm().getBtnPedActPedido().setEnabled(true);
+				setContainerEnabled(getFrm().getPnlDatosPedido(), true);
+				getFrm().getJtPedidoLin().setEnabled(true);
+			}
+		} else {
+			getFrm().getBtnPedGenVenta().setEnabled(true);
+			getFrm().getBtnPedGenPedido().setEnabled(true);
+			getFrm().getBtnPedAnuPedido().setEnabled(true);
+			getFrm().getBtnPedActPedido().setEnabled(true);
+			setContainerEnabled(getFrm().getPnlDatosPedido(), true);
+			getFrm().getJtPedidoLin().setEnabled(true);
+		}
 	}
 
 	public void agregarItemAPedido(JComboBox<Producto> cbxPedProd, JFormattedTextField ftxtPedCant) {
@@ -401,6 +440,16 @@ public class CtrlFrmPedido extends CtrlGenerico implements CnstPresGeneric {
 		} catch(Exception e) {
 			manejarExcepcion(e);
 		}
+	}
+	
+	public void limpiarPedido() {
+		clearForm(getFrm().getContentPane());
+		if(ctrlPb.getPersSel() != null) {
+			ctrlPb.setPersSel(null);
+		}
+		manejarControlesPorEstado(null);
+		getFrm().getTglbtnPedNuevo().setSelected(false);
+		getFrm().getTglbtnPedExist().setSelected(false);
 	}
 	
 	public void cargarMapDesdePedido(Pedido pedido) {
@@ -519,10 +568,25 @@ public class CtrlFrmPedido extends CtrlGenerico implements CnstPresGeneric {
 						Fecha horaProg = convertirHoraDesdeTxt(getFrm().getFtxtPedHora().getText());
 						pedido.setHoraProg(horaProg);
 					}
-					pedido.setSinc(Sinc.S);
-					mgrPed.actualizarPedido(pedido, EstadoPedido.R);
-					enviarInfo(PED, PEDIDO_ACT_OK);
+					String res = mgrPed.actualizarPedido(pedido, EstadoPedido.R);
+					if(null == res) enviarInfo(PED, PEDIDO_ACT_OK);
 				}
+			} else {
+				enviarWarning(PED, DATOS_OBLIG);
+			}
+		} catch(Exception e) {
+			manejarExcepcion(e);
+		}
+	}
+	
+	public void anularPedido(JTable jtPedido) {
+		try {
+			GenCompType genComp = new GenCompType();
+			genComp.setComp(jtPedido);
+			if(controlDatosObl(genComp)) {
+				Pedido pedido = getPedidoInt();
+				String res = mgrPed.actualizarPedido(pedido, EstadoPedido.A);
+				if(null == res) enviarInfo(PED, PEDIDO_ANU_OK);
 			} else {
 				enviarWarning(PED, DATOS_OBLIG);
 			}
@@ -540,8 +604,12 @@ public class CtrlFrmPedido extends CtrlGenerico implements CnstPresGeneric {
 				Fecha fechaHora = (Fecha) jtPedido.getModel().getValueAt(jtPedido.getSelectedRow(), 1);
 				Pedido pedido = mgrPed.obtenerPedidoPorId(pers.getIdPersona(), fechaHora);
 				if(enviarConfirm(PED, VTA_CONF_GEN) == CONFIRM_OK) {
-					mgrPed.actualizarPedido(pedido, EstadoPedido.C);
-					enviarInfo(VTA, VTA_GENERADA_OK);
+					String control = mgrPed.actualizarPedido(pedido, EstadoPedido.C);
+					if(null == control) {
+						enviarInfo(VTA, VTA_GENERADA_OK);
+					} else {
+						enviarWarning(PED, control);
+					}
 				}
 			} else {
 				enviarWarning(PED, DATOS_OBLIG);

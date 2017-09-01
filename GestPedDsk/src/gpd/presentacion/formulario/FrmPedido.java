@@ -54,6 +54,7 @@ public class FrmPedido extends JFrame {
 	private JPanel contentPane;
 	private JDesktopPane desktopPane;
 	private JToggleButton tglbtnPedNuevo;
+	private JToggleButton tglbtnPedExist;
 	private JPanel pnlPedBus;
 	private JTable jtPedido;
 	private JPanel pnlDatosPedido;
@@ -71,6 +72,11 @@ public class FrmPedido extends JFrame {
 	private JDateChooser dchPedFecha;
 	private JFormattedTextField ftxtPedHora;
 	private JTextArea txtPedInfo;
+	private JButton btnPedGenVenta;
+	private JButton btnPedGenPedido;
+	private JButton btnPedActPedido;
+	private JButton btnPedAnuPedido;
+	private JScrollPane scrollPanePedidoLin;
 
 	public static FrmPedido getFrmPedido(UsuarioDsk usr) {
 		if(instance == null) {
@@ -196,7 +202,7 @@ public class FrmPedido extends JFrame {
 		lblPersona.setHorizontalAlignment(SwingConstants.RIGHT);
 		
 		JButton btnPedBp = new JButton("...");
-		btnPedBp.setBounds(426, 44, 32, 22);
+		btnPedBp.setBounds(416, 44, 32, 22);
 		pnlPedido.add(btnPedBp);
 		
 		JSeparator separator = new JSeparator();
@@ -205,7 +211,7 @@ public class FrmPedido extends JFrame {
 		separator.setBounds(10, 317, 764, 2);
 		pnlPedido.add(separator);
 		
-		JScrollPane scrollPanePedidoLin = new JScrollPane();
+		scrollPanePedidoLin = new JScrollPane();
 		scrollPanePedidoLin.setBounds(400, 371, 374, 139);
 		pnlPedido.add(scrollPanePedidoLin);
 		
@@ -213,11 +219,11 @@ public class FrmPedido extends JFrame {
 		scrollPanePedidoLin.setColumnHeaderView(jtPedidoLin);
 		scrollPanePedidoLin.setViewportView(jtPedidoLin);
 		
-		JButton btnPedGenVenta = new JButton("Generar Venta");
+		btnPedGenVenta = new JButton("Generar Venta");
 		btnPedGenVenta.setBounds(650, 283, 124, 23);
 		pnlPedido.add(btnPedGenVenta);
 		
-		JButton btnPedGenPedido = new JButton("Generar Pedido");
+		btnPedGenPedido = new JButton("Generar Pedido");
 		btnPedGenPedido.setBounds(650, 521, 124, 23);
 		pnlPedido.add(btnPedGenPedido);
 		
@@ -236,12 +242,17 @@ public class FrmPedido extends JFrame {
 		lblPedidosExistentesFiltrados.setBounds(10, 125, 145, 14);
 		pnlPedido.add(lblPedidosExistentesFiltrados);
 		
-		JButton btnPedActPedido = new JButton("Actualizar Pedido");
+		btnPedActPedido = new JButton("Actualizar Pedido");
 		btnPedActPedido.setBounds(516, 521, 124, 23);
 		pnlPedido.add(btnPedActPedido);
 		
+		btnPedAnuPedido = new JButton("Anular Pedido");
+		btnPedAnuPedido.setForeground(Color.RED);
+		btnPedAnuPedido.setBounds(382, 521, 124, 23);
+		pnlPedido.add(btnPedAnuPedido);
+		
 		JButton btnPedLimpiar = new JButton("Limpiar");
-		btnPedLimpiar.setBounds(384, 9, 89, 23);
+		btnPedLimpiar.setBounds(369, 9, 89, 23);
 		pnlPedido.add(btnPedLimpiar);
 		
 		dchPedFecha = new JDateChooser();
@@ -301,9 +312,13 @@ public class FrmPedido extends JFrame {
 		btnPedObtener.setBounds(665, 10, 89, 23);
 		pnlPedBus.add(btnPedObtener);
 		
-		tglbtnPedNuevo = new JToggleButton("Pedido Nuevo");
-		tglbtnPedNuevo.setBounds(10, 9, 121, 23);
+		tglbtnPedNuevo = new JToggleButton("Nuevo");
+		tglbtnPedNuevo.setBounds(10, 9, 80, 23);
 		pnlPedido.add(tglbtnPedNuevo);
+		tglbtnPedExist = new JToggleButton("Existente");
+		tglbtnPedExist.setBounds(88, 9, 80, 23);
+		pnlPedido.add(tglbtnPedExist);
+		
 		
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(481, 1, 303, 73);
@@ -315,6 +330,15 @@ public class FrmPedido extends JFrame {
 		txtPedInfo.setRows(2);
 		txtPedInfo.setEditable(false);
 		txtPedInfo.setBackground(UIManager.getColor("InternalFrame.borderColor"));
+
+		JLabel lblOrigen = new JLabel("Origen");
+		lblOrigen.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblOrigen.setBounds(467, 14, 56, 14);
+		pnlPedBus.add(lblOrigen);
+		
+		//selecciono boton de pedido nuevo por defecto
+		this.getTglbtnPedNuevo().setSelected(true);
+		ctrlPed.controlarPedido();
 		
 		/*****************************************************************************************************************************************************/
 		/* ACCIONES CONTROLES */
@@ -322,16 +346,28 @@ public class FrmPedido extends JFrame {
 		
 		ctrlPed.cargarCbxPedidoEstado(cbxPedidoEstado);
 		ctrlPed.cargarCbxPedidoOrigen(cbxPedidoOrig);
-		
-		JLabel lblOrigen = new JLabel("Origen");
-		lblOrigen.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblOrigen.setBounds(467, 14, 56, 14);
-		pnlPedBus.add(lblOrigen);
+
 		
 		//boton pedido nuevo
 		tglbtnPedNuevo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				ctrlPed.controlarPedido(tglbtnPedNuevo);
+				if(tglbtnPedNuevo.isSelected()) {
+					tglbtnPedExist.setSelected(false);
+				} else {
+					tglbtnPedExist.setSelected(true);
+				}
+				ctrlPed.controlarPedido();
+			}
+		});
+		//boton pedido existente
+		tglbtnPedExist.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				if(tglbtnPedExist.isSelected()) {
+					tglbtnPedNuevo.setSelected(false);
+				} else {
+					tglbtnPedNuevo.setSelected(true);
+				}
+				ctrlPed.controlarPedido();
 			}
 		});
 		//boton obtener pedido
@@ -369,7 +405,7 @@ public class FrmPedido extends JFrame {
 		//boton limpiar
 		btnPedLimpiar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				ctrlPed.clearForm(getContentPane());
+				ctrlPed.limpiarPedido();
 			}
 		});
 		//boton generar pedido
@@ -382,6 +418,12 @@ public class FrmPedido extends JFrame {
 		btnPedActPedido.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				ctrlPed.actualizarPedido(dchPedFecha, ftxtPedHora, jtPedido);
+			}
+		});
+		//boton anular pedido
+		btnPedAnuPedido.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				ctrlPed.anularPedido(jtPedido);
 			}
 		});
 		//boton generar venta
@@ -443,6 +485,13 @@ public class FrmPedido extends JFrame {
 	}
 	public void setTglbtnPedNuevo(JToggleButton tglbtnPedNuevo) {
 		this.tglbtnPedNuevo = tglbtnPedNuevo;
+	}
+	
+	public JToggleButton getTglbtnPedExist() {
+		return tglbtnPedExist;
+	}
+	public void setTglbtnPedExist(JToggleButton tglbtnPedExist) {
+		this.tglbtnPedExist = tglbtnPedExist;
 	}
 
 	public JDateChooser getDchPedFecha() {
@@ -572,4 +621,38 @@ public class FrmPedido extends JFrame {
 		this.ftxtPedHora = ftxtPedHora;
 	}
 
+	public JButton getBtnPedGenVenta() {
+		return btnPedGenVenta;
+	}
+	public void setBtnPedGenVenta(JButton btnPedGenVenta) {
+		this.btnPedGenVenta = btnPedGenVenta;
+	}
+
+	public JButton getBtnPedGenPedido() {
+		return btnPedGenPedido;
+	}
+	public void setBtnPedGenPedido(JButton btnPedGenPedido) {
+		this.btnPedGenPedido = btnPedGenPedido;
+	}
+
+	public JButton getBtnPedActPedido() {
+		return btnPedActPedido;
+	}
+	public void setBtnPedActPedido(JButton btnPedActPedido) {
+		this.btnPedActPedido = btnPedActPedido;
+	}
+
+	public JButton getBtnPedAnuPedido() {
+		return btnPedAnuPedido;
+	}
+	public void setBtnPedAnuPedido(JButton btnPedAnuPedido) {
+		this.btnPedAnuPedido = btnPedAnuPedido;
+	}
+
+	public JScrollPane getScrollPanePedidoLin() {
+		return scrollPanePedidoLin;
+	}
+	public void setScrollPanePedidoLin(JScrollPane scrollPanePedidoLin) {
+		this.scrollPanePedidoLin = scrollPanePedidoLin;
+	}
 }
