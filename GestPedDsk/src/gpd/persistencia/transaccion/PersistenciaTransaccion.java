@@ -323,8 +323,8 @@ public class PersistenciaTransaccion extends Conector implements IPersTransaccio
 				paramList.add(tll.getLote().getIdLote());
 				paramList.add(tll.getCantidad());
 				genExec.setParamList(paramList);
-				resultado = (Integer) runGeneric(conn, genExec);
 			}
+			resultado = (Integer) runGeneric(conn, genExec);
 		} catch (ConectorException e) {
 			Conector.rollbackConn(conn);
 			logger.fatal("Excepcion al guardarListaTranLineaLote: " + e.getMessage(), e);

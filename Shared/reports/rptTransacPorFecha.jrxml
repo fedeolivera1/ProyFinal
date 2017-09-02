@@ -53,6 +53,15 @@ AND t.operacion = $P{tipo_transac}]]>
 	<field name="celular" class="java.lang.String"/>
 	<field name="localidad" class="java.lang.String"/>
 	<field name="departamento" class="java.lang.String"/>
+	<variable name="total_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{total}]]></variableExpression>
+	</variable>
+	<variable name="iva_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{iva}]]></variableExpression>
+	</variable>
+	<variable name="sub_total_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{sub_total}]]></variableExpression>
+	</variable>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -74,7 +83,7 @@ AND t.operacion = $P{tipo_transac}]]>
 				<textElement textAlignment="Left">
 					<font fontName="Arial" size="10" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Período: " + new SimpleDateFormat("dd/MM/yyyy").format($P{fecha_ini}) +
+				<textFieldExpression><![CDATA["Periodo: " + new SimpleDateFormat("dd/MM/yyyy").format($P{fecha_ini}) +
 " al " + new SimpleDateFormat("dd/MM/yyyy").format($P{fecha_fin})]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="false">
@@ -146,58 +155,58 @@ AND t.operacion = $P{tipo_transac}]]>
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="81" splitType="Stretch">
+		<band height="77" splitType="Stretch">
 			<textField>
-				<reportElement x="0" y="3" width="38" height="20" uuid="4ca8f9df-8551-4483-b21b-55d9ff467130"/>
+				<reportElement x="0" y="2" width="38" height="16" uuid="4ca8f9df-8551-4483-b21b-55d9ff467130"/>
 				<textElement>
-					<font fontName="Arial"/>
+					<font fontName="Arial" size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{nro_transac}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="38" y="3" width="99" height="20" uuid="17bb284f-1f8b-4f67-9640-361bf1a52f03"/>
+				<reportElement x="38" y="2" width="99" height="16" uuid="17bb284f-1f8b-4f67-9640-361bf1a52f03"/>
 				<textElement>
-					<font fontName="Arial"/>
+					<font fontName="Arial" size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{fecha_hora}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="137" y="3" width="89" height="20" uuid="8f78085c-732a-47b5-8f0e-c55b1d1488ca"/>
+				<reportElement x="137" y="2" width="89" height="16" uuid="8f78085c-732a-47b5-8f0e-c55b1d1488ca"/>
 				<textElement>
-					<font fontName="Arial"/>
+					<font fontName="Arial" size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{id_persona}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="226" y="3" width="155" height="20" uuid="6fe76217-4cf0-4aa7-8e19-a6747c017928"/>
+				<reportElement x="226" y="2" width="155" height="16" uuid="6fe76217-4cf0-4aa7-8e19-a6747c017928"/>
 				<textElement>
-					<font fontName="Arial"/>
+					<font fontName="Arial" size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{nombre_persona}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="381" y="3" width="58" height="20" uuid="6236be10-f1b7-424a-9204-b13fc045923f"/>
+				<reportElement x="381" y="2" width="58" height="16" uuid="6236be10-f1b7-424a-9204-b13fc045923f"/>
 				<textElement textAlignment="Right">
-					<font fontName="Arial"/>
+					<font fontName="Arial" size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{sub_total}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="439" y="3" width="58" height="20" uuid="e4f5dddf-248c-460f-985b-ffdac2612ddb"/>
+				<reportElement x="439" y="2" width="58" height="16" uuid="e4f5dddf-248c-460f-985b-ffdac2612ddb"/>
 				<textElement textAlignment="Right">
-					<font fontName="Arial"/>
+					<font fontName="Arial" size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{iva}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="497" y="3" width="58" height="20" uuid="46798478-eb53-4d3c-a1dd-5879b848d448"/>
+				<reportElement x="497" y="2" width="58" height="16" uuid="46798478-eb53-4d3c-a1dd-5879b848d448"/>
 				<textElement textAlignment="Right">
-					<font fontName="Arial"/>
+					<font fontName="Arial" size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{total}]]></textFieldExpression>
 			</textField>
 			<subreport>
-				<reportElement x="0" y="45" width="555" height="36" uuid="1e0d18d4-2efc-47cc-ac13-b68345a95c67"/>
+				<reportElement x="0" y="40" width="555" height="36" uuid="1e0d18d4-2efc-47cc-ac13-b68345a95c67"/>
 				<subreportParameter name="nro_transac">
 					<subreportParameterExpression><![CDATA[$F{nro_transac}]]></subreportParameterExpression>
 				</subreportParameter>
@@ -208,21 +217,25 @@ AND t.operacion = $P{tipo_transac}]]>
 				<reportElement x="0" y="0" width="555" height="1" uuid="b9b6f4d8-bdb6-40a0-be17-c895647f11a8"/>
 			</line>
 			<line>
-				<reportElement x="163" y="23" width="392" height="1" uuid="681ca3b7-3127-48bf-a7b1-e56fee1130e5"/>
+				<reportElement x="38" y="19" width="517" height="1" uuid="681ca3b7-3127-48bf-a7b1-e56fee1130e5"/>
 			</line>
 			<line>
-				<reportElement x="163" y="44" width="392" height="1" uuid="ac3c5f74-24d8-49c1-a2bf-ea5c54cffe31"/>
+				<reportElement x="38" y="38" width="517" height="1" uuid="ac3c5f74-24d8-49c1-a2bf-ea5c54cffe31"/>
 			</line>
-			<textField>
-				<reportElement x="163" y="24" width="392" height="20" uuid="a7c7b8d5-afe6-480c-922b-0e05c3408aed"/>
-				<textFieldExpression><![CDATA[$F{direccion} + " " + String.valueOf($F{puerta})
-+ (!$F{solar}.equals("") ? (" Solar: " + $F{solar}) : "")
-+ (!$F{manzana}.equals("") ? (" Manzana: " + $F{manzana}) : "")
-+ (!$F{km}.equals("") ? (" Km: " + $F{km}) : "")
-+ (!$F{complemento}.equals("") ? (" Comp: " + $F{complemento}) : "")
-+ (!$F{telefono}.equals("") ? (" Tel: " + $F{telefono}) : "")
-+ (!$F{celular}.equals("") ? (" Cel: " + $F{celular}) : "")
-+ " " + $F{localidad} + ", " + $F{departamento}]]></textFieldExpression>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="38" y="21" width="517" height="16" uuid="a7c7b8d5-afe6-480c-922b-0e05c3408aed"/>
+				<textElement>
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{direccion} +
+($F{puerta} != null && !$F{puerta}.equals("") ? " " + $F{puerta} : "") +
+($F{solar} != null && !$F{solar}.equals("") ? " Sol:" + $F{solar} : "") +
+($F{manzana} != null && !$F{manzana}.equals("") ? " Mz:" + $F{manzana} : "") +
+($F{km} != null && !$F{km}.equals(0.00) ? " Km:" + $F{km} : "") +
+($F{complemento} != null && !$F{complemento}.equals("") ? " " + $F{complemento} : "") +
+($F{telefono} != null && !$F{telefono}.equals("") ? (" Tel: " + $F{telefono}) : "") +
+($F{celular} != null && !$F{celular}.equals("") ? (" Cel: " + $F{celular}) : "") +
+" " + $F{localidad} + ", " + $F{departamento}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
@@ -260,6 +273,31 @@ AND t.operacion = $P{tipo_transac}]]>
 		</band>
 	</pageFooter>
 	<summary>
-		<band height="35" splitType="Stretch"/>
+		<band height="31" splitType="Stretch">
+			<textField>
+				<reportElement x="497" y="6" width="58" height="20" uuid="f917045d-0e84-48c1-8fb8-a2b1996e4c9e"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{total_1}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="439" y="6" width="58" height="20" uuid="e68a6a89-cad3-496f-b732-8de68cc7a721"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{iva_1}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="381" y="6" width="58" height="20" uuid="7a33f44a-c3b0-4248-b665-a2c14ab4e62e"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{sub_total_1}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="381" y="0" width="174" height="1" uuid="ad27eaea-adf9-411e-b97d-1548b427aeaa"/>
+			</line>
+		</band>
 	</summary>
 </jasperReport>

@@ -153,9 +153,9 @@ WHERE ( ((p.fecha_reg BETWEEN $P{fecha_ini} AND $P{fecha_fin}) AND $P{no_fechas}
 				<textElement>
 					<font fontName="Arial" size="9"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($F{telefono}!=null && $F{telefono}.equals("") ? $F{telefono} : "")  +
+				<textFieldExpression><![CDATA[($F{telefono}!=null && !$F{telefono}.equals("") ? $F{telefono} : "")  +
 ($F{celular} != null && !$F{celular}.equals("") ? (" " + $F{celular}) : "") +
-($F{email} != null && $F{email}.equals("") ? (" " + $F{email}) : "")]]></textFieldExpression>
+($F{email} != null && !$F{email}.equals("") ? (" " + $F{email}) : "")]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="111" y="20" width="70" height="16" uuid="888e6630-7af0-4f8a-96b0-715975f40e78"/>
