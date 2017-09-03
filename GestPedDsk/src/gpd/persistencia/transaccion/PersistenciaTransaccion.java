@@ -311,7 +311,7 @@ public class PersistenciaTransaccion extends Conector implements IPersTransaccio
 	}
 	
 	@Override
-	public Integer guardarListaTranLineaLote(Connection conn, List<TranLineaLote> listaTll) throws PersistenciaException {
+	public Integer guardarListaTranVtaLote(Connection conn, List<TranLineaLote> listaTll) throws PersistenciaException {
 		Integer resultado = null;
 		try {
 			GenSqlExecType genExec = new GenSqlExecType(QRY_INSERT_TRA_VTA_LOTE);
@@ -338,7 +338,7 @@ public class PersistenciaTransaccion extends Conector implements IPersTransaccio
 	}
 
 	@Override
-	public Integer eliminarTranLineaLote(Connection conn, Integer nroTransac) throws PersistenciaException {
+	public Integer eliminarTranVtaLote(Connection conn, Integer nroTransac) throws PersistenciaException {
 		Integer resultado = null;
 		try {
 			GenSqlExecType genExec = new GenSqlExecType(QRY_DELETE_TRA_VTA_LOTE);

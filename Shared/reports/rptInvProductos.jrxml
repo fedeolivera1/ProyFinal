@@ -83,21 +83,21 @@ ORDER BY tp.id_tipo_prod, p.id_producto]]>
 			</staticText>
 			<staticText>
 				<reportElement x="490" y="0" width="65" height="20" uuid="032b3c4f-a185-48ee-ab11-abb4398a293a"/>
-				<textElement>
+				<textElement textAlignment="Right">
 					<font fontName="Arial" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Precio lista]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="441" y="0" width="49" height="20" uuid="39a9ae96-220e-4562-97bd-867bb2fcdd9d"/>
-				<textElement>
+				<textElement textAlignment="Right">
 					<font fontName="Arial" isBold="true"/>
 				</textElement>
 				<text><![CDATA[IVA]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="384" y="0" width="57" height="20" uuid="0c4ee0b4-bbab-4032-913e-76ddeb3d3360"/>
-				<textElement>
+				<textElement textAlignment="Right">
 					<font fontName="Arial" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Stock Min.]]></text>
@@ -129,21 +129,21 @@ ORDER BY tp.id_tipo_prod, p.id_producto]]>
 			</textField>
 			<textField>
 				<reportElement x="490" y="3" width="65" height="16" uuid="a9fac008-f20e-45bd-9861-22e4f8c52b7b"/>
-				<textElement>
+				<textElement textAlignment="Right">
 					<font fontName="Arial" size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{precio}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="441" y="3" width="49" height="16" uuid="be8df31a-a52e-48a1-9a4d-0e80e80b4802"/>
-				<textElement>
+				<textElement textAlignment="Right">
 					<font fontName="Arial" size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{apl_iva}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="384" y="3" width="57" height="16" uuid="678c6a66-8f8a-4fe3-97d9-52ba252b7720"/>
-				<textElement>
+				<textElement textAlignment="Right">
 					<font fontName="Arial" size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{stock_min}]]></textFieldExpression>

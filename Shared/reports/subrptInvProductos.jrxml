@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subrptInvProductos" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="4103aff9-936d-4f87-b166-291daab49505">
-	<property name="ireport.zoom" value="1.610510000000001"/>
+	<property name="ireport.zoom" value="2.3579476910000023"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="id_producto" class="java.lang.Integer"/>
@@ -122,19 +122,22 @@ ORDER BY l.venc ASC]]>
 		<band splitType="Stretch"/>
 	</pageFooter>
 	<summary>
-		<band height="25" splitType="Stretch">
+		<band height="56" splitType="Stretch">
 			<line>
-				<reportElement x="487" y="1" width="68" height="1" uuid="adec25d4-abbd-40a0-8148-4d0d3fb80ba2"/>
+				<reportElement x="422" y="2" width="133" height="1" uuid="adec25d4-abbd-40a0-8148-4d0d3fb80ba2"/>
+				<graphicElement>
+					<pen lineWidth="2.0" lineStyle="Double"/>
+				</graphicElement>
 			</line>
 			<staticText>
-				<reportElement x="422" y="3" width="65" height="20" uuid="8567a312-0802-480e-b058-79343b251ff7"/>
-				<textElement>
+				<reportElement x="422" y="5" width="65" height="20" uuid="8567a312-0802-480e-b058-79343b251ff7"/>
+				<textElement textAlignment="Right">
 					<font fontName="Arial" size="9"/>
 				</textElement>
 				<text><![CDATA[Total stock:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="487" y="3" width="68" height="20" uuid="c65aa687-b4c9-4964-b51b-4e416b938f72"/>
+				<reportElement x="487" y="5" width="68" height="20" uuid="c65aa687-b4c9-4964-b51b-4e416b938f72"/>
 				<textElement textAlignment="Right">
 					<font fontName="Arial" size="9"/>
 				</textElement>

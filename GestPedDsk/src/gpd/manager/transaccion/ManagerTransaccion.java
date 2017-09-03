@@ -289,29 +289,6 @@ public class ManagerTransaccion {
 		return null;
 	}
 	
-//	public Integer modificarEstadoTransaccion(Transaccion transaccion, List<Lote> listaLote) throws PresentacionException {
-//		if(transaccion != null) {
-//			//transaccion de tipo "compra"
-//			if(transaccion.getTipoTran().equals(TipoTran.C)) {
-//				try {
-//					Conector.getConn();
-//					//seteo estado a "confirmado"
-//					transaccion.setEstadoTran(EstadoTran.C);
-//					getInterfaceTransaccion().guardarTranEstado(transaccion);
-//					getInterfaceTransaccion().modificarEstadoTransaccion(transaccion);
-//					for(Lote lote : listaLote) {
-//						getInterfaceLote().actualizarLote(lote);
-//					}
-//					Conector.closeConn("modificarTransaccionCompra");
-//				} catch (PersistenciaException e) {
-//					logger.fatal("Excepcion en ManagerTransaccion > modificarTransaccionCompra: " + e.getMessage(), e);
-//					throw new PresentacionException(e);
-//				}
-//			}
-//		}
-//		return null;
-//	}
-	
 	public List<TranLineaLote> obtenerListaTranLineaLote(Integer nroTransac, Integer idProducto) throws PresentacionException {
 		logger.info("Se ingresa a obtenerListaTranLineaLote");
 		List<TranLineaLote> listaTll = null;
@@ -327,12 +304,32 @@ public class ManagerTransaccion {
 		return listaTll;
 	}
 	
-	//anulaciones
+	//anulaciones compras
+	public ErrorLogico anularTransaccionCompra(Transaccion transaccion) throws PresentacionException {
+		ErrorLogico error = null;
+		try (Connection conn = Conector.getConn()) {
+			if(transaccion != null && TipoTran.C.equals(transaccion.getTipoTran())) {
+				transaccion.setEstadoTran(EstadoTran.A);
+				transaccion.setFechaHora(new Fecha(Fecha.AMDHMS));
+				getInterfaceTransaccion().guardarTranEstado(conn, transaccion);
+				getInterfaceTransaccion().modificarEstadoTransaccion(conn, transaccion);
+				Conector.commitConn(conn);
+			}
+		} catch (PersistenciaException | SQLException e) {
+			logger.fatal("Excepcion en ManagerTransaccion > anularTransaccionVenta: " + e.getMessage(), e);
+			throw new PresentacionException(e);
+		} catch (Exception e) {
+			logger.fatal("Excepcion GENERICA en ManagerTransaccion > anularTransaccionVenta: " + e.getMessage(), e);
+			throw new PresentacionException(e);
+		}
+		return error;
+	}
 	
+	//anulaciones ventas
 	public ErrorLogico anularTransaccionVenta(Transaccion transaccion) throws PresentacionException {
 		ErrorLogico error = null;
 		try (Connection conn = Conector.getConn()) {
-			if(transaccion != null) {
+			if(transaccion != null && TipoTran.V.equals(transaccion.getTipoTran())) {
 				transaccion.setEstadoTran(EstadoTran.A);
 				transaccion.setFechaHora(new Fecha(Fecha.AMDHMS));
 				//se debe manejar lote para devolver cantidad de productos
@@ -359,9 +356,9 @@ public class ManagerTransaccion {
 				getInterfaceTransaccion().guardarTranEstado(conn, transaccion);
 				getInterfaceTransaccion().modificarEstadoTransaccion(conn, transaccion);
 				//elimino tran_vta_lote para la transaccion que se anula
-				getInterfaceTransaccion().eliminarTranLineaLote(conn, transaccion.getNroTransac());
+				getInterfaceTransaccion().eliminarTranVtaLote(conn, transaccion.getNroTransac());
+				Conector.commitConn(conn);
 			}
-			Conector.commitConn(conn);
 		} catch (PersistenciaException | SQLException e) {
 			logger.fatal("Excepcion en ManagerTransaccion > anularTransaccionVenta: " + e.getMessage(), e);
 			throw new PresentacionException(e);

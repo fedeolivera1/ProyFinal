@@ -23,6 +23,7 @@ import org.apache.log4j.Logger;
 
 import com.toedter.calendar.JDateChooser;
 
+import gpd.dominio.transaccion.EstadoTran;
 import gpd.dominio.usuario.UsuarioDsk;
 import gpd.presentacion.controlador.CtrlFrmConsulta;
 import gpd.reports.TipoReporte;
@@ -39,6 +40,7 @@ public class FrmConsulta extends JFrame {
 	private JDesktopPane desktopPane;
 	private JTextField txtConsPersona;
 	private JComboBox<TipoReporte> cbxConsFiltro;
+	private JComboBox<EstadoTran> cbxConsEstadoTx;
 	private JDateChooser dchConsIni;
 	private JDateChooser dchConsFin;
 	private JCheckBox chkConsTodo;
@@ -111,6 +113,11 @@ public class FrmConsulta extends JFrame {
 		lblTipoReporte.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblTipoReporte.setBounds(22, 14, 81, 14);
 		panel.add(lblTipoReporte);
+
+		cbxConsEstadoTx = new JComboBox<>();
+		cbxConsEstadoTx.setVisible(false);
+		cbxConsEstadoTx.setBounds(304, 11, 147, 20);
+		panel.add(cbxConsEstadoTx);
 		
 		JLabel label_1 = new JLabel("Persona");
 		label_1.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -127,22 +134,22 @@ public class FrmConsulta extends JFrame {
 		btnConsBp.setBounds(461, 70, 32, 22);
 		panel.add(btnConsBp);
 		
+		JButton btnConsLimpiar = new JButton("Limpiar");
+		btnConsLimpiar.setBounds(503, 70, 89, 23);
+		panel.add(btnConsLimpiar);
+		
 		/*****************************************************************************************************************************************************/
 		/* ACCIONES CONTROLES */
 		/*****************************************************************************************************************************************************/
 		
 		ctrlInterno.cargarTipoRep(cbxConsFiltro);
+		ctrlInterno.cargarTipoTx(cbxConsEstadoTx);
 		
-		JButton btnConsLimpiar = new JButton("Limpiar");
 		btnConsLimpiar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				ctrlInterno.limpiar();
 			}
 		});
-		btnConsLimpiar.setBounds(503, 70, 89, 23);
-		panel.add(btnConsLimpiar);
-		
-		
 		cbxConsFiltro.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent arg0) {
 				ctrlInterno.manejarControles(cbxConsFiltro);
@@ -223,5 +230,13 @@ public class FrmConsulta extends JFrame {
 	}
 	public void setBtnConsBp(JButton btnConsBp) {
 		this.btnConsBp = btnConsBp;
+	}
+
+	public JComboBox<EstadoTran> getCbxConsEstadoTx() {
+		return cbxConsEstadoTx;
+	}
+
+	public void setCbxConsEstadoTx(JComboBox<EstadoTran> cbxConsEstadoTx) {
+		this.cbxConsEstadoTx = cbxConsEstadoTx;
 	}
 }

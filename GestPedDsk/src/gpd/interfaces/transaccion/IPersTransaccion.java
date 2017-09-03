@@ -24,7 +24,7 @@ public interface IPersTransaccion {
 	public EstadoTran obtenerUltTranEstadoPorId(Connection conn, Integer idTransac) throws PersistenciaException;
 
 	public List<TranLineaLote> obtenerListaTranLineaLote(Connection conn, Integer nroTransac, Integer idProducto) throws PersistenciaException;
-	public Integer guardarListaTranLineaLote(Connection conn, List<TranLineaLote> listaTll) throws PersistenciaException;
-	public Integer eliminarTranLineaLote(Connection conn, Integer nroTransac) throws PersistenciaException;
+	public Integer guardarListaTranVtaLote(Connection conn, List<TranLineaLote> listaTll) throws PersistenciaException;
+	public Integer eliminarTranVtaLote(Connection conn, Integer nroTransac) throws PersistenciaException;
 	
 }

@@ -307,6 +307,8 @@ public class CtrlFrmMovimiento extends CtrlGenerico implements CnstPresGeneric {
 							if (fila > -1 && cols > 1) {
 								Integer nroTransac = (Integer) tabla.getModel().getValueAt(fila, 0);
 								Transaccion transac = mgrTran.obtenerTransaccionPorId(nroTransac);
+								clearComponent(getFrm().getScrollPaneVentaLin());
+								clearComponent(getFrm().getScrollPaneVentaLinLote());
 								cargarJtVentaItems(transac);
 							}
 						} catch (PresentacionException  e) {
@@ -514,7 +516,7 @@ public class CtrlFrmMovimiento extends CtrlGenerico implements CnstPresGeneric {
 			GenCompType gct = new GenCompType();
 			gct.setComp(frmMov.getJtComprasPend());
 			if(controlDatosObl(gct) && getTransac() != null) {
-				mgrTran.anularTransaccionVenta(getTransac());
+				mgrTran.anularTransaccionCompra(getTransac());
 				cargarJtComprasPend(getFrm().getCbxCompraProv());
 				clearPanel(getFrm().getPnlCompraDatos());
 				clearPanel(getFrm().getPnlCompraItems());

@@ -802,7 +802,7 @@ public class ManagerProducto {
 				if(restanteActStock == 0) break;
 			}
 			//se manda a persistir lista con datos de stock por lotes
-			getInterfaceTransac().guardarListaTranLineaLote(conn, listaTll);
+			getInterfaceTransac().guardarListaTranVtaLote(conn, listaTll);
 		} catch (ProductoSinStockException e) {
 			logger.error(e.getMessage());
 			throw e;

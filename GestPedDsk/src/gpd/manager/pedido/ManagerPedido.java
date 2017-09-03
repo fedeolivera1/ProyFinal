@@ -93,6 +93,7 @@ public class ManagerPedido {
 	}
 	
 	public Integer generarNuevoPedido(Pedido pedido) throws PresentacionException {
+		Integer resultado = 0;
 		try (Connection conn = Conector.getConn()) {
 			if(pedido != null && pedido.getListaPedidoLinea() != null &&
 					!pedido.getListaPedidoLinea().isEmpty()) {
@@ -139,7 +140,7 @@ public class ManagerPedido {
 				//generar trnsaccion de venta
 				mgrTransac.generarTransaccionVenta(conn, transac);
 				//persisto el pedido en base
-				getInterfacePedido().guardarPedido(conn, pedido);
+				resultado = getInterfacePedido().guardarPedido(conn, pedido);
 				//persisto lineas de pedido en base
 				getInterfacePedidoLinea().guardarListaPedidoLinea(conn, pedido.getListaPedidoLinea());
 			}
@@ -151,7 +152,7 @@ public class ManagerPedido {
 			logger.fatal("Excepcion GENERICA en ManagerPedido > manejarStockLotePorProducto: " + e.getMessage(), e);
 			throw new PresentacionException(e);
 		}
-		return null;
+		return resultado;
 	}
 	
 	/**

@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.swing.ComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JDesktopPane;
 import javax.swing.JTextField;
@@ -12,6 +13,7 @@ import javax.swing.JTextField;
 import com.toedter.calendar.JDateChooser;
 
 import gpd.dominio.persona.TipoPersona;
+import gpd.dominio.transaccion.EstadoTran;
 import gpd.dominio.transaccion.TipoTran;
 import gpd.dominio.usuario.UsuarioDsk;
 import gpd.presentacion.formulario.FrmConsulta;
@@ -53,22 +55,53 @@ public class CtrlFrmConsulta extends CtrlGenerico implements CnstPresGeneric {
 		}
 	}
 	
-	public void manejarControles(JComboBox<TipoReporte> cbxConsFiltro) {
-		if(cbxConsFiltro.getSelectedItem().equals(TipoReporte.PR)) {
-			getFrm().getDchConsIni().setEnabled(false);
-			getFrm().getDchConsFin().setEnabled(false);
-			getFrm().getTxtConsPersona().setText(STR_VACIO);
-			getFrm().getBtnConsBp().setEnabled(false);
-			getFrm().getChkConsTodo().setVisible(false);
-		} else if( cbxConsFiltro.getSelectedItem().equals(TipoReporte.PF) || 
-				cbxConsFiltro.getSelectedItem().equals(TipoReporte.PJ) ) {
-			getFrm().getChkConsTodo().setVisible(true);
-		} else {
-			getFrm().getDchConsIni().setEnabled(true);
-			getFrm().getDchConsFin().setEnabled(true);
-			getFrm().getBtnConsBp().setEnabled(true);
-			getFrm().getChkConsTodo().setVisible(false);
+	public void cargarTipoTx(JComboBox<EstadoTran> cbxConsEstadoTx) {
+		try {
+			cbxConsEstadoTx.removeAllItems();
+			for(EstadoTran estado : EstadoTran.values()) {
+				cbxConsEstadoTx.addItem(estado);
+			}
+			cbxConsEstadoTx.setSelectedIndex(1);//selecciono confirmado por default
+		} catch(Exception e) {
+			manejarExcepcion(e);
 		}
+	}
+	
+	public void manejarControles(JComboBox<TipoReporte> cbxConsFiltro) {
+		if(cbxConsFiltro.getSelectedIndex() >= 0) {
+			if(cbxConsFiltro.getSelectedItem().equals(TipoReporte.PR)) {
+				getFrm().getDchConsIni().setEnabled(false);
+				getFrm().getDchConsFin().setEnabled(false);
+				getFrm().getTxtConsPersona().setText(STR_VACIO);
+				getFrm().getBtnConsBp().setEnabled(false);
+				getFrm().getChkConsTodo().setVisible(false);
+				getFrm().getCbxConsEstadoTx().setVisible(false);
+			} else if( cbxConsFiltro.getSelectedItem().equals(TipoReporte.PF) || 
+					cbxConsFiltro.getSelectedItem().equals(TipoReporte.PJ) ) {
+				cargaCtrlDef();
+				getFrm().getChkConsTodo().setVisible(true);
+				getFrm().getTxtConsPersona().setText(STR_VACIO);
+				getFrm().getBtnConsBp().setEnabled(false);
+			} else if( cbxConsFiltro.getSelectedItem().equals(TipoReporte.C) ||
+					cbxConsFiltro.getSelectedItem().equals(TipoReporte.V)) {
+				cargaCtrlDef();
+				ComboBoxModel<EstadoTran> cbModel = getFrm().getCbxConsEstadoTx().getModel();
+				cbModel.setSelectedItem(EstadoTran.C);
+				getFrm().getCbxConsEstadoTx().setSelectedItem(cbModel.getSelectedItem());
+				getFrm().getCbxConsEstadoTx().setVisible(true);
+			} else {
+				cargaCtrlDef();
+			}
+		}
+	}
+	private void cargaCtrlDef() {
+		getFrm().getDchConsIni().setEnabled(true);
+		getFrm().getDchConsFin().setEnabled(true);
+		getFrm().getBtnConsBp().setEnabled(true);
+		getFrm().getChkConsTodo().setVisible(false);
+		getFrm().getCbxConsEstadoTx().setVisible(false);
+		getFrm().getTxtConsPersona().setText(STR_VACIO);
+		getFrm().getBtnConsBp().setEnabled(true);
 	}
 	
 	public void controlComponenteReporte(JComboBox<TipoReporte> cbxTipoRep) {
@@ -82,11 +115,13 @@ public class CtrlFrmConsulta extends CtrlGenerico implements CnstPresGeneric {
 				switch(tr) {
 					case C: case V:
 						idPersona = ctrlPb.getPersSel() != null ? ctrlPb.getPersSel().getIdPersona() : -1;
-						generarReporteTransac((TipoReporte.C.equals(tr) ? TipoTran.C : TipoTran.V), idPersona, getFrm().getDchConsIni(), getFrm().getDchConsFin());
+						generarReporteTransac((TipoReporte.C.equals(tr) ? TipoTran.C : TipoTran.V), idPersona, getFrm().getDchConsIni(), getFrm().getDchConsFin(), 
+								getFrm().getCbxConsEstadoTx());
 						break;
 					case P:
 						idPersona = ctrlPb.getPersSel() != null ? ctrlPb.getPersSel().getIdPersona() : -1;
 						generarReportePedido(idPersona, getFrm().getDchConsIni(), getFrm().getDchConsFin());
+						break;
 					case PR:
 						generarReporteProducto();
 						break;
@@ -107,20 +142,24 @@ public class CtrlFrmConsulta extends CtrlGenerico implements CnstPresGeneric {
 		}
 	}
 	
-	public void generarReporteTransac(TipoTran tipoTran, Long idPersona, JDateChooser dchConsIni, JDateChooser dchConsFin) {
+	public void generarReporteTransac(TipoTran tipoTran, Long idPersona, JDateChooser dchConsIni, JDateChooser dchConsFin,
+			JComboBox<EstadoTran> cbxEstadoTx) {
 		try {
 			GenCompType genComp = new GenCompType();
 			genComp.setComp(dchConsIni);
 			genComp.setComp(dchConsFin);
+			genComp.setComp(cbxEstadoTx);
 			if(controlDatosObl(genComp)) {
 				Date dateIni = dchConsIni.getDate();
 				Date dateFin = dchConsFin.getDate();
+				String estado = String.valueOf(((EstadoTran)cbxEstadoTx.getSelectedItem()).getAsChar());
 
 				mapParamsJr = new HashMap<>();
 				mapParamsJr.put("tipo_transac", String.valueOf(tipoTran.getAsChar()));
 				mapParamsJr.put("id_persona", idPersona);
 				mapParamsJr.put("fecha_ini", dateIni);
 				mapParamsJr.put("fecha_fin", dateFin);
+				mapParamsJr.put("estado", estado);
 				mapParamsJr.put("SUBREPORT_DIR", System.getProperty("file.separator"));
 				GeneradorReportes.abrirReporte("rptTransacPorFecha", mapParamsJr);
 			}
@@ -193,17 +232,10 @@ public class CtrlFrmConsulta extends CtrlGenerico implements CnstPresGeneric {
 		}
 	}
 	
-	public void generarReportePersonaJuridica(JDateChooser dchConsIni, JDateChooser dchConsFin, Integer noFechas) {
-		try {
-			
-		} catch(Exception e) {
-			manejarExcepcion(e);
-		}
-	}
-	
 	public void limpiar() {
 		clearForm(getFrm().getContentPane());
 		ctrlPb.setPersSel(null);
+		cargaCtrlDef();
 	}
 	
 

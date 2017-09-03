@@ -321,6 +321,13 @@ public class CtrlFrmPedido extends CtrlGenerico implements CnstPresGeneric {
 				getFrm().getBtnPedActPedido().setEnabled(false);
 				setContainerEnabled(getFrm().getPnlDatosPedido(), false);
 				getFrm().getJtPedidoLin().setEnabled(false);
+			} else if(EstadoPedido.X.equals(pedido.getEstado())) {
+				getFrm().getBtnPedGenVenta().setEnabled(false);
+				getFrm().getBtnPedGenPedido().setEnabled(false);
+				getFrm().getBtnPedAnuPedido().setEnabled(false);
+				getFrm().getBtnPedActPedido().setEnabled(false);
+				setContainerEnabled(getFrm().getPnlDatosPedido(), false);
+				getFrm().getJtPedidoLin().setEnabled(false);
 			} else {
 				getFrm().getBtnPedGenVenta().setEnabled(true);
 				getFrm().getBtnPedGenPedido().setEnabled(true);
@@ -447,6 +454,7 @@ public class CtrlFrmPedido extends CtrlGenerico implements CnstPresGeneric {
 		if(ctrlPb.getPersSel() != null) {
 			ctrlPb.setPersSel(null);
 		}
+		mapLineasPedido.clear();
 		manejarControlesPorEstado(null);
 		getFrm().getTglbtnPedNuevo().setSelected(false);
 		getFrm().getTglbtnPedExist().setSelected(false);
@@ -461,6 +469,16 @@ public class CtrlFrmPedido extends CtrlGenerico implements CnstPresGeneric {
 									pedido.getFechaHora().getAsNumber(Fecha.AMDHMS), 
 									pl.getProducto().getIdProducto());
 					mapLineasPedido.put(key, pl);
+				}
+				if(pedido.getFechaProg() != null) {
+					getFrm().getDchPedFecha().setDate(pedido.getFechaProg().getTime());
+				} else {
+					clearComponent(getFrm().getDchPedFecha());
+				}
+				if(pedido.getHoraProg() != null) {
+					getFrm().getFtxtPedHora().setText(pedido.getHoraProg().toString(Fecha.HM));
+				} else {
+					clearComponent(getFrm().getFtxtPedHora());
 				}
 			}
 		} catch(Exception e) {
@@ -533,8 +551,11 @@ public class CtrlFrmPedido extends CtrlGenerico implements CnstPresGeneric {
 						Fecha horaProg = convertirHoraDesdeTxt(getFrm().getFtxtPedHora().getText());
 						pedido.setHoraProg(horaProg);
 					}
-					mgrPed.generarNuevoPedido(pedido);
-					enviarInfo(PED, PEDIDO_GEN_OK);
+					Integer res = mgrPed.generarNuevoPedido(pedido);
+					if(res > 0) {
+						enviarInfo(PED, PEDIDO_GEN_OK);
+						limpiarPedido();
+					}
 				} else {
 					enviarWarning(PED, PEDIDO_NO_GENERADO);
 				}
@@ -569,7 +590,10 @@ public class CtrlFrmPedido extends CtrlGenerico implements CnstPresGeneric {
 						pedido.setHoraProg(horaProg);
 					}
 					String res = mgrPed.actualizarPedido(pedido, EstadoPedido.R);
-					if(null == res) enviarInfo(PED, PEDIDO_ACT_OK);
+					if(null == res) {
+						enviarInfo(PED, PEDIDO_ACT_OK);
+						limpiarPedido();
+					}
 				}
 			} else {
 				enviarWarning(PED, DATOS_OBLIG);
@@ -586,7 +610,10 @@ public class CtrlFrmPedido extends CtrlGenerico implements CnstPresGeneric {
 			if(controlDatosObl(genComp)) {
 				Pedido pedido = getPedidoInt();
 				String res = mgrPed.actualizarPedido(pedido, EstadoPedido.A);
-				if(null == res) enviarInfo(PED, PEDIDO_ANU_OK);
+				if(null == res) {
+					enviarInfo(PED, PEDIDO_ANU_OK);
+					limpiarPedido();
+				}
 			} else {
 				enviarWarning(PED, DATOS_OBLIG);
 			}
@@ -607,6 +634,7 @@ public class CtrlFrmPedido extends CtrlGenerico implements CnstPresGeneric {
 					String control = mgrPed.actualizarPedido(pedido, EstadoPedido.C);
 					if(null == control) {
 						enviarInfo(VTA, VTA_GENERADA_OK);
+						limpiarPedido();
 					} else {
 						enviarWarning(PED, control);
 					}
