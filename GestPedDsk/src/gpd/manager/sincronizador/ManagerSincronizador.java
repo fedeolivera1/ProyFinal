@@ -21,6 +21,7 @@ import gpd.exceptions.ParsersException;
 import gpd.exceptions.PersistenciaException;
 import gpd.exceptions.PresentacionException;
 import gpd.exceptions.SincronizadorException;
+import gpd.exceptions.WsException;
 import gpd.interfaces.pedido.IPersPedido;
 import gpd.interfaces.pedido.IPersPedidoLinea;
 import gpd.interfaces.persona.IPersPersona;
@@ -68,7 +69,6 @@ public class ManagerSincronizador implements CnstService {
 	private static IPersProducto interfaceProducto;
 	private static IPersPedido interfacePedido;
 	private static IPersPedidoLinea interfacePedidoLinea;
-	private static WsGestPed iGestPed;
 	
 	private static final int SINC_OK = 1;
 	private static final String ESC = "\n";
@@ -119,12 +119,28 @@ public class ManagerSincronizador implements CnstService {
 	 * @return
 	 * @throws PresentacionException
 	 */
-	public String sincronizarPersonas(Fecha fechaDesde, Fecha fechaHasta) throws PresentacionException {
+	public String sincronizarPersonas(Fecha fechaDesde, Fecha fechaHasta) throws PresentacionException, WsException {
 		try (Connection conn = Conector.getConn()) {
 			try {
-				String respuesta = sincronizarPersonasNoConn(conn, fechaDesde, fechaHasta);
+				/*
+				 * como primer paso se comprueba la conectividad con internet y se consume el servicio
+				 * con las credenciales del config
+				 */
+				ControlAccesoInternet.controlarConectividadInet();
+				ServiceConsumer srvCns = new ServiceConsumer();
+				WsGestPed iGestPed = srvCns.consumirWebService();
+				logger.info("<< GPD >> Invocacion a webservice correcta.");
+				/**/
+				String respuesta = sincronizarPersonasNoConn(conn, iGestPed, fechaDesde, fechaHasta);
 				Conector.commitConn(conn);
 				return respuesta;
+			} catch (NoInetConnectionException e) {
+				Conector.rollbackConn(conn);
+				logger.fatal("Excepcion en ManagerSincronizador > sincronizarPersonas: " + e.getMessage(), e);
+				throw new PresentacionException(e);
+			} catch (WsException e) {
+				Conector.rollbackConn(conn);
+				throw e;
 			} catch (Exception e) {
 				Conector.rollbackConn(conn);
 				logger.fatal("Excepcion INVOCADA desde metodo noConn en ManagerSincronizador > sincronizarPersonas: " + e.getMessage(), e);
@@ -153,157 +169,149 @@ public class ManagerSincronizador implements CnstService {
 	 * <<<<< RECIBE CONNECTION - NO AUTOGENERA >>>>>
 	 * ****************************************************************************************************************************
 	 */
-	public String sincronizarPersonasNoConn(Connection conn, Fecha fechaDesde, Fecha fechaHasta) throws PresentacionException, NoInetConnectionException {
+	public String sincronizarPersonasNoConn(Connection conn, WsGestPed iGestPed, Fecha fechaDesde, Fecha fechaHasta) throws PresentacionException, NoInetConnectionException, WsException {
 		StringBuilder sb = new StringBuilder();
+		logger.info("<< GPD >> Se ingresa a sincronizarPersonas... ");
+		sb.append("### Gestor de pedidos: inicia sincronización de personas. ###").append(ESC);
 		Integer persSincDsk = null;
 		Integer persSincWeb = null;
 		try {
-			logger.info("<< GPD >> Se ingresa a sincronizarPersonas... ");
-			sb.append("### Gestor de pedidos: inicia sincronización de personas. ### ").append(ESC);
-			/*
-			 * como primer paso se comprueba la conectividad con internet, sin esto la sincronizacion 
-			 * no puede continuar en ambiente de prod
-			 */
-			ControlAccesoInternet.controlarConectividadInet();
-			ServiceConsumer srvCns = new ServiceConsumer();
-			iGestPed = srvCns.consumirWebService();
-			logger.info(">> GPD >> Invocacion a webservice correcta.");
-			logger.info(">> GPD >> Prueba WS: " + iGestPed.servicioFuncional());
-
 			ParamObtPersonasNoSinc paramOpns = ParserParamPersona.parseParamObtPersNoSinc(fechaDesde, fechaHasta);
 			// <<< llamo al WS >>> > operacion obtenerPersonasNoSinc
 			ResultObtPersonasNoSinc resultOpns = iGestPed.obtenerPersonasNoSinc(paramOpns);
 			// <<< end WS >>>
-			List<Persona> listaPersonaResult = ParserResultPersona.parseResultObtPersNoSinc(conn, resultOpns);
-			List<Long> listaIdPersonasSinc = new ArrayList<Long>();
-			
-			/*
-			 * Parte 1 de la sincronizacion: consulto webservice de sistema web para obtener personas no sincronizadas con
-			 * el ambiente local.
-			 * Luego de esto, se realizan las altas o modificaciones correspondientes para cada uno de los datos devueltos
-			 * por el webservice.
-			 */
-			logger.info("#1 -- Inicia primera parte de la sincronizacion de persona: obtener Personas a sincronizar.");
-			if(listaPersonaResult != null && !listaPersonaResult.isEmpty()) {
-				persSincWeb = listaPersonaResult.size();
-				sb.append("Se retornan " + persSincWeb + " personas a sincronizar... ").append(ESC);
-				for(Persona pers : listaPersonaResult) {
-					Long idPersona = pers.getIdPersona();
-					String accion = "";
-					String tipoPers = "";
-					Integer resultado = 0;
-					/*
-					 * para cada persona se obtiene el tipo, y se consulta si existe o no, para modificar o agregar.
-					 * luego de esto, dependiendo del resultado que retorna la base de datos, se agrega a la lista que
-					 * va a confirmar en el servicio la sincronizacion.
-					 */
-					if(pers instanceof PersonaFisica) {
-						tipoPers = "fisica";
-						if(getInterfacePersona().checkExistPersona(conn, idPersona)) {
-							resultado = getInterfacePersona().modificarPersFisica(conn, (PersonaFisica) pers);
-							accion = "modifica";
-						} else {
-							resultado = getInterfacePersona().guardarPersFisica(conn, (PersonaFisica) pers);
-							accion = "agrega";
-						}
-						if(resultado > 0) {
-							listaIdPersonasSinc.add(idPersona);
-							sb.append("-- Se ").append(accion).append(" la persona ").append(tipoPers).append(" con ID [").append(String.valueOf(idPersona)).append("] en el sistema.").append(ESC);
-						} else {
-							logger.warn("Hubo un problema al " + accion + " la persona con ID: " + idPersona + ". No se agrega a la lista de confirmados.");
-							sb.append("Hubo un problema al " + accion + " la persona con ID [" + idPersona + "]. No se agrega a la lista de confirmados.");
-						}
-					} else if(pers instanceof PersonaJuridica) {
-						tipoPers = "juridica";
-						if(getInterfacePersona().checkExistPersona(conn, idPersona)) {
-							resultado = getInterfacePersona().modificarPersJuridica(conn, (PersonaJuridica) pers);
-							accion = "modifica";
-						} else {
-							resultado = getInterfacePersona().guardarPersJuridica(conn, (PersonaJuridica) pers);
-							accion = "agrega";
-						}
-						if(resultado > 0) {
-							listaIdPersonasSinc.add(idPersona);
-							sb.append("-- Se ").append(accion).append(" la persona ").append(tipoPers).append(" con ID [").append(String.valueOf(idPersona)).append("] en el sistema.").append(ESC);
-						} else {
-							logger.warn("Hubo un problema al " + accion + " la persona con ID: " + idPersona);
-							sb.append("Hubo un problema al " + accion + " la persona con ID [" + idPersona + "]. No se agrega a la lista de confirmados.");
-						}
-					}
+			if(resultOpns.getErroresServ() != null && !resultOpns.getErroresServ().isEmpty()) {
+				for(ErrorServicio error : resultOpns.getErroresServ()) {
+					sb.append("ERROR SERVICIO: " + error.getCodigo() + " - " + error.getDescripcion()).append(ESC);
 				}
-				
+			} else {
+				List<Persona> listaPersonaResult = ParserResultPersona.parseResultObtPersNoSinc(conn, resultOpns);
+				List<Long> listaIdPersonasSinc = new ArrayList<Long>();
 				/*
-				 * Parte 2 de la sincronizacion: con las personas modificadas en la base local
-				 * llama a webservice para CONFIRMAR dichas sincronizaciones
+				 * Parte 1 de la sincronizacion: consulto webservice de sistema web para obtener personas no sincronizadas con
+				 * el ambiente local.
+				 * Luego de esto, se realizan las altas o modificaciones correspondientes para cada uno de los datos devueltos
+				 * por el webservice.
 				 */
-				if(!listaIdPersonasSinc.isEmpty()) {
-					Fecha ultAct = new Fecha(Fecha.AMDHMS);
-					persSincDsk = listaIdPersonasSinc.size();
-					logger.info("#2 -- Inicia segunda parte de la sincronizacion de persona: confirmar las personas sincronizadas en dsk al sistema web.");
-					ParamRecPersonasASinc paramRps = ParserParamPersona.parseParamRecPersonasSinc(listaIdPersonasSinc);
-					// <<< llamo al WS >>> > operacion recibirPersonasSinc (recibe personas y confirma sincronizacion)
-					ResultRecPersonasASinc resultRps = iGestPed.recibirPersonasASinc(paramRps);
-					// <<< end WS >>>
-					HashMap<Long, Integer> hmResultRps = (HashMap<Long, Integer>) ParserResultPersona.parseResultRecPersonasSinc(resultRps);
-					Boolean errorSincWeb = false;
-					Boolean errorSincDsk = false;
-					
-					//se recorre el map con los resultados que devuelve el servicio de la actualizacion
-					for(Map.Entry<Long, Integer> entry : hmResultRps.entrySet()) {
-						Long idPersona = entry.getKey();
-						Integer estadoSinc = entry.getValue();
-						//estado del retorno de la persona web
-						if(EstadoSinc.E.equals(estadoSinc)) {
-							//estado en error
-							errorSincWeb = true;
-							logger.error("Ha habido un error de sincronizacion para la persona con ID [" + idPersona + "] en el sistema web.");
-							sb.append("-- ERROR -- La Persona con ID [").append(String.valueOf(idPersona)).append("] ha tenido un error en la sincronización Web.").append(ESC);
-						} else {
-							//estado ok > procedo a actualizar localmente la sinc
-							if(getInterfacePersona().actualizarSincPersona(conn, idPersona, Sinc.S, ultAct) < SINC_OK) {
-								errorSincDsk = true;
-								logger.error("Ha habido un error de sincronizacion para la persona con ID [" + idPersona + "] en el sistema local.");
-								sb.append("-- ERROR -- La Persona con ID [").append(String.valueOf(idPersona)).append("] ha tenido un error en la sincronización Local.").append(ESC);
+				logger.info("#1 -- Inicia primera parte de la sincronizacion de persona: obtener Personas a sincronizar.");
+				if(listaPersonaResult != null && !listaPersonaResult.isEmpty()) {
+					persSincWeb = listaPersonaResult.size();
+					sb.append("Se retornan " + persSincWeb + " personas a sincronizar... ").append(ESC);
+					for(Persona pers : listaPersonaResult) {
+						Long idPersona = pers.getIdPersona();
+						String accion = "";
+						String tipoPers = "";
+						Integer resultado = 0;
+						/*
+						 * para cada persona se obtiene el tipo, y se consulta si existe o no, para modificar o agregar.
+						 * luego de esto, dependiendo del resultado que retorna la base de datos, se agrega a la lista que
+						 * va a confirmar en el servicio la sincronizacion.
+						 */
+						if(pers instanceof PersonaFisica) {
+							tipoPers = "fisica";
+							if(getInterfacePersona().checkExistPersona(conn, idPersona)) {
+								resultado = getInterfacePersona().modificarPersFisica(conn, (PersonaFisica) pers);
+								accion = "modifica";
 							} else {
-								logger.info("La Persona con ID [" + idPersona + "] ha retornado con sincronizacion OK.");
-								sb.append("-- La Persona con ID [").append(String.valueOf(idPersona)).append("] ha retornado con sincronizacion OK.").append(ESC);
+								resultado = getInterfacePersona().guardarPersFisica(conn, (PersonaFisica) pers);
+								accion = "agrega";
+							}
+							if(resultado > 0) {
+								listaIdPersonasSinc.add(idPersona);
+								sb.append("-- Se ").append(accion).append(" la persona ").append(tipoPers).append(" con ID [").append(String.valueOf(idPersona)).append("] en el sistema.").append(ESC);
+							} else {
+								logger.warn("Hubo un problema al " + accion + " la persona con ID: " + idPersona + ". No se agrega a la lista de confirmados.");
+								sb.append("Hubo un problema al " + accion + " la persona con ID [" + idPersona + "]. No se agrega a la lista de confirmados.");
+							}
+						} else if(pers instanceof PersonaJuridica) {
+							tipoPers = "juridica";
+							if(getInterfacePersona().checkExistPersona(conn, idPersona)) {
+								resultado = getInterfacePersona().modificarPersJuridica(conn, (PersonaJuridica) pers);
+								accion = "modifica";
+							} else {
+								resultado = getInterfacePersona().guardarPersJuridica(conn, (PersonaJuridica) pers);
+								accion = "agrega";
+							}
+							if(resultado > 0) {
+								listaIdPersonasSinc.add(idPersona);
+								sb.append("-- Se ").append(accion).append(" la persona ").append(tipoPers).append(" con ID [").append(String.valueOf(idPersona)).append("] en el sistema.").append(ESC);
+							} else {
+								logger.warn("Hubo un problema al " + accion + " la persona con ID: " + idPersona);
+								sb.append("Hubo un problema al " + accion + " la persona con ID [" + idPersona + "]. No se agrega a la lista de confirmados.");
 							}
 						}
 					}
+					
 					/*
-					 * se agrega warning a logueo si la cantidad de personas devueltas por el servicio a sincronizar
-					 * no coincidiera con la cantidad de personas manejadas localmente 
+					 * Parte 2 de la sincronizacion: con las personas modificadas en la base local
+					 * llama a webservice para CONFIRMAR dichas sincronizaciones
 					 */
-					if(!persSincWeb.equals(persSincDsk)) {
-						logger.warn("La cantidad de personas a sincronizar no coincide...");
-						logger.warn("-Cantidad de personas retornadas desde web: " + persSincWeb);
-						logger.warn("-Cantidad de personas sincronizadas en dsk: " + persSincDsk);
-					}
-					/*
-					 * se controlan para todas las personas recibidas desde el servicio que retornen sin error
-					 * en caso de errores, se rollbackea la transaccion del lado dsk.
-					 */
-					if(!errorSincWeb && !errorSincDsk) {
-//						Conector.commitConn(conn);
-						logger.debug("Se comitea la conexion, no han existido errores.");
+					if(!listaIdPersonasSinc.isEmpty()) {
+						Fecha ultAct = new Fecha(Fecha.AMDHMS);
+						persSincDsk = listaIdPersonasSinc.size();
+						logger.info("#2 -- Inicia segunda parte de la sincronizacion de persona: confirmar las personas sincronizadas en dsk al sistema web.");
+						ParamRecPersonasASinc paramRps = ParserParamPersona.parseParamRecPersonasSinc(listaIdPersonasSinc);
+						// <<< llamo al WS >>> > operacion recibirPersonasSinc (recibe personas y confirma sincronizacion)
+						ResultRecPersonasASinc resultRps = iGestPed.recibirPersonasASinc(paramRps);
+						// <<< end WS >>>
+						HashMap<Long, Integer> hmResultRps = (HashMap<Long, Integer>) ParserResultPersona.parseResultRecPersonasSinc(resultRps);
+						Boolean errorSincWeb = false;
+						Boolean errorSincDsk = false;
+						
+						//se recorre el map con los resultados que devuelve el servicio de la actualizacion
+						for(Map.Entry<Long, Integer> entry : hmResultRps.entrySet()) {
+							Long idPersona = entry.getKey();
+							Integer estadoSinc = entry.getValue();
+							//estado del retorno de la persona web
+							if(EstadoSinc.E.equals(estadoSinc)) {
+								//estado en error
+								errorSincWeb = true;
+								logger.error("Ha habido un error de sincronizacion para la persona con ID [" + idPersona + "] en el sistema web.");
+								sb.append("-- ERROR -- La Persona con ID [").append(String.valueOf(idPersona)).append("] ha tenido un error en la sincronización Web.").append(ESC);
+							} else {
+								//estado ok > procedo a actualizar localmente la sinc
+								if(getInterfacePersona().actualizarSincPersona(conn, idPersona, Sinc.S, ultAct) < SINC_OK) {
+									errorSincDsk = true;
+									logger.error("Ha habido un error de sincronizacion para la persona con ID [" + idPersona + "] en el sistema local.");
+									sb.append("-- ERROR -- La Persona con ID [").append(String.valueOf(idPersona)).append("] ha tenido un error en la sincronización Local.").append(ESC);
+								} else {
+									logger.info("La Persona con ID [" + idPersona + "] ha retornado con sincronizacion OK.");
+									sb.append("-- La Persona con ID [").append(String.valueOf(idPersona)).append("] ha retornado con sincronizacion OK.").append(ESC);
+								}
+							}
+						}
+						/*
+						 * se agrega warning a logueo si la cantidad de personas devueltas por el servicio a sincronizar
+						 * no coincidiera con la cantidad de personas manejadas localmente 
+						 */
+						if(!persSincWeb.equals(persSincDsk)) {
+							logger.warn("La cantidad de personas a sincronizar no coincide...");
+							logger.warn("-Cantidad de personas retornadas desde web: " + persSincWeb);
+							logger.warn("-Cantidad de personas sincronizadas en dsk: " + persSincDsk);
+						}
+						/*
+						 * se controlan para todas las personas recibidas desde el servicio que retornen sin error
+						 * en caso de errores, se rollbackea la transaccion del lado dsk.
+						 */
+						if(errorSincWeb || errorSincDsk) {
+							Conector.rollbackConn(conn);
+							logger.error("Se invoca un rollback ya que se han detectado errores en el retorno del servicio o en la actualizacion local.");
+							logger.error("Error invocado por: " + (errorSincWeb ? "SINC WEB " : "") + (errorSincDsk ? "SINC DSK" : "") );
+							throw new SincronizadorException("El sincronizador de personas ha detectado un error, la transaccion hará rollback");
+						}
 					} else {
 						Conector.rollbackConn(conn);
-						logger.error("Se invoca un rollback ya que se han detectado errores en el retorno del servicio o en la actualizacion local.");
-						logger.error("Error invocado por: " + (errorSincWeb ? "SINC WEB " : "") + (errorSincDsk ? "SINC DSK" : "") );
+						logger.error("El sincronizador hace rollback por no sincronizar las personas devueltas del servicio con el ambiente local.");
 						throw new SincronizadorException("El sincronizador de personas ha detectado un error, la transaccion hará rollback");
 					}
+					
 				} else {
-					Conector.rollbackConn(conn);
-					logger.error("El sincronizador hace rollback por no sincronizar las personas devueltas del servicio con el ambiente local.");
-					throw new SincronizadorException("El sincronizador de personas ha detectado un error, la transaccion hará rollback");
+					logger.warn("El sincronizador no ha devuelto personas a sincronizar.");
+					sb.append("El sincronizador no ha devuelto personas a sincronizar...").append(ESC);
 				}
-				
-			} else {
-				logger.warn("El sincronizador no ha devuelto personas a sincronizar.");
-				sb.append("El sincronizador no ha devuelto personas a sincronizar...").append(ESC);
+				sb.append("### Gestor de pedidos: finaliza sincronización de personas. ###").append(ESC);
 			}
-			sb.append("### Gestor de pedidos: finaliza sincronización de personas. ###").append(ESC);
-		} catch (SincronizadorException | PersistenciaException | NoInetConnectionException | ParsersException e) {
+		} catch (SincronizadorException | PersistenciaException | ParsersException e) {
 			Conector.rollbackConn(conn);
 			logger.fatal("Excepcion en ManagerSincronizador > sincronizarPersona: " + e.getMessage(), e);
 			throw new PresentacionException(e);
@@ -323,12 +331,28 @@ public class ManagerSincronizador implements CnstService {
 	 * @return
 	 * @throws PresentacionException
 	 */
-	public String sincronizarProductos(Fecha fechaDesde, Fecha fechaHasta) throws PresentacionException {
+	public String sincronizarProductos(Fecha fechaDesde, Fecha fechaHasta) throws PresentacionException, WsException {
 		try (Connection conn = Conector.getConn()) {
 			try {
-				String respuesta = sincronizarProductosNoConn(conn, fechaDesde, fechaHasta);
+				/*
+				 * como primer paso se comprueba la conectividad con internet y se consume el servicio
+				 * con las credenciales del config
+				 */
+				ControlAccesoInternet.controlarConectividadInet();
+				ServiceConsumer srvCns = new ServiceConsumer();
+				WsGestPed iGestPed = srvCns.consumirWebService();
+				logger.info("<< GPD >> Invocacion a webservice correcta.");
+				/**/
+				String respuesta = sincronizarProductosNoConn(conn, iGestPed, fechaDesde, fechaHasta);
 				Conector.commitConn(conn);
 				return respuesta;
+			} catch (WsException e) {
+				Conector.rollbackConn(conn);
+				throw e;
+			} catch (SincronizadorException | NoInetConnectionException e) {
+				Conector.rollbackConn(conn);
+				logger.fatal("Excepcion en ManagerSincronizador > sincronizarProductos: " + e.getMessage(), e);
+				throw new PresentacionException(e);
 			} catch (Exception e) {
 				Conector.rollbackConn(conn);
 				logger.fatal("Excepcion INVOCADA desde metodo noConn en ManagerSincronizador > sincronizarProductos: " + e.getMessage(), e);
@@ -349,17 +373,11 @@ public class ManagerSincronizador implements CnstService {
 	 * <<<<< RECIBE CONNECTION - NO AUTOGENERA >>>>>
 	 * ****************************************************************************************************************************
 	 */
-	public String sincronizarProductosNoConn(Connection conn, Fecha fechaDesde, Fecha fechaHasta) throws PresentacionException {
+	public String sincronizarProductosNoConn(Connection conn, WsGestPed iGestPed, Fecha fechaDesde, Fecha fechaHasta) throws PresentacionException {
 		StringBuilder sb = new StringBuilder();
 		logger.info("<< GPD >> Se ingresa a sincronizarProductos... ");
 		sb.append("### Gestor de pedidos: inicia sincronización de productos. ###").append(ESC);
 		try {
-			ControlAccesoInternet.controlarConectividadInet();
-
-			ServiceConsumer srvCns = new ServiceConsumer();
-			iGestPed = srvCns.consumirWebService();
-			logger.info(">> GPD >> Invocacion a webservice correcta.");
-			logger.info(">> GPD >> Prueba WS: " + iGestPed.servicioFuncional());
 			/*
 			 * se obtienen productos a sicronizar
 			 */
@@ -426,13 +444,13 @@ public class ManagerSincronizador implements CnstService {
 				sb.append("El sincronizador no ha devuelto productos a sincronizar...").append(ESC);
 			}
 			sb.append("### Gestor de pedidos: finaliza sincronización de productos. ###").append(ESC);
-		} catch (SincronizadorException | PersistenciaException | NoInetConnectionException | ParsersException e) {
+		} catch (PersistenciaException | ParsersException e) {
 			Conector.rollbackConn(conn);
-			logger.fatal("Excepcion en ManagerSincronizador > sincronizarPersona: " + e.getMessage(), e);
+			logger.fatal("Excepcion en ManagerSincronizador > sincronizarProductosNoConn: " + e.getMessage(), e);
 			throw new PresentacionException(e);
 		} catch (Exception e) {
 			Conector.rollbackConn(conn);
-			logger.fatal("Excepcion GENERICA en ManagerSincronizador > sincronizarPersona: " + e.getMessage(), e);
+			logger.fatal("Excepcion GENERICA en ManagerSincronizador > sincronizarProductosNoConn: " + e.getMessage(), e);
 			throw new PresentacionException(e);
 		}
 		return sb.toString();
@@ -453,36 +471,37 @@ public class ManagerSincronizador implements CnstService {
 	 * sincronizar los pedidos desde el sist web
 	 * ****************************************************************************************************************************
 	 */
-	public String sincronizarPedidos(Fecha fechaDesde, Fecha fechaHasta) throws PresentacionException {
-//		Connection conn = null;
+	public String sincronizarPedidos(Fecha fechaDesde, Fecha fechaHasta) throws PresentacionException, WsException {
 		StringBuilder sb = new StringBuilder();
 		logger.info("<< GPD >> Se ingresa a sincronizarPedidos... ");
 		sb.append("### Gestor de pedidos: inicia sincronización de pedidos. ###").append(ESC);
 		try (Connection conn = Conector.getConn()) {
 			try {
+				/*
+				 * como primer paso se comprueba la conectividad con internet y se consume el servicio
+				 * con las credenciales del config
+				 */
 				ControlAccesoInternet.controlarConectividadInet();
-				// [ !! ] realizo antes, las sincronizaciones en orden de personas y pedidos..
-				sb.append(sincronizarPersonasNoConn(conn, fechaDesde, fechaHasta));
-				sb.append(sincronizarProductosNoConn(conn, fechaDesde, fechaHasta));
-				// [ !! ]
 				ServiceConsumer srvCns = new ServiceConsumer();
-				iGestPed = srvCns.consumirWebService();
-				logger.info(">> GPD >> Invocacion a webservice correcta.");
-				logger.info(">> GPD >> Prueba WS: " + iGestPed.servicioFuncional());
-	
+				WsGestPed iGestPed = srvCns.consumirWebService();
+				logger.info("<< GPD >> Invocacion a webservice correcta.");
+				/**/
+				// [ !! ] realizo antes, las sincronizaciones en orden de personas y pedidos..
+				sb.append(sincronizarPersonasNoConn(conn, iGestPed, fechaDesde, fechaHasta));
+				sb.append(sincronizarProductosNoConn(conn, iGestPed, fechaDesde, fechaHasta));
+				// [ !! ]
 				/*
 				 * se realiza la obtención de pedidos de web hacia dsk
 				 * para esto, se obtienen los pedidos web con estado 'P'
 				 */
-				ParamObtPedidosNoSinc param = ParserParamPedido.parseParamObtPedidosNoSinc(fechaDesde, fechaHasta);
+				ParamObtPedidosNoSinc paramOpns = ParserParamPedido.parseParamObtPedidosNoSinc(fechaDesde, fechaHasta);
 				// <<< llamo al WS >>> > operacion obtenerPedidosNoSinc (obtiene pedidos no sinc desde sist web)
-				ResultObtPedidosNoSinc result = iGestPed.obtenerPedidosNoSinc(param);
+				ResultObtPedidosNoSinc resultOpns = iGestPed.obtenerPedidosNoSinc(paramOpns);
 				// <<< end WS >>>
-//				conn = Conector.getConn();
 				Map<Pedido, EstadoSinc> mapPedidosAConf = null;
-				if(result.getErroresServ().isEmpty()) {
+				if(resultOpns.getErroresServ().isEmpty()) {
 					mapPedidosAConf = new HashMap<>();
-					List<Pedido> listaPedidosNoSinc = ParserResultPedido.parseResultPedidosNoSinc(conn, result);
+					List<Pedido> listaPedidosNoSinc = ParserResultPedido.parseResultPedidosNoSinc(conn, resultOpns);
 					Fecha ultAct = new Fecha(Fecha.AMDHMS);
 					if(listaPedidosNoSinc != null && !listaPedidosNoSinc.isEmpty()) {
 						for(Pedido pedido : listaPedidosNoSinc) {
@@ -517,7 +536,7 @@ public class ManagerSincronizador implements CnstService {
 						}
 					}
 				} else {
-					for(ErrorServicio error : result.getErroresServ()) {
+					for(ErrorServicio error : resultOpns.getErroresServ()) {
 						Conector.rollbackConn(conn);
 						sb.append("-- ERROR -- P1: La sincronizacion de pedidos ha retornado error: " + error.getCodigo() 
 									+ " - " + error.getDescripcion()).append(ESC);
@@ -552,8 +571,8 @@ public class ManagerSincronizador implements CnstService {
 							}
 						}
 					} else {
-						if(result.getErroresServ() != null && !result.getErroresServ().isEmpty()) {
-							for(ErrorServicio error : result.getErroresServ()) {
+						if(resultOpns.getErroresServ() != null && !resultOpns.getErroresServ().isEmpty()) {
+							for(ErrorServicio error : resultOpns.getErroresServ()) {
 								sb.append("-- ERROR -- P2: La sincronizacion de pedidos ha retornado error: " + error.getCodigo() 
 											+ " - " + error.getDescripcion()).append(ESC);
 							}
@@ -570,6 +589,9 @@ public class ManagerSincronizador implements CnstService {
 				Conector.rollbackConn(conn);
 				logger.fatal("Excepcion en ManagerSincronizador > sincronizarPedidosDesdeWeb: " + e.getMessage(), e);
 				throw new PresentacionException(e);
+			} catch (WsException e) {
+				Conector.rollbackConn(conn);
+				throw e;
 			} catch (Exception e) {
 				Conector.rollbackConn(conn);
 				logger.fatal("Excepcion GENERICA en ManagerSincronizador > sincronizarPedidosDesdeWeb: " + e.getMessage(), e);

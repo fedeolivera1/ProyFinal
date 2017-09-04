@@ -35,6 +35,7 @@ import com.toedter.calendar.JDateChooser;
 
 import gpd.exceptions.NoInetConnectionException;
 import gpd.exceptions.PresentacionException;
+import gpd.exceptions.WsException;
 import gpd.presentacion.generic.CnstPresExceptions;
 import gpd.presentacion.generic.CnstPresGeneric;
 import gpd.presentacion.generic.CompValidador;
@@ -78,6 +79,9 @@ public abstract class CtrlGenerico {
 		} else if(e instanceof WebServiceException) {
 			logger.error("Excepcion lanzada desde Controladores: " + e.getMessage(), e);
 			enviarError(CnstPresExceptions.CONN, CnstPresExceptions.WS_UNAVAILABLE);
+		} else if(e instanceof WsException) {
+			logger.error("Excepcion lanzada desde Controladores: " + e.getMessage(), e);
+			enviarError(CnstPresExceptions.CONN, e.getMessage());
 		} else {
 			logger.error("Excepcion NO CONTROLADA lanzada desde Controladores: " + e.getMessage(), e);
 			enviarError(CnstPresExceptions.GEN, CnstPresExceptions.ENC + e.getMessage());
@@ -85,8 +89,7 @@ public abstract class CtrlGenerico {
 	}
 	
 	/**
-	 * metodo que transforma una password sin cifrar a una cifrada con el metodo
-	 * MD5. 
+	 * metodo que transforma una password sin cifrar a una cifrada con el metodo MD5. 
 	 * @param input
 	 * @return string con hash md5 de password
 	 */
@@ -103,6 +106,7 @@ public abstract class CtrlGenerico {
 		 	return hashtext;
 	 	}
 		catch (NoSuchAlgorithmException e) {
+			logger.fatal("Excepcion en CtrlGenerico > getMD5 al generar hash MD5: " + e.getMessage(), e);
 			throw new RuntimeException(e);
 		}
 	}

@@ -1,11 +1,11 @@
 package test.service.consumer;
 
-import static org.junit.Assert.assertEquals;
-
 import org.junit.Test;
 
 import gpd.exceptions.SincronizadorException;
+import gpd.exceptions.WsException;
 import gpd.ws.consumer.ServiceConsumer;
+import gpw.webservice.proxy.ResultServFuncional;
 import gpw.webservice.proxy.WsGestPed;
 
 public class ServiceConsumerTest {
@@ -15,9 +15,9 @@ public class ServiceConsumerTest {
 		ServiceConsumer scvCns = new ServiceConsumer();
 		try {
 			WsGestPed igestped = scvCns.consumirWebService();
-			String resultado = igestped.servicioFuncional();
-			assertEquals(resultado, "Servicio Funcional");
-		} catch (SincronizadorException e) {
+			ResultServFuncional resultado = igestped.servFuncional();
+			assert(!resultado.getError().equals(null));
+		} catch (SincronizadorException | WsException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
