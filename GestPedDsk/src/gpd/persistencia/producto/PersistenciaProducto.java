@@ -316,6 +316,28 @@ public class PersistenciaProducto extends Conector implements IPersProducto, Cns
 		}
 		return resultado;
 	}
+	
+	@Override
+	public Boolean checkExistProducto(Connection conn, Integer idProducto) throws PersistenciaException {
+		try {
+			GenSqlSelectType genSel = new GenSqlSelectType(QRY_CHECK_EXIST_PROD);
+			genSel.setParam(idProducto);
+			try (ResultSet rs = (ResultSet) runGeneric(conn, genSel)) {
+				if(rs.next()) {
+					return true;
+				}
+			}
+		} catch (ConectorException | SQLException e) {
+			Conector.rollbackConn(conn);
+			logger.fatal("Excepcion al checkExistProducto: " + e.getMessage(), e);
+			throw new PersistenciaException(e);
+		} catch (Exception e) {
+			Conector.rollbackConn(conn);
+			logger.fatal("Excepcion GENERICA al checkExistProducto: " + e.getMessage(), e);
+			throw new PersistenciaException(e);
+		}
+		return false;
+	}
 
 
 }

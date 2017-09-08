@@ -18,6 +18,7 @@ public interface CnstPresGeneric {
 	
 	//prod
 	public static final String PROD = "Producto";
+	public static final String PROD_NOEXIST = "El producto no existe en los registros por su Id.";
 	
 	//tipoProd
 	public static final String TP = "Tipo Prod";
@@ -44,13 +45,13 @@ public interface CnstPresGeneric {
 	public static final String PERS_F_ING_OK = "Se ha ingresado la persona correctamente.";
 	public static final String PERS_F_MOD_OK = "Se ha modificado la persona correctamente.";
 	public static final String PERS_F_ELI_OK = "Se ha eliminado la persona correctamente.";
-	public static final String PERS_F_ING_EXIST = "La persona fisica ya existe en los registros por su documento.";
-	public static final String PERS_F_ING_NOEXIST = "La persona fisica no existe en los registros por su documento.";
+	public static final String PERS_F_EXIST = "La persona fisica ya existe en los registros por su documento.";
+	public static final String PERS_F_NOEXIST = "La persona fisica no existe en los registros por su documento.";
 	public static final String PERS_J_ING_OK = "Se ha ingresado la empresa correctamente.";
 	public static final String PERS_J_MOD_OK = "Se ha modificado la empresa correctamente.";
 	public static final String PERS_J_ELI_OK = "Se ha eliminado la empresa correctamente.";
-	public static final String PERS_J_ING_EXIST = "La persona juridica ya existe en los registros por su rut.";
-	public static final String PERS_J_ING_NOEXIST = "La persona juridica no existe en los registros por su rut.";
+	public static final String PERS_J_EXIST = "La persona juridica ya existe en los registros por su rut.";
+	public static final String PERS_J_NOEXIST = "La persona juridica no existe en los registros por su rut.";
 	public static final String PERS_J_P_ING_OK = "Se ha ingresado el proveedor correctamente.";
 	public static final String PERS_J_P_MOD_OK = "Se ha modificado el proveedor correctamente.";
 	public static final String PERS_J_P_ELI_OK = "Se ha eliminado el proveedor correctamente.";

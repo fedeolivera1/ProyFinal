@@ -42,5 +42,7 @@ public interface CnstQryProducto {
 	public static final String QRY_UPDATE_SINC_PROD = "UPDATE producto SET sinc = ?, ult_act = ? "
 													+ "WHERE id_producto = ? "
 													+ "AND activo = 1";
+	
+	public static final String QRY_CHECK_EXIST_PROD = "SELECT (1) AS existe FROM producto WHERE id_producto = ?";
 
 }

@@ -30,7 +30,7 @@ import gpd.presentacion.generic.CnstPresGeneric;
 import gpd.presentacion.generic.GenCompType;
 import gpd.types.Fecha;
 
-public class CtrlFrmPersona extends CtrlGenerico {
+public class CtrlFrmPersona extends CtrlGenerico implements CnstPresGeneric {
 
 	private ManagerPersona mgrPers = new ManagerPersona();
 	private FrmPersona frmPers;
@@ -346,10 +346,10 @@ public class CtrlFrmPersona extends CtrlGenerico {
 					lst.add(pf);
 					cargarJtPersFisica(lst);
 				} else {
-					enviarWarning(CnstPresGeneric.PERS, CnstPresGeneric.PERS_F_ING_EXIST);
+					enviarWarning(PERS, PERS_F_EXIST);
 				}
 			} else {
-				enviarWarning(CnstPresGeneric.PERS, CnstPresGeneric.DATOS_OBLIG);
+				enviarWarning(PERS, DATOS_OBLIG);
 			}
 		} catch(Exception e) {
 			manejarExcepcion(e);
@@ -409,10 +409,10 @@ public class CtrlFrmPersona extends CtrlGenerico {
 					lst.add(pf);
 					cargarJtPersFisica(lst);
 				} else {
-					enviarWarning(CnstPresGeneric.PERS, CnstPresGeneric.PERS_F_ING_NOEXIST);
+					enviarWarning(PERS, PERS_F_NOEXIST);
 				}
 			} else {
-				enviarWarning(CnstPresGeneric.PERS, CnstPresGeneric.DATOS_OBLIG);
+				enviarWarning(PERS, DATOS_OBLIG);
 			}
 		} catch(Exception e) {
 			manejarExcepcion(e);
@@ -425,10 +425,15 @@ public class CtrlFrmPersona extends CtrlGenerico {
 			genComp.setComp(txtPfDoc);
 			if(controlDatosObl(genComp)) {
 				PersonaFisica pf = mgrPers.obtenerPersFisicaPorId(ctrlNumLong(txtPfDoc.getText()) ? new Long(txtPfDoc.getText()): null);
-				mgrPers.eliminarPersFisica(pf);
-				clearPanel(frmPers.getContentPane());
+				if(pf != null) {
+					mgrPers.eliminarPersFisica(pf);
+					clearPanel(frmPers.getContentPane());
+					enviarInfo(PERS, PERS_F_ELI_OK);
+				} else {
+					enviarWarning(PERS, PERS_F_NOEXIST);
+				}
 			} else {
-				enviarWarning(CnstPresGeneric.PERS, CnstPresGeneric.DATOS_OBLIG);
+				enviarWarning(PERS, DATOS_OBLIG);
 			}
 		} catch(Exception e) {
 			manejarExcepcion(e);
@@ -490,10 +495,10 @@ public class CtrlFrmPersona extends CtrlGenerico {
 					lst.add(pj);
 					cargarJtPersJuridica(lst);
 				} else {
-					enviarWarning(CnstPresGeneric.PERS, CnstPresGeneric.PERS_J_ING_EXIST);
+					enviarWarning(PERS, PERS_J_EXIST);
 				}
 			} else {
-				enviarWarning(CnstPresGeneric.PERS, CnstPresGeneric.DATOS_OBLIG);
+				enviarWarning(PERS, DATOS_OBLIG);
 			}
 		} catch(Exception e) {
 			manejarExcepcion(e);
@@ -546,10 +551,10 @@ public class CtrlFrmPersona extends CtrlGenerico {
 					lst.add(pj);
 					cargarJtPersJuridica(lst);
 				} else {
-					enviarWarning(CnstPresGeneric.PERS, CnstPresGeneric.PERS_J_ING_NOEXIST);
+					enviarWarning(PERS, PERS_J_NOEXIST);
 				}
 			} else {
-				enviarWarning(CnstPresGeneric.PERS, CnstPresGeneric.DATOS_OBLIG);
+				enviarWarning(PERS, DATOS_OBLIG);
 			}
 		} catch(Exception e) {
 			manejarExcepcion(e);
@@ -562,10 +567,15 @@ public class CtrlFrmPersona extends CtrlGenerico {
 			genComp.setComp(txtPjRut);
 			if(controlDatosObl(genComp)) {
 				PersonaJuridica pj = mgrPers.obtenerPersJuridicaPorId(new Long(txtPjRut.getText()));
-				mgrPers.eliminarPersJuridica(pj);
-				clearPanel(frmPers.getContentPane());
+				if(pj != null) {
+					mgrPers.eliminarPersJuridica(pj);
+					clearPanel(frmPers.getContentPane());
+					enviarInfo(PERS, PERS_J_ELI_OK);
+				} else {
+					enviarWarning(PERS, PERS_J_NOEXIST);
+				}
 			} else {
-				enviarWarning(CnstPresGeneric.PERS, CnstPresGeneric.DATOS_OBLIG);
+				enviarWarning(PERS, DATOS_OBLIG);
 			}
 		} catch(Exception e) {
 			manejarExcepcion(e);

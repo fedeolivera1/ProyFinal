@@ -31,7 +31,7 @@ public class GeneradorReportes {
         } catch (JRException ex) {
         	logger.error("Excepcion de Jasper Reports: " + ex.getMessage(), ex);
         } catch (Exception e) {
-        	logger.error("Excepcion no controlada de GeneradorReportes: " + e.getMessage(), e);
+        	logger.error("Excepcion GENERICA de GeneradorReportes: " + e.getMessage(), e);
         	System.out.println(e.getMessage());
     	}
     }

@@ -473,7 +473,6 @@ public class CtrlFrmProducto extends CtrlGenerico implements CnstPresGeneric {
 	
 	public void buscarProducto(JComboBox<TipoProd> cbxTp, JTextField txtProCod, JTextField txtProNom, JTextField txtProDesc) {
 		try {
-			//FIXME chequear que no haya que poner campos obligatorios
 			List<Producto> listaProd = (ArrayList<Producto>) mgrProd.obtenerBusquedaProducto((TipoProd) cbxTp.getSelectedItem(), txtProCod.getText(), txtProNom.getText(), txtProDesc.getText());
 			cargarJtProd(listaProd);
 		} catch(Exception e) {
@@ -533,21 +532,25 @@ public class CtrlFrmProducto extends CtrlGenerico implements CnstPresGeneric {
 			genComp.setComp(precio);
 			if(controlDatosObl(genComp)) {
 				Integer idInt = ctrlNumLong(id.getText()) ? new Integer(id.getText()) : null;
-				TipoProd tp = (TipoProd) cbxTp.getSelectedItem();
-				Producto prod = mgrProd.obtenerProductoPorId(idInt);
-				prod.setTipoProd(tp);
-				prod.setCodigo(codigo.getText());
-				prod.setNombre(nombre.getText());
-				prod.setDescripcion(descripcion.getText());
-				prod.setStockMin(new Float(stockMin.getText()));
-				prod.setCantUnidad(new Float(ftxtProPres.getText()));
-				prod.setUnidad((Unidad) cbxProUni.getSelectedItem()); 
-				prod.setAplIva((AplicaIva) cbxProAplIva.getSelectedItem()); 
-				prod.setPrecio(new Double(precio.getText()));
-				mgrProd.modificarProducto(prod);
-				clearForm(frmProd.getContentPane());
-				List<Producto> lst = mgrProd.obtenerListaProductoPorTipoProd(tp);
-				cargarJtProd(lst);
+				if(mgrProd.checkExistProducto(idInt)) {
+					TipoProd tp = (TipoProd) cbxTp.getSelectedItem();
+					Producto prod = mgrProd.obtenerProductoPorId(idInt);
+					prod.setTipoProd(tp);
+					prod.setCodigo(codigo.getText());
+					prod.setNombre(nombre.getText());
+					prod.setDescripcion(descripcion.getText());
+					prod.setStockMin(new Float(stockMin.getText()));
+					prod.setCantUnidad(new Float(ftxtProPres.getText()));
+					prod.setUnidad((Unidad) cbxProUni.getSelectedItem()); 
+					prod.setAplIva((AplicaIva) cbxProAplIva.getSelectedItem()); 
+					prod.setPrecio(new Double(precio.getText()));
+					mgrProd.modificarProducto(prod);
+					clearForm(frmProd.getContentPane());
+					List<Producto> lst = mgrProd.obtenerListaProductoPorTipoProd(tp);
+					cargarJtProd(lst);
+				} else {
+					enviarWarning(PROD, PROD_NOEXIST);
+				}
 			} else {
 				enviarWarning(PROD, DATOS_OBLIG);
 			}
@@ -561,9 +564,13 @@ public class CtrlFrmProducto extends CtrlGenerico implements CnstPresGeneric {
 		try {
 			if(controlDatosObl(id)) {
 				Integer idInt = ctrlNumLong(id.getText()) ? new Integer(id.getText()) : null;
-				clearForm(frmProd.getContentPane());
-				Producto prod = mgrProd.obtenerProductoPorId(idInt);
-				mgrProd.desactivarProducto(prod);
+				if(mgrProd.checkExistProducto(idInt)) {
+					clearForm(frmProd.getContentPane());
+					Producto prod = mgrProd.obtenerProductoPorId(idInt);
+					mgrProd.desactivarProducto(prod);
+				} else {
+					enviarWarning(PROD, PROD_NOEXIST);
+				}
 			} else {
 				enviarWarning(PROD, DATOS_OBLIG);
 			}
@@ -883,7 +890,7 @@ public class CtrlFrmProducto extends CtrlGenerico implements CnstPresGeneric {
 			getDeskPane().add(ifrmUtil);
 			//
 			Component comp = getFrm().getContentPane().getComponent(1);
-			comp.setVisible(false);//FIXME: ver si no existe solucion mejor
+			comp.setVisible(false);
 			//
 			ifrmUtil.show();
 		} catch(Exception e) {

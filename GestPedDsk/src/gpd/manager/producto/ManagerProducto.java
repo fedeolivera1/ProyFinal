@@ -220,6 +220,21 @@ public class ManagerProducto {
 		return resultado;
 	}
 	
+	public Boolean checkExistProducto(Integer idProducto) throws PresentacionException {
+		try (Connection conn = Conector.getConn()) {
+			if(idProducto != null) {
+				return getInterfaceProducto().checkExistProducto(conn, idProducto);
+			}
+		} catch (PersistenciaException | SQLException e) {
+			logger.fatal("Excepcion en ManagerPersona > obtenerBusquedaPersona: " + e.getMessage(), e);
+			throw new PresentacionException(e);
+		} catch (Exception e) {
+			logger.fatal("Excepcion GENERICA en ManagerPersona > obtenerBusquedaPersona: " + e.getMessage(), e);
+			throw new PresentacionException(e);
+		}
+		return false;
+	}
+	
 	
 	/*****************************************************************************************************************************************************/
 	/** TIPO PROD */
@@ -685,8 +700,8 @@ public class ManagerProducto {
 			Double precioFinal = new Double(0);
 			Long stock = new Long(0);
 			hlpProd.setIdProducto(idProducto);
-			hlpProd.setPrecioVta(precioFinal);
 			hlpProd.setStock(stock);
+			hlpProd.setPrecioVta(precioFinal);
 			if(listaLote != null && !listaLote.isEmpty()) {
 				for(Lote lote : listaLote) {
 					Producto prod = lote.getTranLinea().getProducto();
@@ -737,7 +752,7 @@ public class ManagerProducto {
 			 * con una excepcion del tipo ProductoSinStockException
 			 */
 			HlpProducto hlpProd = obtenerStockPrecioLotePorProductoNoConn(conn, idProducto);
-			if(hlpProd == null || hlpProd.getStock() < cantidad) {
+			if(hlpProd.getStock() < cantidad) {
 				throw new ProductoSinStockException("--Stock insuficiente para el producto: " + idProducto + " !!!");
 			}
 			listaLote = getInterfaceLote().obtenerListaLotePorProd(conn, idProducto, diasParaVenc);

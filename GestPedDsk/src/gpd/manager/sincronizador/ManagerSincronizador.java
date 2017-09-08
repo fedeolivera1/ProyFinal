@@ -544,14 +544,16 @@ public class ManagerSincronizador implements CnstService {
 				}
 				/*
 				 * se realiza el envío de pedidos desde el dsk hacia la web
-				 * para esto, obtengo pedidos WEB en estado 'R' (revisados) o 'C' (confirmados)
+				 * para esto, obtengo pedidos WEB en estado 'R' (revisados) o 'C' (confirmados), 'A' (anulados)
 				 */
 				List<Pedido> listaPedidosASinc = getInterfacePedido().obtenerListaPedidoNoSincWeb(conn, fechaDesde, fechaHasta);
 				if( (mapPedidosAConf != null && !mapPedidosAConf.isEmpty()) || (listaPedidosASinc != null && !listaPedidosASinc.isEmpty()) ) {
 					sb.append("-Se proceden a sincronizar [" + listaPedidosASinc.size() + "] pedidos hacia el sistema WEB.").append(ESC);
 					sb.append("-Se proceden a confirmar [" + mapPedidosAConf.size() + "] pedidos recibidos hacia el sistema WEB.").append(ESC);
 					ParamRecPedidosASinc paramRpas = ParserParamPedido.parseParamRecPedidosASinc(mapPedidosAConf, listaPedidosASinc);
+					// <<< llamo al WS >>> > operacion recibirPedidosASinc (recibe pedidos a sinc desde sist dsk)
 					ResultRecPedidosASinc resultRpas = iGestPed.recibirPedidosASinc(paramRpas);
+					// <<< end WS >>>
 					if(resultRpas != null && (resultRpas.getErroresServ() == null || resultRpas.getErroresServ().isEmpty())) {
 						Fecha ultAct = new Fecha(Fecha.AMDHMS);
 						for(ResultPedidoASinc resultPas : resultRpas.getListaPedidoSinc()) {

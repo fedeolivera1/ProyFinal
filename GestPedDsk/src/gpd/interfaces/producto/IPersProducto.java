@@ -19,5 +19,6 @@ public interface IPersProducto {
 	public Integer modificarProducto(Connection conn, Producto producto) throws PersistenciaException;
 	public Integer modificarSincProducto(Connection conn, Integer idProd, Sinc sinc, Fecha ultAct) throws PersistenciaException;
 	public Integer desactivarProducto(Connection conn, Producto producto) throws PersistenciaException;
+	public Boolean checkExistProducto(Connection conn, Integer idProducto) throws PersistenciaException;
 
 }
