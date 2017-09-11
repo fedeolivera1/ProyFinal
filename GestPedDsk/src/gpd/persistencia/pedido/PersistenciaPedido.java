@@ -100,6 +100,71 @@ public class PersistenciaPedido extends Conector implements IPersPedido, CnstQry
 	}
 	
 	@Override
+	public Pedido obtenerPedidoPorTransac(Connection conn, Integer transac) throws PersistenciaException {
+		Pedido pedido = null;
+		PersistenciaPersona pp = new PersistenciaPersona();
+		PersistenciaUsuario pu = new PersistenciaUsuario();
+		PersistenciaTransaccion pt = new PersistenciaTransaccion();
+		PersistenciaPedidoLinea ppl = new PersistenciaPedidoLinea();
+		try {
+			GenSqlSelectType genSel = new GenSqlSelectType(QRY_SELECT_PEDIDO_XTRANSAC);
+			genSel.setParam(transac);
+			try (ResultSet rs = (ResultSet) runGeneric(conn, genSel)) {
+				if(rs.next()) {
+					pedido = new Pedido();
+					pedido.setPersona(pp.obtenerPersGenerico(conn, rs.getLong("id_persona")));
+					pedido.setFechaHora(new Fecha(rs.getTimestamp("fecha_hora")));
+					char[] estadoChar = new char[1];
+					rs.getCharacterStream("estado").read(estadoChar);
+					EstadoPedido estado = EstadoPedido.getEstadoPedidoPorChar(estadoChar[0]);
+					pedido.setEstado(estado);
+					Date fechaProg = rs.getDate("fecha_prog");
+					if(!rs.wasNull()) {
+						pedido.setFechaProg(new Fecha(fechaProg));
+					}
+					Time horaProg = rs.getTime("hora_prog");
+					if(!rs.wasNull()) {
+						pedido.setHoraProg(new Fecha(horaProg));
+					}
+					char[] origenChar = new char[1];
+					rs.getCharacterStream("origen").read(origenChar);
+					Origen origenPed = Origen.getOrigenPorChar(origenChar[0]);
+					pedido.setOrigen(origenPed);
+					pedido.setSubTotal(rs.getDouble("sub_total"));
+					pedido.setIva(rs.getDouble("iva"));
+					pedido.setTotal(rs.getDouble("total"));
+					String nomUsu = rs.getString("nom_usu");
+					if(!rs.wasNull()) {
+						pedido.setUsuario(pu.obtenerUsuarioPorId(conn, nomUsu));
+					}
+					Integer nroTransac = rs.getInt("nro_transac");
+					if(!rs.wasNull()) {
+						pedido.setTransaccion(pt.obtenerTransaccionPorId(conn, nroTransac));
+					}
+					char[] sincChar = new char[1];
+					rs.getCharacterStream("sinc").read(sincChar);
+					Sinc sinc = Sinc.getSincPorChar(sincChar[0]);
+					pedido.setSinc(sinc);
+					pedido.setUltAct(new Fecha(rs.getTimestamp("ult_act")));
+					//obtiene lista de lineas y asigna a pedido
+					List<PedidoLinea> listaLineas = ppl.obtenerListaPedidoLinea(conn, pedido);
+					pedido.setListaPedidoLinea(listaLineas);
+					//
+				}
+			}
+		} catch (ConectorException | SQLException | IOException e) {
+			Conector.rollbackConn(conn);
+			logger.fatal("Excepcion al obtenerPedidoPorId: " + e.getMessage(), e);
+			throw new PersistenciaException(e);
+		} catch (Exception e) {
+			Conector.rollbackConn(conn);
+			logger.fatal("Excepcion GENERICA al obtenerPedidoPorId: " + e.getMessage(), e);
+			throw new PersistenciaException(e);
+		}
+		return pedido;
+	}
+	
+	@Override
 	public List<Pedido> obtenerListaPedido(Connection conn, EstadoPedido ep, Long idPersona, Origen origen, Fecha fechaDesde, Fecha fechaHasta) throws PersistenciaException {
 		List<Pedido> listaPedido = new ArrayList<>();
 		PersistenciaPersona pp = new PersistenciaPersona();
@@ -341,6 +406,29 @@ public class PersistenciaPedido extends Conector implements IPersPedido, CnstQry
 	public Integer modificarSincUltActPedido(Connection conn, Pedido pedido) throws PersistenciaException {
 		Integer resultado = null;
 		GenSqlExecType genExec = new GenSqlExecType(QRY_ACT_SINC_ULTACT_PEDIDO);
+		genExec.setParam(pedido.getSinc().getAsChar());
+		genExec.setParam(pedido.getUltAct());
+		genExec.setParam(pedido.getPersona().getIdPersona());
+		genExec.setParam(pedido.getFechaHora());
+		try {
+			resultado = (Integer) runGeneric(conn, genExec);
+		} catch (ConectorException e) {
+			Conector.rollbackConn(conn);
+			logger.fatal("Excepcion al modificarSincUltActPedido: " + e.getMessage(), e);
+			throw new PersistenciaException(e);
+		} catch (Exception e) {
+			Conector.rollbackConn(conn);
+			logger.fatal("Excepcion GENERICA al modificarSincUltActPedido: " + e.getMessage(), e);
+			throw new PersistenciaException(e);
+		}
+		return resultado;
+	}
+	
+	@Override
+	public Integer modificarEstadoPedido(Connection conn, Pedido pedido) throws PersistenciaException {
+		Integer resultado = null;
+		GenSqlExecType genExec = new GenSqlExecType(QRY_ACT_ESTADO_PEDIDO);
+		genExec.setParam(pedido.getEstado().getAsChar());
 		genExec.setParam(pedido.getSinc().getAsChar());
 		genExec.setParam(pedido.getUltAct());
 		genExec.setParam(pedido.getPersona().getIdPersona());

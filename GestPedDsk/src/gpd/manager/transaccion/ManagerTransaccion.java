@@ -10,6 +10,8 @@ import org.apache.log4j.Logger;
 
 import gpd.db.constantes.CnstQryTransaccion;
 import gpd.dominio.helper.HlpProducto;
+import gpd.dominio.pedido.EstadoPedido;
+import gpd.dominio.pedido.Pedido;
 import gpd.dominio.producto.Lote;
 import gpd.dominio.producto.Producto;
 import gpd.dominio.transaccion.EstadoTran;
@@ -22,12 +24,14 @@ import gpd.dominio.util.Sinc;
 import gpd.exceptions.ConectorException;
 import gpd.exceptions.PersistenciaException;
 import gpd.exceptions.PresentacionException;
+import gpd.interfaces.pedido.IPersPedido;
 import gpd.interfaces.producto.IPersLote;
 import gpd.interfaces.producto.IPersProducto;
 import gpd.interfaces.transaccion.IPersTranLinea;
 import gpd.interfaces.transaccion.IPersTransaccion;
 import gpd.manager.producto.ManagerProducto;
 import gpd.persistencia.conector.Conector;
+import gpd.persistencia.pedido.PersistenciaPedido;
 import gpd.persistencia.producto.PersistenciaLote;
 import gpd.persistencia.producto.PersistenciaProducto;
 import gpd.persistencia.transaccion.PersistenciaTranLinea;
@@ -43,6 +47,7 @@ public class ManagerTransaccion {
 	private static IPersTranLinea interfaceTranLinea;
 	private static IPersLote interfaceLote;
 	private static IPersProducto interfaceProducto;
+	private static IPersPedido interfacePedido;
 	
 	private static IPersTransaccion getInterfaceTransaccion() {
 		if(interfaceTransaccion == null) {
@@ -67,6 +72,12 @@ public class ManagerTransaccion {
 			interfaceProducto = new PersistenciaProducto();
 		}
 		return interfaceProducto;
+	}
+	private static IPersPedido getInterfacePedido() {
+		if(interfacePedido == null) {
+			interfacePedido = new PersistenciaPedido();
+		}
+		return interfacePedido;
 	}
 	
 	
@@ -328,8 +339,9 @@ public class ManagerTransaccion {
 		ErrorLogico error = null;
 		try (Connection conn = Conector.getConn()) {
 			if(transaccion != null && TipoTran.V.equals(transaccion.getTipoTran())) {
+				Fecha ultAct = new Fecha(Fecha.AMDHMS);
 				transaccion.setEstadoTran(EstadoTran.A);
-				transaccion.setFechaHora(new Fecha(Fecha.AMDHMS));
+				transaccion.setFechaHora(ultAct);
 				//se debe manejar lote para devolver cantidad de productos
 				error = validarAnulacionVto(transaccion);
 				if(error != null) {
@@ -355,6 +367,12 @@ public class ManagerTransaccion {
 				getInterfaceTransaccion().modificarEstadoTransaccion(conn, transaccion);
 				//elimino tran_vta_lote para la transaccion que se anula
 				getInterfaceTransaccion().eliminarTranVtaLote(conn, transaccion.getNroTransac());
+				//actualizo el estado del pedido (ya vendido) a anulado
+				Pedido pedido = getInterfacePedido().obtenerPedidoPorTransac(conn, transaccion.getNroTransac());
+				pedido.setEstado(EstadoPedido.A);
+				pedido.setSinc(Sinc.N);
+				pedido.setUltAct(ultAct);
+				getInterfacePedido().modificarEstadoPedido(conn, pedido);
 				Conector.commitConn(conn);
 			}
 		} catch (PersistenciaException | SQLException e) {

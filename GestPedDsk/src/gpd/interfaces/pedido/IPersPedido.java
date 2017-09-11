@@ -12,6 +12,7 @@ import gpd.types.Fecha;
 public interface IPersPedido {
 
 	public Pedido obtenerPedidoPorId(Connection conn, Long idPersona, Fecha fechaHora) throws PersistenciaException;
+	public Pedido obtenerPedidoPorTransac(Connection conn, Integer nroTransac) throws PersistenciaException;
 	public List<Pedido> obtenerListaPedido(Connection conn, EstadoPedido ep, Long idPersona, Origen origen, Fecha fechaDesde, Fecha fechaHasta) throws PersistenciaException;
 	public List<Pedido> obtenerListaPedidoNoSincWeb(Connection conn, Fecha fechaDesde, Fecha fechaHasta) throws PersistenciaException;
 	public Integer guardarPedido(Connection conn, Pedido pedido) throws PersistenciaException;
@@ -19,5 +20,6 @@ public interface IPersPedido {
 	public Integer eliminarPedido(Connection conn, Pedido pedido) throws PersistenciaException;
 	public Boolean checkExistPedido(Connection conn, Pedido pedido) throws PersistenciaException;
 	public Integer modificarSincUltActPedido(Connection conn, Pedido pedido) throws PersistenciaException;
+	public Integer modificarEstadoPedido(Connection conn, Pedido pedido) throws PersistenciaException;
 
 }

@@ -19,5 +19,6 @@
 	<classpathentry kind="lib" path="/Shared/ext_jars/jfreechart-1.0.12.jar"/>
 	<classpathentry kind="lib" path="/Shared/ext_jars/poi-3.16.jar"/>
 	<classpathentry kind="lib" path="/Shared/ext_jars/WsGestPedProxy.jar"/>
+	<classpathentry kind="lib" path="/Shared/ext_jars/tools.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

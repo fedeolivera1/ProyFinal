@@ -222,6 +222,7 @@ public class CtrlFrmPedido extends CtrlGenerico implements CnstPresGeneric {
 						}
 					}
 				});
+				setearInfoPedido();
 			} else {
 				cargarJTableVacia(tabla, JTABLE_SIN_LINEASPED);
 			}
