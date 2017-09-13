@@ -77,6 +77,8 @@ public class FrmPedido extends JFrame {
 	private JButton btnPedActPedido;
 	private JButton btnPedAnuPedido;
 	private JScrollPane scrollPanePedidoLin;
+	private JPanel pnlPedidoLin;
+	private JButton btnPedItemEli;
 
 	public static FrmPedido getFrmPedido(UsuarioDsk usr) {
 		if(instance == null) {
@@ -164,7 +166,6 @@ public class FrmPedido extends JFrame {
 		JButton btnPedItemMod = new JButton("Modificar Item");
 		btnPedItemMod.setBounds(240, 103, 124, 23);
 		pnlDatosPedido.add(btnPedItemMod);
-		ctrlPed.cargarCbxTipoProd(cbxPedidoTp);
 		
 		JLabel lblDe = new JLabel("de");
 		lblDe.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -211,14 +212,6 @@ public class FrmPedido extends JFrame {
 		separator.setBounds(10, 317, 764, 2);
 		pnlPedido.add(separator);
 		
-		scrollPanePedidoLin = new JScrollPane();
-		scrollPanePedidoLin.setBounds(400, 371, 374, 139);
-		pnlPedido.add(scrollPanePedidoLin);
-		
-		jtPedidoLin = new JTable();
-		scrollPanePedidoLin.setColumnHeaderView(jtPedidoLin);
-		scrollPanePedidoLin.setViewportView(jtPedidoLin);
-		
 		btnPedGenVenta = new JButton("Generar Venta");
 		btnPedGenVenta.setBounds(650, 283, 124, 23);
 		pnlPedido.add(btnPedGenVenta);
@@ -231,11 +224,6 @@ public class FrmPedido extends JFrame {
 		lblItemsParaEl.setHorizontalAlignment(SwingConstants.LEFT);
 		lblItemsParaEl.setBounds(10, 357, 124, 14);
 		pnlPedido.add(lblItemsParaEl);
-		
-		JLabel lblItemsActualesEn = new JLabel("Items actuales en el pedido");
-		lblItemsActualesEn.setHorizontalAlignment(SwingConstants.LEFT);
-		lblItemsActualesEn.setBounds(400, 357, 145, 14);
-		pnlPedido.add(lblItemsActualesEn);
 		
 		JLabel lblPedidosExistentesFiltrados = new JLabel("Pedidos existentes filtrados");
 		lblPedidosExistentesFiltrados.setHorizontalAlignment(SwingConstants.LEFT);
@@ -338,12 +326,39 @@ public class FrmPedido extends JFrame {
 		
 		//selecciono boton de pedido nuevo por defecto
 		this.getTglbtnPedNuevo().setSelected(true);
-		ctrlPed.controlarPedido();
+		
+		pnlPedidoLin = new JPanel();
+		pnlPedidoLin.setBorder(new LineBorder(new Color(0, 0, 0)));
+		pnlPedidoLin.setBounds(400, 328, 374, 182);
+		pnlPedido.add(pnlPedidoLin);
+		pnlPedidoLin.setLayout(null);
+		
+		JLabel lblItemsActualesEn = new JLabel("Items actuales en el pedido");
+		lblItemsActualesEn.setBounds(10, 15, 131, 14);
+		pnlPedidoLin.add(lblItemsActualesEn);
+		lblItemsActualesEn.setHorizontalAlignment(SwingConstants.LEFT);
+		
+		scrollPanePedidoLin = new JScrollPane();
+		scrollPanePedidoLin.setViewportBorder(new LineBorder(new Color(0, 0, 0)));
+		scrollPanePedidoLin.setBounds(0, 40, 374, 142);
+		pnlPedidoLin.add(scrollPanePedidoLin);
+		
+		jtPedidoLin = new JTable();
+		scrollPanePedidoLin.setColumnHeaderView(jtPedidoLin);
+		scrollPanePedidoLin.setViewportView(jtPedidoLin);
+		
+		btnPedItemEli = new JButton("Eliminar Item");
+		btnPedItemEli.setBounds(240, 11, 124, 23);
+		pnlPedidoLin.add(btnPedItemEli);
+		btnPedItemEli.setForeground(Color.RED);
+		
 		
 		/*****************************************************************************************************************************************************/
 		/* ACCIONES CONTROLES */
 		/*****************************************************************************************************************************************************/
 		
+		ctrlPed.cargarCbxTipoProd(cbxPedidoTp);
+		ctrlPed.controlarPedido();
 		ctrlPed.cargarCbxPedidoEstado(cbxPedidoEstado);
 		ctrlPed.cargarCbxPedidoOrigen(cbxPedidoOrig);
 
@@ -442,6 +457,12 @@ public class FrmPedido extends JFrame {
 		btnPedItemMod.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ctrlPed.modificarItemAPedido(jtPedidoLin, cbxPedidoProd, ftxtPedCant);
+			}
+		});
+		//boton eliminar item a pedido
+		btnPedItemEli.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ctrlPed.eliminarItemPedido();
 			}
 		});
 		//control num en cantidad
@@ -654,5 +675,19 @@ public class FrmPedido extends JFrame {
 	}
 	public void setScrollPanePedidoLin(JScrollPane scrollPanePedidoLin) {
 		this.scrollPanePedidoLin = scrollPanePedidoLin;
+	}
+
+	public JPanel getPnlPedidoLin() {
+		return pnlPedidoLin;
+	}
+	public void setPnlPedidoLin(JPanel pnlPedidoLin) {
+		this.pnlPedidoLin = pnlPedidoLin;
+	}
+
+	public JButton getBtnPedItemEli() {
+		return btnPedItemEli;
+	}
+	public void setBtnPedItemEli(JButton btnPedItemEli) {
+		this.btnPedItemEli = btnPedItemEli;
 	}
 }

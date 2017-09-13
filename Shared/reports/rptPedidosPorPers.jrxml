@@ -6,6 +6,7 @@
 	<parameter name="id_persona" class="java.lang.Long"/>
 	<parameter name="fecha_ini" class="java.util.Date"/>
 	<parameter name="fecha_fin" class="java.util.Date"/>
+	<parameter name="estado" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[SELECT pd.id_persona, pd.fecha_hora, pd.estado, pd.fecha_prog, pd.hora_prog, pd.origen,
 	pd.sub_total, pd.iva, pd.total, pd.nom_usu, pd.nro_transac,
@@ -21,7 +22,7 @@ ON pd.id_persona = pf.documento
 LEFT OUTER JOIN pers_juridica pj
 ON pd.id_persona = pj.rut
 WHERE (p.id_persona = $P{id_persona} OR -1 = $P{id_persona})
-AND pd.estado IN ('P', 'R', 'C')
+AND (pd.estado = $P{estado} OR $P{estado} = '')
 AND pd.fecha_hora::date BETWEEN $P{fecha_ini} AND $P{fecha_fin}]]>
 	</queryString>
 	<field name="id_persona" class="java.lang.Long"/>
@@ -65,13 +66,20 @@ AND pd.fecha_hora::date BETWEEN $P{fecha_ini} AND $P{fecha_fin}]]>
 	</background>
 	<title>
 		<band height="45" splitType="Stretch">
-			<staticText>
-				<reportElement x="0" y="0" width="555" height="20" uuid="29393717-8e78-4a50-84dc-194c57913b5c"/>
+			<textField>
+				<reportElement x="0" y="0" width="555" height="31" uuid="155d838d-a2ec-423c-bc86-56d6567884f3"/>
 				<textElement textAlignment="Center">
 					<font fontName="Arial" size="16" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Pedidos pendientes]]></text>
-			</staticText>
+				<textFieldExpression><![CDATA["Pedidos" +
+($P{estado}.equals( "P" ) ? "Pendientes" :
+($P{estado}.equals("R") ? " en Revision" :
+($P{estado}.equals("F") ? " Pre Confirmados" :
+($P{estado}.equals("C") ? " Confirmados" :
+($P{estado}.equals("A") ? " Anulados" :
+($P{estado}.equals("X") ? " Rechazados" :
+""))))))]]></textFieldExpression>
+			</textField>
 		</band>
 	</title>
 	<pageHeader>
@@ -160,7 +168,7 @@ AND pd.fecha_hora::date BETWEEN $P{fecha_ini} AND $P{fecha_fin}]]>
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="23" splitType="Stretch">
+		<band height="21" splitType="Stretch">
 			<textField>
 				<reportElement x="0" y="1" width="99" height="20" uuid="bab80744-1b80-4e26-a5bc-8463b230af41"/>
 				<textElement>

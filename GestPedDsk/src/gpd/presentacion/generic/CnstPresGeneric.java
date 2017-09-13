@@ -65,6 +65,7 @@ public interface CnstPresGeneric {
 	public static final String COMPRA_ANULADA = "La compra se ha anulado.";
 	public static final String COMPRA_NOMODIF_PROD = "El prodcuto que intenta modificar no es parte de la compra.";
 	public static final String JTABLE_SIN_COMPRAS = "No hay compras para mostrar...";
+	public static final String JTABLE_SIN_VENTAS = "No hay ventas para mostrar...";
 	
 	//utilidad
 	public static final String UTIL = "Utilidad";
@@ -91,6 +92,7 @@ public interface CnstPresGeneric {
 	public static final String PEDIDO_LINEA_EXISTE = "La linea ya existe en el pedido.";
 	public static final String PEDIDO_LINEA_NO_EXISTE = "La linea no existe en el pedido.";
 	public static final String PEDIDO_NO_GENERADO = "El pedido no fue generado, o no tiene items.";
+	public static final String PEDIDO_SIN_LINEAS = "El pedido no tiene items.";
 	
 	//venta
 	public static final String VTA = "Venta";

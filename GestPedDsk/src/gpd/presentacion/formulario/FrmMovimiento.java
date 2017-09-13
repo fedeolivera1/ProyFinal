@@ -274,6 +274,7 @@ public class FrmMovimiento extends JFrame {
 		tpCompra.add(lblComprasPendientes);
 		
 		JButton btnCompraAnular = new JButton("Anular Compra");
+		btnCompraAnular.setForeground(Color.RED);
 		btnCompraAnular.setBounds(645, 465, 124, 23);
 		tpCompra.add(btnCompraAnular);
 		
@@ -304,12 +305,12 @@ public class FrmMovimiento extends JFrame {
 		pnlCompraDatos.add(btnCompraModItem);
 		
 		pnlGenerarCompra = new JPanel();
-		pnlGenerarCompra.setBounds(524, 0, 245, 45);
+		pnlGenerarCompra.setBounds(516, 0, 253, 45);
 		tpCompra.add(pnlGenerarCompra);
 		pnlGenerarCompra.setLayout(null);
 		
 		JButton btnCompraGenerar = new JButton("Generar Compra");
-		btnCompraGenerar.setBounds(124, 11, 111, 23);
+		btnCompraGenerar.setBounds(134, 11, 111, 23);
 		pnlGenerarCompra.add(btnCompraGenerar);
 		
 		JSeparator separator = new JSeparator();
@@ -368,6 +369,7 @@ public class FrmMovimiento extends JFrame {
 				ctrlMov.iniciarCompra(getFrmMovimiento(usr));
 			}
 		});
+		//generar compra
 		btnCompraGenerar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				ctrlMov.generarCompra();

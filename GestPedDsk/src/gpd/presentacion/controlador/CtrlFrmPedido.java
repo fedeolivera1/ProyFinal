@@ -138,15 +138,17 @@ public class CtrlFrmPedido extends CtrlGenerico implements CnstPresGeneric {
 				modeloJtPed.addColumn("Persona");
 				modeloJtPed.addColumn("Fecha - Hora");
 				modeloJtPed.addColumn("Items (prod|cant)");
-				modeloJtPed.addColumn("Estado pedido");
+				modeloJtPed.addColumn("Origen");
+				modeloJtPed.addColumn("Estado");
 				modeloJtPed.addColumn("Total");
 				for(Pedido pedido : listaPedido) {
-					Object [] fila = new Object[5];
+					Object [] fila = new Object[6];
 					fila[0] = pedido.getPersona();
 					fila[1] = pedido.getFechaHora();
 					fila[2] = pedido.getListaPedidoLinea().size();
-					fila[3] = pedido.getEstado().getEstadoPedido();
-					fila[4] = pedido.getTotal(); 
+					fila[3] = pedido.getOrigen().getOrigen();
+					fila[4] = pedido.getEstado().getEstadoPedido();
+					fila[5] = pedido.getTotal(); 
 					modeloJtPed.addRow(fila);
 				}
 				tabla.addMouseListener(new MouseAdapter() {
@@ -190,22 +192,28 @@ public class CtrlFrmPedido extends CtrlGenerico implements CnstPresGeneric {
 					private static final long serialVersionUID = 1L;
 					@Override
 				    public boolean isCellEditable (int fila, int columna) {
-				        return false;
+						return columna == 0 ? true : false;
 				    }
+					@Override
+					public Class<?> getColumnClass(int column) {
+						return column == 0 ? Boolean.class : Object.class;
+					}
 				};
 				tabla.setModel(modeloJtPed);
+				modeloJtPed.addColumn("");
 				modeloJtPed.addColumn("Producto");
-				modeloJtPed.addColumn("Fecha-Hora Pedido");
+				modeloJtPed.addColumn("Fecha-Hora");
 				modeloJtPed.addColumn("Precio Unit");
 				modeloJtPed.addColumn("Cantidad");
 				modeloJtPed.addColumn("SubTotal");
 				for(PedidoLinea pl : mapLineasPedido.values()) {
-					Object [] fila = new Object[5];
-					fila[0] = pl.getProducto();
-					fila[1] = pl.getPedido().getFechaHora();
-					fila[2] = pl.getPrecioUnit();
-					fila[3] = pl.getCantidad();
-					fila[4] = pl.getPrecioUnit() * pl.getCantidad();//fixme revisar decimales
+					Object [] fila = new Object[6];
+					fila[0] = new Boolean(false);
+					fila[1] = pl.getProducto();
+					fila[2] = pl.getPedido().getFechaHora();
+					fila[3] = pl.getPrecioUnit();
+					fila[4] = pl.getCantidad();
+					fila[5] = pl.getPrecioUnit() * pl.getCantidad();//fixme revisar decimales
 					modeloJtPed.addRow(fila);
 				}
 				
@@ -215,9 +223,8 @@ public class CtrlFrmPedido extends CtrlGenerico implements CnstPresGeneric {
 						int fila = tabla.rowAtPoint(me.getPoint());
 						int cols = tabla.getModel().getColumnCount();
 						if (fila > -1 && cols > 1) {
-							Producto prod = (Producto) tabla.getModel().getValueAt(fila, 0);
-//							Fecha fechaHora = (Fecha) tabla.getModel().getValueAt(fila, 1);
-							Integer cant = (Integer) tabla.getModel().getValueAt(fila, 3);
+							Producto prod = (Producto) tabla.getModel().getValueAt(fila, 1);
+							Integer cant = (Integer) tabla.getModel().getValueAt(fila, 4);
 							cargarDatosPedidoLin(prod, cant);
 						}
 					}
@@ -237,7 +244,11 @@ public class CtrlFrmPedido extends CtrlGenerico implements CnstPresGeneric {
 		if(esNuevo) {
 			strInfoPedido.append("Pedido nuevo.").append(ESC);
 		} else {
-			strInfoPedido.append("Pedido existente.").append(ESC);
+			strInfoPedido.append("Pedido existente.");
+			if(getPedidoInt() != null) {
+				strInfoPedido.append(" [").append(getPedidoInt().getEstado().getEstadoPedido()).append("]");
+			}
+			strInfoPedido.append(ESC);
 		}
 		if(mapLineasPedido != null && !mapLineasPedido.isEmpty()) {
 			strInfoPedido.append("Items:").append(ESC);
@@ -297,23 +308,36 @@ public class CtrlFrmPedido extends CtrlGenerico implements CnstPresGeneric {
 	
 	private void manejarControlesPorEstado(Pedido pedido) {
 		if(pedido != null) {
-			if( EstadoPedido.R.equals(pedido.getEstado()) ||
-					EstadoPedido.A.equals(pedido.getEstado()) || 
-					EstadoPedido.C.equals(pedido.getEstado())) {
-				//estado Revision[R] | Anulado[A] | Confirmado[C]
+			if( EstadoPedido.A.equals(pedido.getEstado()) || 
+					EstadoPedido.C.equals(pedido.getEstado()) ) {
+				//estado Anulado[A] | Confirmado[C]
 				getFrm().getBtnPedGenVenta().setEnabled(false);
 				getFrm().getBtnPedGenPedido().setEnabled(false);
-				if( (EstadoPedido.R.equals(pedido.getEstado()) && 
-						Origen.W.equals(pedido.getOrigen()) && 
-						Sinc.S.equals(pedido.getSinc())) ||
-						Origen.D.equals(pedido.getOrigen()) ) {
-					getFrm().getBtnPedActPedido().setEnabled(true);
-				} else {
-					getFrm().getBtnPedActPedido().setEnabled(false);
-				}
+				getFrm().getBtnPedActPedido().setEnabled(false);
 				getFrm().getBtnPedAnuPedido().setEnabled(false);
 				setContainerEnabled(getFrm().getPnlDatosPedido(), false);
+				setContainerEnabled(getFrm().getPnlPedidoLin(), false);
 				getFrm().getJtPedidoLin().setEnabled(false);
+			} else if( EstadoPedido.R.equals(pedido.getEstado()) ) {
+				//estado Revision[R]
+				getFrm().getBtnPedGenVenta().setEnabled(true);
+				getFrm().getBtnPedGenPedido().setEnabled(false);
+				getFrm().getBtnPedActPedido().setEnabled(true);
+				getFrm().getBtnPedAnuPedido().setEnabled(true);
+				setContainerEnabled(getFrm().getPnlDatosPedido(), true);
+				setContainerEnabled(getFrm().getPnlPedidoLin(), true);
+				getFrm().getJtPedidoLin().setEnabled(true);
+				if(Origen.W.equals(pedido.getOrigen()) && 
+						Sinc.S.equals(pedido.getSinc())) { //casos web
+					getFrm().getBtnPedGenVenta().setEnabled(false);
+					getFrm().getBtnPedActPedido().setEnabled(false);
+					getFrm().getBtnPedAnuPedido().setEnabled(false);
+					setContainerEnabled(getFrm().getPnlPedidoLin(), false);
+					getFrm().getJtPedidoLin().setEnabled(false);
+				} else if(Origen.W.equals(pedido.getOrigen()) && 
+						Sinc.N.equals(pedido.getSinc())) {
+					getFrm().getBtnPedGenVenta().setEnabled(false);
+				}
 			} else if(EstadoPedido.F.equals(pedido.getEstado())) {
 				//estado PreConfirmado[F] (permite solo generar la venta o anularlo)
 				getFrm().getBtnPedGenVenta().setEnabled(true);
@@ -321,13 +345,16 @@ public class CtrlFrmPedido extends CtrlGenerico implements CnstPresGeneric {
 				getFrm().getBtnPedAnuPedido().setEnabled(true);
 				getFrm().getBtnPedActPedido().setEnabled(false);
 				setContainerEnabled(getFrm().getPnlDatosPedido(), false);
+				setContainerEnabled(getFrm().getPnlPedidoLin(), false);
 				getFrm().getJtPedidoLin().setEnabled(false);
 			} else if(EstadoPedido.X.equals(pedido.getEstado())) {
+				//estado Rechazado[X] < solo web
 				getFrm().getBtnPedGenVenta().setEnabled(false);
 				getFrm().getBtnPedGenPedido().setEnabled(false);
 				getFrm().getBtnPedAnuPedido().setEnabled(false);
 				getFrm().getBtnPedActPedido().setEnabled(false);
 				setContainerEnabled(getFrm().getPnlDatosPedido(), false);
+				setContainerEnabled(getFrm().getPnlPedidoLin(), false);
 				getFrm().getJtPedidoLin().setEnabled(false);
 			} else {
 				getFrm().getBtnPedGenVenta().setEnabled(true);
@@ -335,6 +362,7 @@ public class CtrlFrmPedido extends CtrlGenerico implements CnstPresGeneric {
 				getFrm().getBtnPedAnuPedido().setEnabled(true);
 				getFrm().getBtnPedActPedido().setEnabled(true);
 				setContainerEnabled(getFrm().getPnlDatosPedido(), true);
+				setContainerEnabled(getFrm().getPnlPedidoLin(), true);
 				getFrm().getJtPedidoLin().setEnabled(true);
 			}
 		} else {
@@ -343,6 +371,7 @@ public class CtrlFrmPedido extends CtrlGenerico implements CnstPresGeneric {
 			getFrm().getBtnPedAnuPedido().setEnabled(true);
 			getFrm().getBtnPedActPedido().setEnabled(true);
 			setContainerEnabled(getFrm().getPnlDatosPedido(), true);
+			setContainerEnabled(getFrm().getPnlPedidoLin(), true);
 			getFrm().getJtPedidoLin().setEnabled(true);
 		}
 	}
@@ -394,8 +423,8 @@ public class CtrlFrmPedido extends CtrlGenerico implements CnstPresGeneric {
 			genComp.setComp(getFrm().getTxtPersDesc());
 			if(controlDatosObl(genComp)) {
 				if(getPedidoInt() != null) {
-					Producto prod = (Producto) jtPedidoLin.getValueAt(jtPedidoLin.getSelectedRow(), 0);//posi prod
-					Fecha fechaHora = (Fecha) jtPedidoLin.getValueAt(jtPedidoLin.getSelectedRow(), 1);//posi fecha-hora pedido
+					Producto prod = (Producto) jtPedidoLin.getValueAt(jtPedidoLin.getSelectedRow(), 1);//posi prod
+					Fecha fechaHora = (Fecha) jtPedidoLin.getValueAt(jtPedidoLin.getSelectedRow(), 2);//posi fecha-hora pedido
 					
 					KeyMapLp key = new KeyMapLp(getPedidoInt().getPersona().getIdPersona(), 
 							fechaHora.getAsNumber(Fecha.AMDHMS), 
@@ -421,6 +450,31 @@ public class CtrlFrmPedido extends CtrlGenerico implements CnstPresGeneric {
 				enviarWarning(PED, DATOS_OBLIG);
 			}
 		
+		} catch(Exception e) {
+			manejarExcepcion(e);
+		}
+	}
+	
+	public void eliminarItemPedido() {
+		try {
+			if(this.getFrm().getJtPedidoLin().getModel().getRowCount() > 0 && 
+					this.getFrm().getJtPedidoLin().getModel().getColumnCount() > 1) {
+				for(int i=0; i< getFrm().getJtPedidoLin().getModel().getRowCount(); i++) {
+					Boolean checked = (Boolean) getFrm().getJtPedidoLin().getModel().getValueAt(i, 0);
+					if (checked) {
+						Producto prod = (Producto) getFrm().getJtPedidoLin().getModel().getValueAt(i, 1);//posi prod
+						Fecha fechaHora = (Fecha) getFrm().getJtPedidoLin().getModel().getValueAt(i, 2);//posi fecha-hora pedido
+						KeyMapLp key = new KeyMapLp(getPedidoInt().getPersona().getIdPersona(), 
+								fechaHora.getAsNumber(Fecha.AMDHMS), 
+								prod.getIdProducto());
+						if(mapLineasPedido.containsKey(key)) {
+							mapLineasPedido.remove(key);
+						}
+					}
+				}
+				clearPanel(frm.getPnlDatosPedido());
+				cargarJtPedidoLin();
+			}
 		} catch(Exception e) {
 			manejarExcepcion(e);
 		}
@@ -595,6 +649,8 @@ public class CtrlFrmPedido extends CtrlGenerico implements CnstPresGeneric {
 						enviarInfo(PED, PEDIDO_ACT_OK);
 						limpiarPedido();
 					}
+				} else {
+					enviarWarning(PED, PEDIDO_SIN_LINEAS);
 				}
 			} else {
 				enviarWarning(PED, DATOS_OBLIG);

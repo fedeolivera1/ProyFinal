@@ -317,7 +317,7 @@ public class CtrlFrmMovimiento extends CtrlGenerico implements CnstPresGeneric {
 					}
 				});
 			} else {
-				cargarJTableVacia(tabla, JTABLE_SIN_COMPRAS);
+				cargarJTableVacia(tabla, JTABLE_SIN_VENTAS);
 			}
 		} catch(Exception e) {
 			manejarExcepcion(e);

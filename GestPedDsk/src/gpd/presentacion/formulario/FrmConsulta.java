@@ -23,6 +23,7 @@ import org.apache.log4j.Logger;
 
 import com.toedter.calendar.JDateChooser;
 
+import gpd.dominio.pedido.EstadoPedido;
 import gpd.dominio.transaccion.EstadoTran;
 import gpd.dominio.usuario.UsuarioDsk;
 import gpd.presentacion.controlador.CtrlFrmConsulta;
@@ -41,6 +42,7 @@ public class FrmConsulta extends JFrame {
 	private JTextField txtConsPersona;
 	private JComboBox<TipoReporte> cbxConsFiltro;
 	private JComboBox<EstadoTran> cbxConsEstadoTx;
+	private JComboBox<EstadoPedido> cbxConsEstadoPed;
 	private JDateChooser dchConsIni;
 	private JDateChooser dchConsFin;
 	private JCheckBox chkConsTodo;
@@ -118,6 +120,10 @@ public class FrmConsulta extends JFrame {
 		cbxConsEstadoTx.setVisible(false);
 		cbxConsEstadoTx.setBounds(304, 11, 147, 20);
 		panel.add(cbxConsEstadoTx);
+		cbxConsEstadoPed = new JComboBox<>();
+		cbxConsEstadoPed.setVisible(false);
+		cbxConsEstadoPed.setBounds(304, 11, 147, 20);
+		panel.add(cbxConsEstadoPed);
 		
 		JLabel label_1 = new JLabel("Persona");
 		label_1.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -144,6 +150,7 @@ public class FrmConsulta extends JFrame {
 		
 		ctrlInterno.cargarTipoRep(cbxConsFiltro);
 		ctrlInterno.cargarTipoTx(cbxConsEstadoTx);
+		ctrlInterno.cargarEstadoPedido(cbxConsEstadoPed);
 		
 		btnConsLimpiar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -235,8 +242,14 @@ public class FrmConsulta extends JFrame {
 	public JComboBox<EstadoTran> getCbxConsEstadoTx() {
 		return cbxConsEstadoTx;
 	}
-
 	public void setCbxConsEstadoTx(JComboBox<EstadoTran> cbxConsEstadoTx) {
 		this.cbxConsEstadoTx = cbxConsEstadoTx;
+	}
+
+	public JComboBox<EstadoPedido> getCbxConsEstadoPed() {
+		return cbxConsEstadoPed;
+	}
+	public void setCbxConsEstadoPed(JComboBox<EstadoPedido> cbxConsEstadoPed) {
+		this.cbxConsEstadoPed = cbxConsEstadoPed;
 	}
 }
