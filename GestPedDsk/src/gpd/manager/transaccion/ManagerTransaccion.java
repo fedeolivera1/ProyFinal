@@ -340,10 +340,8 @@ public class ManagerTransaccion {
 		try (Connection conn = Conector.getConn()) {
 			if(transaccion != null && TipoTran.V.equals(transaccion.getTipoTran())) {
 				Fecha ultAct = new Fecha(Fecha.AMDHMS);
-				transaccion.setEstadoTran(EstadoTran.A);
-				transaccion.setFechaHora(ultAct);
 				//se debe manejar lote para devolver cantidad de productos
-				error = validarAnulacionVto(transaccion);
+				error = validarAnulacion(transaccion);
 				if(error != null) {
 					return error;
 				} else {
@@ -363,6 +361,8 @@ public class ManagerTransaccion {
 						getInterfaceLote().actualizarStockLote(conn, loteActual.getIdLote(), stock);
 					}
 				}
+				transaccion.setEstadoTran(EstadoTran.A);
+				transaccion.setFechaHora(ultAct);
 				getInterfaceTransaccion().guardarTranEstado(conn, transaccion);
 				getInterfaceTransaccion().modificarEstadoTransaccion(conn, transaccion);
 				//elimino tran_vta_lote para la transaccion que se anula
@@ -385,28 +385,21 @@ public class ManagerTransaccion {
 		return error;
 	}
 	
-	private ErrorLogico validarAnulacionVto(Transaccion transaccion) throws PresentacionException {
+	private ErrorLogico validarAnulacion(Transaccion transaccion) throws PresentacionException {
 		ErrorLogico error = null;
 		try (Connection conn = Conector.getConn()) {
-			ManagerProducto mgrProd = new ManagerProducto();
+//			ManagerProducto mgrProd = new ManagerProducto();
 			ConfigDriver cfgDrv = ConfigDriver.getConfigDriver();
-			Integer diasTol = Integer.valueOf(cfgDrv.getVencTolerableAnul());
-			for(TranLinea tl : transaccion.getListaTranLinea()) {
-				Lote lote = mgrProd.obtenerLoteVtaPorTransacProdNoConn(conn, tl.getTransaccion().getNroTransac(), tl.getProducto().getIdProducto());
-				Fecha fechaAnulacion = new Fecha(Fecha.AMD);
-				Fecha fechaVto = lote.getVenc();
-				long diff = fechaVto.getTimeInMillis() - fechaAnulacion.getTimeInMillis(); 
-			    long dias = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
-			    /*
-			     * se maneja para la anulacion que los días restantes de vencimiento de los productos
-			     * no superen lo establecido por properties
-			     */
-				if(diasTol.longValue() > dias) {
-					error = new ErrorLogico();
-					error.setCodigo(0);
-					error.setDescripcion("Alguno de los productos no cumple con el requisito de tolerancia de vencimiento.");
-					return error;
-				}
+//			Integer diasTolVto = Integer.valueOf(cfgDrv.getVencTolerableAnul());
+			Integer diasTolAnu = Integer.valueOf(cfgDrv.getDiasTolerableAnul());
+			Fecha fechaAnulacion = new Fecha(Fecha.AMD);
+			long diff = fechaAnulacion.getTimeInMillis() - transaccion.getFechaHora().getTimeInMillis();
+			long diasDiff = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
+			if(diasDiff > diasTolAnu.longValue()) {
+				error = new ErrorLogico();
+				error.setCodigo(0);
+				error.setDescripcion("La tolerancia de anulacion de compra de [" + diasTolAnu + "] dias ha sido excedida.");
+				return error;
 			}
 		} catch (PersistenciaException | SQLException e) {
 			logger.fatal("Excepcion en ManagerTransaccion > validarAnulacionVto: " + e.getMessage(), e);

@@ -33,6 +33,7 @@ import gpd.presentacion.formulario.FrmMovimiento;
 import gpd.presentacion.generic.CnstPresExceptions;
 import gpd.presentacion.generic.CnstPresGeneric;
 import gpd.presentacion.generic.GenCompType;
+import gpd.types.ErrorLogico;
 import gpd.types.Fecha;
 
 public class CtrlFrmMovimiento extends CtrlGenerico implements CnstPresGeneric {
@@ -602,9 +603,13 @@ public class CtrlFrmMovimiento extends CtrlGenerico implements CnstPresGeneric {
 				if(enviarConfirm(VTA, VTA_CONF_ANULA) == CONFIRM_OK) {
 					Integer nroTransac = (Integer) frmMov.getJtVenta().getModel().getValueAt(frmMov.getJtVenta().getSelectedRow(), 0);
 					Transaccion transac = (Transaccion) mgrTran.obtenerTransaccionPorId(nroTransac);
-					mgrTran.anularTransaccionVenta(transac);
-					limpiarVenta();
-					enviarInfo(VTA, VTA_ANULADA);
+					ErrorLogico error = mgrTran.anularTransaccionVenta(transac);
+					if(error == null) {
+						limpiarVenta();
+						enviarInfo(VTA, VTA_ANULADA);
+					} else {
+						enviarWarning(VTA, error.getDescripcion());
+					}
 				}
 			}
 		} catch(Exception e) {

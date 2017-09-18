@@ -272,9 +272,9 @@ public class FrmProducto extends JFrame {
 		JPanel tpLote = new JPanel();
 		tabbedPane.addTab("Lote", null, tpLote, null);
 		tpLote.setLayout(null);
-		JButton btnCompraAct = new JButton("Actualizar Compra");
-		btnCompraAct.setBounds(647, 470, 122, 23);
-		tpLote.add(btnCompraAct);
+		JButton btnCompraConf = new JButton("Confirmar Compra");
+		btnCompraConf.setBounds(647, 470, 122, 23);
+		tpLote.add(btnCompraConf);
 		
 		scrollPaneLote = new JScrollPane();
 		scrollPaneLote.setBounds(10, 80, 759, 160);
@@ -528,9 +528,9 @@ public class FrmProducto extends JFrame {
 				ctrlProd.clearPanel(getPnlLoteDatos());
 			}
 		});
-		btnCompraAct.addActionListener(new ActionListener() {
+		btnCompraConf.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				ctrlProd.actualizarCompra(cbxLoteCompras);
+				ctrlProd.confirmarCompra(cbxLoteCompras);
 			}
 		});
 		//boton abrir ifrm unidad

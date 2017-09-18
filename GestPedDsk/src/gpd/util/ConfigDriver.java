@@ -86,8 +86,8 @@ public class ConfigDriver extends PropManager {
 	 * WebService Values
 	 * @throws Exception
 	 */
-	public String getVencTolerableAnul() throws Exception {
-		return super.getPropertyValue(CnstProp.PROP_CONFIG, CnstProp.CFG_VENC_TOL_ANUL);
+	public String getDiasTolerableAnul() throws Exception {
+		return super.getPropertyValue(CnstProp.PROP_CONFIG, CnstProp.CFG_DIAS_TOL_ANUL);
 	}
 	
 	public String getWsUrl() throws Exception {
@@ -103,11 +103,11 @@ public class ConfigDriver extends PropManager {
 	}
 	
 	public String getWsUsrName() throws Exception {
-		return super.getPropertyValue(CnstProp.PROP_CONFIG, CnstProp.CFG_WS_USRNAME);
+		return super.getPropertyValue(CnstProp.PROP_CONFIG, CnstProp.CFG_WS_USERNAME);
 	}
 	
 	public String getWsPassWd() throws Exception {
-		return super.getPropertyValue(CnstProp.PROP_CONFIG, CnstProp.CFG_WS_PASSWD);
+		return super.getPropertyValue(CnstProp.PROP_CONFIG, CnstProp.CFG_WS_PASSWORD);
 	}
 	
 	/**

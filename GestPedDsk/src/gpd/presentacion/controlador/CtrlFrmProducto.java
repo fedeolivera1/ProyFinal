@@ -969,7 +969,7 @@ public class CtrlFrmProducto extends CtrlGenerico implements CnstPresGeneric {
 		}
 	}
 	
-	public void actualizarCompra(JComboBox<Transaccion> cbxLoteCompras) {
+	public void confirmarCompra(JComboBox<Transaccion> cbxLoteCompras) {
 		try {
 			GenCompType genComp = new GenCompType();
 			genComp.setComp(cbxLoteCompras);

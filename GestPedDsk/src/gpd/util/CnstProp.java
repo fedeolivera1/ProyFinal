@@ -16,14 +16,14 @@ public interface CnstProp {
 
 	//datos properties config
 	public static final String CFG_DIAS_PARA_VENC = "dias_para_venc";
-	public static final String CFG_VENC_TOL_ANUL = "venc_tolerable_anulacion";
+	public static final String CFG_DIAS_TOL_ANUL = "dias_tolerable_anulacion";
 	
 	//datos properties consumo del webservice
 	public static final String CFG_WS_URL = "ws_url";
 	public static final String CFG_WS_TN = "ws_target_ns";
 	public static final String CFG_WS_NAME = "ws_name";
-	public static final String CFG_WS_USRNAME = "ws_usrname";
-	public static final String CFG_WS_PASSWD = "ws_passwd";
+	public static final String CFG_WS_USERNAME = "ws_username";
+	public static final String CFG_WS_PASSWORD = "ws_password";
 	
 	//datos properties url de conexion de prueba
 	public static final String CFG_INET_TEST_URL = "inet_test_url";
