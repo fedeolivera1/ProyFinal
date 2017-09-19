@@ -830,28 +830,49 @@ public class ManagerProducto {
 		}
 	}
 	
-//	public Lote obtenerLotePorId(Integer idLote) {
-//		logger.info("Se ingresa a obtenerLotePorId");
-//		try {
-//			Conector.getConn();
-//			Conector.closeConn("obtenerLotePorId");
-//		} catch (PersistenciaException e) {
-//			e.printStackTrace();
-//		}
-//		return null;
-//	}
+	/*****************************************************************************************************************************************************/
+	/** ADVERTENCIAS PROD Y LOTE */
+	/*****************************************************************************************************************************************************/
 	
-//	public Integer actualizarLote(Lote lote) {
-//		logger.info("Se ingresa a actualizarLote");
-//		try {
-//			Conector.getConn();
-//			resultado = getInterfaceLote().actualizarLote(lote);
-//			Conector.closeConn("actualizarLote");
-//		} catch (PersistenciaException e) {
-//			e.printStackTrace();
-//		}
-//		return resultado;
-//	}
+	/**
+	 * metodo de advertencias que devuelve los productos que tienen stock menor al minimo
+	 * contando los lotes en los cuales están contenidos
+	 * @return
+	 * @throws PresentacionException
+	 */
+	public List<Producto> obtenerProductosStockMenorAMin() throws PresentacionException {
+		List<Producto> listaProdSb = null;
+		try (Connection conn = Conector.getConn()) {
+			listaProdSb = getInterfaceProducto().obtenerProductosStockMenorAMin(conn);
+		} catch (PersistenciaException | SQLException e) {
+			logger.fatal("Excepcion en ManagerProducto > obtenerProductosStockMenorAMin: " + e.getMessage(), e);
+			throw new PresentacionException(e);
+		} catch (Exception e) {
+			logger.fatal("Excepcion GENERICA en ManagerProducto > obtenerProductosStockMenorAMin: " + e.getMessage(), e);
+			throw new PresentacionException(e);
+		}
+		return listaProdSb;
+	}
+	
+	/**
+	 * metodo de advertencias que recibe dias de tolerancia y devuelve lotes prox a vencer
+	 * o vencidos
+	 * @return
+	 * @throws PresentacionException
+	 */
+	public List<Lote> obtenerLotesProxVenc(Integer diasTol) throws PresentacionException {
+		List<Lote> listaLoteProxVenc = null;
+		try (Connection conn = Conector.getConn()) {
+			listaLoteProxVenc = getInterfaceLote().obtenerListaLoteProxVenc(conn, diasTol);
+		} catch (PersistenciaException | SQLException e) {
+			logger.fatal("Excepcion en ManagerProducto > obtenerLotesPorVenc: " + e.getMessage(), e);
+			throw new PresentacionException(e);
+		} catch (Exception e) {
+			logger.fatal("Excepcion GENERICA en ManagerProducto > obtenerLotesPorVenc: " + e.getMessage(), e);
+			throw new PresentacionException(e);
+		}
+		return listaLoteProxVenc;
+	}
 	
 	
 }

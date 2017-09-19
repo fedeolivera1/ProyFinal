@@ -5,7 +5,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.net.URL;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -54,6 +56,10 @@ public class FrmLogin extends JFrame {
 	 * Create the frame.
 	 */
 	public FrmLogin() {
+		setTitle("Login - YAMETL");
+		URL url = ClassLoader.getSystemResource("icon.png");
+		ImageIcon icon = new ImageIcon(url);
+		setIconImage(icon.getImage());
 		ctrl = new CtrlFrmLogin(this);
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

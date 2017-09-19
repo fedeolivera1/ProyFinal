@@ -46,8 +46,15 @@ public interface CnstQryLote {
 												+ "ON l.id_producto = p.id_producto "
 												+ "WHERE p.activo = 1 "
 												+ "AND l.id_producto = ? "
+												+ "AND (l.venc IS NOT NULL AND l.nro_dep IS NOT NULL AND l.id_util IS NOT NULL) "
 												+ "AND l.stock > 0 "
 												+ "AND DATE_PART('day', l.venc - now()) > ? "
 												+ "ORDER BY l.venc ASC";
+	
+	public static final String QRY_SELECT_LOTES_PROX_VENC = "SELECT * FROM lote l "
+												+ "INNER JOIN producto p "
+												+ "ON l.id_producto = p.id_producto "
+												+ "WHERE l.stock > 0 "
+												+ "AND DATE_PART('day', l.venc - now()) <= ?";
 
 }

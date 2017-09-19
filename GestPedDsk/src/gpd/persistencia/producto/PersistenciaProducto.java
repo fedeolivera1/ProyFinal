@@ -338,6 +338,34 @@ public class PersistenciaProducto extends Conector implements IPersProducto, Cns
 		}
 		return false;
 	}
+	
+	@Override
+	public List<Producto> obtenerProductosStockMenorAMin(Connection conn) throws PersistenciaException {
+		List<Producto> listaProd = new ArrayList<>();
+		try {
+			GenSqlSelectType genSel = new GenSqlSelectType(QRY_PROD_STOCK_MENOR_A_MIN);
+			try (ResultSet rs = (ResultSet) runGeneric(conn, genSel)) {
+				while(rs.next()) {
+					Producto producto = new Producto();
+					producto.setIdProducto(rs.getInt("id_producto"));
+					producto.setCodigo(rs.getString("codigo"));
+					producto.setNombre(rs.getString("nombre"));
+					producto.setDescripcion(rs.getString("descripcion"));
+					producto.setStockMin(rs.getFloat("stock_min"));
+					listaProd.add(producto);
+				}
+			}
+		} catch (ConectorException | SQLException e) {
+			Conector.rollbackConn(conn);
+			logger.fatal("Excepcion al obtenerBusquedaProducto: " + e.getMessage(), e);
+			throw new PersistenciaException(e);
+		} catch (Exception e) {
+			Conector.rollbackConn(conn);
+			logger.fatal("Excepcion GENERICA al obtenerBusquedaProducto: " + e.getMessage(), e);
+			throw new PersistenciaException(e);
+		}
+		return listaProd;
+	}
 
 
 }

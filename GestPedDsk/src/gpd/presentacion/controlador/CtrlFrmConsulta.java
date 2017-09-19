@@ -3,29 +3,39 @@ package gpd.presentacion.controlador;
 import java.awt.Container;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.ComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JDesktopPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import com.toedter.calendar.JDateChooser;
 
+import gpd.dominio.helper.HlpProducto;
 import gpd.dominio.pedido.EstadoPedido;
 import gpd.dominio.persona.TipoPersona;
+import gpd.dominio.producto.Lote;
+import gpd.dominio.producto.Producto;
 import gpd.dominio.transaccion.EstadoTran;
 import gpd.dominio.transaccion.TipoTran;
 import gpd.dominio.usuario.UsuarioDsk;
+import gpd.manager.producto.ManagerProducto;
 import gpd.presentacion.formulario.FrmConsulta;
 import gpd.presentacion.generic.CnstPresGeneric;
 import gpd.presentacion.generic.GenCompType;
 import gpd.reports.GeneradorReportes;
 import gpd.reports.TipoReporte;
+import gpd.types.Fecha;
 import gpd.util.ConfigDriver;
 
 public class CtrlFrmConsulta extends CtrlGenerico implements CnstPresGeneric {
 
+	private static final String ESC = "\n";
+	
 	private FrmConsulta frm;
 	private UsuarioDsk usr;
 	private JDesktopPane deskPane;
@@ -105,7 +115,7 @@ public class CtrlFrmConsulta extends CtrlGenerico implements CnstPresGeneric {
 				getFrm().getCbxConsEstadoTx().setSelectedItem(cbModel.getSelectedItem());
 				getFrm().getCbxConsEstadoTx().setVisible(true);
 			} else if(cbxConsFiltro.getSelectedItem().equals(TipoReporte.P)) {
-				getFrm().getCbxConsEstadoTx().setVisible(false);
+				cargaCtrlDef();
 				getFrm().getCbxConsEstadoPed().setVisible(true);
 			} else {
 				cargaCtrlDef();
@@ -202,6 +212,7 @@ public class CtrlFrmConsulta extends CtrlGenerico implements CnstPresGeneric {
 				mapParamsJr.put("fecha_ini", dateIni);
 				mapParamsJr.put("fecha_fin", dateFin);
 				mapParamsJr.put("estado", estado);
+				mapParamsJr.put("SUBREPORT_DIR", System.getProperty("file.separator"));
 				GeneradorReportes.abrirReporte("rptPedidosPorPers", mapParamsJr);
 			}
 		} catch(Exception e) {
@@ -257,6 +268,56 @@ public class CtrlFrmConsulta extends CtrlGenerico implements CnstPresGeneric {
 		clearForm(getFrm().getContentPane());
 		ctrlPb.setPersSel(null);
 		cargaCtrlDef();
+	}
+	
+	public void cargarProdStockMin(JTextArea txtProdStockMin) {
+		try {
+			StringBuilder str = new StringBuilder();
+			ManagerProducto mgrProd = new ManagerProducto();
+			List<Producto> listaProdStockBajo = mgrProd.obtenerProductosStockMenorAMin();
+			if(listaProdStockBajo != null && !listaProdStockBajo.isEmpty()) {
+				for(Producto prod : listaProdStockBajo) {
+					HlpProducto hlpProd = mgrProd.obtenerStockPrecioLotePorProducto(prod.getIdProducto());
+					str.append("El producto con id ").append(prod.getIdProducto()).append(" - codigo ").append(prod.getCodigo()).append(" - nombre ")
+						.append(prod.getNombre()).append(" tiene stock ").append(hlpProd.getStock()).append(" min[").append(prod.getStockMin()).append("]").append(ESC);
+				}
+				getFrm().getTxtProdStockMin().setText(str.toString());
+			}
+		} catch(Exception e) {
+			manejarExcepcion(e);
+		}
+	}
+	
+	public void cargarLotesPorVenc(JTextArea txtLotesAVenc, JTextArea txtLotesVenc) {
+		try {
+			StringBuilder strLpv = new StringBuilder();
+			StringBuilder strLv = new StringBuilder();
+			ManagerProducto mgrProd = new ManagerProducto();
+			ConfigDriver cfgDrv = ConfigDriver.getConfigDriver();
+			Integer diasParaVenc = Integer.valueOf(cfgDrv.getDiasParaVenc());
+			List<Lote> listaLotesPv = mgrProd.obtenerLotesProxVenc(diasParaVenc);
+			Fecha fechaAct = new Fecha(Fecha.AMD);
+			if(listaLotesPv != null && !listaLotesPv.isEmpty()) {
+				for(Lote lote : listaLotesPv) {
+					Producto prod = lote.getTranLinea().getProducto();
+					if(lote.getVenc().before(new Fecha(Fecha.AMD))) {
+						strLv.append("El lote ").append(lote.getIdLote()).append(" || Dep:").append(lote.getDeposito()).append(" || Prod: ")
+							.append(prod.getIdProducto()).append("|").append(prod.getCodigo()).append("|").append(prod.getNombre())
+							.append(" ha vencido en la fecha: ").append(lote.getVenc().toString(Fecha.DMA)).append(ESC);
+					} else {
+						long diff = lote.getVenc().getTimeInMillis() - fechaAct.getTimeInMillis();
+						long diasDiff = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
+						strLpv.append("El lote ").append(lote.getIdLote()).append(" || Dep:").append(lote.getDeposito()).append(" || Prod: ")
+							.append(prod.getIdProducto()).append("|").append(prod.getCodigo()).append("|").append(prod.getNombre())
+							.append(" se vencerá en ").append(diasDiff).append(" dias").append(ESC);
+					}
+				}
+				getFrm().getTxtLotesVenc().setText(strLv.toString());
+				getFrm().getTxtLotesAVenc().setText(strLpv.toString());
+			}
+		} catch(Exception e) {
+			manejarExcepcion(e);
+		}
 	}
 	
 

@@ -17,5 +17,7 @@ public interface IPersLote {
 	public Integer actualizarLote(Connection conn, Lote lote) throws PersistenciaException;
 	public Integer actualizarStockLote(Connection conn, Integer idLote, Integer stock) throws PersistenciaException;
 //	public Integer eliminarLote(Connection conn, Lote lote) throws PersistenciaException;
+	//warnings
+	public List<Lote> obtenerListaLoteProxVenc(Connection conn, Integer diasTol) throws PersistenciaException;
 	
 }

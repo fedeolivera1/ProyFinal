@@ -44,5 +44,13 @@ public interface CnstQryProducto {
 													+ "AND activo = 1";
 	
 	public static final String QRY_CHECK_EXIST_PROD = "SELECT (1) AS existe FROM producto WHERE id_producto = ?";
+	
+	public static final String QRY_PROD_STOCK_MENOR_A_MIN = "SELECT p.id_producto, p.codigo, p.nombre, p.descripcion, p.stock_min "
+													+ "FROM producto p "
+													+ "LEFT OUTER JOIN lote l "
+													+ "ON l.id_producto = p.id_producto "
+													+ "WHERE p.stock_min > (SELECT COALESCE(SUM(l.stock),0) FROM lote l WHERE l.id_producto = p.id_producto "
+													+ "AND (l.venc IS NOT NULL AND l.nro_dep IS NOT NULL AND l.id_util IS NOT NULL)) "
+													+ "GROUP BY p.id_producto";
 
 }

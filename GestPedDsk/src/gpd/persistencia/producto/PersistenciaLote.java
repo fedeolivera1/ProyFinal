@@ -249,11 +249,6 @@ public class PersistenciaLote extends Conector implements IPersLote, CnstQryLote
 		return resultado;
 	}
 
-//	@Override
-//	public Integer eliminarLote(Lote lote) throws PersistenciaException {
-//		return null;
-//	}
-
 	
 	/***************************************************/
 	/* METODOS GENERICOS */
@@ -298,6 +293,27 @@ public class PersistenciaLote extends Conector implements IPersLote, CnstQryLote
 		} catch (Exception e) {
 			//no rollbackea ya que debe ser metodo contenido por otro de pers
 			logger.fatal("Excepcion GENERICA al cargarLoteDesdeRs: " + e.getMessage(), e);
+			throw new PersistenciaException(e);
+		}
+		return listaLote;
+	}
+	
+	@Override
+	public List<Lote> obtenerListaLoteProxVenc(Connection conn, Integer diasTol) throws PersistenciaException {
+		List<Lote> listaLote = null;
+		try {
+			GenSqlSelectType genSel = new GenSqlSelectType(QRY_SELECT_LOTES_PROX_VENC);
+			genSel.setParam(diasTol);
+			try (ResultSet rs = (ResultSet) runGeneric(conn, genSel)) {
+				listaLote = cargarLoteDesdeRs(conn, rs);
+			}
+		} catch (ConectorException | SQLException e) {
+			Conector.rollbackConn(conn);
+			logger.fatal("Excepcion al obtenerListaTransaccionPorPersona: " + e.getMessage(), e);
+			throw new PersistenciaException(e);
+		} catch (Exception e) {
+			Conector.rollbackConn(conn);
+			logger.fatal("Excepcion GENERICA al eliminarDeposito: " + e.getMessage(), e);
 			throw new PersistenciaException(e);
 		}
 		return listaLote;

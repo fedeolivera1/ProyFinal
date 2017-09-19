@@ -29,6 +29,10 @@ import gpd.dominio.usuario.UsuarioDsk;
 import gpd.presentacion.controlador.CtrlFrmConsulta;
 import gpd.reports.TipoReporte;
 import javax.swing.JCheckBox;
+import javax.swing.JTextArea;
+import java.awt.Font;
+import javax.swing.JScrollPane;
+import java.awt.Color;
 
 public class FrmConsulta extends JFrame {
 
@@ -47,6 +51,12 @@ public class FrmConsulta extends JFrame {
 	private JDateChooser dchConsFin;
 	private JCheckBox chkConsTodo;
 	private JButton btnConsBp;
+	private JTextArea txtProdStockMin;
+	private JTextArea txtLotesAVenc;
+	private JTextArea txtLotesVenc;
+	private JLabel lblProductosConMenos;
+	private JLabel lblProductosProximosA;
+	private JLabel lblProductosVencidos;
 
 	public static FrmConsulta getFrmConsulta(UsuarioDsk usr) {
 		if(instance == null) {
@@ -60,7 +70,7 @@ public class FrmConsulta extends JFrame {
 	 * Create the frame.
 	 */
 	public FrmConsulta(UsuarioDsk usr) {
-		setTitle("Consulta");
+		setTitle("Consulta - YAMETL");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 800, 600);
 		contentPane = new JPanel();
@@ -144,6 +154,53 @@ public class FrmConsulta extends JFrame {
 		btnConsLimpiar.setBounds(503, 70, 89, 23);
 		panel.add(btnConsLimpiar);
 		
+		JPanel panel_1 = new JPanel();
+		panel_1.setBounds(10, 188, 764, 362);
+		contentPane.add(panel_1);
+		panel_1.setLayout(null);
+		
+		lblProductosConMenos = new JLabel("Productos con menos del stock minimo");
+		lblProductosConMenos.setBounds(10, 16, 219, 14);
+		panel_1.add(lblProductosConMenos);
+		
+		lblProductosProximosA = new JLabel("Lotes proximos a venc.");
+		lblProductosProximosA.setBounds(10, 131, 219, 14);
+		panel_1.add(lblProductosProximosA);
+		
+		lblProductosVencidos = new JLabel("Lotes vencidos");
+		lblProductosVencidos.setBounds(10, 245, 219, 14);
+		panel_1.add(lblProductosVencidos);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(10, 31, 744, 92);
+		panel_1.add(scrollPane);
+		
+		txtProdStockMin = new JTextArea();
+		txtProdStockMin.setForeground(Color.RED);
+		txtProdStockMin.setEditable(false);
+		scrollPane.setViewportView(txtProdStockMin);
+		txtProdStockMin.setFont(new Font("Monospaced", Font.PLAIN, 11));
+		
+		JScrollPane scrollPane_1 = new JScrollPane();
+		scrollPane_1.setBounds(10, 146, 744, 92);
+		panel_1.add(scrollPane_1);
+		
+		txtLotesAVenc = new JTextArea();
+		txtLotesAVenc.setForeground(new Color(210, 105, 30));
+		txtLotesAVenc.setEditable(false);
+		txtLotesAVenc.setFont(new Font("Monospaced", Font.PLAIN, 11));
+		scrollPane_1.setViewportView(txtLotesAVenc);
+		
+		JScrollPane scrollPane_2 = new JScrollPane();
+		scrollPane_2.setBounds(10, 260, 744, 92);
+		panel_1.add(scrollPane_2);
+		
+		txtLotesVenc = new JTextArea();
+		txtLotesVenc.setForeground(Color.RED);
+		txtLotesVenc.setEditable(false);
+		txtLotesVenc.setFont(new Font("Monospaced", Font.PLAIN, 11));
+		scrollPane_2.setViewportView(txtLotesVenc);
+		
 		/*****************************************************************************************************************************************************/
 		/* ACCIONES CONTROLES */
 		/*****************************************************************************************************************************************************/
@@ -151,6 +208,17 @@ public class FrmConsulta extends JFrame {
 		ctrlInterno.cargarTipoRep(cbxConsFiltro);
 		ctrlInterno.cargarTipoTx(cbxConsEstadoTx);
 		ctrlInterno.cargarEstadoPedido(cbxConsEstadoPed);
+		
+		//warnings
+		ctrlInterno.cargarProdStockMin(txtProdStockMin);
+		ctrlInterno.cargarLotesPorVenc(txtLotesAVenc, txtLotesVenc);
+		
+		JLabel lblAdvertencias = new JLabel("Advertencias");
+		lblAdvertencias.setBounds(20, 174, 86, 14);
+		contentPane.add(lblAdvertencias);
+		lblAdvertencias.setForeground(Color.RED);
+//		ctrlInterno.cargarProdProxAVenc();
+//		ctrlInterno.cargarProdVencidos();
 		
 		btnConsLimpiar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -251,5 +319,26 @@ public class FrmConsulta extends JFrame {
 	}
 	public void setCbxConsEstadoPed(JComboBox<EstadoPedido> cbxConsEstadoPed) {
 		this.cbxConsEstadoPed = cbxConsEstadoPed;
+	}
+
+	public JTextArea getTxtProdStockMin() {
+		return txtProdStockMin;
+	}
+	public void setTxtProdStockMin(JTextArea txtProdStockMin) {
+		this.txtProdStockMin = txtProdStockMin;
+	}
+
+	public JTextArea getTxtLotesAVenc() {
+		return txtLotesAVenc;
+	}
+	public void setTxtLotesAVenc(JTextArea txtLotesAVenc) {
+		this.txtLotesAVenc = txtLotesAVenc;
+	}
+
+	public JTextArea getTxtLotesVenc() {
+		return txtLotesVenc;
+	}
+	public void setTxtLotesVenc(JTextArea txtLotesVenc) {
+		this.txtLotesVenc = txtLotesVenc;
 	}
 }
