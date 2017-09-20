@@ -7,8 +7,10 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.net.URL;
 import java.util.GregorianCalendar;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDesktopPane;
@@ -27,6 +29,7 @@ import gpd.dominio.pedido.EstadoPedido;
 import gpd.dominio.transaccion.EstadoTran;
 import gpd.dominio.usuario.UsuarioDsk;
 import gpd.presentacion.controlador.CtrlFrmConsulta;
+import gpd.presentacion.generic.CnstPresGeneric;
 import gpd.reports.TipoReporte;
 import javax.swing.JCheckBox;
 import javax.swing.JTextArea;
@@ -73,6 +76,13 @@ public class FrmConsulta extends JFrame {
 		setTitle("Consulta - YAMETL");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 800, 600);
+		
+		if(ClassLoader.getSystemResource(CnstPresGeneric.ICON_BG) != null) {
+			URL url = ClassLoader.getSystemResource(CnstPresGeneric.ICON_BG);
+			ImageIcon icon = new ImageIcon(url);
+			setIconImage(icon.getImage());
+		}
+		
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);

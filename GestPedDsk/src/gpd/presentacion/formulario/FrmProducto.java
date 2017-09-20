@@ -11,9 +11,11 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.net.URL;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDesktopPane;
@@ -43,6 +45,8 @@ import gpd.dominio.transaccion.EstadoTran;
 import gpd.dominio.transaccion.Transaccion;
 import gpd.dominio.usuario.UsuarioDsk;
 import gpd.presentacion.controlador.CtrlFrmProducto;
+import gpd.presentacion.generic.CnstPresGeneric;
+
 import java.awt.event.FocusAdapter;
 
 public class FrmProducto extends JFrame {
@@ -101,9 +105,16 @@ public class FrmProducto extends JFrame {
 	public FrmProducto(UsuarioDsk usr) {
 		
 		setLocationRelativeTo(null);
-		setTitle("Producto");
+		setTitle("Producto - YAMETL");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 800, 600);
+		
+		if(ClassLoader.getSystemResource(CnstPresGeneric.ICON_BG) != null) {
+			URL url = ClassLoader.getSystemResource(CnstPresGeneric.ICON_BG);
+			ImageIcon icon = new ImageIcon(url);
+			setIconImage(icon.getImage());
+		}
+		
 		ctrlProd = new CtrlFrmProducto(this);
 		
 		contentPane = new JPanel();

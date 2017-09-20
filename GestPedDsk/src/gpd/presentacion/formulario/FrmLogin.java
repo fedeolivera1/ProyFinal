@@ -22,6 +22,7 @@ import javax.swing.border.EmptyBorder;
 import org.apache.log4j.Logger;
 
 import gpd.presentacion.controlador.CtrlFrmLogin;
+import gpd.presentacion.generic.CnstPresGeneric;
 
 public class FrmLogin extends JFrame {
 
@@ -32,6 +33,7 @@ public class FrmLogin extends JFrame {
 	private CtrlFrmLogin ctrl;
 	private JPasswordField txtPass;
 	private JLabel lblPassword;
+	private JLabel lblLogo;
 
 	/**
 	 * Launch the application.
@@ -57,13 +59,16 @@ public class FrmLogin extends JFrame {
 	 */
 	public FrmLogin() {
 		setTitle("Login - YAMETL");
-		URL url = ClassLoader.getSystemResource("icon.png");
-		ImageIcon icon = new ImageIcon(url);
-		setIconImage(icon.getImage());
 		ctrl = new CtrlFrmLogin(this);
-		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
+		
+		if(ClassLoader.getSystemResource(CnstPresGeneric.ICON_BG) != null) {
+			URL url = ClassLoader.getSystemResource(CnstPresGeneric.ICON_BG);
+			ImageIcon icon = new ImageIcon(url);
+			setIconImage(icon.getImage());
+		}
+		
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -112,6 +117,13 @@ public class FrmLogin extends JFrame {
 		lblPassword.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblPassword.setBounds(248, 128, 46, 14);
 		contentPane.add(lblPassword);
+		
+		if(ClassLoader.getSystemResource("icon_md.png") != null) {
+			ImageIcon imagen = new ImageIcon(ClassLoader.getSystemResource(CnstPresGeneric.ICON_MD));
+			lblLogo = new JLabel(imagen);
+			lblLogo.setBounds(10, 11, 152, 152);
+			contentPane.add(lblLogo);
+		}
 	}
 	
 }

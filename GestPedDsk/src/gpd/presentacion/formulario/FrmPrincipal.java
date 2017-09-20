@@ -3,9 +3,12 @@ package gpd.presentacion.formulario;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.URL;
 
+import javax.swing.ImageIcon;
 import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -16,6 +19,7 @@ import javax.swing.border.EmptyBorder;
 import gpd.dominio.usuario.TipoUsr;
 import gpd.dominio.usuario.UsuarioDsk;
 import gpd.presentacion.controlador.CtrlFrmUsuario;
+import gpd.presentacion.generic.CnstPresGeneric;
 
 public class FrmPrincipal extends JFrame {
 
@@ -30,9 +34,17 @@ public class FrmPrincipal extends JFrame {
 	 * Create the frame.
 	 */
 	public FrmPrincipal(UsuarioDsk usr) {
+		setTitle("Principal - YAMETL");
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 800, 600);
+		
+		if(ClassLoader.getSystemResource(CnstPresGeneric.ICON_BG) != null) {
+			URL url = ClassLoader.getSystemResource(CnstPresGeneric.ICON_BG);
+			ImageIcon icon = new ImageIcon(url);
+			setIconImage(icon.getImage());
+		}
+		
 		ctrlUsuario = new CtrlFrmUsuario(this);
 		setUsrLogueado(usr);
 		
@@ -246,14 +258,15 @@ public class FrmPrincipal extends JFrame {
 		contentPane.add(desktopPane);
 		//agrego desktopPane a controlador
 		ctrlUsuario.setDeskPane(desktopPane);
-		
-		JPanel pnlPpal = new JPanel();
-		pnlPpal.setBounds(0, 0, 784, 545);
-		contentPane.add(pnlPpal);
-		pnlPpal.setLayout(null);
-		
-	}
 
+		if(ClassLoader.getSystemResource(CnstPresGeneric.LOGO) != null) {
+			ImageIcon imagen = new ImageIcon(ClassLoader.getSystemResource(CnstPresGeneric.LOGO));
+			JLabel lblLogo = new JLabel(imagen);
+			lblLogo.setBounds(10, 11, 764, 176);
+			contentPane.add(lblLogo);
+		}
+	}
+	
 
 	public UsuarioDsk getUsrLogueado() {
 		return usrLogueado;

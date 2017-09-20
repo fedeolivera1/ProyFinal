@@ -13,8 +13,10 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.net.URL;
 import java.util.GregorianCalendar;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDesktopPane;
@@ -43,6 +45,7 @@ import gpd.dominio.producto.TipoProd;
 import gpd.dominio.usuario.UsuarioDsk;
 import gpd.dominio.util.Origen;
 import gpd.presentacion.controlador.CtrlFrmPedido;
+import gpd.presentacion.generic.CnstPresGeneric;
 
 public class FrmPedido extends JFrame {
 
@@ -95,9 +98,16 @@ public class FrmPedido extends JFrame {
 	public FrmPedido(UsuarioDsk usr) {
 		ctrlPed = new CtrlFrmPedido(this, usr);
 				 
-		setTitle("Pedido");
+		setTitle("Pedido - YAMETL");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 800, 600);
+		
+		if(ClassLoader.getSystemResource(CnstPresGeneric.ICON_BG) != null) {
+			URL url = ClassLoader.getSystemResource(CnstPresGeneric.ICON_BG);
+			ImageIcon icon = new ImageIcon(url);
+			setIconImage(icon.getImage());
+		}
+		
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);

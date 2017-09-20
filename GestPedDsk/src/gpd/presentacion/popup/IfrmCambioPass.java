@@ -5,6 +5,8 @@ import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JPasswordField;
 import javax.swing.SwingConstants;
+import javax.swing.event.InternalFrameAdapter;
+import javax.swing.event.InternalFrameEvent;
 
 import gpd.presentacion.controlador.CtrlFrmUsuario;
 import java.awt.event.ActionListener;
@@ -66,9 +68,17 @@ public class IfrmCambioPass extends JInternalFrame {
 				ctrlInterno.cambiarCont(pwfPassAct, pwfPassNueva1, pwfPassNueva2);
 			}
 		});
+		
+		/***************************************************/
+		/* EVENTO CIERRE DEL IFRM */
+		/***************************************************/
+		
+		addInternalFrameListener(new InternalFrameAdapter() {
+			@Override
+			public void internalFrameClosing(InternalFrameEvent arg0) {
+				ctrlInterno.cerrarIFrmCp();
+			}
+		});
 	}
-	
-	
-	
 
 }

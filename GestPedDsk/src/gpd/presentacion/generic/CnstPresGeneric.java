@@ -2,6 +2,11 @@ package gpd.presentacion.generic;
 
 public interface CnstPresGeneric {
 	
+	//imagenes
+	public static final String ICON_MD = "icon_md.png";
+	public static final String ICON_BG = "icon_bg.png";
+	public static final String LOGO = "logo.png";
+	
 	//usuario
 	public static final String USR = "Usuario";
 	public final static String USR_DATOS = "Debe proporcionar nombre de usuario y password.";

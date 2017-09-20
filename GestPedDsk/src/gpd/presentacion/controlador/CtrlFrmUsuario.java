@@ -231,6 +231,7 @@ public class CtrlFrmUsuario extends CtrlGenerico implements CnstPresGeneric {
 			Component comp = getFrmPpal().getContentPane().getComponent(1);
 			getDeskPane().setBounds(0, 0, 0, 0);
 			comp.setVisible(true);
+			comp.repaint();
 		} catch(Exception e) {
 			manejarExcepcion(e);
 		}
@@ -256,6 +257,7 @@ public class CtrlFrmUsuario extends CtrlGenerico implements CnstPresGeneric {
 			Component comp = getFrmPpal().getContentPane().getComponent(1);
 			getDeskPane().setBounds(0, 0, 0, 0);
 			comp.setVisible(true);
+			comp.repaint();
 		} catch(Exception e) {
 			manejarExcepcion(e);
 		}
