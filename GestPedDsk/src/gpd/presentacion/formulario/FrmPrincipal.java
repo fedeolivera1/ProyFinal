@@ -20,6 +20,10 @@ import gpd.dominio.usuario.TipoUsr;
 import gpd.dominio.usuario.UsuarioDsk;
 import gpd.presentacion.controlador.CtrlFrmUsuario;
 import gpd.presentacion.generic.CnstPresGeneric;
+import javax.swing.SwingConstants;
+import javax.swing.JTextField;
+import java.awt.Color;
+import java.awt.Font;
 
 public class FrmPrincipal extends JFrame {
 
@@ -28,6 +32,7 @@ public class FrmPrincipal extends JFrame {
 	private CtrlFrmUsuario ctrlUsuario;
 	private JDesktopPane desktopPane;
 	private UsuarioDsk usrLogueado;
+	private JTextField txtUsrLog;
 
 
 	/**
@@ -67,9 +72,10 @@ public class FrmPrincipal extends JFrame {
 				ctrlUsuario.abrirIFrmUsu();
 			}
 		});
-		//control usr //FIXME revisar esto
+		/*
+		 * manejo de usuarios solamente habilitados para usuarios admin
+		 */
 		mntmUsuario.setEnabled(usr.getTipoUsr().equals(TipoUsr.A) ? true : false);
-		//
 		mnArchivo.add(mntmUsuario);
 		
 		JMenuItem mntmCambioContr = new JMenuItem("Cambio Contr");
@@ -192,6 +198,10 @@ public class FrmPrincipal extends JFrame {
 				frmMov.setVisible(true);
 			}
 		});
+		/*
+		 * compras solamente habilitadas para usuarios admin
+		 */
+		mntmCompra.setEnabled(usr.getTipoUsr().equals(TipoUsr.A) ? true : false);
 		mnMovimiento.add(mntmCompra);
 		
 		JMenuItem mntmVenta = new JMenuItem("Venta");
@@ -258,6 +268,23 @@ public class FrmPrincipal extends JFrame {
 		contentPane.add(desktopPane);
 		//agrego desktopPane a controlador
 		ctrlUsuario.setDeskPane(desktopPane);
+		
+		JLabel lblUsuario = new JLabel("Usuario:");
+		lblUsuario.setFont(new Font("Tahoma", Font.BOLD, 12));
+		lblUsuario.setForeground(Color.BLUE);
+		lblUsuario.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblUsuario.setBounds(10, 503, 56, 26);
+		contentPane.add(lblUsuario);
+		
+		txtUsrLog = new JTextField();
+		txtUsrLog.setFont(new Font("Tahoma", Font.BOLD, 12));
+		txtUsrLog.setForeground(Color.BLUE);
+		txtUsrLog.setBorder(null);
+		txtUsrLog.setEditable(false);
+		txtUsrLog.setBounds(69, 507, 170, 20);
+		txtUsrLog.setColumns(10);
+		txtUsrLog.setText(usr.getNomUsu());
+		contentPane.add(txtUsrLog);
 
 		if(ClassLoader.getSystemResource(CnstPresGeneric.LOGO) != null) {
 			ImageIcon imagen = new ImageIcon(ClassLoader.getSystemResource(CnstPresGeneric.LOGO));

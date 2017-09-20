@@ -278,8 +278,8 @@ public class CtrlFrmConsulta extends CtrlGenerico implements CnstPresGeneric {
 			if(listaProdStockBajo != null && !listaProdStockBajo.isEmpty()) {
 				for(Producto prod : listaProdStockBajo) {
 					HlpProducto hlpProd = mgrProd.obtenerStockPrecioLotePorProducto(prod.getIdProducto());
-					str.append("El producto con id ").append(prod.getIdProducto()).append(" - codigo ").append(prod.getCodigo()).append(" - nombre ")
-						.append(prod.getNombre()).append(" tiene stock ").append(hlpProd.getStock()).append(" min[").append(prod.getStockMin()).append("]").append(ESC);
+					str.append("El producto con id ").append(prod.getIdProducto()).append(" | ").append(prod.getCodigo()).append(" | ")
+						.append(prod.getNombre()).append(" tiene stock ").append(hlpProd.getStock()).append(" min [").append(prod.getStockMin()).append("]").append(ESC);
 				}
 				getFrm().getTxtProdStockMin().setText(str.toString());
 			}
@@ -300,10 +300,14 @@ public class CtrlFrmConsulta extends CtrlGenerico implements CnstPresGeneric {
 			if(listaLotesPv != null && !listaLotesPv.isEmpty()) {
 				for(Lote lote : listaLotesPv) {
 					Producto prod = lote.getTranLinea().getProducto();
-					if(lote.getVenc().before(new Fecha(Fecha.AMD))) {
-						strLv.append("El lote ").append(lote.getIdLote()).append(" || Dep:").append(lote.getDeposito()).append(" || Prod: ")
+					if(lote.getVenc().before(fechaAct)) {
+						long diff = fechaAct.getTimeInMillis() - lote.getVenc().getTimeInMillis();
+						long diasDiff = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
+						if(diasDiff < 30) {
+							strLv.append("El lote ").append(lote.getIdLote()).append(" || Dep:").append(lote.getDeposito()).append(" || Prod: ")
 							.append(prod.getIdProducto()).append("|").append(prod.getCodigo()).append("|").append(prod.getNombre())
 							.append(" ha vencido en la fecha: ").append(lote.getVenc().toString(Fecha.DMA)).append(ESC);
+						}
 					} else {
 						long diff = lote.getVenc().getTimeInMillis() - fechaAct.getTimeInMillis();
 						long diasDiff = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
