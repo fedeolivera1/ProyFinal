@@ -59,7 +59,7 @@ public class ParserParamPedido {
 					paramPas.setFechaHora(pedido.getFechaHora().getAsXMLGregorianCalendar(Fecha.AMDHMS));
 					paramPas.setEstado(pedido.getEstado().getEstadoPedido());
 					paramPas.setFechaProg(pedido.getFechaProg() != null ? pedido.getFechaProg().getAsXMLGregorianCalendar(Fecha.AMD) : null);
-					paramPas.setFechaProg(pedido.getHoraProg() != null ? pedido.getHoraProg().getHoraAsXMLGregorianCalendar() : null);
+					paramPas.setHoraProg(pedido.getHoraProg() != null ? pedido.getHoraProg().getHoraAsXMLGregorianCalendar() : null);
 					paramPas.setOrigen(pedido.getOrigen().getOrigen());
 					paramPas.setTotal(pedido.getTotal());
 					paramPas.setSinc(pedido.getSinc().getSinc());

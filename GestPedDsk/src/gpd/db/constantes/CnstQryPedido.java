@@ -35,7 +35,8 @@ public interface CnstQryPedido {
 													+ "sub_total, iva, total, nom_usu, nro_transac, sinc, ult_act) "
 												+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 	
-	public static final String QRY_UPDATE_PEDIDO = "UPDATE pedido SET estado = ?, fecha_prog = ?, hora_prog = ?, sub_total = ?, iva = ?, total = ?, sinc = ?, ult_act = ? "
+	public static final String QRY_UPDATE_PEDIDO = "UPDATE pedido SET estado = ?, fecha_prog = ?, hora_prog = ?, sub_total = ?, iva = ?, total = ?, "
+												+ "nom_usu = ?, nro_transac = ?, sinc = ?, ult_act = ? "
 												+ "WHERE id_persona = ? "
 												+ "AND fecha_hora = ? ";
 	

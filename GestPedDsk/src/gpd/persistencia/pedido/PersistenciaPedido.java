@@ -342,6 +342,8 @@ public class PersistenciaPedido extends Conector implements IPersPedido, CnstQry
 		genExec.setParam(pedido.getSubTotal());
 		genExec.setParam(pedido.getIva());
 		genExec.setParam(pedido.getTotal());
+		genExec.setParam(pedido.getUsuario().getNomUsu());
+		genExec.setParam(pedido.getTransaccion().getNroTransac());
 		genExec.setParam(pedido.getSinc().getAsChar());
 		genExec.setParam(pedido.getUltAct());
 		genExec.setParam(pedido.getPersona().getIdPersona());

@@ -644,7 +644,7 @@ public class CtrlFrmPedido extends CtrlGenerico implements CnstPresGeneric {
 						Fecha horaProg = convertirHoraDesdeTxt(getFrm().getFtxtPedHora().getText());
 						pedido.setHoraProg(horaProg);
 					}
-					String res = mgrPed.actualizarPedido(pedido, EstadoPedido.R);
+					String res = mgrPed.actualizarPedido(pedido, EstadoPedido.R, getUsr());
 					if(null == res) {
 						enviarInfo(PED, PEDIDO_ACT_OK);
 						limpiarPedido();
@@ -666,7 +666,7 @@ public class CtrlFrmPedido extends CtrlGenerico implements CnstPresGeneric {
 			genComp.setComp(jtPedido);
 			if(controlDatosObl(genComp)) {
 				Pedido pedido = getPedidoInt();
-				String res = mgrPed.actualizarPedido(pedido, EstadoPedido.A);
+				String res = mgrPed.actualizarPedido(pedido, EstadoPedido.A, getUsr());
 				if(null == res) {
 					enviarInfo(PED, PEDIDO_ANU_OK);
 					limpiarPedido();
@@ -688,7 +688,7 @@ public class CtrlFrmPedido extends CtrlGenerico implements CnstPresGeneric {
 				Fecha fechaHora = (Fecha) jtPedido.getModel().getValueAt(jtPedido.getSelectedRow(), 1);
 				Pedido pedido = mgrPed.obtenerPedidoPorId(pers.getIdPersona(), fechaHora);
 				if(enviarConfirm(PED, VTA_CONF_GEN) == CONFIRM_OK) {
-					String control = mgrPed.actualizarPedido(pedido, EstadoPedido.C);
+					String control = mgrPed.actualizarPedido(pedido, EstadoPedido.C, getUsr());
 					if(null == control) {
 						enviarInfo(VTA, VTA_GENERADA_OK);
 						limpiarPedido();

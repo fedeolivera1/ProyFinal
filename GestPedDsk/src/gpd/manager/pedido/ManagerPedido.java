@@ -16,6 +16,7 @@ import gpd.dominio.transaccion.EstadoTran;
 import gpd.dominio.transaccion.TipoTran;
 import gpd.dominio.transaccion.TranLinea;
 import gpd.dominio.transaccion.Transaccion;
+import gpd.dominio.usuario.UsuarioDsk;
 import gpd.dominio.util.Converters;
 import gpd.dominio.util.Origen;
 import gpd.dominio.util.Sinc;
@@ -164,7 +165,7 @@ public class ManagerPedido {
 	 * @throws PresentacionException
 	 * @throws ProductoSinStockException
 	 */
-	public String actualizarPedido(Pedido pedido, EstadoPedido estPedCambio) throws PresentacionException, ProductoSinStockException {
+	public String actualizarPedido(Pedido pedido, EstadoPedido estPedCambio, UsuarioDsk usr) throws PresentacionException, ProductoSinStockException {
 		try (Connection conn = Conector.getConn()) {
 			if( (EstadoPedido.P.equals(pedido.getEstado()) && EstadoPedido.C.equals(estPedCambio)) || 
 					(EstadoPedido.F.equals(pedido.getEstado()) && EstadoPedido.C.equals(estPedCambio))) {
@@ -224,6 +225,8 @@ public class ManagerPedido {
 						transac.setFechaHora(new Fecha(Fecha.AMDHMS));
 						ManagerTransaccion mgrTransac = new ManagerTransaccion();
 						mgrTransac.generarTransaccionVenta(conn, transac);
+						//le seteo al pedido la transaccion ya que en los casos web, de inicio no tendran transaccion asociada
+						pedido.setTransaccion(transac);
 					}
 					
 					for(PedidoLinea pl : pedido.getListaPedidoLinea()) {
@@ -231,6 +234,8 @@ public class ManagerPedido {
 					}
 					pedido.setEstado(EstadoPedido.C);
 					pedido.setSinc(Sinc.N);
+					//le seteo el usuario actualizador del pedido
+					pedido.setUsuario(usr);
 					getInterfacePedido().modificarPedido(conn, pedido);
 					//* guardo nuevo estado en tabla de estados (seteo fecha-hora temporalmente para estado_tran)
 					Conector.commitConn(conn);
