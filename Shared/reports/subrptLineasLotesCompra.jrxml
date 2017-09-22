@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subrptLineasLotes" language="groovy" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="22f010a9-06f8-46c2-b2f4-433f8c4fccd1">
+	<property name="ireport.zoom" value="1.7715610000000013"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="nro_transac" class="java.lang.Integer"/>
+	<parameter name="id_producto" class="java.lang.Integer"/>
+	<queryString>
+		<![CDATA[SELECT l.id_lote, l.nro_dep, d.nombre, l.stock
+FROM lote l
+INNER JOIN deposito d
+ON l.nro_dep = d.nro_dep
+WHERE l.nro_transac = $P{nro_transac}
+AND l.id_producto = $P{id_producto}]]>
+	</queryString>
+	<field name="id_lote" class="java.lang.Integer"/>
+	<field name="nro_dep" class="java.lang.Integer"/>
+	<field name="nombre" class="java.lang.String"/>
+	<field name="stock" class="java.lang.Integer"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="23" splitType="Stretch">
+			<line>
+				<reportElement x="231" y="2" width="176" height="1" uuid="cbeef43e-b5cb-40fe-9ea1-3a55279cc787"/>
+			</line>
+			<staticText>
+				<reportElement x="231" y="4" width="37" height="14" uuid="7566e825-03f4-48e6-8b1a-532343bb42be"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Lote]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="268" y="4" width="84" height="14" uuid="777f0b58-610c-48e4-ab5b-0e382ba2fe76"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Deposito]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="352" y="4" width="55" height="14" uuid="5418fcf4-43db-483d-ad0b-780a4eea230e"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Stock]]></text>
+			</staticText>
+			<line>
+				<reportElement x="231" y="20" width="176" height="1" uuid="63bc8298-1bd3-42fa-843c-08fd31a432c8"/>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<textField>
+				<reportElement x="231" y="1" width="37" height="14" uuid="971690f8-8bc5-4a5b-bb89-3433d80dd39c"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{id_lote}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="268" y="1" width="84" height="14" uuid="9a01ef2a-e828-471c-a34e-ad40a2461369"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nro_dep} + " | " + $F{nombre}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="352" y="0" width="55" height="14" uuid="cfdbe8b7-91fa-440c-a62f-def3d5cf4276"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{stock}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

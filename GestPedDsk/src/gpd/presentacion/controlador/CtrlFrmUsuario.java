@@ -93,12 +93,16 @@ public class CtrlFrmUsuario extends CtrlGenerico implements CnstPresGeneric {
 				String contUno = String.valueOf(txtPasswd.getPassword());
 				String contDos = String.valueOf(txtPasswd2.getPassword());
 				if(controlIgualdadPass(contUno, contDos)) {
-					String cont = getMD5(contUno);
-					UsuarioDsk usr = new UsuarioDsk(txtNomUsu.getText(), cont, cbxTipoUsr.getItemAt(cbxTipoUsr.getSelectedIndex()));
-					mgrUsr.guardarUsuario(usr);
-					clearControlsInJPanel(getIfrmUsr().getPnlDatosUsu());
-					cargarListUsuario(getIfrmUsr().getJlUsuario());
-					enviarInfo(USR, USR_ING_OK);
+					if(!mgrUsr.checkExistUsuario(txtNomUsu.getText())) {
+						String cont = getMD5(contUno);
+						UsuarioDsk usr = new UsuarioDsk(txtNomUsu.getText(), cont, cbxTipoUsr.getItemAt(cbxTipoUsr.getSelectedIndex()));
+						mgrUsr.guardarUsuario(usr);
+						clearControlsInJPanel(getIfrmUsr().getPnlDatosUsu());
+						cargarListUsuario(getIfrmUsr().getJlUsuario());
+						enviarInfo(USR, USR_ING_OK);
+					} else {
+						enviarWarning(USR, USR_EXIST);
+					}
 				} else {
 					enviarWarning(USR, USR_PASS_REP);
 				}
@@ -118,13 +122,17 @@ public class CtrlFrmUsuario extends CtrlGenerico implements CnstPresGeneric {
 			genComp.setComp(jlUsuario);
 			if(controlDatosObl(genComp)) {
 				UsuarioDsk usr = (UsuarioDsk) jlUsuario.getSelectedValue();
-				usr.setTipoUsr((TipoUsr) cbxTipoUsr.getSelectedItem());
-				mgrUsr.modificarUsuarioSinPass(usr);
-				setContainerEnabled(getIfrmUsr().getPwfUsuPass1(), true);
-				setContainerEnabled(getIfrmUsr().getPwfUsuPass2(), true);
-				clearControlsInJPanel(getIfrmUsr().getPnlDatosUsu());
-				cargarListUsuario(getIfrmUsr().getJlUsuario());
-				enviarInfo(USR, USR_MOD_OK);
+				if(usr.getNomUsu().equalsIgnoreCase(ADMIN)) {
+					enviarWarning(USR, USR_ADMIN_NC);
+				} else {
+					usr.setTipoUsr((TipoUsr) cbxTipoUsr.getSelectedItem());
+					mgrUsr.modificarUsuarioSinPass(usr);
+					setContainerEnabled(getIfrmUsr().getPwfUsuPass1(), true);
+					setContainerEnabled(getIfrmUsr().getPwfUsuPass2(), true);
+					clearControlsInJPanel(getIfrmUsr().getPnlDatosUsu());
+					cargarListUsuario(getIfrmUsr().getJlUsuario());
+					enviarInfo(USR, USR_MOD_OK);
+				}
 			} else {
 				enviarWarning(USR, DATOS_OBLIG);
 			}
@@ -139,11 +147,15 @@ public class CtrlFrmUsuario extends CtrlGenerico implements CnstPresGeneric {
 			GenCompType genComp = new GenCompType();
 			genComp.setComp(jlUsuario);
 			if(controlDatosObl(genComp)) {
-				UsuarioDsk usuario = jlUsuario.getSelectedValue();
-				if(enviarConfirm(USR, USR_ELI_CONFIRM + usuario.getNomUsu() + QUESTION) == CONFIRM_OK) {
-					mgrUsr.eliminarUsuario(usuario);
-					cargarListUsuario(getIfrmUsr().getJlUsuario());
-					enviarInfo(USR, USR_ELI_OK);
+				UsuarioDsk usr = jlUsuario.getSelectedValue();
+				if(usr.getNomUsu().equalsIgnoreCase(ADMIN)) {
+					enviarWarning(USR, USR_ADMIN_NC);
+				} else {
+					if(enviarConfirm(USR, USR_ELI_CONFIRM + usr.getNomUsu() + QUESTION) == CONFIRM_OK) {
+						mgrUsr.eliminarUsuario(usr);
+						cargarListUsuario(getIfrmUsr().getJlUsuario());
+						enviarInfo(USR, USR_ELI_OK);
+					}
 				}
 			} else {
 				enviarWarning(USR, DATOS_OBLIG);

@@ -3,7 +3,7 @@
 	<property name="ireport.zoom" value="2.2000000000000015"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<parameter name="tipo_transac" class="java.lang.String"/>
+	<parameter name="operacion" class="java.lang.String"/>
 	<parameter name="id_persona" class="java.lang.Long">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
@@ -35,7 +35,7 @@ INNER JOIN departamento d
 ON l.id_dep = d.id_dep
 WHERE (p.id_persona = $P{id_persona} OR $P{id_persona} = -1)
 AND t.fecha_hora::date BETWEEN $P{fecha_ini} AND $P{fecha_fin}
-AND t.operacion = $P{tipo_transac}
+AND t.operacion = $P{operacion}
 AND t.estado_act = $P{estado}
 ORDER BY t.fecha_hora DESC]]>
 	</queryString>
@@ -75,7 +75,7 @@ ORDER BY t.fecha_hora DESC]]>
 				<textElement textAlignment="Center">
 					<font fontName="Arial" size="16" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($P{tipo_transac}.equals( "C" ) ? "Compras" : "Ventas") +
+				<textFieldExpression><![CDATA[($P{operacion}.equals( "C" ) ? "Compras" : "Ventas") +
 ($P{estado}.equals("C") ? " Generadas" : ($P{estado}.equals("P") ? " Pendientes" : " Anuladas"))]]></textFieldExpression>
 			</textField>
 		</band>
@@ -211,6 +211,9 @@ ORDER BY t.fecha_hora DESC]]>
 			</textField>
 			<subreport>
 				<reportElement x="0" y="40" width="555" height="36" uuid="1e0d18d4-2efc-47cc-ac13-b68345a95c67"/>
+				<subreportParameter name="operacion">
+					<subreportParameterExpression><![CDATA[$P{operacion}]]></subreportParameterExpression>
+				</subreportParameter>
 				<subreportParameter name="nro_transac">
 					<subreportParameterExpression><![CDATA[$F{nro_transac}]]></subreportParameterExpression>
 				</subreportParameter>

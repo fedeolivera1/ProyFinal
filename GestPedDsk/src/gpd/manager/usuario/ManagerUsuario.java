@@ -131,4 +131,21 @@ public class ManagerUsuario {
 		return resultado;
 	}
 	
+	public Boolean checkExistUsuario(String nombreUsuario) throws PresentacionException {
+		logger.info("Ingresa eliminarUsuario");
+		Boolean exist = false;
+		try (Connection conn = Conector.getConn()) {
+			if(nombreUsuario != null) {
+				exist = getInterfaceUsuario().checkExistUsuario(conn, nombreUsuario);
+			}
+		} catch (PersistenciaException | SQLException e) {
+			logger.fatal("Excepcion en ManagerUsuario > eliminarUsuario: " + e.getMessage(), e);
+			throw new PresentacionException(e);
+		} catch (Exception e) {
+			logger.fatal("Excepcion GENERICA en ManagerUsuario > eliminarUsuario: " + e.getMessage(), e);
+			throw new PresentacionException(e);
+		}
+		return exist;
+	}
+	
 }

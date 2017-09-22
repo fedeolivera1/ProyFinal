@@ -2,8 +2,10 @@ package gpd.presentacion.popup;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.URL;
 
 import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
@@ -21,6 +23,7 @@ import javax.swing.event.ListSelectionListener;
 
 import gpd.dominio.producto.Unidad;
 import gpd.presentacion.controlador.CtrlFrmProducto;
+import gpd.presentacion.generic.CnstPresGeneric;
 
 public class IfrmUnidad extends JInternalFrame {
 
@@ -44,6 +47,11 @@ public class IfrmUnidad extends JInternalFrame {
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
+		if(ClassLoader.getSystemResource(CnstPresGeneric.ICON_BG) != null) {
+			URL url = ClassLoader.getSystemResource(CnstPresGeneric.ICON_BG);
+			ImageIcon icon = new ImageIcon(url);
+			setFrameIcon(icon);
+		}
 		
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));

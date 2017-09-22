@@ -15,5 +15,5 @@ public interface IPersUsuario {
 	public Integer modificarUsuario(Connection conn, UsuarioDsk usuario) throws PersistenciaException;
 	public Integer modificarUsuarioSinPass(Connection conn, UsuarioDsk usuario) throws PersistenciaException;
 	public Integer eliminarUsuario(Connection conn, UsuarioDsk usuario) throws PersistenciaException;
-	
+	public Boolean checkExistUsuario(Connection conn, String nomUsu) throws PersistenciaException;
 }

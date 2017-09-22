@@ -8,18 +8,21 @@ public interface CnstPresGeneric {
 	public static final String LOGO = "logo.png";
 	
 	//usuario
+	public static final String ADMIN = "admin";
 	public static final String USR = "Usuario";
 	public final static String USR_DATOS = "Debe proporcionar nombre de usuario y password.";
 	public final static String USR_NO_AUTENTICADO = "El usuario no se ha podido autenticar.";
 	public final static String USR_PASS_LARGO = "El largo de las nuevas contraseñas deben ser al menos 6 caracteres.";
 	public final static String USR_PASS_VAL = "Las contraseña actual no coincide con el registro.";
 	public final static String USR_PASS_REP = "Las contraseñas no coinciden.";
+	public final static String USR_EXIST = "EL usuario ya existe en los registros.";
 	public final static String USR_PASS_NO_INGRESADO = "Ingrese una contraseña.";
 	public final static String USR_ING_OK = "El usuario ha sido ingresado correctamente.";
 	public final static String USR_MOD_OK = "El usuario ha sido modificado correctamente.";
 	public final static String USR_ELI_OK = "El usuario ha sido eliminado correctamente.";
 	public final static String USR_ELI_CONFIRM = "Está seguro que desea eliminar a ";
 	public final static String USR_CONFIRM_CC = "El cambio de contraseña ha sido efectuado correctamente.";
+	public final static String USR_ADMIN_NC = "El usuario admin no es editable.";
 	
 	//prod
 	public static final String PROD = "Producto";

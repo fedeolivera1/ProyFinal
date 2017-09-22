@@ -184,7 +184,7 @@ public class CtrlFrmConsulta extends CtrlGenerico implements CnstPresGeneric {
 				String estado = String.valueOf(((EstadoTran)cbxEstadoTx.getSelectedItem()).getAsChar());
 
 				mapParamsJr = new HashMap<>();
-				mapParamsJr.put("tipo_transac", String.valueOf(tipoTran.getAsChar()));
+				mapParamsJr.put("operacion", String.valueOf(tipoTran.getAsChar()));
 				mapParamsJr.put("id_persona", idPersona);
 				mapParamsJr.put("fecha_ini", dateIni);
 				mapParamsJr.put("fecha_fin", dateFin);

@@ -2,8 +2,10 @@ package gpd.presentacion.popup;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.URL;
 
 import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -25,6 +27,8 @@ import javax.swing.event.ListSelectionListener;
 import gpd.dominio.usuario.TipoUsr;
 import gpd.dominio.usuario.UsuarioDsk;
 import gpd.presentacion.controlador.CtrlFrmUsuario;
+import gpd.presentacion.generic.CnstPresGeneric;
+
 import javax.swing.JSeparator;
 import java.awt.SystemColor;
 
@@ -55,6 +59,11 @@ public class IfrmUsuario extends JInternalFrame {
 		setTitle("Usuario");
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		if(ClassLoader.getSystemResource(CnstPresGeneric.ICON_BG) != null) {
+			URL url = ClassLoader.getSystemResource(CnstPresGeneric.ICON_BG);
+			ImageIcon icon = new ImageIcon(url);
+			setFrameIcon(icon);
+		}
 		
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));

@@ -1,5 +1,6 @@
 package gpd.presentacion.popup;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
@@ -9,7 +10,10 @@ import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 
 import gpd.presentacion.controlador.CtrlFrmUsuario;
+import gpd.presentacion.generic.CnstPresGeneric;
+
 import java.awt.event.ActionListener;
+import java.net.URL;
 import java.awt.event.ActionEvent;
 
 public class IfrmCambioPass extends JInternalFrame {
@@ -30,6 +34,11 @@ public class IfrmCambioPass extends JInternalFrame {
 		setClosable(true);
 		setBounds(100, 100, 450, 300);
 		getContentPane().setLayout(null);
+		if(ClassLoader.getSystemResource(CnstPresGeneric.ICON_BG) != null) {
+			URL url = ClassLoader.getSystemResource(CnstPresGeneric.ICON_BG);
+			ImageIcon icon = new ImageIcon(url);
+			setFrameIcon(icon);
+		}
 		ctrlInterno = ctrl;
 		
 		JLabel lblContraseaActual = new JLabel("Contraseña Actual");

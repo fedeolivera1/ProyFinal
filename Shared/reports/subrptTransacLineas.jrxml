@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subrptTransacLineas" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="cb83259d-4cde-48af-9c9a-03d09c4e9164">
-	<property name="ireport.zoom" value="1.771561000000002"/>
+	<property name="ireport.zoom" value="2.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="nro_transac" class="java.lang.Integer"/>
+	<parameter name="operacion" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Proyecto\\ProyFinal2017Dsk\\Shared\\reports\\"]]></defaultValueExpression>
+	</parameter>
 	<queryString>
 		<![CDATA[SELECT tl.id_producto, p.codigo, p.nombre, p.apl_iva, tl.cantidad, tl.iva, tl.precio_unit
 FROM tran_linea tl
@@ -30,28 +34,28 @@ WHERE tl.nro_transac = $P{nro_transac}]]>
 	<columnHeader>
 		<band height="14" splitType="Stretch">
 			<staticText>
-				<reportElement x="122" y="0" width="234" height="14" uuid="4302809a-b976-48a3-8308-3e1cdc634677"/>
+				<reportElement x="141" y="0" width="233" height="14" uuid="4302809a-b976-48a3-8308-3e1cdc634677"/>
 				<textElement>
 					<font fontName="Arial" size="8"/>
 				</textElement>
 				<text><![CDATA[Producto]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="356" y="0" width="53" height="14" uuid="d6eded31-a9e1-4441-8246-acd43326e188"/>
+				<reportElement x="374" y="0" width="53" height="14" uuid="d6eded31-a9e1-4441-8246-acd43326e188"/>
 				<textElement>
 					<font fontName="Arial" size="8"/>
 				</textElement>
 				<text><![CDATA[Cant.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="478" y="0" width="58" height="14" uuid="49581b7d-f7bc-4436-b39e-d8a389726ed6"/>
+				<reportElement x="497" y="0" width="58" height="14" uuid="49581b7d-f7bc-4436-b39e-d8a389726ed6"/>
 				<textElement>
 					<font fontName="Arial" size="8"/>
 				</textElement>
 				<text><![CDATA[Precio Unit]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="409" y="0" width="69" height="14" uuid="6075f141-6750-4f81-8578-831093964bbb"/>
+				<reportElement x="427" y="0" width="69" height="14" uuid="6075f141-6750-4f81-8578-831093964bbb"/>
 				<textElement>
 					<font fontName="Arial" size="8"/>
 				</textElement>
@@ -62,33 +66,61 @@ WHERE tl.nro_transac = $P{nro_transac}]]>
 	<detail>
 		<band height="14" splitType="Stretch">
 			<textField>
-				<reportElement x="122" y="0" width="234" height="14" uuid="697b8d85-feef-48ae-8e43-b153b546e885"/>
+				<reportElement x="141" y="0" width="233" height="14" uuid="697b8d85-feef-48ae-8e43-b153b546e885"/>
 				<textElement>
 					<font fontName="Arial" size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{id_producto} + " | " + $F{codigo} + " | " + $F{nombre} + " | iva: " + $F{apl_iva}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="356" y="0" width="53" height="14" uuid="1ab8ded1-79ad-4c3a-8ef7-157b52de35d3"/>
+				<reportElement x="374" y="0" width="53" height="14" uuid="1ab8ded1-79ad-4c3a-8ef7-157b52de35d3"/>
 				<textElement textAlignment="Center">
 					<font fontName="Arial" size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{cantidad}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="409" y="0" width="69" height="14" uuid="f3345094-4ea9-48eb-abe7-a62db0ae2565"/>
+				<reportElement x="427" y="0" width="69" height="14" uuid="f3345094-4ea9-48eb-abe7-a62db0ae2565"/>
 				<textElement>
 					<font fontName="Arial" size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{iva}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="478" y="0" width="58" height="14" uuid="cf8d1414-16ff-41d6-9e58-296130d337d0"/>
+				<reportElement x="497" y="0" width="58" height="14" uuid="cf8d1414-16ff-41d6-9e58-296130d337d0"/>
 				<textElement>
 					<font fontName="Arial" size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{precio_unit}]]></textFieldExpression>
 			</textField>
+		</band>
+		<band height="50">
+			<printWhenExpression><![CDATA[$P{operacion}.equals("C") == true]]></printWhenExpression>
+			<subreport>
+				<reportElement x="141" y="0" width="414" height="50" uuid="a9d6fc04-2643-4c4e-97c1-3bea0f326130"/>
+				<subreportParameter name="nro_transac">
+					<subreportParameterExpression><![CDATA[$P{nro_transac}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="id_producto">
+					<subreportParameterExpression><![CDATA[$F{id_producto}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "subrptLineasLotesCompra.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="50">
+			<printWhenExpression><![CDATA[$P{operacion}.equals("V") == true]]></printWhenExpression>
+			<subreport>
+				<reportElement x="141" y="0" width="414" height="50" uuid="16fd0519-aa1e-4947-892d-7045029de99e"/>
+				<subreportParameter name="nro_transac">
+					<subreportParameterExpression><![CDATA[$P{nro_transac}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="id_producto">
+					<subreportParameterExpression><![CDATA[$F{id_producto}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "subrptLineasLotesVenta.jasper"]]></subreportExpression>
+			</subreport>
 		</band>
 	</detail>
 	<columnFooter>

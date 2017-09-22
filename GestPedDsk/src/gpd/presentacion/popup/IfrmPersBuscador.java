@@ -8,7 +8,9 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.net.URL;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JInternalFrame;
@@ -27,6 +29,7 @@ import gpd.dominio.persona.Localidad;
 import gpd.dominio.persona.Persona;
 import gpd.dominio.persona.TipoPersona;
 import gpd.presentacion.controlador.CtrlFrmPersBuscador;
+import gpd.presentacion.generic.CnstPresGeneric;
 
 public class IfrmPersBuscador extends JInternalFrame {
 
@@ -45,6 +48,11 @@ public class IfrmPersBuscador extends JInternalFrame {
 		setTitle("Buscador Persona");
 		setClosable(true);
 		setBounds(100, 100, 450, 320);
+		if(ClassLoader.getSystemResource(CnstPresGeneric.ICON_BG) != null) {
+			URL url = ClassLoader.getSystemResource(CnstPresGeneric.ICON_BG);
+			ImageIcon icon = new ImageIcon(url);
+			setFrameIcon(icon);
+		}
 		ctrlInterno = ctrl;
 
 		ctrlInterno.setIfrmPb(this);

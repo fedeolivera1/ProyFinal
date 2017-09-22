@@ -6,8 +6,10 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.net.URL;
 
 import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
@@ -27,6 +29,7 @@ import javax.swing.event.ListSelectionListener;
 
 import gpd.dominio.producto.Utilidad;
 import gpd.presentacion.controlador.CtrlFrmProducto;
+import gpd.presentacion.generic.CnstPresGeneric;
 
 public class IfrmUtilidad extends JInternalFrame {
 
@@ -53,6 +56,11 @@ public class IfrmUtilidad extends JInternalFrame {
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
+		if(ClassLoader.getSystemResource(CnstPresGeneric.ICON_BG) != null) {
+			URL url = ClassLoader.getSystemResource(CnstPresGeneric.ICON_BG);
+			ImageIcon icon = new ImageIcon(url);
+			setFrameIcon(icon);
+		}
 		
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));

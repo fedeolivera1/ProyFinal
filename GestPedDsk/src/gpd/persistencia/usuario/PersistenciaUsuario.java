@@ -202,5 +202,27 @@ public class PersistenciaUsuario extends Conector implements IPersUsuario, CnstQ
 		}
 		return resultado;
 	}
+	
+	@Override
+	public Boolean checkExistUsuario(Connection conn, String nombreUsuario) throws PersistenciaException {
+		try {
+			GenSqlSelectType genSel = new GenSqlSelectType(QRY_CHECK_EXIST_USR);
+			genSel.setParam(nombreUsuario);
+			try (ResultSet rs = (ResultSet) runGeneric(conn, genSel)) {
+				if(rs.next()) {
+					return true;
+				}
+			}
+		} catch (ConectorException | SQLException e) {
+			Conector.rollbackConn(conn);
+			logger.fatal("Excepcion al checkExistPersona: " + e.getMessage(), e);
+			throw new PersistenciaException(e);
+		} catch (Exception e) {
+			Conector.rollbackConn(conn);
+			logger.fatal("Excepcion GENERICA al checkExistPersona: " + e.getMessage(), e);
+			throw new PersistenciaException(e);
+		}
+		return false;
+	}
 
 }
