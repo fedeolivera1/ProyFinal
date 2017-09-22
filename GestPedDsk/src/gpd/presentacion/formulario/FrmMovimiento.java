@@ -215,6 +215,7 @@ public class FrmMovimiento extends JFrame {
 		scrollPaneVentaLin.setViewportView(jtVentaLin);
 		
 		JButton btnVtaAnular = new JButton("Anular Venta");
+		btnVtaAnular.setForeground(Color.RED);
 		btnVtaAnular.setBounds(645, 13, 124, 23);
 		tpVenta.add(btnVtaAnular);
 		

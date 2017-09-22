@@ -22,6 +22,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
@@ -554,6 +555,7 @@ public abstract class CtrlGenerico {
 		for (int i = 0; i < filas; i++) {
 			modelo.removeRow(0);
 		}
+		tabla.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 	}
 	
 	/**

@@ -71,6 +71,7 @@ public interface CnstPresGeneric {
 	public static final String COMPRA_SIN_LINEAS = "No existen items en la compra, revise los datos.";
 	public static final String COMPRA_CONFIRMADA = "La compra se ha confirmado.";
 	public static final String COMPRA_ANULADA = "La compra se ha anulado.";
+	public static final String COMPRA_ANU_CONF = "Esta seguro que quiere anular la compra?";
 	public static final String COMPRA_NOMODIF_PROD = "El prodcuto que intenta modificar no es parte de la compra.";
 	public static final String JTABLE_SIN_COMPRAS = "No hay compras para mostrar...";
 	public static final String JTABLE_SIN_VENTAS = "No hay ventas para mostrar...";

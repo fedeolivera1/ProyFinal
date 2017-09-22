@@ -517,11 +517,13 @@ public class CtrlFrmMovimiento extends CtrlGenerico implements CnstPresGeneric {
 			GenCompType gct = new GenCompType();
 			gct.setComp(frmMov.getJtComprasPend());
 			if(controlDatosObl(gct) && getTransac() != null) {
-				mgrTran.anularTransaccionCompra(getTransac());
-				cargarJtComprasPend(getFrm().getCbxCompraProv());
-				clearPanel(getFrm().getPnlCompraDatos());
-				clearPanel(getFrm().getPnlCompraItems());
-				enviarInfo(MOV, COMPRA_ANULADA);
+				if(enviarConfirm(MOV, COMPRA_ANU_CONF) == CONFIRM_OK) {
+					mgrTran.anularTransaccionCompra(getTransac());
+					cargarJtComprasPend(getFrm().getCbxCompraProv());
+					clearPanel(getFrm().getPnlCompraDatos());
+					clearPanel(getFrm().getPnlCompraItems());
+					enviarInfo(MOV, COMPRA_ANULADA);
+				}
 			} else {
 				enviarWarning(MOV, DATOS_OBLIG);
 			}
