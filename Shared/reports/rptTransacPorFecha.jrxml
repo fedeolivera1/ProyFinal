@@ -191,21 +191,21 @@ ORDER BY t.fecha_hora DESC]]>
 			<textField>
 				<reportElement x="381" y="2" width="58" height="16" uuid="6236be10-f1b7-424a-9204-b13fc045923f"/>
 				<textElement textAlignment="Right">
-					<font fontName="Arial" size="9"/>
+					<font fontName="Arial" size="9" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{sub_total}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="439" y="2" width="58" height="16" uuid="e4f5dddf-248c-460f-985b-ffdac2612ddb"/>
 				<textElement textAlignment="Right">
-					<font fontName="Arial" size="9"/>
+					<font fontName="Arial" size="9" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{iva}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="497" y="2" width="58" height="16" uuid="46798478-eb53-4d3c-a1dd-5879b848d448"/>
 				<textElement textAlignment="Right">
-					<font fontName="Arial" size="9"/>
+					<font fontName="Arial" size="9" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{total}]]></textFieldExpression>
 			</textField>
@@ -303,7 +303,7 @@ ORDER BY t.fecha_hora DESC]]>
 				<textFieldExpression><![CDATA[$V{sub_total_1}]]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement x="381" y="2" width="174" height="1" uuid="ad27eaea-adf9-411e-b97d-1548b427aeaa"/>
+				<reportElement x="38" y="2" width="517" height="1" uuid="ad27eaea-adf9-411e-b97d-1548b427aeaa"/>
 				<graphicElement>
 					<pen lineWidth="2.0" lineStyle="Double"/>
 				</graphicElement>

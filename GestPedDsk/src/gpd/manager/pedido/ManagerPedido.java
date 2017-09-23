@@ -25,12 +25,14 @@ import gpd.exceptions.PresentacionException;
 import gpd.exceptions.ProductoSinStockException;
 import gpd.interfaces.pedido.IPersPedido;
 import gpd.interfaces.pedido.IPersPedidoLinea;
+import gpd.interfaces.transaccion.IPersTranLinea;
 import gpd.interfaces.transaccion.IPersTransaccion;
 import gpd.manager.producto.ManagerProducto;
 import gpd.manager.transaccion.ManagerTransaccion;
 import gpd.persistencia.conector.Conector;
 import gpd.persistencia.pedido.PersistenciaPedido;
 import gpd.persistencia.pedido.PersistenciaPedidoLinea;
+import gpd.persistencia.transaccion.PersistenciaTranLinea;
 import gpd.persistencia.transaccion.PersistenciaTransaccion;
 import gpd.types.Fecha;
 
@@ -40,6 +42,7 @@ public class ManagerPedido {
 	private static IPersPedido interfacePedido;
 	private static IPersPedidoLinea interfacePedidoLinea;
 	private static IPersTransaccion interfaceTransac;
+	private static IPersTranLinea interfaceTranLinea;
 	private static final String ESC = "\n";
 	
 	private static IPersPedido getInterfacePedido() {
@@ -59,6 +62,12 @@ public class ManagerPedido {
 			interfaceTransac = new PersistenciaTransaccion();
 		}
 		return interfaceTransac;
+	}
+	private static IPersTranLinea getInterfaceTranLinea() {
+		if(interfaceTranLinea == null) {
+			interfaceTranLinea = new PersistenciaTranLinea();
+		}
+		return interfaceTranLinea;
 	}
 	
 	/*****************************************************************************************************************************************************/
@@ -93,6 +102,12 @@ public class ManagerPedido {
 		return listaPedido;
 	}
 	
+	/**
+	 * metodo para generar nuevos pedidos
+	 * @param pedido
+	 * @return
+	 * @throws PresentacionException
+	 */
 	public Integer generarNuevoPedido(Pedido pedido) throws PresentacionException {
 		Integer resultado = 0;
 		try (Connection conn = Conector.getConn()) {
@@ -167,9 +182,10 @@ public class ManagerPedido {
 	 */
 	public String actualizarPedido(Pedido pedido, EstadoPedido estPedCambio, UsuarioDsk usr) throws PresentacionException, ProductoSinStockException {
 		try (Connection conn = Conector.getConn()) {
-			if( (EstadoPedido.P.equals(pedido.getEstado()) && EstadoPedido.C.equals(estPedCambio)) || 
-					(EstadoPedido.F.equals(pedido.getEstado()) && EstadoPedido.C.equals(estPedCambio))) {
-				//ESTADOS: Pendiente[P] > Confirmado[C] (dsk o web) | PreConfirmado[F] > Confirmado[C] (web)
+			if( (EstadoPedido.P.equals(pedido.getEstado()) && EstadoPedido.C.equals(estPedCambio)) ||
+					((EstadoPedido.R.equals(pedido.getEstado()) && EstadoPedido.C.equals(estPedCambio)) && Origen.D.equals(pedido.getOrigen())) ||
+					(EstadoPedido.F.equals(pedido.getEstado()) && EstadoPedido.C.equals(estPedCambio)) ) {
+				//ESTADOS: Pendiente[P] > Confirmado[C] (dsk o web) | Revision[R] a Confirmado[C] (dsk) | PreConfirmado[F] > Confirmado[C] (web)
 				logger.info("<< Ingresa actualizacion de pedidos >> estado actual: " + pedido.getEstado().getEstadoPedido() + 
 						" - estado actualiza: " + estPedCambio.getEstadoPedido() + " [actualizacion a venta]");
 				String controlStock = controlarStocksPedido(conn, pedido);
@@ -186,8 +202,13 @@ public class ManagerPedido {
 						transac = pedido.getTransaccion();
 						//marco como confirmada la transaccion
 						transac.setEstadoTran(EstadoTran.C);
-						transac.setFechaHora(new Fecha(Fecha.AMDHMS));
-						getInterfaceTransaccion().modificarEstadoTransaccion(conn, transac);
+//						transac.setFechaHora(new Fecha(Fecha.AMDHMS));
+//						getInterfaceTransaccion().modificarEstadoTransaccion(conn, transac);
+						/*
+						 * se invoca a metodo actualizarTransacDesdePedido ya que al ser una actualización, esta
+						 * debe contener modificaciones en sus lineas, por lo que hay que impactar la transac.
+						 */
+						actualizarTransacDesdePedido(conn, pedido, transac);
 						getInterfaceTransaccion().guardarTranEstado(conn, transac);
 					} else {
 						//si el pedido fue hecho en sist WEB, se genera la nueva transaccion
@@ -246,7 +267,7 @@ public class ManagerPedido {
 					((EstadoPedido.R.equals(pedido.getEstado()) && Sinc.N.equals(pedido.getSinc())) && EstadoPedido.R.equals(estPedCambio)) ) {
 				//ESTADOS: Pendiente[P] > Revision[R] | Revision[R] > Revision[R] (sin haber sido sincronizado - pedido web)
 				logger.info("<< Ingresa actualizacion de pedidos >> estado actual: " + pedido.getEstado().getEstadoPedido() + 
-						" - estado actualiza: " + estPedCambio.getEstadoPedido() + " [actualizacion de lineas de pedido en estado C]");
+						" - estado actualiza: " + estPedCambio.getEstadoPedido() + " [actualizacion de lineas, pedido en estado P o R]");
 				pedido.setEstado(EstadoPedido.R);
 				Double subTotal = new Double(0);
 				Double ivaTotal = new Double(0);
@@ -296,6 +317,47 @@ public class ManagerPedido {
 			throw new PresentacionException(e);
 		}
 		return null;
+	}
+	
+	/**
+	 * metodo que recibe al pedido y la transaccion, borra las lineas de transaccion y las guarda de nuevo ya que
+	 * es una modificación... impacta el cabezal de transac con los importes del pedido.
+	 * @param conn
+	 * @param pedido
+	 * @param transac
+	 * @throws PresentacionException
+	 */
+	private void actualizarTransacDesdePedido(Connection conn, Pedido pedido, Transaccion transac) throws PresentacionException {
+		try {
+			if(pedido != null) {
+				List<TranLinea> listaTransacLinea = new ArrayList<>();
+				for(PedidoLinea pl : pedido.getListaPedidoLinea()) {
+					TranLinea tl = new TranLinea(transac);
+					Producto prod = pl.getProducto();
+					tl.setProducto(prod);
+					tl.setCantidad(pl.getCantidad());
+					tl.setIva(Converters.redondearDosDec(pl.getIva()));
+					tl.setPrecioUnit(Converters.redondearDosDec(pl.getPrecioUnit()));
+					listaTransacLinea.add(tl);
+				}
+				transac.setSubTotal(Converters.redondearDosDec(pedido.getSubTotal()));
+				transac.setIva(Converters.redondearDosDec(pedido.getIva()));
+				transac.setTotal(Converters.redondearDosDec(pedido.getTotal()));
+				
+				//borro y agrego nuevas lineas
+				getInterfaceTranLinea().eliminarTranLinea(conn, transac.getNroTransac());
+				transac.setListaTranLinea(listaTransacLinea);
+				getInterfaceTranLinea().guardarListaTranLinea(conn, listaTransacLinea);
+				//actualizo transaccion con datos nuevos
+				getInterfaceTransaccion().actualizarTransaccion(conn, transac);
+			}
+		} catch (PersistenciaException e) {
+			logger.fatal("Excepcion en ManagerPedido > actualizarTransacDesdePedido: " + e.getMessage(), e);
+			throw new PresentacionException(e);
+		} catch (Exception e) {
+			logger.fatal("Excepcion GENERICA en ManagerPedido > actualizarTransacDesdePedido: " + e.getMessage(), e);
+			throw new PresentacionException(e);
+		}
 	}
 	
 	/**

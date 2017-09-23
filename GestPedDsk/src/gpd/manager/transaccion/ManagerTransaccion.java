@@ -106,6 +106,11 @@ public class ManagerTransaccion {
 					Lote lote = new Lote();
 					lote.setTranLinea(tl);
 					lote.setStock(tl.getCantidad());
+					/*
+					 * se setea stock ini para tener referencia de cuantos prod fueron comprados...
+					 * este dato no se actualizará nunca, muestra en reporte de compras
+					 */
+					lote.setStockIni(lote.getStock());
 					listaLote.add(lote);
 					//obtengo valor de iva para el producto
 					Float ivaAplicaProd = Float.valueOf(cfgDrv.getIva(prod.getAplIva().getAplIvaProp()));
@@ -388,9 +393,7 @@ public class ManagerTransaccion {
 	private ErrorLogico validarAnulacion(Transaccion transaccion) throws PresentacionException {
 		ErrorLogico error = null;
 		try (Connection conn = Conector.getConn()) {
-//			ManagerProducto mgrProd = new ManagerProducto();
 			ConfigDriver cfgDrv = ConfigDriver.getConfigDriver();
-//			Integer diasTolVto = Integer.valueOf(cfgDrv.getVencTolerableAnul());
 			Integer diasTolAnu = Integer.valueOf(cfgDrv.getDiasTolerableAnul());
 			Fecha fechaAnulacion = new Fecha(Fecha.AMD);
 			long diff = fechaAnulacion.getTimeInMillis() - transaccion.getFechaHora().getTimeInMillis();
@@ -398,7 +401,7 @@ public class ManagerTransaccion {
 			if(diasDiff > diasTolAnu.longValue()) {
 				error = new ErrorLogico();
 				error.setCodigo(0);
-				error.setDescripcion("La tolerancia de anulacion de compra de [" + diasTolAnu + "] dias ha sido excedida.");
+				error.setDescripcion("La tolerancia de anulacion del movimiento de [" + diasTolAnu + "] dias ha sido excedida.");
 				return error;
 			}
 		} catch (PersistenciaException | SQLException e) {

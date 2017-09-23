@@ -186,6 +186,7 @@ public class PersistenciaLote extends Conector implements IPersLote, CnstQryLote
 				paramList.add(lote.getTranLinea().getTransaccion().getNroTransac());
 				paramList.add(lote.getTranLinea().getProducto().getIdProducto());
 				paramList.add(lote.getStock());
+				paramList.add(lote.getStockIni());
 				genExec.setParamList(paramList);
 			}
 			resultado = (Integer) runGeneric(conn, genExec);

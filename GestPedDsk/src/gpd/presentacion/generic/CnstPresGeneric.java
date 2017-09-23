@@ -2,6 +2,7 @@ package gpd.presentacion.generic;
 
 public interface CnstPresGeneric {
 	
+	public static final String REPL = "#var#";
 	//imagenes
 	public static final String ICON_MD = "icon_md.png";
 	public static final String ICON_BG = "icon_bg.png";
@@ -87,6 +88,7 @@ public interface CnstPresGeneric {
 	public static final String LOTES_ACT_OK = "El lote ha sido actualizado correctamente.";
 	public static final String JTABLE_SIN_LOTES = "No hay lotes para mostrar...";
 	public static final String LOTES_NO_COMPLETADOS = "Hay lotes sin actualizar, complete la informacion.";
+	public static final String LOTES_VENC_NOTOL = "El vencimiento no puede ser menor a [#var#] dias.";
 	
 	//pedido
 	public static final String PED = "Pedido";
@@ -94,6 +96,8 @@ public interface CnstPresGeneric {
 	public static final String PEDIDO_GEN_OK = "El pedido se ha generado correctamente.";
 	public static final String PEDIDO_ACT_OK = "El pedido se ha actualizado correctamente.";
 	public static final String PEDIDO_ANU_OK = "El pedido se ha anulado correctamente.";
+	public static final String PEDIDO_ANU_CONF = "Se anulará el pedido, continuar?";
+	public static final String PEDIDO_ACT_CONF = "Se actualizará el pedido, continuar?";
 	public static final String PEDIDO_SIN_PERS = "Debe seleccionar una persona para el pedido.";
 	public static final String NUEVO_PEDIDO_CONF = "Si genera un nuevo pedido perdera los datos que no haya guardado, continuar?";
 	public static final String JTABLE_SIN_PEDIDOS = "No hay pedidos para mostrar...";
@@ -102,6 +106,7 @@ public interface CnstPresGeneric {
 	public static final String PEDIDO_LINEA_NO_EXISTE = "La linea no existe en el pedido.";
 	public static final String PEDIDO_NO_GENERADO = "El pedido no fue generado, o no tiene items.";
 	public static final String PEDIDO_SIN_LINEAS = "El pedido no tiene items.";
+	public static final String PEDIDO_ITEMS_ACT = "El pedido contiene items que debe actualizar para la venta.";
 	
 	//venta
 	public static final String VTA = "Venta";

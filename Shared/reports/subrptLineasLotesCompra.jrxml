@@ -6,17 +6,21 @@
 	<parameter name="nro_transac" class="java.lang.Integer"/>
 	<parameter name="id_producto" class="java.lang.Integer"/>
 	<queryString>
-		<![CDATA[SELECT l.id_lote, l.nro_dep, d.nombre, l.stock
+		<![CDATA[SELECT l.id_lote, l.nro_dep, d.nombre, u.id_util, u.descripcion, l.stock_ini
 FROM lote l
 INNER JOIN deposito d
 ON l.nro_dep = d.nro_dep
+INNER JOIN utilidad u
+ON l.id_util = u.id_util
 WHERE l.nro_transac = $P{nro_transac}
 AND l.id_producto = $P{id_producto}]]>
 	</queryString>
 	<field name="id_lote" class="java.lang.Integer"/>
 	<field name="nro_dep" class="java.lang.Integer"/>
 	<field name="nombre" class="java.lang.String"/>
-	<field name="stock" class="java.lang.Integer"/>
+	<field name="id_util" class="java.lang.Integer"/>
+	<field name="descripcion" class="java.lang.String"/>
+	<field name="stock_ini" class="java.lang.Integer"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -29,17 +33,17 @@ AND l.id_producto = $P{id_producto}]]>
 	<columnHeader>
 		<band height="23" splitType="Stretch">
 			<line>
-				<reportElement x="231" y="2" width="176" height="1" uuid="cbeef43e-b5cb-40fe-9ea1-3a55279cc787"/>
+				<reportElement x="194" y="2" width="213" height="1" uuid="cbeef43e-b5cb-40fe-9ea1-3a55279cc787"/>
 			</line>
 			<staticText>
-				<reportElement x="231" y="4" width="37" height="14" uuid="7566e825-03f4-48e6-8b1a-532343bb42be"/>
+				<reportElement x="194" y="4" width="37" height="14" uuid="7566e825-03f4-48e6-8b1a-532343bb42be"/>
 				<textElement>
 					<font fontName="Arial" size="8"/>
 				</textElement>
 				<text><![CDATA[Lote]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="268" y="4" width="84" height="14" uuid="777f0b58-610c-48e4-ab5b-0e382ba2fe76"/>
+				<reportElement x="231" y="4" width="68" height="14" uuid="777f0b58-610c-48e4-ab5b-0e382ba2fe76"/>
 				<textElement>
 					<font fontName="Arial" size="8"/>
 				</textElement>
@@ -50,24 +54,31 @@ AND l.id_producto = $P{id_producto}]]>
 				<textElement textAlignment="Right">
 					<font fontName="Arial" size="8"/>
 				</textElement>
-				<text><![CDATA[Stock]]></text>
+				<text><![CDATA[Stock Inicial]]></text>
 			</staticText>
 			<line>
-				<reportElement x="231" y="20" width="176" height="1" uuid="63bc8298-1bd3-42fa-843c-08fd31a432c8"/>
+				<reportElement x="194" y="20" width="213" height="1" uuid="63bc8298-1bd3-42fa-843c-08fd31a432c8"/>
 			</line>
+			<staticText>
+				<reportElement x="299" y="4" width="53" height="14" uuid="5ee3ecb4-732c-455e-b298-00b51db7221f"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Utilidad]]></text>
+			</staticText>
 		</band>
 	</columnHeader>
 	<detail>
 		<band height="15" splitType="Stretch">
 			<textField>
-				<reportElement x="231" y="1" width="37" height="14" uuid="971690f8-8bc5-4a5b-bb89-3433d80dd39c"/>
+				<reportElement x="194" y="1" width="37" height="14" uuid="971690f8-8bc5-4a5b-bb89-3433d80dd39c"/>
 				<textElement>
 					<font fontName="Arial" size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{id_lote}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="268" y="1" width="84" height="14" uuid="9a01ef2a-e828-471c-a34e-ad40a2461369"/>
+				<reportElement x="231" y="1" width="68" height="14" uuid="9a01ef2a-e828-471c-a34e-ad40a2461369"/>
 				<textElement>
 					<font fontName="Arial" size="8"/>
 				</textElement>
@@ -78,7 +89,14 @@ AND l.id_producto = $P{id_producto}]]>
 				<textElement textAlignment="Right">
 					<font fontName="Arial" size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{stock}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{stock_ini}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="299" y="0" width="53" height="14" uuid="4caff2e4-e909-4cc9-b22f-d1c4d2c41404"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{id_util} + " | " + $F{descripcion}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

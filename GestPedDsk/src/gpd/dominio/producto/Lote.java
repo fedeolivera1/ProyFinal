@@ -14,6 +14,7 @@ public class Lote implements Serializable {
 	private Deposito deposito;
 	private Utilidad utilidad;
 	private Integer stock;
+	private Integer stockIni;
 	
 	
 	public Integer getIdLote() {
@@ -58,10 +59,16 @@ public class Lote implements Serializable {
 		this.stock = stock;
 	}
 	
+	public Integer getStockIni() {
+		return stockIni;
+	}
+	public void setStockIni(Integer stockIni) {
+		this.stockIni = stockIni;
+	}
+	
 	@Override
 	public String toString() {
 		return String.valueOf(idLote);
 	}
-
 	
 }

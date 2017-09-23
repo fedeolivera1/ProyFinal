@@ -86,6 +86,29 @@ public class PersistenciaTransaccion extends Conector implements IPersTransaccio
 	}
 	
 	@Override
+	public Integer actualizarTransaccion(Connection conn, Transaccion transaccion) throws PersistenciaException {
+		Integer resultado = null;
+		GenSqlExecType genExec = new GenSqlExecType(QRY_UPDATE_TRANSACCION);
+		genExec.setParam(transaccion.getSubTotal());
+		genExec.setParam(transaccion.getIva());
+		genExec.setParam(transaccion.getTotal());
+		genExec.setParam(transaccion.getEstadoTran().getAsChar());
+		genExec.setParam(transaccion.getNroTransac());
+		try {
+			resultado = (Integer) runGeneric(conn, genExec);
+		} catch (ConectorException e) {
+			Conector.rollbackConn(conn);
+			logger.error("Excepcion al guardarTransaccionVenta: " + e.getMessage(), e);
+			throw new PersistenciaException(e);
+		} catch (Exception e) {
+			Conector.rollbackConn(conn);
+			logger.fatal("Excepcion GENERICA al guardarTransaccionVenta: " + e.getMessage(), e);
+			throw new PersistenciaException(e);
+		}
+		return resultado;
+	}
+	
+	@Override
 	public Integer modificarEstadoTransaccion(Connection conn, Transaccion transaccion) throws PersistenciaException {
 		Integer resultado = null;
 		GenSqlExecType genExec = new GenSqlExecType(QRY_UPDATE_TRAN_EST);

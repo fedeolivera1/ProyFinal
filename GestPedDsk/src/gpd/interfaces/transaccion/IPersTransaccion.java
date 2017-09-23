@@ -14,6 +14,7 @@ public interface IPersTransaccion {
 
 	public Integer guardarTransaccionCompra(Connection conn, Transaccion transaccion) throws PersistenciaException;
 	public Integer guardarTransaccionVenta(Connection conn, Transaccion transaccion) throws PersistenciaException;
+	public Integer actualizarTransaccion(Connection conn, Transaccion transaccion) throws PersistenciaException;
 	public Integer modificarEstadoTransaccion(Connection conn, Transaccion transaccion) throws PersistenciaException;
 	
 	public Transaccion obtenerTransaccionPorId(Connection conn, Integer idTransac) throws PersistenciaException;

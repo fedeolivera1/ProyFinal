@@ -3,8 +3,8 @@ package gpd.db.constantes;
 public interface CnstQryLote {
 
 	public static final String QRY_INSERT_LOTE = "INSERT INTO lote "
-												+ "(nro_transac, id_producto, stock) "
-												+ "VALUES (?, ?, ?)";
+												+ "(nro_transac, id_producto, stock, stock_ini) "
+												+ "VALUES (?, ?, ?, ?)";
 	
 	public static final String QRY_UPDATE_LOTE = "UPDATE lote SET "
 												+ "venc = ?, nro_dep = ?, id_util = ? "

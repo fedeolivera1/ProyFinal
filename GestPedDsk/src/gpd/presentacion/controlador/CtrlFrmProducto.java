@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultListModel;
@@ -45,6 +46,7 @@ import gpd.presentacion.popup.IfrmTipoProd;
 import gpd.presentacion.popup.IfrmUnidad;
 import gpd.presentacion.popup.IfrmUtilidad;
 import gpd.types.Fecha;
+import gpd.util.ConfigDriver;
 
 public class CtrlFrmProducto extends CtrlGenerico implements CnstPresGeneric {
 
@@ -954,12 +956,23 @@ public class CtrlFrmProducto extends CtrlGenerico implements CnstPresGeneric {
 				Integer idLote = (Integer) jtLote.getModel().getValueAt(jtLote.getSelectedRow(), 0);
 				if(hashLotes != null && !hashLotes.isEmpty() && 
 						hashLotes.containsKey(idLote)) {
-					Lote lote = hashLotes.get(idLote);
-					lote.setDeposito((Deposito) cbxLoteDep.getSelectedItem());
-					lote.setUtilidad((Utilidad) cbxLoteUtil.getSelectedItem());
-					lote.setVenc(new Fecha(dchLoteVenc.getDate().getTime()));
-					//ver de actualizar la tabla para cada uno de los datos
-					cargarJtLote();
+					ConfigDriver cfgDrv = ConfigDriver.getConfigDriver();
+					Integer diasParaVenc = Integer.valueOf(cfgDrv.getDiasParaVenc());
+					Fecha fechaVenc = new Fecha(dchLoteVenc.getDate().getTime());
+					Fecha fechaActual =new Fecha(Fecha.AMD);
+					long diff = fechaVenc.getTimeInMillis() - fechaActual.getTimeInMillis();
+					long diasDiff = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
+					if(diasDiff > diasParaVenc) {
+						Lote lote = hashLotes.get(idLote);
+						lote.setDeposito((Deposito) cbxLoteDep.getSelectedItem());
+						lote.setUtilidad((Utilidad) cbxLoteUtil.getSelectedItem());
+						lote.setVenc(new Fecha(dchLoteVenc.getDate().getTime()));
+						//ver de actualizar la tabla para cada uno de los datos
+						cargarJtLote();
+					} else {
+						String msj = LOTES_VENC_NOTOL.replace(REPL, String.valueOf(diasParaVenc));
+						enviarWarning(LOTE, msj);
+					}
 				}
 			} else {
 				enviarWarning(LOTE, DATOS_OBLIG);

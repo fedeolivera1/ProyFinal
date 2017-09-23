@@ -148,7 +148,8 @@ public class CtrlFrmPedido extends CtrlGenerico implements CnstPresGeneric {
 					fila[2] = pedido.getListaPedidoLinea().size();
 					fila[3] = pedido.getOrigen().getOrigen();
 					fila[4] = pedido.getEstado().getEstadoPedido();
-					fila[5] = pedido.getTotal(); 
+					Double precioTotal = Converters.redondearDosDec(pedido.getTotal()); 
+					fila[5] = precioTotal;
 					modeloJtPed.addRow(fila);
 				}
 				tabla.addMouseListener(new MouseAdapter() {
@@ -211,9 +212,9 @@ public class CtrlFrmPedido extends CtrlGenerico implements CnstPresGeneric {
 					fila[0] = new Boolean(false);
 					fila[1] = pl.getProducto();
 					fila[2] = pl.getPedido().getFechaHora();
-					fila[3] = pl.getPrecioUnit();
+					fila[3] = Converters.redondearDosDec(pl.getPrecioUnit());
 					fila[4] = pl.getCantidad();
-					fila[5] = pl.getPrecioUnit() * pl.getCantidad();//fixme revisar decimales
+					fila[5] = Converters.redondearDosDec(pl.getPrecioUnit() * pl.getCantidad());
 					modeloJtPed.addRow(fila);
 				}
 				
@@ -578,6 +579,8 @@ public class CtrlFrmPedido extends CtrlGenerico implements CnstPresGeneric {
 			getFrm().getCbxPedidoProd().setSelectedItem(cbModelProd.getSelectedItem());
 			
 			getFrm().getTxtPedCant().setText(String.valueOf(cant));
+			HlpProducto hlpProd = mgrProd.obtenerStockPrecioLotePorProducto(prod.getIdProducto());
+			cargarDatosProd(hlpProd);
 		} catch(Exception e) {
 			manejarExcepcion(e);
 		}
@@ -629,28 +632,30 @@ public class CtrlFrmPedido extends CtrlGenerico implements CnstPresGeneric {
 			genComp.setComp(ftxtPedHora);
 			genComp.setComp(jtPedido);
 			if(controlDatosObl(genComp)) {
-				if(getPedidoInt() != null && (getPedidoInt().getEstado().equals(EstadoPedido.P) || getPedidoInt().getEstado().equals(EstadoPedido.R)) 
-						&& mapLineasPedido != null && !mapLineasPedido.isEmpty()) {
-					Pedido pedido = getPedidoInt();
-					ArrayList<PedidoLinea> listaPl = new ArrayList<>();
-					listaPl.addAll(mapLineasPedido.values());
-					pedido.setListaPedidoLinea(listaPl);
-					pedido.setUsuario(getUsr());
-					if(getFrm().getDchPedFecha() != null) {
-						Fecha fechaProg = new Fecha(getFrm().getDchPedFecha().getDate());
-						pedido.setFechaProg(fechaProg);
+				if(enviarConfirm(PED, PEDIDO_ACT_CONF) == CONFIRM_OK) {
+					if(getPedidoInt() != null && (getPedidoInt().getEstado().equals(EstadoPedido.P) || getPedidoInt().getEstado().equals(EstadoPedido.R)) 
+							&& mapLineasPedido != null && !mapLineasPedido.isEmpty()) {
+						Pedido pedido = getPedidoInt();
+						ArrayList<PedidoLinea> listaPl = new ArrayList<>();
+						listaPl.addAll(mapLineasPedido.values());
+						pedido.setListaPedidoLinea(listaPl);
+						pedido.setUsuario(getUsr());
+						if(getFrm().getDchPedFecha() != null) {
+							Fecha fechaProg = new Fecha(getFrm().getDchPedFecha().getDate());
+							pedido.setFechaProg(fechaProg);
+						}
+						if(getFrm().getFtxtPedHora().getText() != ":") {
+							Fecha horaProg = convertirHoraDesdeTxt(getFrm().getFtxtPedHora().getText());
+							pedido.setHoraProg(horaProg);
+						}
+						String res = mgrPed.actualizarPedido(pedido, EstadoPedido.R, getUsr());
+						if(null == res) {
+							enviarInfo(PED, PEDIDO_ACT_OK);
+							limpiarPedido();
+						}
+					} else {
+						enviarWarning(PED, PEDIDO_SIN_LINEAS);
 					}
-					if(getFrm().getFtxtPedHora().getText() != ":") {
-						Fecha horaProg = convertirHoraDesdeTxt(getFrm().getFtxtPedHora().getText());
-						pedido.setHoraProg(horaProg);
-					}
-					String res = mgrPed.actualizarPedido(pedido, EstadoPedido.R, getUsr());
-					if(null == res) {
-						enviarInfo(PED, PEDIDO_ACT_OK);
-						limpiarPedido();
-					}
-				} else {
-					enviarWarning(PED, PEDIDO_SIN_LINEAS);
 				}
 			} else {
 				enviarWarning(PED, DATOS_OBLIG);
@@ -665,11 +670,15 @@ public class CtrlFrmPedido extends CtrlGenerico implements CnstPresGeneric {
 			GenCompType genComp = new GenCompType();
 			genComp.setComp(jtPedido);
 			if(controlDatosObl(genComp)) {
-				Pedido pedido = getPedidoInt();
-				String res = mgrPed.actualizarPedido(pedido, EstadoPedido.A, getUsr());
-				if(null == res) {
-					enviarInfo(PED, PEDIDO_ANU_OK);
-					limpiarPedido();
+				if(enviarConfirm(PED, PEDIDO_ANU_CONF) == CONFIRM_OK) {
+					Pedido pedido = getPedidoInt();
+					String res = mgrPed.actualizarPedido(pedido, EstadoPedido.A, getUsr());
+					if(null == res) {
+						enviarInfo(PED, PEDIDO_ANU_OK);
+						limpiarPedido();
+					}
+				} else {
+					
 				}
 			} else {
 				enviarWarning(PED, DATOS_OBLIG);
@@ -687,14 +696,18 @@ public class CtrlFrmPedido extends CtrlGenerico implements CnstPresGeneric {
 				Persona pers = (Persona) jtPedido.getModel().getValueAt(jtPedido.getSelectedRow(), 0);
 				Fecha fechaHora = (Fecha) jtPedido.getModel().getValueAt(jtPedido.getSelectedRow(), 1);
 				Pedido pedido = mgrPed.obtenerPedidoPorId(pers.getIdPersona(), fechaHora);
-				if(enviarConfirm(PED, VTA_CONF_GEN) == CONFIRM_OK) {
-					String control = mgrPed.actualizarPedido(pedido, EstadoPedido.C, getUsr());
-					if(null == control) {
-						enviarInfo(VTA, VTA_GENERADA_OK);
-						limpiarPedido();
-					} else {
-						enviarWarning(PED, control);
+				if(controlPedidoParaVenta()) {
+					if(enviarConfirm(PED, VTA_CONF_GEN) == CONFIRM_OK) {
+						String control = mgrPed.actualizarPedido(pedido, EstadoPedido.C, getUsr());
+						if(null == control) {
+							enviarInfo(VTA, VTA_GENERADA_OK);
+							limpiarPedido();
+						} else {
+							enviarWarning(PED, control);
+						}
 					}
+				} else {
+					enviarWarning(PED, PEDIDO_ITEMS_ACT);
 				}
 			} else {
 				enviarWarning(PED, DATOS_OBLIG);
@@ -702,6 +715,17 @@ public class CtrlFrmPedido extends CtrlGenerico implements CnstPresGeneric {
 		} catch(Exception e) {
 			manejarExcepcion(e);
 		}
+	}
+	
+	private Boolean controlPedidoParaVenta() {
+		if(mapLineasPedido != null && !mapLineasPedido.isEmpty()) {
+			for(PedidoLinea pl : mapLineasPedido.values()) {
+				if(pl.getPrecioUnit().doubleValue() == new Double(0)) {
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 	
 	public void abrirIfrmPersBuscador(Container contentPane, JDesktopPane deskPane, JTextField txtPersDesc) {

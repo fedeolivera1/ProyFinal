@@ -22,13 +22,13 @@ import gpw.webservice.proxy.ParamUnidadASinc;
 public class ParserParamProducto {
 	
 	private static final Logger logger = Logger.getLogger(ParserParamProducto.class);
-	private static HashSet<Integer> setTp = new HashSet<>();
-	private static HashSet<Integer> setUni = new HashSet<>();
 	
 	public static ParamRecProductosASinc parseParamRecProductosASinc(Connection conn, List<Producto> listaProd) throws ParsersException {
 		ParamRecProductosASinc param = null;
 		try {
 			if(listaProd != null && !listaProd.isEmpty()) {
+				HashSet<Integer> setTp = new HashSet<>();
+				HashSet<Integer> setUni = new HashSet<>();
 				param = new ParamRecProductosASinc();
 				for(Producto prod : listaProd) {
 					logger.debug("Inicia parseo para el producto: " + prod.getIdProducto());

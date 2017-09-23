@@ -8,6 +8,9 @@ public interface CnstQryTransaccion {
 															+ "(nro_transac, id_persona, operacion, fecha_hora, sub_total, iva, total, estado_act) "
 															+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 	
+	public static final String QRY_UPDATE_TRANSACCION = "UPDATE transaccion SET sub_total = ?, iva = ?, total = ?, estado_act = ? "
+															+ "WHERE nro_transac = ?";
+	
 	public static final String QRY_UPDATE_TRAN_EST = "UPDATE transaccion SET estado_act = ? "
 															+ "WHERE nro_transac = ?";
 			
