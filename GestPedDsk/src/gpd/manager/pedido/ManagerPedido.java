@@ -190,6 +190,7 @@ public class ManagerPedido {
 						" - estado actualiza: " + estPedCambio.getEstadoPedido() + " [actualizacion a venta]");
 				String controlStock = controlarStocksPedido(conn, pedido);
 				if(null == controlStock) {
+					
 					ManagerProducto mgrProd = new ManagerProducto();
 					pedido.setEstado(estPedCambio);
 					/*
@@ -212,42 +213,7 @@ public class ManagerPedido {
 						getInterfaceTransaccion().guardarTranEstado(conn, transac);
 					} else {
 						//si el pedido fue hecho en sist WEB, se genera la nueva transaccion
-						transac = new Transaccion(TipoTran.V);
-						List<TranLinea> listaTransacLinea = new ArrayList<>();
-						Double subTotal = new Double(0);
-						Double ivaTotal = new Double(0);
-						Double total = new Double(0);
-						for(PedidoLinea pl : pedido.getListaPedidoLinea()) {
-							TranLinea tl = new TranLinea(transac);
-							Producto prod = pl.getProducto();
-							tl.setProducto(prod);
-							tl.setCantidad(pl.getCantidad());
-							tl.setIva(pl.getIva());
-							tl.setPrecioUnit(pl.getPrecioUnit());
-							listaTransacLinea.add(tl);
-							total += pl.getPrecioUnit() * pl.getCantidad();
-							ivaTotal += pl.getIva() * pl.getCantidad();
-						}
-						subTotal = total - ivaTotal;
-						subTotal = Converters.redondearDosDec(subTotal);
-						ivaTotal = Converters.redondearDosDec(ivaTotal);
-						total = Converters.redondearDosDec(total);
-						pedido.setSubTotal(subTotal);
-						pedido.setIva(ivaTotal);
-						pedido.setTotal(total);
-						transac.setPersona(pedido.getPersona());
-						transac.setFechaHora(pedido.getFechaHora());
-						transac.setSubTotal(pedido.getSubTotal());
-						transac.setIva(pedido.getIva());
-						transac.setTotal(pedido.getTotal());
-						transac.setListaTranLinea(listaTransacLinea);
-						//marco como confirmada la transaccion
-						transac.setEstadoTran(EstadoTran.C);
-						transac.setFechaHora(new Fecha(Fecha.AMDHMS));
-						ManagerTransaccion mgrTransac = new ManagerTransaccion();
-						mgrTransac.generarTransaccionVenta(conn, transac);
-						//le seteo al pedido la transaccion ya que en los casos web, de inicio no tendran transaccion asociada
-						pedido.setTransaccion(transac);
+						transac = generarTransaccionVentaParaPedidoWeb(conn, pedido, EstadoTran.C);
 					}
 					
 					for(PedidoLinea pl : pedido.getListaPedidoLinea()) {
@@ -286,6 +252,7 @@ public class ManagerPedido {
 				//si es web lo marco como no sinc para que sea enviado en la sincronizacion
 				if(pedido.getOrigen().equals(Origen.W)) {
 					pedido.setSinc(Sinc.N);
+					generarTransaccionVentaParaPedidoWeb(conn, pedido, EstadoTran.P);
 				}
 				getInterfacePedido().modificarPedido(conn, pedido);
 				//* elimino lista de lineas de pedido
@@ -305,7 +272,7 @@ public class ManagerPedido {
 				if(pedido.getOrigen().equals(Origen.W)) {
 					pedido.setSinc(Sinc.N);
 				}
-				getInterfacePedido().modificarPedido(conn, pedido);
+				getInterfacePedido().modificarEstadoPedido(conn, pedido);
 				Conector.commitConn(conn);
 			} else {
 				throw new PresentacionException("El estado del pedido no permite actualizacion! Verifique.");
@@ -354,6 +321,58 @@ public class ManagerPedido {
 		} catch (PersistenciaException e) {
 			logger.fatal("Excepcion en ManagerPedido > actualizarTransacDesdePedido: " + e.getMessage(), e);
 			throw new PresentacionException(e);
+		} catch (Exception e) {
+			logger.fatal("Excepcion GENERICA en ManagerPedido > actualizarTransacDesdePedido: " + e.getMessage(), e);
+			throw new PresentacionException(e);
+		}
+	}
+	
+	/**
+	 * metodo para generar transacciones a pedidos web
+	 * @param conn
+	 * @param pedido
+	 */
+	private Transaccion generarTransaccionVentaParaPedidoWeb(Connection conn, Pedido pedido, EstadoTran estadoTran) throws PresentacionException {
+		try {
+			Transaccion transac = new Transaccion(TipoTran.V);
+			List<TranLinea> listaTransacLinea = new ArrayList<>();
+			Double subTotal = new Double(0);
+			Double ivaTotal = new Double(0);
+			Double total = new Double(0);
+			for(PedidoLinea pl : pedido.getListaPedidoLinea()) {
+				TranLinea tl = new TranLinea(transac);
+				Producto prod = pl.getProducto();
+				tl.setProducto(prod);
+				tl.setCantidad(pl.getCantidad());
+				tl.setIva(pl.getIva());
+				tl.setPrecioUnit(pl.getPrecioUnit());
+				listaTransacLinea.add(tl);
+				total += pl.getPrecioUnit() * pl.getCantidad();
+				ivaTotal += pl.getIva() * pl.getCantidad();
+			}
+			subTotal = total - ivaTotal;
+			subTotal = Converters.redondearDosDec(subTotal);
+			ivaTotal = Converters.redondearDosDec(ivaTotal);
+			total = Converters.redondearDosDec(total);
+			pedido.setSubTotal(subTotal);
+			pedido.setIva(ivaTotal);
+			pedido.setTotal(total);
+			transac.setPersona(pedido.getPersona());
+			transac.setFechaHora(pedido.getFechaHora());
+			transac.setSubTotal(pedido.getSubTotal());
+			transac.setIva(pedido.getIva());
+			transac.setTotal(pedido.getTotal());
+			transac.setListaTranLinea(listaTransacLinea);
+			//marco como confirmada la transaccion
+			transac.setEstadoTran(estadoTran);
+			transac.setFechaHora(new Fecha(Fecha.AMDHMS));
+			ManagerTransaccion mgrTransac = new ManagerTransaccion();
+			mgrTransac.generarTransaccionVenta(conn, transac);
+			//le seteo al pedido la transaccion ya que en los casos web, de inicio no tendran transaccion asociada
+			pedido.setTransaccion(transac);
+			return transac;
+		} catch (PresentacionException e) {
+			throw e;
 		} catch (Exception e) {
 			logger.fatal("Excepcion GENERICA en ManagerPedido > actualizarTransacDesdePedido: " + e.getMessage(), e);
 			throw new PresentacionException(e);

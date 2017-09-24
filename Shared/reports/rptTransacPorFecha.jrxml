@@ -231,7 +231,7 @@ ORDER BY t.fecha_hora DESC]]>
 			</line>
 			<textField isStretchWithOverflow="true">
 				<reportElement x="38" y="21" width="517" height="16" uuid="a7c7b8d5-afe6-480c-922b-0e05c3408aed"/>
-				<textElement>
+				<textElement textAlignment="Right">
 					<font fontName="Arial" size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{direccion} +
@@ -242,7 +242,7 @@ ORDER BY t.fecha_hora DESC]]>
 ($F{complemento} != null && !$F{complemento}.equals("") ? " " + $F{complemento} : "") +
 ($F{telefono} != null && !$F{telefono}.equals("") ? (" Tel: " + $F{telefono}) : "") +
 ($F{celular} != null && !$F{celular}.equals("") ? (" Cel: " + $F{celular}) : "") +
-" " + $F{localidad} + ", " + $F{departamento}]]></textFieldExpression>
+" - " + $F{localidad} + ", " + $F{departamento}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

@@ -339,6 +339,15 @@ public class CtrlFrmPedido extends CtrlGenerico implements CnstPresGeneric {
 						Sinc.N.equals(pedido.getSinc())) {
 					getFrm().getBtnPedGenVenta().setEnabled(false);
 				}
+			} else if(EstadoPedido.P.equals(pedido.getEstado())) {
+				//estado Pendiente[P]
+				getFrm().getBtnPedGenVenta().setEnabled(true);
+				getFrm().getBtnPedGenPedido().setEnabled(false);
+				getFrm().getBtnPedAnuPedido().setEnabled(true);
+				getFrm().getBtnPedActPedido().setEnabled(true);
+				setContainerEnabled(getFrm().getPnlDatosPedido(), true);
+				setContainerEnabled(getFrm().getPnlPedidoLin(), true);
+				getFrm().getJtPedidoLin().setEnabled(true);
 			} else if(EstadoPedido.F.equals(pedido.getEstado())) {
 				//estado PreConfirmado[F] (permite solo generar la venta o anularlo)
 				getFrm().getBtnPedGenVenta().setEnabled(true);
@@ -441,6 +450,10 @@ public class CtrlFrmPedido extends CtrlGenerico implements CnstPresGeneric {
 						pl.setIva(Converters.obtenerIvaDePrecio(precioCalcProd, ivaDeProd));
 						pl.setPrecioUnit(Double.valueOf(getFrm().getFtxtPedLotePrecio().getText()));
 						cargarJtPedidoLin(); 
+						if(Origen.W.equals(pl.getPedido().getOrigen())) {
+							//luego de modificar una linea de un pedido web, no permitirá generar la venta (debe sinc)
+							getFrm().getBtnPedGenVenta().setEnabled(false);
+						}
 					} else {
 						enviarWarning(PED, PEDIDO_LINEA_NO_EXISTE);
 					}
