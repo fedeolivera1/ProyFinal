@@ -70,6 +70,7 @@ public interface CnstPresGeneric {
 	public static final String COMPRA_PROD_YA_ING = "El producto ya ha sido ingresado, revise los datos.";
 	public static final String COMPRA_SIN_TRANSAC = "No existe compra abierta, revise los datos.";
 	public static final String COMPRA_SIN_LINEAS = "No existen items en la compra, revise los datos.";
+	public static final String COMPRA_GENERADA = "La compra se ha generado.";
 	public static final String COMPRA_CONFIRMADA = "La compra se ha confirmado.";
 	public static final String COMPRA_ANULADA = "La compra se ha anulado.";
 	public static final String COMPRA_ANU_CONF = "Esta seguro que quiere anular la compra?";

@@ -969,6 +969,7 @@ public class CtrlFrmProducto extends CtrlGenerico implements CnstPresGeneric {
 						lote.setVenc(new Fecha(dchLoteVenc.getDate().getTime()));
 						//ver de actualizar la tabla para cada uno de los datos
 						cargarJtLote();
+						enviarInfo(LOTE, LOTES_ACT_OK);
 					} else {
 						String msj = LOTES_VENC_NOTOL.replace(REPL, String.valueOf(diasParaVenc));
 						enviarWarning(LOTE, msj);
@@ -1002,7 +1003,7 @@ public class CtrlFrmProducto extends CtrlGenerico implements CnstPresGeneric {
 						mgrTransac.modificarTransaccionCompra(transac, listaLote);
 						clearControlsInJPanel(getFrm().getPnlLoteDatos());
 						clearControlsInJPanel(getFrm().getScrollPaneProd());
-						enviarInfo(LOTE, LOTES_ACT_OK);
+						enviarInfo(LOTE, COMPRA_CONFIRMADA);
 					} else {
 						enviarWarning(LOTE, LOTES_NO_COMPLETADOS);
 					}

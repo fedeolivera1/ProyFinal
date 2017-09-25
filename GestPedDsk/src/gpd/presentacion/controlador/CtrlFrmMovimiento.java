@@ -500,7 +500,7 @@ public class CtrlFrmMovimiento extends CtrlGenerico implements CnstPresGeneric {
 					getTransac().getListaTranLinea().addAll(mapLineasTran.values());
 					mgrTran.generarTransaccionCompra(getTransac());
 					limpiarCompra(getFrm(), false);
-					enviarInfo(MOV, COMPRA_CONFIRMADA);
+					enviarInfo(MOV, COMPRA_GENERADA);
 				} else {
 					enviarWarning(MOV, COMPRA_SIN_LINEAS);
 				}
