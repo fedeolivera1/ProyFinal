@@ -342,7 +342,7 @@ public class CtrlFrmPedido extends CtrlGenerico implements CnstPresGeneric {
 			} else if(EstadoPedido.P.equals(pedido.getEstado())) {
 				//estado Pendiente[P]
 				getFrm().getBtnPedGenVenta().setEnabled(true);
-				getFrm().getBtnPedGenPedido().setEnabled(false);
+				getFrm().getBtnPedGenPedido().setEnabled(true);
 				getFrm().getBtnPedAnuPedido().setEnabled(true);
 				getFrm().getBtnPedActPedido().setEnabled(true);
 				setContainerEnabled(getFrm().getPnlDatosPedido(), true);
