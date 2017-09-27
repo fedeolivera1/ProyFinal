@@ -36,7 +36,6 @@ import gpd.persistencia.producto.PersistenciaProducto;
 import gpd.persistencia.producto.PersistenciaTipoProd;
 import gpd.persistencia.producto.PersistenciaUnidad;
 import gpd.types.Fecha;
-import gpd.ws.consumer.CnstService;
 import gpd.ws.consumer.ControlAccesoInternet;
 import gpd.ws.consumer.ServiceConsumer;
 import gpd.ws.parsers.HlpResultProd;
@@ -60,7 +59,7 @@ import gpw.webservice.proxy.ResultRecPersonasASinc;
 import gpw.webservice.proxy.ResultRecProductosASinc;
 import gpw.webservice.proxy.WsGestPed;
 
-public class ManagerSincronizador implements CnstService {
+public class ManagerSincronizador {
 
 	private static final Logger logger = Logger.getLogger(ManagerSincronizador.class);
 	private static IPersPersona interfacePersona;
