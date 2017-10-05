@@ -410,6 +410,7 @@ public class CtrlFrmPedido extends CtrlGenerico implements CnstPresGeneric {
 					if(!mapLineasPedido.containsKey(key)) {
 						mapLineasPedido.put(key, pl);
 						cargarJtPedidoLin();
+						clearControlsInJPanel(getFrm().getPnlDatosPedido());
 					} else {
 						enviarWarning(PED, PEDIDO_LINEA_EXISTE);
 					}
@@ -454,6 +455,7 @@ public class CtrlFrmPedido extends CtrlGenerico implements CnstPresGeneric {
 							//luego de modificar una linea de un pedido web, no permitirá generar la venta (debe sinc)
 							getFrm().getBtnPedGenVenta().setEnabled(false);
 						}
+						clearControlsInJPanel(getFrm().getPnlDatosPedido());
 					} else {
 						enviarWarning(PED, PEDIDO_LINEA_NO_EXISTE);
 					}

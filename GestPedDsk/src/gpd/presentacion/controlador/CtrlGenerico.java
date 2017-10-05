@@ -3,6 +3,8 @@ package gpd.presentacion.controlador;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseListener;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -554,6 +556,11 @@ public abstract class CtrlGenerico {
 		int filas = modelo.getRowCount();
 		for (int i = 0; i < filas; i++) {
 			modelo.removeRow(0);
+		}
+		for(MouseListener ml : tabla.getMouseListeners()) {
+			if(ml instanceof MouseAdapter) {
+				tabla.removeMouseListener(ml);
+			}
 		}
 		tabla.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 	}
