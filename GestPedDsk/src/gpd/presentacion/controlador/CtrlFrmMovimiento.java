@@ -25,6 +25,7 @@ import gpd.dominio.transaccion.TipoTran;
 import gpd.dominio.transaccion.TranLinea;
 import gpd.dominio.transaccion.TranLineaLote;
 import gpd.dominio.transaccion.Transaccion;
+import gpd.dominio.util.Converters;
 import gpd.exceptions.PresentacionException;
 import gpd.manager.persona.ManagerPersona;
 import gpd.manager.producto.ManagerProducto;
@@ -182,6 +183,7 @@ public class CtrlFrmMovimiento extends CtrlGenerico implements CnstPresGeneric {
 			} else {
 				cargarJTableVacia(tabla, JTABLE_SIN_ITEMS);
 			}
+			actualizarTotalCompra();
 		} catch(Exception e) {
 			manejarExcepcion(e);
 		}
@@ -621,6 +623,18 @@ public class CtrlFrmMovimiento extends CtrlGenerico implements CnstPresGeneric {
 	
 	public void limpiarVenta() {
 		clearForm(getFrm().getContentPane());
+	}
+	
+	private void actualizarTotalCompra() {
+		if(mapLineasTran != null && !mapLineasTran.isEmpty()) {
+			Double total = new Double(0);
+			for(TranLinea tl : mapLineasTran.values()) {
+				total += tl.getPrecioUnit() * tl.getCantidad();
+			}
+			getFrm().getFtxtTotalCompra().setText(String.valueOf(Converters.redondearDosDec(total)));
+		} else {
+			getFrm().getFtxtTotalCompra().setText(String.valueOf(0));
+		}
 	}
 	
 	

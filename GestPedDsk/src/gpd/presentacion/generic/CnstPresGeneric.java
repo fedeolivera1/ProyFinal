@@ -27,6 +27,9 @@ public interface CnstPresGeneric {
 	
 	//prod
 	public static final String PROD = "Producto";
+	public static final String PROD_ING_OK = "Se ha ingresado el producto correctamente.";
+	public static final String PROD_MOD_OK = "Se ha modificado el producto correctamente.";
+	public static final String PROD_DESACT_OK = "Se ha desactivado el producto correctamente.";
 	public static final String PROD_NOEXIST = "El producto no existe en los registros por su Id.";
 	
 	//tipoProd

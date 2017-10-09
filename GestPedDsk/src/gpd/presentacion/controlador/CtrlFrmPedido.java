@@ -279,13 +279,14 @@ public class CtrlFrmPedido extends CtrlGenerico implements CnstPresGeneric {
 				setPedidoInt(pedido);
 				mapLineasPedido = null;
 				setearInfoPedido();
-				manejarControlesPorEstado(pedido);
+				manejarControlesPorEstado(null);
 			} else {
 				esNuevo = false;
 				activarControlesPedExistente();
 				setPedidoInt(null);
 				mapLineasPedido = null;
 				setearInfoPedido();
+				manejarControlesPorEstado(null);
 			}
 			mapLineasPedido = new HashMap<>();
 		} catch(Exception e) {
@@ -342,7 +343,7 @@ public class CtrlFrmPedido extends CtrlGenerico implements CnstPresGeneric {
 			} else if(EstadoPedido.P.equals(pedido.getEstado())) {
 				//estado Pendiente[P]
 				getFrm().getBtnPedGenVenta().setEnabled(true);
-				getFrm().getBtnPedGenPedido().setEnabled(true);
+				getFrm().getBtnPedGenPedido().setEnabled(false);
 				getFrm().getBtnPedAnuPedido().setEnabled(true);
 				getFrm().getBtnPedActPedido().setEnabled(true);
 				setContainerEnabled(getFrm().getPnlDatosPedido(), true);
@@ -376,10 +377,10 @@ public class CtrlFrmPedido extends CtrlGenerico implements CnstPresGeneric {
 				getFrm().getJtPedidoLin().setEnabled(true);
 			}
 		} else {
-			getFrm().getBtnPedGenVenta().setEnabled(true);
+			getFrm().getBtnPedGenVenta().setEnabled(false);
 			getFrm().getBtnPedGenPedido().setEnabled(true);
-			getFrm().getBtnPedAnuPedido().setEnabled(true);
-			getFrm().getBtnPedActPedido().setEnabled(true);
+			getFrm().getBtnPedAnuPedido().setEnabled(false);
+			getFrm().getBtnPedActPedido().setEnabled(false);
 			setContainerEnabled(getFrm().getPnlDatosPedido(), true);
 			setContainerEnabled(getFrm().getPnlPedidoLin(), true);
 			getFrm().getJtPedidoLin().setEnabled(true);

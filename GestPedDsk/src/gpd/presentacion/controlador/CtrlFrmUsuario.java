@@ -131,6 +131,7 @@ public class CtrlFrmUsuario extends CtrlGenerico implements CnstPresGeneric {
 					setContainerEnabled(getIfrmUsr().getPwfUsuPass2(), true);
 					clearControlsInJPanel(getIfrmUsr().getPnlDatosUsu());
 					cargarListUsuario(getIfrmUsr().getJlUsuario());
+					clearControlsInJPanel(getIfrmUsr().getPnlDatosUsu());
 					enviarInfo(USR, USR_MOD_OK);
 				}
 			} else {
@@ -153,7 +154,10 @@ public class CtrlFrmUsuario extends CtrlGenerico implements CnstPresGeneric {
 				} else {
 					if(enviarConfirm(USR, USR_ELI_CONFIRM + usr.getNomUsu() + QUESTION) == CONFIRM_OK) {
 						mgrUsr.eliminarUsuario(usr);
+						setContainerEnabled(getIfrmUsr().getPwfUsuPass1(), true);
+						setContainerEnabled(getIfrmUsr().getPwfUsuPass2(), true);
 						cargarListUsuario(getIfrmUsr().getJlUsuario());
+						clearControlsInJPanel(getIfrmUsr().getPnlDatosUsu());
 						enviarInfo(USR, USR_ELI_OK);
 					}
 				}

@@ -510,6 +510,7 @@ public class CtrlFrmProducto extends CtrlGenerico implements CnstPresGeneric {
 				clearForm(frmProd.getContentPane());
 				List<Producto> lst = mgrProd.obtenerListaProductoPorTipoProd(tp);
 				cargarJtProd(lst);
+				enviarInfo(TP, PROD_ING_OK);
 			} else {
 				enviarWarning(PROD, DATOS_OBLIG);
 			}
@@ -550,6 +551,7 @@ public class CtrlFrmProducto extends CtrlGenerico implements CnstPresGeneric {
 					clearForm(frmProd.getContentPane());
 					List<Producto> lst = mgrProd.obtenerListaProductoPorTipoProd(tp);
 					cargarJtProd(lst);
+					enviarInfo(TP, PROD_MOD_OK);
 				} else {
 					enviarWarning(PROD, PROD_NOEXIST);
 				}
@@ -570,6 +572,7 @@ public class CtrlFrmProducto extends CtrlGenerico implements CnstPresGeneric {
 					clearForm(frmProd.getContentPane());
 					Producto prod = mgrProd.obtenerProductoPorId(idInt);
 					mgrProd.desactivarProducto(prod);
+					enviarInfo(TP, PROD_DESACT_OK);
 				} else {
 					enviarWarning(PROD, PROD_NOEXIST);
 				}

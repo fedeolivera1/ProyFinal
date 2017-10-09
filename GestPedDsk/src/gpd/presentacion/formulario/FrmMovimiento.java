@@ -67,6 +67,7 @@ public class FrmMovimiento extends JFrame {
 	private JTable jtVentaLin;
 	private JScrollPane scrollPaneVentaLinLote;
 	private JTable jtVentaLinLote;
+	private JFormattedTextField ftxtTotalCompra;
 
 
 	public static FrmMovimiento getFrmMovimiento(UsuarioDsk usr) {
@@ -323,6 +324,11 @@ public class FrmMovimiento extends JFrame {
 		btnCompraGenerar.setBounds(134, 11, 111, 23);
 		pnlGenerarCompra.add(btnCompraGenerar);
 		
+		ftxtTotalCompra = new JFormattedTextField();
+		ftxtTotalCompra.setEditable(false);
+		ftxtTotalCompra.setBounds(679, 245, 90, 20);
+		tpCompra.add(ftxtTotalCompra);
+		
 		JSeparator separator = new JSeparator();
 		separator.setForeground(SystemColor.info);
 		separator.setBackground(SystemColor.info);
@@ -337,6 +343,12 @@ public class FrmMovimiento extends JFrame {
 		ctrlMov.setContainerEnabled(pnlCompraDatos, false);
 		ctrlMov.cargarCbxProveedor(cbxCompraProv);
 		ctrlMov.cargarCbxTipoProd(cbxCompraTp);
+		
+		
+		JLabel lblTotal = new JLabel("Total");
+		lblTotal.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblTotal.setBounds(623, 248, 46, 14);
+		tpCompra.add(lblTotal);
 		
 		
 		btnCompraModItem.addActionListener(new ActionListener() {
@@ -555,4 +567,12 @@ public class FrmMovimiento extends JFrame {
 	public void setJtVentaLinLote(JTable jtVentaLinLote) {
 		this.jtVentaLinLote = jtVentaLinLote;
 	}
+
+	public JFormattedTextField getFtxtTotalCompra() {
+		return ftxtTotalCompra;
+	}
+	public void setFtxtTotalCompra(JFormattedTextField ftxtTotalCompra) {
+		this.ftxtTotalCompra = ftxtTotalCompra;
+	}
+	
 }
